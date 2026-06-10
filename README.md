@@ -9,14 +9,31 @@ dashboard/
   clients/
     amacx/
       config.js     ← window.DASHBOARD_CONFIG — identity, brand colours, markets, data source
-      data.js       ← window.DASHBOARD_DATA  — the dateRanges object (KPIs + market table)
+      data.js       ← window.DASHBOARD_DATA  — dateRanges (KPIs + market table); AMACX has no `sections`
       logo.jpg      ← client logo
+    demo/
+      config.js     ← UK-only demo client (GBP, channels Amazon/eBay/D2C, static data)
+      data.js       ← dateRanges + a full `sections` object that data-drives every deep page
+      logo.svg      ← demo logo
 ```
 
 The page reads `?client=<name>` and loads `clients/<name>/config.js` + `data.js` before `app.js` boots.
 
-- **Live URL:** `https://<your-host>/dashboard/index.html?client=amacx`
+- **AMACX:** `https://<your-host>/dashboard/index.html?client=amacx`
+- **UK demo:** `https://<your-host>/dashboard/index.html?client=demo`
 - Default client (no param) is `amacx`.
+
+### Deep pages: the `sections` object (opt-in)
+
+`index.html` still ships AMACX's EU markup as the **default content** for the deeper pages
+(P&L, Inventory, Products, Keywords, lower Overview, campaign/forecast tables, the two SVG
+charts). A client only overrides them by providing a `sections` object in its `data.js`:
+
+- **No `sections`** (AMACX) → the static markup in `index.html` renders unchanged. Zero regression.
+- **Has `sections`** (demo) → `app.js` rebuilds every deep page from that data at boot, including
+  auto-scaled SVG charts, so the client is fully self-consistent (the UK demo is 100% UK/GBP).
+
+To make AMACX fully data-driven later, give its `data.js` a `sections` object too — no template edits.
 
 ---
 
@@ -49,19 +66,20 @@ Then open: **http://localhost:8080/index.html?client=amacx**
 
 ---
 
-## What's live vs static (Phase 1)
+## What's config/data-driven
 
-| Driven by config/data now | Still static AMACX markup in `index.html` (Phase 2) |
+| Always driven by config/data | Driven only when `data.js` has a `sections` object |
 |---|---|
 | Title, logo, client name, portal label, footer | P&L, Inventory, Products, Keywords pages |
-| Brand colours (`:root` CSS variables) | Campaign-performance table, charts, bar rows |
-| Sidebar market chips + topbar labels | |
-| Date-range dropdown | |
-| Overview + Advertising KPIs, market-spend table | |
-| Live overlay from the Apps Script proxy (`dataSource`) | |
+| Brand colours (`:root` CSS variables) | Campaign / budget / forecast tables |
+| Sidebar market chips + topbar labels | The two SVG trend charts (auto-scaled) |
+| Date-range dropdown | Overview tasks/flags, Buy Box, CVR, lower bars |
+| Overview + Advertising KPIs, market-spend table | Scope labels ("All EU"→"All UK") + P&L nav icon |
+| Live overlay from the Apps Script proxy (`dataSource`) | Market filter `<select>` options |
 
-**Phase 2** converts the remaining static pages into data-driven renders (reading extra keys from `data.js`),
-which is also where the **MerchantSpring MCP** feed will plug in via `dataSource.type: 'merchantSpring'`.
+The right column is the **`sections`** mechanism (see above). AMACX leaves it unset (keeps its static
+EU markup); the UK demo supplies it in full. The **MerchantSpring MCP** feed will plug in via
+`dataSource.type: 'merchantSpring'`, populating both `dateRanges` and `sections` live.
 
 ## Data flow
 
