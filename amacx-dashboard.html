@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AMACX EU — TD Strategists</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#404935;--brand2:#333c28;
+  --accent:#ffe746;--accent-l:#fffde7;--accent-m:#fff176;
+  --bg:#f1ece6;--surface:#ffffff;--surface2:#f7f4f0;
+  --border:#e0d9d0;--text:#404935;--muted:#6b7160;--muted2:#a7ab90;
+  --green:#2d6a4f;--green-bg:#eaf4ef;--green-b:#95d5b2;
+  --red:#b5373a;--red-bg:#fdf0f0;--red-b:#f5b8b9;
+  --amber:#92660a;--amber-bg:#fdf6e7;--amber-b:#f5d98a;
+  --blue:#1e4fa0;--blue-bg:#edf2fc;--blue-b:#b3c9f0;
+  --sans:'Poppins',sans-serif;--display:'Space Grotesk',sans-serif;
+  --sw:224px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+.shell{display:flex;min-height:100vh;overflow-x:hidden;width:100%;}
+.sidebar{width:var(--sw);background:#404935;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .25s;overflow-y:auto;scrollbar-width:none;}
+.sidebar::-webkit-scrollbar{display:none;}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.logo-mark{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:13px;font-weight:700;color:var(--brand);flex-shrink:0;}
+.logo-name{font-family:var(--display);font-size:14px;font-weight:700;color:#fff;letter-spacing:-.1px;}
+.logo-sub{font-size:10px;color:rgba(255,255,255,.65);letter-spacing:1px;text-transform:uppercase;}
+.sb-client{margin:12px 10px 0;padding:12px 13px;background:rgba(255,255,255,.06);border-radius:10px;flex-shrink:0;}
+.cl-lbl{font-size:10px;color:rgba(255,255,255,.40);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+.cl-name{font-family:var(--display);font-size:15px;font-weight:800;color:#fff;}
+.cl-per{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px;}
+.sb-sec{padding:16px 12px 5px;font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.40);}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;margin:1px 8px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.65);font-size:13px;font-weight:500;transition:all .15s;user-select:none;white-space:nowrap;}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85);}
+.nav-item.active{background:var(--accent);color:var(--brand);font-weight:600;}
+.nav-ic{font-size:15px;flex-shrink:0;width:18px;text-align:center;}
+.sb-sec2{padding:14px 12px 5px;font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.40);}
+.mkt-btn{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;margin:2px 8px;border-radius:7px;cursor:pointer;color:rgba(255,255,255,.60);font-size:12px;transition:all .15s;user-select:none;}
+.mkt-btn:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);}
+.mkt-btn.active{color:#fff;background:rgba(255,255,255,.1);}
+.mkt-rev{font-size:11px;color:rgba(255,255,255,.38);font-variant-numeric:tabular-nums;}
+.mkt-btn.active .mkt-rev{color:rgba(255,255,255,.55);}
+.nld-pill{font-size:9px;background:rgba(255,231,70,.2);color:#ffe746;border-radius:4px;padding:1px 5px;margin-left:4px;}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,.07);font-size:11px;color:rgba(255,255,255,.48);line-height:1.7;flex-shrink:0;}
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden;min-width:0;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;gap:12px;}
+.tb-left{display:flex;align-items:center;gap:12px;}
+.hamburger{display:none;background:none;border:none;cursor:pointer;color:var(--text);font-size:20px;padding:4px;line-height:1;}
+.tb-title{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:-.2px;white-space:nowrap;}
+.tb-mkt{font-size:12px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;white-space:nowrap;}
+.tb-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.upd-badge{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green);background:var(--green-bg);border:1px solid #b7dfc9;border-radius:6px;padding:4px 10px;white-space:nowrap;}
+.upd-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.rpt-btn{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--brand);background:var(--accent);border:1px solid #d4c930;border-radius:7px;padding:6px 12px;cursor:pointer;text-decoration:none;transition:all .15s;white-space:nowrap;}
+.rpt-btn:hover{background:#fff176;}
+.date-select-wrap{position:relative;display:flex;align-items:center;}
+.page-tabs{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;display:flex;gap:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.page-tabs::-webkit-scrollbar{display:none;}
+.ptab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;user-select:none;}
+.ptab:hover{color:var(--text);}
+.ptab.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600;}
+.page-content{display:none;padding:24px 28px;flex-direction:column;gap:24px;overflow-x:hidden;max-width:100%;}
+.page-content.active{display:flex;}
+.sec-lbl{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted2);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;font-family:var(--display);}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.g21{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;}
+.g12{display:grid;grid-template-columns:1fr 1.6fr;gap:16px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;overflow:hidden;}
+.kpi-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0;}
+.kpi-lbl{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:5px;}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.3px;line-height:1;margin-bottom:6px;}
+.kpi-d{display:flex;align-items:center;gap:3px;font-size:11px;font-weight:500;}
+.kpi-s{font-size:11px;color:var(--muted);margin-top:3px;}
+.du{color:var(--green)}.dd{color:var(--red)}.df{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.card-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.card-ttl{font-size:13px;font-weight:600;font-family:var(--display);}
+.card-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.card-body{padding:16px;}
+svg.lc{width:100%;overflow:visible;display:block;}
+.leg{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;}
+.leg-i{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+.leg-dot{width:12px;height:3px;border-radius:2px;}
+.bar-row{display:flex;align-items:center;gap:10px;padding:6px 0;}
+.bar-row+.bar-row{border-top:1px solid var(--border);}
+.bar-lbl{font-size:12px;color:var(--text);width:120px;flex-shrink:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-track{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width .4s;}
+.bar-val{font-size:12px;font-variant-numeric:tabular-nums;font-weight:600;width:70px;text-align:right;flex-shrink:0;}
+.ad-scroll{width:100%;}
+.ad-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);}
+.ad-cell{background:var(--surface);padding:14px 10px;text-align:center;}
+.ad-val{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.2px;margin-bottom:3px;}
+.ad-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:500;}
+.tscroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tscroll::-webkit-scrollbar{height:3px;}
+.tscroll::-webkit-scrollbar-track{background:var(--surface2);}
+.tscroll::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px;}
+.dtable{width:100%;border-collapse:collapse;}
+.dtable th{padding:9px 14px;font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;background:var(--surface2);border-bottom:1px solid var(--border);}
+.dtable th:not(:first-child){text-align:right;}
+.dtable td{padding:10px 14px;font-size:12px;border-bottom:1px solid var(--border);}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable td:not(:first-child){text-align:right;font-variant-numeric:tabular-nums;}
+.dtable tbody tr:hover{background:var(--surface2);}
+.pname{font-weight:500;font-size:12px;}
+.pasin{font-size:10px;color:var(--muted2);margin-top:1px;}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:500;}
+.bg{background:var(--green-bg);color:#15803d;}
+.ba{background:var(--amber-bg);color:#b45309;}
+.br{background:var(--red-bg);color:#b91c1c;}
+.bb{background:var(--blue-bg);color:#1d4ed8;}
+.inv-list{display:flex;flex-direction:column;}
+.inv-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);}
+.inv-row:last-child{border-bottom:none;}
+.sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sdot.dg{background:var(--green)}.sdot.da{background:var(--amber)}.sdot.dr{background:var(--red)}
+.inv-info{flex:1;min-width:0;}
+.inv-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.inv-note{font-size:11px;color:var(--muted);margin-top:1px;}
+.inv-r{text-align:right;flex-shrink:0;}
+.inv-u{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;}
+.inv-d{font-size:10px;color:var(--muted);margin-top:1px;}
+.prog-wrap{background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;margin-top:4px;}
+.prog-fill{height:100%;border-radius:4px;}
+.nld-card{background:#faf8ee;border:1px solid #e0d88a;border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.nld-icon{width:36px;height:36px;background:#f5f0c0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.nld-ttl{font-size:13px;font-weight:600;color:#5a5800;margin-bottom:4px;}
+.nld-body{font-size:12px;color:#6b7160;line-height:1.6;}
+.pl-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:12px;overflow:hidden;}
+.pl-cell{background:var(--surface);padding:16px;text-align:center;}
+.pl-val{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.2px;margin-bottom:4px;}
+.pl-lbl{font-size:11px;color:var(--muted);font-weight:500;}
+.kw-chip{display:inline-block;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;}
+select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:49;}
+.overlay.open{display:block;}
+@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr);}.g3{grid-template-columns:repeat(2,1fr);}.g21,.g12{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(3,1fr);}.two-col{grid-template-columns:1fr;}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%);z-index:200;}.sidebar.open{transform:translateX(0);box-shadow:4px 0 24px rgba(0,0,0,.18);}.main{margin-left:0;}.hamburger{display:flex;align-items:center;}.page-content{padding:14px;gap:14px;}.topbar{padding:0 14px;height:50px;}.page-tabs{padding:0 14px;gap:0;}.ptab{padding:10px 12px;font-size:12px;}.kpi-val{font-size:20px;}.kpi-s{display:none;}.tb-mkt{display:none;}.upd-badge span{display:none;}.upd-badge{padding:4px 8px;}.bar-lbl{width:90px;font-size:11px;}.g4{grid-template-columns:repeat(2,1fr);gap:10px;}.g3{grid-template-columns:repeat(2,1fr);gap:10px;}.g21,.g12,.two-col{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(5,1fr);}.pl-summary{grid-template-columns:repeat(3,1fr);}.card-hdr{flex-wrap:wrap;gap:8px;}.rpt-btn{font-size:11px;padding:5px 9px;}.tb-title{font-size:15px;}}
+@media(max-width:480px){.g4{grid-template-columns:repeat(2,1fr);gap:8px;}.g3{grid-template-columns:1fr;}.g2{grid-template-columns:1fr;}#tasks-flags{grid-template-columns:1fr;}.pl-summary{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(5,1fr);}.kpi{padding:12px;}.kpi-val{font-size:20px;}.page-content{padding:12px;gap:12px;}.topbar{padding:0 12px;}.page-tabs{padding:0 12px;}.ptab{padding:8px 10px;font-size:11px;}.dtable th,.dtable td{padding:8px 10px;font-size:11px;}.bar-lbl{width:80px;font-size:10px;}.bar-val{font-size:11px;width:55px;}select{font-size:10px;}}
+.fade{opacity:0;transform:translateY(8px);animation:fi .3s ease forwards;}
+@keyframes fi{to{opacity:1;transform:translateY(0);}}
+@keyframes pulse2{0%,100%{opacity:1;}50%{opacity:.3;}}
+.tasks-flags-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fade:nth-child(1){animation-delay:.04s}.fade:nth-child(2){animation-delay:.08s}
+.fade:nth-child(3){animation-delay:.12s}.fade:nth-child(4){animation-delay:.16s}
+.fade:nth-child(5){animation-delay:.20s}.fade:nth-child(6){animation-delay:.24s}
+.fade:nth-child(7){animation-delay:.28s}.fade:nth-child(8){animation-delay:.32s}
+</style>
+</head>
+<body>
+<div class="shell">
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo" style="padding:16px 16px 14px;background:#404935;">
+    <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCALHAscDASIAAhEBAxEB/8QAHQABAAMBAAMBAQAAAAAAAAAAAAcICQYDBAUCAf/EAGAQAAEDAgMDBQUQDggDBgcBAAABAgMEBQYHEQgSIRMxQVFhFBgicZUJFRYyN0JSVnR1gZGys9LTFyM1RlRVV2KChZShtMQzOHJ2hJKx0SRjokNzg5OlwTRERVOjwuHw/8QAGwEBAAIDAQEAAAAAAAAAAAAAAAQFAgMGBwH/xAA/EQEAAQMBAgcOBQQCAwEAAAAAAQIDBBEFIQYSEzFBUYEUIjIzQlNhcZGhscHR8BU0NVLhFiNDsnKCJGLxwv/aAAwDAQACEQMRAD8ApkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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" alt="TD Strategists" style="width:110px;height:auto;display:block;mix-blend-mode:screen;">
+    <div class="logo-sub" style="margin-top:6px;padding-left:2px;">CLIENT PORTAL</div>
+  </div>
+  <div class="sb-client">
+    <div class="cl-lbl">Client</div>
+    <div class="cl-name">AMACX EU</div>
+    <div class="cl-per">May 2026 &middot; Monthly Report</div>
+  </div>
+  <div class="sb-sec">Pages</div>
+  <div class="nav-item active" onclick="switchPage('overview',this)"><span class="nav-ic">&#9635;</span> Overview</div>
+  <div class="nav-item" onclick="switchPage('pnl',this)"><span class="nav-ic">&#8364;</span> P&amp;L &amp; Expenses</div>
+  <div class="nav-item" onclick="switchPage('advertising',this)"><span class="nav-ic">&#9670;</span> Advertising</div>
+  <div class="nav-item" onclick="switchPage('inventory',this)"><span class="nav-ic">&#9723;</span> Inventory</div>
+  <div class="nav-item" onclick="switchPage('products',this)"><span class="nav-ic">&#9737;</span> Products</div>
+  <div class="nav-item" onclick="switchPage('keywords',this)"><span class="nav-ic">&#9650;</span> Keywords</div>
+  <div class="sb-sec2">Marketplace</div>
+  <div class="mkt-btn active" onclick="switchMarket('all',this)"><span><img src="https://flagcdn.com/16x12/eu.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="EU"> All EU</span><span class="mkt-rev">&#8364;8,856</span></div>
+  <div class="mkt-btn" onclick="switchMarket('de',this)"><span><img src="https://flagcdn.com/16x12/de.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="DE"> Germany</span><span class="mkt-rev">&#8364;2,095</span></div>
+  <div class="mkt-btn" onclick="switchMarket('es',this)"><span><img src="https://flagcdn.com/16x12/es.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="ES"> Spain</span><span class="mkt-rev">&#8364;2,167</span></div>
+  <div class="mkt-btn" onclick="switchMarket('it',this)"><span><img src="https://flagcdn.com/16x12/it.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="IT"> Italy</span><span class="mkt-rev">&#8364;2,393</span></div>
+  <div class="mkt-btn" onclick="switchMarket('fr',this)"><span><img src="https://flagcdn.com/16x12/fr.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="FR"> France</span><span class="mkt-rev">&#8364;2,201</span></div>
+  <div class="mkt-btn" onclick="switchMarket('nld',this)"><span><img src="https://flagcdn.com/16x12/nl.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="NL"> Netherlands <span class="nld-pill">Launch</span></span><span class="mkt-rev">Launch</span></div>
+  <div class="sb-footer">Updated monthly<br>Next: 1 Jun 2026<br><br>Managed by TD Strategists</div>
+</aside>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="tb-left">
+      <button class="hamburger" onclick="toggleSidebar()">&#9776;</button>
+      <div class="tb-title" id="tb-title">EU Overview</div>
+      <div class="tb-mkt" id="tb-mkt">All Marketplaces &middot; May 2026</div>
+    </div>
+    <div class="tb-right">
+      <div class="upd-badge"><div class="upd-dot"></div><span>Live</span></div>
+      <div class="date-select-wrap">
+        <select id="date-range-select" onchange="switchDateRange(this.value)" style="font-size:12px;font-weight:500;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:6px 28px 6px 10px;cursor:pointer;appearance:none;-webkit-appearance:none;font-family:var(--sans);box-shadow:0 1px 3px rgba(0,0,0,.06);">
+          <option value="may">May 2026</option>
+          <option value="3m">Last 3 Months (Mar&ndash;May)</option>
+          <option value="6m">Jan&ndash;May 2026 (YTD)</option>
+          <option value="2025">Full Year 2025</option>
+          <option value="12m">2025 + 2026 YTD</option>
+        </select>
+        <span style="pointer-events:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--muted);">&#9660;</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page tabs -->
+  <div class="page-tabs">
+    <div class="ptab active" onclick="switchPage('overview',null,this)">Overview</div>
+    <div class="ptab" onclick="switchPage('pnl',null,this)">P&amp;L &amp; Expenses</div>
+    <div class="ptab" onclick="switchPage('advertising',null,this)">Advertising</div>
+    <div class="ptab" onclick="switchPage('inventory',null,this)">Inventory</div>
+    <div class="ptab" onclick="switchPage('products',null,this)">Products</div>
+    <div class="ptab" onclick="switchPage('keywords',null,this)">Keywords</div>
+  </div>
+
+  <!-- ========== PAGE: OVERVIEW ========== -->
+  <div class="page-content active" id="page-overview">
+
+    <div class="fade tasks-flags-grid" id="tasks-flags">
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-ttl">&#128203; Upcoming Tasks</div><div class="card-sub">From project scope</div></div>
+          <span style="font-size:10px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);border-radius:5px;padding:2px 8px;font-weight:500;">June 2026</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0;">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:500;">Reactivate Campaigns &mdash; ES &amp; IT</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">Advertising &middot; In Progress</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:500;">Spanish Brand Store</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">Graphics &middot; Upcoming</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:500;">Italian Brand Store</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">Graphics &middot; Upcoming</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--muted2);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:500;">Optimise Italy &amp; Spain Listings</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">Listings &middot; Upcoming</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--muted2);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:500;">English Translations &mdash; NLD</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">Listings &middot; Upcoming</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-ttl">&#9888; Flags &amp; Warnings</div><div class="card-sub">Requires attention</div></div>
+          <span style="font-size:10px;background:var(--red-bg);color:var(--red);border:1px solid var(--red-b);border-radius:5px;padding:2px 8px;font-weight:500;">3 active</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0;">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:#fdf0f0;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px;animation:pulse2 1.5s infinite;"></div>
+            <div><div style="font-size:12px;font-weight:600;color:var(--red);">Hydro Tabs &mdash; Non-Compliant IT</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">Italian Health Ministry &middot; Pre-market notification pending</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:#fdf0f0;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px;animation:pulse2 1.5s infinite;"></div>
+            <div><div style="font-size:12px;font-weight:600;color:var(--red);">Energy Ice Gel &mdash; OOS DE/ES/IT</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">B0F332LV9B &middot; Listing suppressed</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:#fdf6e7;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:600;color:var(--amber);">TACOS Above Target &mdash; All Markets</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">26.2% blended &middot; Target &lt;20% &middot; Review bid strategy</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:#fdf6e7;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:600;color:var(--amber);">Shipping Windows Unoptimised</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">FR 7.6d promised vs 5.2d actual &middot; IT 8.1d vs 5.7d</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--muted2);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:500;color:var(--muted);">Beet Shot &mdash; All Markets On Hold</div><div style="font-size:11px;color:var(--muted2);margin-top:1px;">Food safety compliance &middot; B0F331NKWY</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sec-lbl" id="sec-toplevel">Top-Level &mdash; <span id="sec-period-1">May 2026</span></div>
+      <div class="g4">
+        <div class="kpi fade"><div class="kpi-bar" style="background:#404935"></div><div class="kpi-lbl">Total Revenue</div><div class="kpi-val" id="k-rev">&#8364;8,856</div><div class="kpi-d du" id="k-rev-d">&#9650; 26.0% MoM</div><div class="kpi-s" id="k-rev-s">vs &#8364;7,026 Apr</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Ad Sales</div><div class="kpi-val" id="k-ad">&#8364;3,318</div><div class="kpi-d du" id="k-ad-d">&#9650; 14.7% MoM</div><div class="kpi-s" id="k-ad-s">37.5% of revenue</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">TACOS</div><div class="kpi-val" id="k-tacos">26.2%</div><div class="kpi-d dd" id="k-tacos-d">&#9650; 2.6pp vs Apr</div><div class="kpi-s" id="k-tacos-s">Target: reduce to &lt;20%</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">ROAS</div><div class="kpi-val" id="k-margin">3.82&#215;</div><div class="kpi-d dd" id="k-margin-d">&#9660; 0.2 vs Apr</div><div class="kpi-s" id="k-margin-s">269 units &middot; AOV &#8364;48</div></div>
+      </div>
+    </div>
+
+    <div class="g21 fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Revenue Trend</div><div class="card-sub">Total vs Target &mdash; <span class="dr-chart-sub">Jan&ndash;May 2026</span></div></div></div>
+        <div class="card-body" style="padding:16px 16px 10px;">
+          <svg class="lc" viewBox="0 0 440 160">
+            <line x1="40" y1="15"  x2="440" y2="15"  stroke="#e4e2dc" stroke-width="1"/>
+            <line x1="40" y1="45"  x2="440" y2="45"  stroke="#e4e2dc" stroke-width="1"/>
+            <line x1="40" y1="75"  x2="440" y2="75"  stroke="#e4e2dc" stroke-width="1"/>
+            <line x1="40" y1="105" x2="440" y2="105" stroke="#e4e2dc" stroke-width="1"/>
+            <line x1="40" y1="135" x2="440" y2="135" stroke="#e4e2dc" stroke-width="1"/>
+            <text x="36" y="12"  font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="end">&#8364;12k</text>
+            <text x="36" y="42"  font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="end">&#8364;9k</text>
+            <text x="36" y="72"  font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="end">&#8364;6k</text>
+            <text x="36" y="102" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="end">&#8364;3k</text>
+            <text x="36" y="132" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="end">&#8364;0</text>
+            <polygon points="118,95.8 194,99.1 270,85.3 346,64.7 422,46.4 422,135 118,135" fill="#404935" opacity="0.07"/>
+            <polyline points="118,90.0 194,78.0 270,83.8 346,50.0 422,32.9" fill="none" stroke="#e8a87c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 3" opacity="0.9"/>
+            <circle cx="118" cy="90.0" r="1.8" fill="#e8a87c" stroke="#fff" stroke-width="1.2" opacity="0.9"/><circle cx="194" cy="78.0" r="1.8" fill="#e8a87c" stroke="#fff" stroke-width="1.2" opacity="0.9"/><circle cx="270" cy="83.8" r="1.8" fill="#e8a87c" stroke="#fff" stroke-width="1.2" opacity="0.9"/><circle cx="346" cy="50.0" r="1.8" fill="#e8a87c" stroke="#fff" stroke-width="1.2" opacity="0.9"/><circle cx="422" cy="32.9" r="1.8" fill="#e8a87c" stroke="#fff" stroke-width="1.2" opacity="0.9"/>
+            <polyline points="118,95.8 194,99.1 270,85.3 346,64.7 422,46.4" fill="none" stroke="#404935" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="118" cy="95.8" r="2.5" fill="#404935" stroke="#fff" stroke-width="1.5"/><circle cx="194" cy="99.1" r="2.5" fill="#404935" stroke="#fff" stroke-width="1.5"/><circle cx="270" cy="85.3" r="2.5" fill="#404935" stroke="#fff" stroke-width="1.5"/><circle cx="346" cy="64.7" r="2.5" fill="#404935" stroke="#fff" stroke-width="1.5"/><circle cx="422" cy="46.4" r="3" fill="#404935" stroke="#fff" stroke-width="1.5"/>
+            <polyline points="118,132.2 194,132.8 270,125.6 346,114.8 422,111.8" fill="none" stroke="#a7ab90" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 3"/>
+            <circle cx="118" cy="132.2" r="1.8" fill="#a7ab90" stroke="#fff" stroke-width="1.2"/><circle cx="194" cy="132.8" r="1.8" fill="#a7ab90" stroke="#fff" stroke-width="1.2"/><circle cx="270" cy="125.6" r="1.8" fill="#a7ab90" stroke="#fff" stroke-width="1.2"/><circle cx="346" cy="114.8" r="1.8" fill="#a7ab90" stroke="#fff" stroke-width="1.2"/><circle cx="422" cy="111.8" r="2" fill="#a7ab90" stroke="#fff" stroke-width="1.2"/>
+            <text x="118" y="152" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="middle">Jan</text>
+            <text x="194" y="152" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="middle">Feb</text>
+            <text x="270" y="152" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="middle">Mar</text>
+            <text x="346" y="152" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="middle">Apr</text>
+            <text x="422" y="152" font-size="9" fill="#404935" font-family="Poppins" text-anchor="middle" font-weight="600">May</text>
+          </svg>
+          <div class="leg">
+            <div class="leg-i"><div class="leg-dot" style="background:#404935"></div>Revenue Actual</div>
+            <div class="leg-i"><div class="leg-dot" style="background:#e8a87c"></div>Revenue Target</div>
+            <div class="leg-i"><div class="leg-dot" style="background:#a7ab90"></div>Ad Spend</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-ttl">Buy Box</div><div class="card-sub">Win rate by market &mdash; est.</div></div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/de.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="DE"> Germany</span><span style="font-weight:600;color:var(--green)">97%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:97%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/es.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="ES"> Spain</span><span style="font-weight:600;color:var(--green)">94%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:94%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/fr.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="FR"> France</span><span style="font-weight:600;color:var(--green)">96%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:96%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/it.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="IT"> Italy</span><span style="font-weight:600;color:var(--amber)">89%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:89%;background:var(--amber)"></div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-ttl">Session CVR</div><div class="card-sub">All EU &mdash; May</div></div></div>
+          <div class="card-body">
+            <div style="font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.4px;color:var(--brand)">11.8%</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;">&#9650; 0.9pp vs Apr &middot; 48,200 sessions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fade">
+      <div class="sec-lbl">Netherlands &middot; Early Launch</div>
+      <div class="nld-card">
+        <div class="nld-icon"><img src="https://flagcdn.com/16x12/nl.png" width="16" height="12" style="vertical-align:middle;" alt="NL"></div>
+        <div><div class="nld-ttl">Early Launch &mdash; May 2026</div><div class="nld-body">NLD live with 3 ASINs. &#8364;1.2k revenue in first 6 weeks &mdash; early traction positive. Organic ranking building; ad seeding underway. Buy Box secured on all active listings. Full reporting from Month 3.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: P&L ========== -->
+  <div class="page-content" id="page-pnl">
+    <div>
+      <div class="sec-lbl" id="sec-pnl">P&amp;L Summary &mdash; <span id="sec-period-2">May 2026</span></div>
+      <div class="pl-summary fade">
+        <div class="pl-cell"><div class="pl-val" style="color:var(--brand)">&#8364;8,856</div><div class="pl-lbl">Gross Revenue</div></div>
+        <div class="pl-cell"><div class="pl-val" style="color:var(--red)">&#8364;5,890*</div><div class="pl-lbl">Total Costs</div></div>
+        <div class="pl-cell"><div class="pl-val" style="color:var(--green)">&#8364;2,966*</div><div class="pl-lbl">Net Profit</div></div>
+      </div>
+    </div>
+    <div class="g21 fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Revenue Breakdown</div><div class="card-sub">Organic vs Paid &mdash; <span class="dr-period">May 2026</span></div></div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="bar-row"><div class="bar-lbl">Organic Sales</div><div class="bar-track"><div class="bar-fill" style="width:62%;background:#404935"></div></div><div class="bar-val">&#8364;5,538</div></div>
+          <div class="bar-row"><div class="bar-lbl">Ad-Attributed</div><div class="bar-track"><div class="bar-fill" style="width:38%;background:#a7ab90"></div></div><div class="bar-val">&#8364;3,318</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Margin</div><div class="card-sub">Net after all deductions</div></div></div>
+        <div class="card-body">
+          <div style="font-family:var(--display);font-size:32px;font-weight:700;letter-spacing:-.4px;color:var(--green)">33.5%*</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">*Estimated &middot; COGS from FBM sheet</div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Gross Revenue</span><span style="font-weight:600">&#8364;8,856</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Amazon Fees</span><span style="color:var(--red)">&#8722;&#8364;1,328*</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Ad Spend</span><span style="color:var(--red)">&#8722;&#8364;2,320</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">COGS (est.)</span><span style="color:var(--red)">&#8722;&#8364;2,242*</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0 0;"><span style="font-weight:600;">Net Profit</span><span style="font-weight:700;color:var(--green)">&#8364;2,966*</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fade">
+      <div class="sec-lbl">Cost Breakdown</div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Expenses by Category</div><div class="card-sub"><span class="dr-period">May 2026</span> &mdash; All EU</div></div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="bar-row"><div class="bar-lbl">COGS (est.)</div><div class="bar-track"><div class="bar-fill" style="width:85%;background:#404935"></div></div><div class="bar-val">&#8364;2,242*</div></div>
+          <div class="bar-row"><div class="bar-lbl">Amazon Ref. Fee</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:#404935"></div></div><div class="bar-val">&#8364;1,328*</div></div>
+          <div class="bar-row"><div class="bar-lbl">Ad Spend</div><div class="bar-track"><div class="bar-fill" style="width:88%;background:#2563eb"></div></div><div class="bar-val">&#8364;2,320</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="fade">
+      <div class="sec-lbl">P&amp;L by Marketplace</div>
+      <div class="card">
+        <div class="tscroll"><table class="dtable">
+          <thead><tr><th>Market</th><th>Revenue</th><th>Ad Spend</th><th>Net*</th><th>Margin*</th></tr></thead>
+          <tbody>
+            <tr><td><img src="https://flagcdn.com/16x12/de.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="DE"> Germany</td><td>&#8364;2,095</td><td>&#8364;529</td><td style="color:var(--green);font-weight:600">&#8364;718*</td><td><span class="badge bg">34.3%*</span></td></tr>
+            <tr><td><img src="https://flagcdn.com/16x12/es.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="ES"> Spain</td><td>&#8364;2,167</td><td>&#8364;609</td><td style="color:var(--amber);font-weight:600">&#8364;680*</td><td><span class="badge ba">31.4%*</span></td></tr>
+            <tr><td><img src="https://flagcdn.com/16x12/it.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="IT"> Italy</td><td>&#8364;2,393</td><td>&#8364;607</td><td style="color:var(--green);font-weight:600">&#8364;816*</td><td><span class="badge bg">34.1%*</span></td></tr>
+            <tr><td><img src="https://flagcdn.com/16x12/fr.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="FR"> France</td><td>&#8364;2,201</td><td>&#8364;575</td><td style="color:var(--green);font-weight:600">&#8364;734*</td><td><span class="badge bg">33.3%*</span></td></tr>
+            <tr><td><img src="https://flagcdn.com/16x12/nl.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="NL"> NLD</td><td>&#8364;0</td><td>&#8364;0</td><td style="color:var(--muted);font-weight:600">&#8364;0</td><td><span class="badge bb">Launch</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: ADVERTISING ========== -->
+  <div class="page-content" id="page-advertising">
+    <div>
+      <div class="sec-lbl" id="sec-adperf">Ad Performance &mdash; <span id="sec-period-3">May 2026</span></div>
+      <div class="g4">
+        <div class="kpi fade"><div class="kpi-bar" style="background:#404935"></div><div class="kpi-lbl">Ad Spend</div><div class="kpi-val">&#8364;2,320</div><div class="kpi-d du">&#9650; 14.7% MoM</div><div class="kpi-s">vs &#8364;2,023 Apr</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">TACOS</div><div class="kpi-val">26.2%</div><div class="kpi-d dd">&#9650; 2.6pp MoM</div><div class="kpi-s">Target &lt;20%</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">ROAS</div><div class="kpi-val">3.82&#215;</div><div class="kpi-d dd">&#9660; 0.2 MoM</div><div class="kpi-s">&#8364;8,856 revenue</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">AOV</div><div class="kpi-val">&#8364;48</div><div class="kpi-d du">&#9650; &#8364;1 MoM</div><div class="kpi-s">185 orders May</div></div>
+      </div>
+    </div>
+
+    <div class="g21 fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Spend vs TACOS Trend</div><div class="card-sub">6-month view</div></div></div>
+        <div class="card-body" style="padding:16px 16px 10px;">
+          <svg class="lc" viewBox="0 0 440 150">
+            <line x1="0" y1="15" x2="440" y2="15" stroke="#e4e2dc" stroke-width="1"/>
+            <line x1="0" y1="45" x2="440" y2="45" stroke="#e4e2dc" stroke-width="1"/>
+            <line x1="0" y1="75" x2="440" y2="75" stroke="#e4e2dc" stroke-width="1"/>
+            <line x1="0" y1="105" x2="440" y2="105" stroke="#e4e2dc" stroke-width="1"/>
+            <text x="2" y="12" font-size="9" fill="#9ca3af" font-family="Poppins">&#8364;10k</text>
+            <text x="2" y="52" font-size="9" fill="#9ca3af" font-family="Poppins">&#8364;8k</text>
+            <text x="2" y="92" font-size="9" fill="#9ca3af" font-family="Poppins">&#8364;6k</text>
+            <text x="2" y="127" font-size="9" fill="#9ca3af" font-family="Poppins">&#8364;4k</text>
+            <polygon points="42,115 118,108 194,95 270,88 346,80 422,70 422,135 42,135" fill="#404935" opacity="0.08"/>
+            <polyline points="42,115 118,108 194,95 270,88 346,80 422,70" fill="none" stroke="#404935" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="42,65 118,72 194,68 270,60 346,55 422,45" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 3"/>
+            <circle cx="42" cy="115" r="2.5" fill="#404935" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="118" cy="108" r="2.5" fill="#404935" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="194" cy="95" r="2.5" fill="#404935" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="270" cy="88" r="2.5" fill="#404935" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="346" cy="80" r="2.5" fill="#404935" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="422" cy="70" r="3" fill="#404935" stroke="#fff" stroke-width="1.5"/>
+            <text x="42" y="147" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="middle">Dec</text>
+            <text x="118" y="147" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="middle">Jan</text>
+            <text x="194" y="147" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="middle">Feb</text>
+            <text x="270" y="147" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="middle">Mar</text>
+            <text x="346" y="147" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="middle">Apr</text>
+            <text x="422" y="147" font-size="9" fill="#404935" font-family="Poppins" text-anchor="middle" font-weight="600">May</text>
+          </svg>
+          <div class="leg"><div class="leg-i"><div class="leg-dot" style="background:#404935"></div>Ad Spend</div><div class="leg-i"><div class="leg-dot" style="background:var(--green)"></div>ROAS</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Ad Metrics</div><div class="card-sub"><span class="dr-period">May 2026</span> &middot; All EU</div></div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:11px;color:var(--muted);font-weight:500;">Total Spend</span>
+            <span id="a-spend" style="font-family:var(--display);font-size:17px;font-weight:700;">&#8364;2,320</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:11px;color:var(--muted);font-weight:500;">Monthly Budget</span>
+            <span style="font-family:var(--display);font-size:17px;font-weight:700;color:var(--brand);">&#8364;2,600</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:11px;color:var(--muted);font-weight:500;">Utilisation</span>
+            <span style="font-family:var(--display);font-size:17px;font-weight:700;color:var(--green);">89%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:11px;color:var(--muted);font-weight:500;">TACOS</span>
+            <span id="a-tacos" style="font-family:var(--display);font-size:17px;font-weight:700;color:var(--red);">26.2%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:11px;color:var(--muted);font-weight:500;">ROAS</span>
+            <span id="a-roas" style="font-family:var(--display);font-size:17px;font-weight:700;">3.82&#215;</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+            <span style="font-size:11px;color:var(--muted);font-weight:500;">Avg. CPC</span>
+            <span style="font-family:var(--display);font-size:17px;font-weight:700;">&#8364;0.68</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fade">
+      <div class="sec-lbl">Budget &amp; Actuals &mdash; <span id="sec-period-4">May 2026</span></div>
+      <div class="g21">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <!-- Ad Budgets -->
+          <div class="card">
+            <div class="card-hdr"><div><div class="card-ttl">Ad Budgets by Market</div><div class="card-sub">Approved monthly budget &mdash; May 2026</div></div></div>
+            <div class="tscroll">
+              <table class="dtable">
+                <thead><tr><th>Market</th><th>May Budget</th><th>Jun Forecast</th><th>Jul Forecast</th><th>Aug Forecast</th></tr></thead>
+                <tbody>
+                  <tr><td><img src="https://flagcdn.com/16x12/de.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="DE"> Germany</td><td style="font-weight:600;">&#8364;1,200</td><td>&#8364;1,200</td><td>&#8364;1,600</td><td>&#8364;1,700</td></tr>
+                  <tr><td><img src="https://flagcdn.com/16x12/fr.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="FR"> France</td><td style="font-weight:600;">&#8364;500</td><td>&#8364;600</td><td>&#8364;600</td><td>&#8364;800</td></tr>
+                  <tr><td><img src="https://flagcdn.com/16x12/es.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="ES"> Spain</td><td style="font-weight:600;">&#8364;350</td><td>&#8364;650</td><td>&#8364;500</td><td>&#8364;550</td></tr>
+                  <tr><td><img src="https://flagcdn.com/16x12/it.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="IT"> Italy</td><td style="font-weight:600;">&#8364;450</td><td>&#8364;650</td><td>&#8364;650</td><td>&#8364;750</td></tr>
+                  <tr><td><img src="https://flagcdn.com/16x12/nl.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="NL"> Netherlands</td><td style="font-weight:600;">&#8364;0</td><td>&#8364;0</td><td>&#8364;0</td><td>&#8364;0</td></tr>
+                  <tr style="background:var(--surface2);"><td style="font-weight:700;">Total EU</td><td style="font-weight:700;">&#8364;2,500</td><td style="font-weight:700;">&#8364;3,100</td><td style="font-weight:700;">&#8364;3,350</td><td style="font-weight:700;">&#8364;3,800</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Ad Actuals -->
+          <div class="card">
+            <div class="card-hdr"><div><div class="card-ttl">Ad Spend Actuals by Market</div><div class="card-sub">Actual spend vs budget &mdash; <span class="dr-period">May 2026</span></div></div></div>
+            <div class="tscroll">
+              <table class="dtable" id="mkt-spend-tbody-wrapper">
+                <thead><tr><th>Market</th><th>Actual Spend</th><th>Budget</th><th>vs Budget</th><th>TACOS</th></tr></thead>
+                <tbody id="mkt-spend-tbody">
+                  <tr><td><img src="https://flagcdn.com/16x12/de.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="DE"> Germany</td><td style="font-weight:600;">&#8364;529</td><td>&#8364;1,200</td><td><span class="badge bg">&#9660; &#8364;671 under</span></td><td><span class="badge ba">25.3%</span></td></tr>
+                  <tr><td><img src="https://flagcdn.com/16x12/fr.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="FR"> France</td><td style="font-weight:600;">&#8364;575</td><td>&#8364;500</td><td><span class="badge br">&#9650; &#8364;75 over</span></td><td><span class="badge ba">26.1%</span></td></tr>
+                  <tr><td><img src="https://flagcdn.com/16x12/es.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="ES"> Spain</td><td style="font-weight:600;">&#8364;609</td><td>&#8364;350</td><td><span class="badge br">&#9650; &#8364;259 over</span></td><td><span class="badge br">28.1%</span></td></tr>
+                  <tr><td><img src="https://flagcdn.com/16x12/it.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="IT"> Italy</td><td style="font-weight:600;">&#8364;607</td><td>&#8364;450</td><td><span class="badge br">&#9650; &#8364;157 over</span></td><td><span class="badge ba">25.4%</span></td></tr>
+                  <tr><td><img src="https://flagcdn.com/16x12/nl.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="NL"> Netherlands</td><td style="font-weight:600;">&#8364;0</td><td>&#8364;0</td><td><span class="badge bb">Early launch</span></td><td><span class="badge bb">&#8212;</span></td></tr>
+                  <tr style="background:var(--surface2);"><td style="font-weight:700;">Total EU</td><td style="font-weight:700;">&#8364;2,320</td><td style="font-weight:700;">&#8364;2,500</td><td><span class="badge ba">93% utilised</span></td><td style="font-weight:700;"><span class="badge br">26.2%</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-ttl">Ad Spend Forecast</div><div class="card-sub">Budgeted spend &amp; forecast TACOS &mdash; Jun&ndash;Oct 2026</div></div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:0;">
+            <div style="display:grid;grid-template-columns:60px 1fr 70px 60px;gap:8px;padding:6px 0 8px;border-bottom:2px solid var(--border);font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;"><span>Month</span><span>Budget</span><span style="text-align:right;">TACOS</span><span style="text-align:right;">ROAS</span></div>
+            <div style="display:grid;grid-template-columns:60px 1fr 70px 60px;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center;"><span style="font-size:12px;font-weight:600;">Jun</span><div><div style="background:var(--surface2);border-radius:3px;height:6px;overflow:hidden;"><div style="width:78%;height:100%;background:var(--brand);border-radius:3px;opacity:.7;"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px;">&#8364;3,000</div></div><span style="font-size:12px;font-weight:600;color:var(--amber);text-align:right;">24%</span><span style="font-size:12px;font-weight:600;text-align:right;">4.08&#215;</span></div>
+            <div style="display:grid;grid-template-columns:60px 1fr 70px 60px;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center;"><span style="font-size:12px;font-weight:600;">Jul</span><div><div style="background:var(--surface2);border-radius:3px;height:6px;overflow:hidden;"><div style="width:87%;height:100%;background:var(--brand);border-radius:3px;opacity:.7;"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px;">&#8364;3,350</div></div><span style="font-size:12px;font-weight:600;color:var(--amber);text-align:right;">25%</span><span style="font-size:12px;font-weight:600;text-align:right;">4.07&#215;</span></div>
+            <div style="display:grid;grid-template-columns:60px 1fr 70px 60px;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center;"><span style="font-size:12px;font-weight:600;">Aug</span><div><div style="background:var(--surface2);border-radius:3px;height:6px;overflow:hidden;"><div style="width:99%;height:100%;background:var(--brand);border-radius:3px;opacity:.7;"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px;">&#8364;3,800 <span style="font-size:10px;color:var(--green);font-weight:600;">&#9650; peak</span></div></div><span style="font-size:12px;font-weight:600;color:var(--amber);text-align:right;">23%</span><span style="font-size:12px;font-weight:600;text-align:right;">4.38&#215;</span></div>
+            <div style="display:grid;grid-template-columns:60px 1fr 70px 60px;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center;"><span style="font-size:12px;font-weight:600;">Sep</span><div><div style="background:var(--surface2);border-radius:3px;height:6px;overflow:hidden;"><div style="width:77%;height:100%;background:var(--brand);border-radius:3px;opacity:.6;"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px;">&#8364;2,950</div></div><span style="font-size:12px;font-weight:600;color:var(--green);text-align:right;">20%</span><span style="font-size:12px;font-weight:600;text-align:right;">5.02&#215;</span></div>
+            <div style="display:grid;grid-template-columns:60px 1fr 70px 60px;gap:8px;padding:10px 0;align-items:center;"><span style="font-size:12px;font-weight:600;">Oct</span><div><div style="background:var(--surface2);border-radius:3px;height:6px;overflow:hidden;"><div style="width:61%;height:100%;background:var(--brand);border-radius:3px;opacity:.5;"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px;">&#8364;2,350</div></div><span style="font-size:12px;font-weight:600;color:var(--green);text-align:right;">19%</span><span style="font-size:12px;font-weight:600;text-align:right;">5.36&#215;</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fade">
+      <div class="sec-lbl">Campaign Performance</div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Active Campaigns</div><div class="card-sub"><span class="dr-period">May 2026</span> &mdash; All EU</div></div><select><option>All Markets</option><option>DE</option><option>ES</option><option>IT</option><option>FR</option></select></div>
+        <div class="tscroll"><table class="dtable">
+          <thead><tr><th>Campaign</th><th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th><th>CPC</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><div class="pname">SP &mdash; Sport Drink DE</div><div class="pasin">Sponsored Products</div></td><td>&#8364;1.82k</td><td>&#8364;9.8k</td><td><span class="badge bg">18.6%</span></td><td>5.4&#215;</td><td>&#8364;0.38</td><td><span class="badge bg">Active</span></td></tr>
+            <tr><td><div class="pname">SP &mdash; Energy Gel DE</div><div class="pasin">Sponsored Products</div></td><td>&#8364;0.94k</td><td>&#8364;5.1k</td><td><span class="badge bg">18.4%</span></td><td>5.4&#215;</td><td>&#8364;0.41</td><td><span class="badge bg">Active</span></td></tr>
+            <tr><td><div class="pname">SB &mdash; AMACX Brand DE</div><div class="pasin">Sponsored Brands</div></td><td>&#8364;0.64k</td><td>&#8364;3.1k</td><td><span class="badge ba">20.6%</span></td><td>4.8&#215;</td><td>&#8364;0.52</td><td><span class="badge bg">Active</span></td></tr>
+            <tr><td><div class="pname">SP &mdash; Hydration ES</div><div class="pasin">Sponsored Products</div></td><td>&#8364;0.92k</td><td>&#8364;4.6k</td><td><span class="badge bg">20.0%</span></td><td>5.0&#215;</td><td>&#8364;0.33</td><td><span class="badge bg">Active</span></td></tr>
+            <tr><td><div class="pname">SP &mdash; Recovery IT</div><div class="pasin">Sponsored Products</div></td><td>&#8364;0.76k</td><td>&#8364;3.4k</td><td><span class="badge ba">22.4%</span></td><td>4.5&#215;</td><td>&#8364;0.35</td><td><span class="badge ba">Review</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: INVENTORY ========== -->
+  <div class="page-content" id="page-inventory">
+    <div>
+      <div class="sec-lbl">Stock Status &mdash; Last Update</div>
+      <div class="g4">
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">In Stock</div><div class="kpi-val">14</div><div class="kpi-d du">ASINs healthy</div><div class="kpi-s">Across all markets</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">Low Stock</div><div class="kpi-val">3</div><div class="kpi-d" style="color:var(--amber)">Reorder advised</div><div class="kpi-s">&lt;14 days cover</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">OOS</div><div class="kpi-val">1</div><div class="kpi-d dd">Listing suppressed</div><div class="kpi-s">FR &mdash; Isotonic</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Late Dispatch</div><div class="kpi-val">0.8%</div><div class="kpi-d du">&#9660; 0.3pp MoM</div><div class="kpi-s">Target &lt;4%</div></div>
+      </div>
+    </div>
+    <div class="g21 fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Stock by ASIN</div><div class="card-sub">All marketplaces &mdash; current</div></div><select><option>All Markets</option><option>DE</option><option>ES</option><option>IT</option><option>FR</option></select></div>
+        <div class="inv-list">
+          <div class="inv-row"><div class="sdot dg"></div><div class="inv-info"><div class="inv-name">Sport Drink Mix &mdash; DE</div><div class="inv-note">B0CX1234DE &middot; Healthy</div></div><div class="inv-r"><div class="inv-u">842 units</div><div class="inv-d">~34 days</div></div></div>
+          <div class="inv-row"><div class="sdot dg"></div><div class="inv-info"><div class="inv-name">Sport Drink Mix &mdash; ES</div><div class="inv-note">B0CX1234ES &middot; Healthy</div></div><div class="inv-r"><div class="inv-u">421 units</div><div class="inv-d">~28 days</div></div></div>
+          <div class="inv-row"><div class="sdot dg"></div><div class="inv-info"><div class="inv-name">Energy Gel 25pk &mdash; DE</div><div class="inv-note">B0CX5678DE &middot; Healthy</div></div><div class="inv-r"><div class="inv-u">614 units</div><div class="inv-d">~28 days</div></div></div>
+          <div class="inv-row"><div class="sdot dg"></div><div class="inv-info"><div class="inv-name">Recovery Powder &mdash; All EU</div><div class="inv-note">B0CX3456 &middot; No flags</div></div><div class="inv-r"><div class="inv-u">391 units</div><div class="inv-d">~22 days</div></div></div>
+          <div class="inv-row"><div class="sdot da"></div><div class="inv-info"><div class="inv-name">Hydration Tabs 40s &mdash; IT</div><div class="inv-note">B0CX9012IT &middot; Low &mdash; reorder</div></div><div class="inv-r"><div class="inv-u" style="color:var(--amber)">187 units</div><div class="inv-d">~12 days</div></div></div>
+          <div class="inv-row"><div class="sdot da"></div><div class="inv-info"><div class="inv-name">Isotonic Mix 1kg &mdash; DE</div><div class="inv-note">B0CX7890DE &middot; Low</div></div><div class="inv-r"><div class="inv-u" style="color:var(--amber)">203 units</div><div class="inv-d">~14 days</div></div></div>
+          <div class="inv-row"><div class="sdot da"></div><div class="inv-info"><div class="inv-name">Energy Gel &mdash; IT</div><div class="inv-note">B0CX5678IT &middot; Low</div></div><div class="inv-r"><div class="inv-u" style="color:var(--amber)">98 units</div><div class="inv-d">~10 days</div></div></div>
+          <div class="inv-row"><div class="sdot dr"></div><div class="inv-info"><div class="inv-name">Isotonic Mix 1kg &mdash; FR</div><div class="inv-note">B0CX7890FR &middot; OOS &middot; suppressed</div></div><div class="inv-r"><div class="inv-u" style="color:var(--red)">0 units</div><div class="inv-d" style="color:var(--red)">OOS</div></div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-ttl">Dispatch Performance</div><div class="card-sub">Late dispatch rate</div></div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/de.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="DE"> Germany</span><span style="font-weight:600;color:var(--green)">0.4%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:10%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/es.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="ES"> Spain</span><span style="font-weight:600;color:var(--green)">0.9%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:23%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/fr.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="FR"> France</span><span style="font-weight:600;color:var(--amber)">1.2%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:30%;background:var(--amber)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/it.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="IT"> Italy</span><span style="font-weight:600;color:var(--amber)">1.6%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:40%;background:var(--amber)"></div></div></div>
+            <div style="margin-top:4px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);">Amazon threshold: &lt;4% &middot; All markets compliant</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-ttl">Restock Priority</div><div class="card-sub">Action required</div></div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:#fdf0f0;border:1px solid #f5b8b9;border-radius:8px;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:var(--red)">Isotonic Mix 1kg &mdash; FR</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">OOS &middot; Immediate restock needed</div></div>
+            <div style="background:#fdf6e7;border:1px solid #f0d070;border-radius:8px;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:var(--amber)">Hydration Tabs &mdash; IT</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">12 days cover &middot; Order this week</div></div>
+            <div style="background:#fdf6e7;border:1px solid #f0d070;border-radius:8px;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:var(--amber)">Energy Gel &mdash; IT</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">10 days cover &middot; Order this week</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: PRODUCTS ========== -->
+  <div class="page-content" id="page-products">
+    <div>
+      <div class="sec-lbl">Product Performance &mdash; <span id="sec-period-6">May 2026</span></div>
+      <div class="g4">
+        <div class="kpi fade"><div class="kpi-bar" style="background:#404935"></div><div class="kpi-lbl">Top ASIN Rev.</div><div class="kpi-val">&#8364;2,095</div><div class="kpi-d du">Germany</div><div class="kpi-s">23.7% of total</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">Orders</div><div class="kpi-val">185</div><div class="kpi-d du">&#9650; 24.2% MoM</div><div class="kpi-s">149 orders Apr</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Avg. AoV</div><div class="kpi-val">&#8364;48</div><div class="kpi-d du">&#9650; &#8364;1 MoM</div><div class="kpi-s">&#8364;47 Apr</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">ASP</div><div class="kpi-val">&#8364;32.92</div><div class="kpi-d du">&#9650; &#8364;0.24 MoM</div><div class="kpi-s">&#8364;32.68 Apr</div></div>
+      </div>
+    </div>
+    <div class="fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Performance by Market</div><div class="card-sub"><span class="dr-period">May 2026</span></div></div><select><option>All Markets</option><option>DE</option><option>ES</option><option>IT</option><option>FR</option></select></div>
+        <div class="tscroll"><table class="dtable">
+          <thead><tr><th>Market</th><th>Revenue</th><th>Units</th><th>Orders</th><th>CVR</th><th>AoV</th></tr></thead>
+          <tbody>
+            <tr><td><img src="https://flagcdn.com/16x12/de.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="DE"> Germany</td><td>&#8364;2,095</td><td>65</td><td>47</td><td><span class="badge bg">12.4%</span></td><td>&#8364;44.6</td></tr>
+            <tr><td><img src="https://flagcdn.com/16x12/fr.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="FR"> France</td><td>&#8364;2,201</td><td>68</td><td>49</td><td><span class="badge bg">11.8%</span></td><td>&#8364;44.9</td></tr>
+            <tr><td><img src="https://flagcdn.com/16x12/es.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="ES"> Spain</td><td>&#8364;2,167</td><td>67</td><td>46</td><td><span class="badge ba">9.2%</span></td><td>&#8364;47.1</td></tr>
+            <tr><td><img src="https://flagcdn.com/16x12/it.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="IT"> Italy</td><td>&#8364;2,393</td><td>69</td><td>43</td><td><span class="badge ba">8.7%</span></td><td>&#8364;55.7</td></tr>
+            <tr><td><img src="https://flagcdn.com/16x12/nl.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="NL"> Netherlands</td><td>&#8364;0</td><td>0</td><td>0</td><td><span class="badge bb">Launch</span></td><td>&mdash;</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: KEYWORDS ========== -->
+  <div class="page-content" id="page-keywords">
+    <div>
+      <div class="sec-lbl">Keyword Performance &mdash; <span id="sec-period-7">May 2026</span></div>
+      <div class="g4">
+        <div class="kpi fade"><div class="kpi-bar" style="background:#404935"></div><div class="kpi-lbl">Active KWs</div><div class="kpi-val">214</div><div class="kpi-d du">&#9650; 18 MoM</div><div class="kpi-s">Across all campaigns</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">Avg. CPC</div><div class="kpi-val">&#8364;0.38</div><div class="kpi-d du">&#9660; &#8364;0.03 MoM</div><div class="kpi-s">Blended EU</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">High ACOS KWs</div><div class="kpi-val">11</div><div class="kpi-d dd">ACOS &gt;30%</div><div class="kpi-s">Review &amp; pause</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Top KW Rev.</div><div class="kpi-val">&#8364;4.2k</div><div class="kpi-d du">isotonic drink</div><div class="kpi-s">DE market</div></div>
+      </div>
+    </div>
+    <div class="fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Top Performing Keywords</div><div class="card-sub">By revenue &mdash; <span class="dr-period">May 2026</span></div></div><select><option>All Markets</option><option>DE</option><option>ES</option><option>IT</option><option>FR</option></select></div>
+        <div class="tscroll"><table class="dtable">
+          <thead><tr><th>Keyword</th><th>Match</th><th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th><th>CPC</th></tr></thead>
+          <tbody>
+            <tr><td><div class="kw-chip pname">isotonic drink</div><div class="pasin">DE &middot; SP</div></td><td><span class="badge bg">Exact</span></td><td>&#8364;412</td><td>&#8364;4.2k</td><td><span class="badge bg">9.8%</span></td><td>10.2&#215;</td><td>&#8364;0.29</td></tr>
+            <tr><td><div class="kw-chip pname">sport drink powder</div><div class="pasin">DE &middot; SP</div></td><td><span class="badge bg">Exact</span></td><td>&#8364;380</td><td>&#8364;3.8k</td><td><span class="badge bg">10.0%</span></td><td>10.0&#215;</td><td>&#8364;0.32</td></tr>
+            <tr><td><div class="kw-chip pname">energy gel marathon</div><div class="pasin">DE &middot; SP</div></td><td><span class="badge bb">Phrase</span></td><td>&#8364;290</td><td>&#8364;2.7k</td><td><span class="badge bg">10.7%</span></td><td>9.3&#215;</td><td>&#8364;0.38</td></tr>
+            <tr><td><div class="kw-chip pname">hidrataci&#243;n deportiva</div><div class="pasin">ES &middot; SP</div></td><td><span class="badge bg">Exact</span></td><td>&#8364;244</td><td>&#8364;2.1k</td><td><span class="badge bg">11.6%</span></td><td>8.6&#215;</td><td>&#8364;0.27</td></tr>
+            <tr><td><div class="kw-chip pname">gel energetico running</div><div class="pasin">ES &middot; SP</div></td><td><span class="badge bb">Phrase</span></td><td>&#8364;188</td><td>&#8364;1.6k</td><td><span class="badge bg">11.8%</span></td><td>8.5&#215;</td><td>&#8364;0.24</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+function switchPage(key, sideNavEl, tabEl) {
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + key).classList.add('active');
+  if (sideNavEl) sideNavEl.classList.add('active');
+  if (tabEl) tabEl.classList.add('active');
+  if (!tabEl) {
+    const tabs = document.querySelectorAll('.ptab');
+    const pages = ['overview','pnl','advertising','inventory','products','keywords'];
+    const idx = pages.indexOf(key);
+    if (idx >= 0) tabs[idx].classList.add('active');
+  }
+  if (!sideNavEl) {
+    const navs = document.querySelectorAll('.nav-item');
+    const pages = ['overview','pnl','advertising','inventory','products','keywords'];
+    const idx = pages.indexOf(key);
+    if (idx >= 0) navs[idx].classList.add('active');
+  }
+  closeSidebar();
+}
+
+const MKT = {
+  all:{t:'EU Overview',m:'All Marketplaces'},
+  de:{t:'Germany',m:'DE'},
+  es:{t:'Spain',m:'ES'},
+  it:{t:'Italy',m:'IT'},
+  fr:{t:'France',m:'FR'},
+  nld:{t:'Netherlands',m:'NLD \u00b7 Early Launch'}
+};
+let currentMarket = 'all';
+let currentPeriod = 'may';
+
+function switchMarket(k, el) {
+  currentMarket = k;
+  document.querySelectorAll('.mkt-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const m = MKT[k];
+  const d = dateRanges[currentPeriod];
+  document.getElementById('tb-title').textContent = m.t;
+  document.getElementById('tb-mkt').textContent = m.m + ' \u00b7 ' + d.label;
+  closeSidebar();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+const dateRanges = {
+  may: {
+    label: 'May 2026', shortLabel: 'May 2026',
+    rev: '\u20ac8,856', revD: '\u25b2 26.0% MoM', revC: 'du', revS: 'vs \u20ac7,026 Apr',
+    adSales: '\u20ac3,318', adSalesD: '\u25b2 14.7% MoM', adSalesC: 'du', adSalesS: '37.5% of revenue',
+    tacos: '26.2%', tacosD: '\u25b2 2.6pp vs Apr', tacosC: 'dd', tacosS: 'Target: reduce to <20%',
+    roas: '3.82\u00d7', roasD: '\u25bc 0.2 vs Apr', roasC: 'dd', roasS: '269 units \u00b7 AOV \u20ac48',
+    spend: '\u20ac2,320', spendD: '\u25b2 14.7% MoM', spendC: 'du', spendS: 'vs \u20ac2,023 Apr',
+    tacosAd: '26.2%', tacosAdD: '\u25b2 2.6pp vs Apr', tacosAdC: 'dd', tacosAdS: 'Target <20%',
+    roasAd: '3.82\u00d7', roasAdD: '\u25bc 0.2 vs Apr', roasAdC: 'dd', roasAdS: '\u20ac8,856 revenue',
+    aov: '\u20ac48', aovD: '\u25b2 \u20ac1 MoM', aovC: 'du', aovS: '185 orders May',
+    mktRows: [
+      ['DE','de','\u20ac677','\u20ac529','bg','\u25bc \u20ac148 under','\u20ac2,095','ba','25.3%'],
+      ['ES','es','\u20ac402','\u20ac609','br','\u25b2 \u20ac207 over','\u20ac2,167','br','28.1%'],
+      ['IT','it','\u20ac480','\u20ac607','br','\u25b2 \u20ac127 over','\u20ac2,393','ba','25.4%'],
+      ['FR','fr','\u20ac464','\u20ac575','br','\u25b2 \u20ac111 over','\u20ac2,201','ba','26.1%'],
+      ['NLD','nl','\u20ac0','\u20ac0','bb','Early launch','\u20ac0','bb','\u2014'],
+      ['Total EU',null,'\u20ac2,600','\u20ac2,320','bg','89% utilised','\u20ac8,856','br','26.2%'],
+    ],
+  },
+  '3m': {
+    label: 'Mar\u2013May 2026', shortLabel: 'Mar\u2013May 2026',
+    rev: '\u20ac20,849', revD: '3-month actuals', revC: 'du', revS: 'Mar \u20ac4,967 \u00b7 Apr \u20ac7,026 \u00b7 May \u20ac8,856',
+    adSales: '\u2014', adSalesD: '3-month total', adSalesC: 'df', adSalesS: '25.3% blended TACOS',
+    tacos: '25.3%', tacosD: '3-month blended', tacosC: 'dd', tacosS: 'Mar 18.9% \u2192 May 26.2%',
+    roas: '3.95\u00d7', roasD: '3-month avg', roasC: 'df', roasS: '639 units \u00b7 444 orders',
+    spend: '\u20ac5,282', spendD: '3-month total', spendC: 'df', spendS: 'Mar \u20ac939 \u00b7 Apr \u20ac2,023 \u00b7 May \u20ac2,320',
+    tacosAd: '25.3%', tacosAdD: '3-month blended', tacosAdC: 'dd', tacosAdS: 'Mar 18.9% \u2192 May 26.2%',
+    roasAd: '3.95\u00d7', roasAdD: '3-month avg', roasAdC: 'df', roasAdS: '\u20ac20,849 revenue',
+    aov: '\u20ac47', aovD: '3-month avg', aovC: 'df', aovS: '444 orders total',
+    mktRows: [
+      ['DE','de','\u20ac2,450','\u20ac1,570','bg','\u25bc \u20ac880 under','\u20ac6,252','ba','25.1%'],
+      ['ES','es','\u20ac1,350','\u20ac1,232','bg','\u25bc \u20ac118 under','\u20ac4,833','ba','25.5%'],
+      ['IT','it','\u20ac1,200','\u20ac1,283','br','\u25b2 \u20ac83 over','\u20ac5,116','ba','25.1%'],
+      ['FR','fr','\u20ac1,414','\u20ac1,207','bg','\u25bc \u20ac207 under','\u20ac4,648','ba','26.0%'],
+      ['NLD','nl','\u20ac0','\u20ac0','bb','Early launch','\u20ac0','bb','\u2014'],
+      ['Total EU',null,'\u20ac6,414','\u20ac5,292','bg','82% utilised','\u20ac20,849','ba','25.4%'],
+    ],
+  },
+  '6m': {
+    label: 'Jan\u2013May 2026 (YTD)', shortLabel: 'Jan\u2013May 2026',
+    rev: '\u20ac28,355', revD: '5-month actuals', revC: 'du', revS: 'Jan \u20ac3,917 \u2192 May \u20ac8,856',
+    adSales: '\u2014', adSalesD: '5-month total', adSalesC: 'df', adSalesS: '20.4% blended TACOS',
+    tacos: '20.4%', tacosD: '5-month blended', tacosC: 'du', tacosS: 'Jan 7.0% \u2192 May 26.2%',
+    roas: '4.91\u00d7', roasD: '5-month avg', roasC: 'du', roasS: '888 units \u00b7 610 orders',
+    spend: '\u20ac5,777', spendD: '5-month total', spendC: 'df', spendS: 'Budget \u20ac6,249 total',
+    tacosAd: '20.4%', tacosAdD: '5-month blended', tacosAdC: 'du', tacosAdS: 'Jan 7.0% \u2192 May 26.2%',
+    roasAd: '4.91\u00d7', roasAdD: '5-month avg', roasAdC: 'du', roasAdS: '\u20ac28,355 revenue',
+    aov: '\u20ac43.83', aovD: '5-month avg', aovC: 'df', aovS: '610 orders total',
+    mktRows: [
+      ['DE','de','\u20ac3,800','\u20ac1,789','bg','\u25bc \u20ac2,011 under','\u20ac9,547','bg','18.7%'],
+      ['ES','es','\u20ac1,500','\u20ac1,301','bg','\u25bc \u20ac199 under','\u20ac5,799','ba','22.4%'],
+      ['IT','it','\u20ac1,600','\u20ac1,404','bg','\u25bc \u20ac196 under','\u20ac6,298','ba','22.3%'],
+      ['FR','fr','\u20ac1,650','\u20ac1,293','bg','\u25bc \u20ac357 under','\u20ac5,717','ba','22.6%'],
+      ['NLD','nl','\u20ac0','\u20ac0','bb','Early launch','\u20ac0','bb','\u2014'],
+      ['Total EU',null,'\u20ac8,550','\u20ac5,787','bg','68% utilised','\u20ac28,355','ba','20.4%'],
+    ],
+  },
+  '2025': {
+    label: 'Full Year 2025', shortLabel: '2025',
+    rev: '\u20ac44,833', revD: 'Full year actuals', revC: 'du', revS: 'Jan\u2013Dec 2025 confirmed',
+    adSales: '\u2014', adSalesD: 'Full year', adSalesC: 'df', adSalesS: '25.96% blended TACOS',
+    tacos: '26.0%', tacosD: 'FY2025 blended', tacosC: 'dd', tacosS: 'Peak Oct 38.4% \u00b7 Low Dec 5.5%',
+    roas: '3.85\u00d7', roasD: 'FY2025 avg', roasC: 'df', roasS: '1,471 units \u00b7 998 orders',
+    spend: '\u20ac11,638', spendD: 'Full year actuals', spendC: 'df', spendS: 'Budget \u20ac18,880',
+    tacosAd: '26.0%', tacosAdD: 'FY2025 blended', tacosAdC: 'dd', tacosAdS: 'Peak Oct 38.4%',
+    roasAd: '3.85\u00d7', roasAdD: 'FY2025 avg', roasAdC: 'df', roasAdS: '\u20ac44,833 revenue',
+    aov: '\u20ac43.42', aovD: 'FY2025 avg', aovC: 'df', aovS: '998 orders FY2025',
+    mktRows: [
+      ['DE','de','\u20ac8,200','\u20ac4,737','bg','\u25bc \u20ac3,463 under','\u20ac26,988','ba','17.6%'],
+      ['ES','es','\u20ac1,100','\u20ac1,032','bg','\u25bc \u20ac68 under','\u20ac4,020','ba','25.7%'],
+      ['IT','it','\u20ac1,500','\u20ac935','bg','\u25bc \u20ac565 under','\u20ac6,484','bg','14.4%'],
+      ['FR','fr','\u20ac1,200','\u20ac734','bg','\u25bc \u20ac466 under','\u20ac3,748','ba','19.6%'],
+      ['NLD','nl','\u20ac0','\u20ac0','bb','Not live','\u20ac0','bb','\u2014'],
+      ['Total EU',null,'\u20ac18,880','\u20ac11,638','bg','62% utilised','\u20ac44,833','ba','26.0%'],
+    ],
+  },
+  '12m': {
+    label: '2025 + 2026 YTD', shortLabel: '2025\u20132026 YTD',
+    rev: '\u20ac73,188', revD: 'Actuals only', revC: 'du', revS: '2025: \u20ac44,833 \u00b7 2026 YTD: \u20ac28,355',
+    adSales: '\u2014', adSalesD: 'Combined total', adSalesC: 'df', adSalesS: '2025+2026 blended',
+    tacos: '23.8%', tacosD: 'Blended actuals', tacosC: 'dd', tacosS: '2025 peak: Oct 38.4%',
+    roas: '4.20\u00d7', roasD: 'Blended avg', roasC: 'du', roasS: '2,359 units \u00b7 1,608 orders',
+    spend: '\u20ac17,415', spendD: 'Combined total', spendC: 'df', spendS: '2025: \u20ac11,638 \u00b7 2026: \u20ac5,777',
+    tacosAd: '23.8%', tacosAdD: 'Blended', tacosAdC: 'dd', tacosAdS: '2025 peak: Oct 38.4%',
+    roasAd: '4.20\u00d7', roasAdD: 'Blended avg', roasAdC: 'du', roasAdS: '\u20ac73,188 revenue',
+    aov: '\u20ac43.50', aovD: 'Blended avg', aovC: 'df', aovS: '1,608 orders combined',
+    mktRows: [
+      ['DE','de','\u20ac12,000','\u20ac6,526','bg','Combined','\u20ac36,535','ba','17.9%'],
+      ['ES','es','\u20ac2,600','\u20ac2,333','bg','Combined','\u20ac9,819','ba','23.8%'],
+      ['IT','it','\u20ac3,100','\u20ac2,339','bg','Combined','\u20ac12,782','bg','18.3%'],
+      ['FR','fr','\u20ac2,850','\u20ac2,027','bg','Combined','\u20ac9,465','ba','21.4%'],
+      ['NLD','nl','\u20ac0','\u20ac0','bb','Early launch','\u20ac587','bb','\u2014'],
+      ['Total EU',null,'\u20ac27,430','\u20ac17,415','bg','63% utilised','\u20ac73,188','ba','23.8%'],
+    ],
+  },
+};
+
+function set(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+function cls(id, c) { const el = document.getElementById(id); if (el) el.className = 'kpi-d ' + c; }
+
+function switchDateRange(val) {
+  const d = dateRanges[val];
+  if (!d) return;
+  currentPeriod = val;
+  document.getElementById('tb-mkt').textContent = MKT[currentMarket].m + ' \u00b7 ' + d.label;
+  document.querySelectorAll('.dr-period').forEach(el => el.textContent = d.shortLabel);
+  [1,2,3,4,5,6,7].forEach(n => { const el = document.getElementById('sec-period-' + n); if (el) el.textContent = d.shortLabel; });
+  set('k-rev', d.rev); set('k-rev-d', d.revD); cls('k-rev-d', d.revC); set('k-rev-s', d.revS);
+  set('k-ad', d.adSales); set('k-ad-d', d.adSalesD); cls('k-ad-d', d.adSalesC); set('k-ad-s', d.adSalesS);
+  set('k-tacos', d.tacos); set('k-tacos-d', d.tacosD); cls('k-tacos-d', d.tacosC); set('k-tacos-s', d.tacosS);
+  set('k-margin', d.roas); set('k-margin-d', d.roasD); cls('k-margin-d', d.roasC); set('k-margin-s', d.roasS);
+  const adKpis = document.querySelectorAll('#page-advertising .kpi');
+  if (adKpis.length >= 4) {
+    const kpiData = [
+      [d.spend, d.spendD, d.spendC, d.spendS],
+      [d.tacosAd, d.tacosAdD, d.tacosAdC, d.tacosAdS],
+      [d.roasAd, d.roasAdD, d.roasAdC, d.roasAdS],
+      [d.aov, d.aovD, d.aovC, d.aovS],
+    ];
+    adKpis.forEach((kpi, i) => {
+      if (!kpiData[i]) return;
+      const [v, delta, c, sub] = kpiData[i];
+      const valEl = kpi.querySelector('.kpi-val');
+      const dEl = kpi.querySelector('.kpi-d');
+      const sEl = kpi.querySelector('.kpi-s');
+      if (valEl) valEl.textContent = v;
+      if (dEl) { dEl.textContent = delta; dEl.className = 'kpi-d ' + c; }
+      if (sEl) sEl.textContent = sub;
+    });
+  }
+  set('a-spend', d.spend); set('a-tacos', d.tacosAd); set('a-roas', d.roasAd);
+  const tbody = document.getElementById('mkt-spend-tbody');
+  if (tbody && d.mktRows) {
+    tbody.innerHTML = d.mktRows.map((r, i) => {
+      const [name, flag, budget, spend, vs_cls, vs_txt, sales, tacos_cls, tacos_txt] = r;
+      const flagImg = flag ? `<img src="https://flagcdn.com/16x12/${flag}.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="${flag.toUpperCase()}">` : '';
+      const isTotal = i === d.mktRows.length - 1;
+      const rs = isTotal ? ' style="background:var(--surface2);"' : '';
+      const ns = isTotal ? ' style="font-weight:700;"' : '';
+      return `<tr${rs}><td${ns}>${flagImg}${name}</td><td style="font-weight:600;">${spend}</td><td${ns}>${budget}</td><td><span class="badge ${vs_cls}">${vs_txt}</span></td><td><span class="badge ${tacos_cls}">${tacos_txt}</span></td></tr>`;
+    }).join('');
+  }
+}
+
+// ---- Live data (Phase 2) — fetch from Google Sheets via Apps Script proxy ----
+// Sheet stays private; only derived JSON is served. Falls back to static values on any error.
+const DATA_URL = 'https://script.google.com/macros/s/AKfycbygyf0FT3jCCBKHle-IJuiocBebz5dn2squMMdza8v4ViLP8Vn3l9fK94CxJogqf5WDdw/exec';
+(function loadLiveData() {
+  if (!DATA_URL) return;
+  fetch(DATA_URL)
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j || j.status !== 'ok' || !j.dateRanges) return;
+      Object.keys(j.dateRanges).forEach(function (k) {
+        if (!dateRanges[k]) { dateRanges[k] = j.dateRanges[k]; return; }
+        var live = j.dateRanges[k];
+        Object.keys(live).forEach(function (f) {
+          var v = live[f];
+          if (f === 'mktRows') { if (Array.isArray(v) && v.length) dateRanges[k][f] = v; }
+          else if (v !== '' && v != null) dateRanges[k][f] = v;  // keep static value when live is blank
+        });
+      });
+      switchDateRange(currentPeriod);  // repaint with live values
+    })
+    .catch(function () { /* keep built-in static values */ });
+})();
+</script>
+</body>
+</html>
