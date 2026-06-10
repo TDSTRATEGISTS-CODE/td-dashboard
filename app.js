@@ -562,6 +562,34 @@ function renderStatement(spec) {
   t.innerHTML = head + '<tbody>' + body + '</tbody>';
 }
 
+// Product portfolio profitability: a conic-gradient pie + stats (total, profitable/breakeven/
+// unprofitable, most/least profitable product). spec counts are product counts.
+function renderPortfolio(spec) {
+  if (!spec) return;
+  var total = spec.total != null ? spec.total : ((spec.profitable || 0) + (spec.breakeven || 0) + (spec.unprofitable || 0));
+  function pct(n) { return total ? Math.round(n / total * 100) : 0; }
+  var pp = pct(spec.profitable), bp = pct(spec.breakeven), up = Math.max(0, 100 - pp - bp);
+  var pie = el('chart-portfolio-pie');
+  if (pie) pie.style.background = 'conic-gradient(var(--green) 0 ' + pp + '%, var(--amber) ' + pp + '% ' + (pp + bp) + '%, var(--red) ' + (pp + bp) + '% 100%)';
+  var w = el('sec-portfolio'); if (!w) return;
+  function leg(color, label, n, p) {
+    return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:11px;height:11px;border-radius:3px;background:' + color + ';flex-shrink:0;"></span>' + label + '<span style="margin-left:auto;font-weight:600;">' + n + ' (' + p + '%)</span></div>';
+  }
+  var mp = spec.mostProfitable || {}, lp = spec.leastProfitable || {};
+  w.innerHTML =
+    '<div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;">Total Products</div>' +
+    '<div style="font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-.5px;margin:2px 0 12px;">' + total + '</div>' +
+    '<div style="display:flex;flex-direction:column;gap:7px;">' +
+      leg('var(--green)', 'Profitable', spec.profitable, pp) +
+      leg('var(--amber)', 'Breakeven', spec.breakeven, bp) +
+      leg('var(--red)', 'Unprofitable', spec.unprofitable, up) +
+    '</div>' +
+    '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;">' +
+      '<div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;"><span style="color:var(--muted);">Most profitable</span><span style="font-weight:600;">' + (mp.name || '') + ' &middot; <span style="color:var(--green);">' + (mp.value || '') + '</span></span></div>' +
+      '<div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;"><span style="color:var(--muted);">Least profitable</span><span style="font-weight:600;">' + (lp.name || '') + ' &middot; <span style="color:' + (lp.color || 'var(--red)') + ';">' + (lp.value || '') + '</span></span></div>' +
+    '</div>';
+}
+
 function renderMarketSelects() {
   var sels = document.querySelectorAll('.js-mkt-select');
   if (!sels.length) return;
@@ -624,7 +652,8 @@ function renderPeriodSections(d) {
   var bb = pick(so.buyBox, o.buyBox); if (bb) renderProgress('sec-buybox', bb);
   var cv = pick(so.cvr, o.cvr); if (cv) renderCvr(cv);
 
-  var psum = pick(spl.summary, pl.summary); if (psum) renderPnlSummary(psum);
+  var psum = pick(spl.summary, pl.summary); if (psum) renderPnlSummary(psum);   // legacy (element removed)
+  var pf = pick(spl.portfolio, pl.portfolio); if (pf) renderPortfolio(pf);
   var pmar = pick(spl.margin, pl.margin); if (pmar) renderMargin(pmar);
   var pmkt = pick(spl.mkt, pl.mkt); if (pmkt) renderPnlMkt(pmkt);
   var pst = pick(spl.statement, pl.statement); if (pst) renderStatement(pst);
