@@ -12,7 +12,7 @@ window.DASHBOARD_CONFIG = {
     logoSrc: 'td-logo.png',                 // shared TD logo for now (all clients) — dashboard/td-logo.png
     logoAlt: 'TD Strategists',
     logoBlend: '',                          // TD SVG is light-on-dark — no blend trick needed
-    logoWidth: '160px',                     // match demo
+    logoWidth: '110px',                     // square TD emblem — keep compact in the sidebar
     footer: {
       cadence: 'Updated monthly',
       next: 'Next: 1 Jun 2026',

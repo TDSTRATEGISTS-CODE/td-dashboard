@@ -378,22 +378,36 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   <div class="page-content" id="page-pnl">
     <div style="order:1;">
       <div class="sec-lbl" id="sec-pnl">Product Profitability &mdash; <span id="sec-period-2">May 2026</span></div>
-      <div class="card fade">
-        <div class="card-hdr"><div><div class="card-ttl">Product Portfolio Profitability</div><div class="card-sub">By product margin &middot; <span class="dr-period">May 2026</span></div></div></div>
-        <div class="card-body" style="display:flex;align-items:center;gap:32px;flex-wrap:wrap;">
-          <div id="chart-portfolio-pie" style="width:150px;height:150px;border-radius:50%;flex-shrink:0;background:conic-gradient(var(--green) 0 89%, var(--amber) 89% 95%, var(--red) 95% 100%);"></div>
-          <div id="sec-portfolio" style="flex:1;min-width:240px;">
-            <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;">Total Products</div>
-            <div style="font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-.5px;margin:2px 0 12px;">18</div>
-            <div style="display:flex;flex-direction:column;gap:7px;">
-              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:11px;height:11px;border-radius:3px;background:var(--green);flex-shrink:0;"></span>Profitable<span style="margin-left:auto;font-weight:600;">16 (89%)</span></div>
-              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:11px;height:11px;border-radius:3px;background:var(--amber);flex-shrink:0;"></span>Breakeven<span style="margin-left:auto;font-weight:600;">1 (6%)</span></div>
-              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:11px;height:11px;border-radius:3px;background:var(--red);flex-shrink:0;"></span>Unprofitable<span style="margin-left:auto;font-weight:600;">1 (6%)</span></div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:stretch;">
+        <div class="card fade" style="flex:4 1 300px;min-width:280px;">
+          <div class="card-hdr"><div><div class="card-ttl">Portfolio Profitability</div><div class="card-sub">By product margin &middot; <span class="dr-period">May 2026</span></div></div></div>
+          <div class="card-body" style="display:flex;align-items:center;gap:22px;">
+            <div id="chart-portfolio-pie" style="width:120px;height:120px;border-radius:50%;flex-shrink:0;background:conic-gradient(var(--green) 0 89%, var(--amber) 89% 95%, var(--red) 95% 100%);"></div>
+            <div id="sec-portfolio" style="flex:1;min-width:130px;">
+              <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;">Total Products</div>
+              <div style="font-family:var(--display);font-size:28px;font-weight:700;letter-spacing:-.5px;margin:2px 0 10px;">18</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:11px;height:11px;border-radius:3px;background:var(--green);flex-shrink:0;"></span>Profitable<span style="margin-left:auto;font-weight:600;">16 (89%)</span></div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:11px;height:11px;border-radius:3px;background:var(--amber);flex-shrink:0;"></span>Breakeven<span style="margin-left:auto;font-weight:600;">1 (6%)</span></div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:11px;height:11px;border-radius:3px;background:var(--red);flex-shrink:0;"></span>Unprofitable<span style="margin-left:auto;font-weight:600;">1 (6%)</span></div>
+              </div>
             </div>
-            <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;">
-              <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;"><span style="color:var(--muted);">Most profitable</span><span style="font-weight:600;">Sport Drink Mix &middot; <span style="color:var(--green);">&#8364;1,840</span></span></div>
-              <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;"><span style="color:var(--muted);">Least profitable</span><span style="font-weight:600;">Energy Ice Gel &middot; <span style="color:var(--red);">&#8722;&#8364;210</span></span></div>
-            </div>
+          </div>
+        </div>
+        <div class="card fade" style="flex:3 1 240px;min-width:230px;">
+          <div class="card-hdr"><div><div class="card-ttl">Most Profitable</div><div class="card-sub">Top 3 &middot; profit &amp; margin</div></div></div>
+          <div class="card-body" id="sec-most-profitable" style="display:flex;flex-direction:column;gap:0;padding:6px 16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Sport Drink Mix</div><div style="text-align:right;flex-shrink:0;white-space:nowrap;"><span style="font-family:var(--display);font-weight:700;color:var(--green);">&#8364;1,840</span> <span class="badge bg">41%</span></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Recovery Powder</div><div style="text-align:right;flex-shrink:0;white-space:nowrap;"><span style="font-family:var(--display);font-weight:700;color:var(--green);">&#8364;1,420</span> <span class="badge bg">38%</span></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Energy Gel DE</div><div style="text-align:right;flex-shrink:0;white-space:nowrap;"><span style="font-family:var(--display);font-weight:700;color:var(--green);">&#8364;1,180</span> <span class="badge bg">35%</span></div></div>
+          </div>
+        </div>
+        <div class="card fade" style="flex:3 1 240px;min-width:230px;">
+          <div class="card-hdr"><div><div class="card-ttl">Least Profitable</div><div class="card-sub">Bottom 3 &middot; profit &amp; margin</div></div></div>
+          <div class="card-body" id="sec-least-profitable" style="display:flex;flex-direction:column;gap:0;padding:6px 16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Energy Ice Gel</div><div style="text-align:right;flex-shrink:0;white-space:nowrap;"><span style="font-family:var(--display);font-weight:700;color:var(--red);">&#8722;&#8364;210</span> <span class="badge br">&#8722;5%</span></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Hydration Tabs 40s</div><div style="text-align:right;flex-shrink:0;white-space:nowrap;"><span style="font-family:var(--display);font-weight:700;color:var(--amber);">&#8364;90</span> <span class="badge ba">3%</span></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Isotonic Mix 1kg</div><div style="text-align:right;flex-shrink:0;white-space:nowrap;"><span style="font-family:var(--display);font-weight:700;color:var(--amber);">&#8364;160</span> <span class="badge ba">5%</span></div></div>
           </div>
         </div>
       </div>
@@ -421,7 +435,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         </div>
       </div>
     </div>
-    <div class="fade" id="sec-costs-wrap" style="order:4;">
+    <div class="fade" id="sec-costs-wrap" style="order:4;display:none;">
       <div class="sec-lbl">Cost Breakdown</div>
       <div class="card">
         <div class="card-hdr"><div><div class="card-ttl">Expenses by Category</div><div class="card-sub"><span class="dr-period">May 2026</span> &mdash; <span class="cfg-scope">All EU</span></div></div></div>
@@ -432,11 +446,39 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         </div>
       </div>
     </div>
-    <div class="fade" id="sec-statement-wrap" style="display:none;order:4;">
+    <div class="fade" id="sec-statement-wrap" style="order:4;">
       <div class="sec-lbl">Profit &amp; Loss Statement</div>
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">P&amp;L</div><div class="card-sub">Income, expenses &amp; metrics &middot; current vs one period up &middot; <span class="cfg-scope">All EU</span></div></div></div>
-        <div id="sec-pnl-statement" style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;"></div>
+        <div class="card-hdr"><div><div class="card-ttl">P&amp;L</div><div class="card-sub">Income, expenses &amp; metrics &middot; Amazon only</div></div></div>
+        <div id="sec-pnl-statement" style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+          <div class="tscroll" style="flex:1 1 320px;min-width:300px;"><table class="dtable">
+            <thead><tr><th style="font-size:14px;text-transform:none;color:var(--text);font-weight:700;font-family:var(--display);">May 2026</th><th>Amount</th><th>%</th><th>Unit</th></tr></thead>
+            <tbody>
+              <tr><td colspan="4" style="background:var(--surface2);font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:8px 14px;">Income</td></tr>
+              <tr><td>Shipped product sales</td><td>&#8364;9,007</td><td style="color:var(--muted);">101.7%</td><td style="color:var(--muted);">&#8364;33.48</td></tr>
+              <tr><td>Sales tax</td><td>&mdash;</td><td style="color:var(--muted);">&mdash;</td><td style="color:var(--muted);">&mdash;</td></tr>
+              <tr><td>Refunds</td><td>&mdash;</td><td style="color:var(--muted);">&mdash;</td><td style="color:var(--muted);">&mdash;</td></tr>
+              <tr><td>Reimbursements</td><td>&mdash;</td><td style="color:var(--muted);">&mdash;</td><td style="color:var(--muted);">&mdash;</td></tr>
+              <tr><td>Promotions</td><td>&#8722;&#8364;292</td><td style="color:var(--muted);">&#8722;3.3%</td><td style="color:var(--muted);">&#8722;&#8364;1.09</td></tr>
+              <tr><td>Other income</td><td>&#8364;141</td><td style="color:var(--muted);">1.6%</td><td style="color:var(--muted);">&#8364;0.52</td></tr>
+              <tr><td style="font-weight:700;">Net revenue</td><td style="font-weight:700;">&#8364;8,856</td><td style="color:var(--muted);">100.0%</td><td style="color:var(--muted);">&#8364;32.92</td></tr>
+              <tr><td colspan="4" style="background:var(--surface2);font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:8px 14px;">Expenses</td></tr>
+              <tr><td>Advertising</td><td>&#8364;2,320</td><td style="color:var(--muted);">26.2%</td><td style="color:var(--muted);">&#8364;8.62</td></tr>
+              <tr><td>Selling fees</td><td>&#8364;1,328</td><td style="color:var(--muted);">15.0%</td><td style="color:var(--muted);">&#8364;4.94</td></tr>
+              <tr><td>Fulfilment and shipping</td><td>&mdash;</td><td style="color:var(--muted);">&mdash;</td><td style="color:var(--muted);">&mdash;</td></tr>
+              <tr><td>Cancellations and refunds</td><td>&mdash;</td><td style="color:var(--muted);">&mdash;</td><td style="color:var(--muted);">&mdash;</td></tr>
+              <tr><td>Cost of goods</td><td>&#8364;2,834</td><td style="color:var(--muted);">32.0%</td><td style="color:var(--muted);">&#8364;10.53</td></tr>
+              <tr><td>Other expenses</td><td>&mdash;</td><td style="color:var(--muted);">&mdash;</td><td style="color:var(--muted);">&mdash;</td></tr>
+              <tr><td style="font-weight:700;">Total expenses</td><td style="font-weight:700;">&#8364;6,482</td><td style="color:var(--muted);">73.2%</td><td style="color:var(--muted);">&#8364;24.10</td></tr>
+              <tr><td colspan="4" style="background:var(--surface2);font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:8px 14px;">Profit</td></tr>
+              <tr><td style="font-weight:700;">PROFIT</td><td style="font-weight:700;color:var(--green);">&#8364;2,374</td><td style="color:var(--muted);">26.8%</td><td style="color:var(--muted);">&#8364;8.83</td></tr>
+              <tr><td>Profit %</td><td style="color:var(--green);">26.8%</td><td style="color:var(--muted);">&mdash;</td><td style="color:var(--muted);">&mdash;</td></tr>
+              <tr><td colspan="4" style="background:var(--surface2);font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:8px 14px;">Metrics</td></tr>
+              <tr><td>Estimated payout</td><td>&#8364;5,208</td><td style="color:var(--muted);">&mdash;</td><td style="color:var(--muted);">&#8364;19.36</td></tr>
+              <tr><td>TACOS %</td><td>26.2%</td><td style="color:var(--muted);">&mdash;</td><td style="color:var(--muted);">&mdash;</td></tr>
+            </tbody>
+          </table></div>
+        </div>
       </div>
     </div>
 

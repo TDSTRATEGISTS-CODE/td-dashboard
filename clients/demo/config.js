@@ -12,7 +12,7 @@ window.DASHBOARD_CONFIG = {
     logoSrc: 'td-logo.png',                    // shared TD logo for now (all clients) — dashboard/td-logo.png
     logoAlt: 'TD Strategists',
     logoBlend: '',                             // SVG is light-on-dark already — no blend trick needed
-    logoWidth: '160px',                        // override the template's default 110px
+    logoWidth: '110px',                        // square TD emblem — keep compact in the sidebar
     scopeLabel: 'All UK',                      // replaces every .cfg-scope span ("All EU" → "All UK")
     currencyIcon: '£',                         // P&L nav icon (€ → £)
     footer: {

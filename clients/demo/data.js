@@ -63,14 +63,16 @@ window.DASHBOARD_DATA = {
       },
       pnl: {
         summary: [ {val:'£76,600',lbl:'Gross Revenue',color:'brand'}, {val:'£50,270*',lbl:'Total Costs',color:'red'}, {val:'£26,330*',lbl:'Net Profit',color:'green'} ],
-        portfolio: { total:23, profitable:22, breakeven:0, unprofitable:1, mostProfitable:{name:'Sport Hydration Mix',value:'£8,400'}, leastProfitable:{name:'Isotonic Mix 1kg',value:'−£140'} },
+        portfolio: { total:23, profitable:22, breakeven:0, unprofitable:1,
+          most:[ {name:'Sport Hydration Mix',profit:'£8,400',margin:'42%',marginCls:'bg'}, {name:'Energy Gel 25pk',profit:'£6,400',margin:'38%',marginCls:'bg'}, {name:'Recovery Powder',profit:'£5,200',margin:'36%',marginCls:'bg'} ],
+          least:[ {name:'Isotonic Mix 1kg',profit:'−£140',margin:'−2%',marginCls:'br',color:'var(--red)'}, {name:'Electrolyte Tabs 20pk',profit:'£310',margin:'3%',marginCls:'ba',color:'var(--amber)'}, {name:'Hydration Tabs 40s',profit:'£630',margin:'6%',marginCls:'ba',color:'var(--amber)'} ] },
         margin: { pct:'34.4%*', pctColor:'green', note:'*Estimated · COGS from cost sheet', rows:[ {lbl:'Gross Revenue',val:'£76,600'}, {lbl:'Marketplace Fees',val:'−£9,958*',color:'red'}, {lbl:'Ad Spend',val:'−£15,800',color:'red'}, {lbl:'COGS (est.)',val:'−£24,512*',color:'red'}, {lbl:'Net Profit',val:'£26,330*',color:'green',strong:true} ] },
         mkt: [ {name:'Amazon UK',flag:'gb',revenue:'£48,300',adspend:'£9,900',net:'£15,939*',netColor:'green',margin:'33.0%*',marginCls:'bg'}, {name:'eBay UK',flag:'gb',revenue:'£10,700',adspend:'£2,100',net:'£4,055*',netColor:'green',margin:'37.9%*',marginCls:'bg'}, {name:'D2C',flag:'gb',revenue:'£17,600',adspend:'£3,800',net:'£6,336*',netColor:'green',margin:'36.0%*',marginCls:'bg'} ],
         statement: { groups:[
-          { header:'Income', rows:[ {lbl:'Shipped product sales',amount:'£77,900',pct:'101.7%',unit:'£40.36'}, {lbl:'Sales tax',amount:'',pct:'',unit:''}, {lbl:'Refunds',amount:'',pct:'',unit:''}, {lbl:'Reimbursements',amount:'',pct:'',unit:''}, {lbl:'Promotions',amount:'−£2,528',pct:'−3.3%',unit:'−£1.31'}, {lbl:'Other income',amount:'£1,226',pct:'1.6%',unit:'£0.64'}, {lbl:'Net revenue',amount:'£76,600',pct:'100.0%',unit:'£39.69',total:true} ] },
-          { header:'Expenses', rows:[ {lbl:'Advertising',amount:'£15,800',pct:'20.6%',unit:'£8.19'}, {lbl:'Selling fees',amount:'£9,958',pct:'13.0%',unit:'£5.16'}, {lbl:'Fulfilment and shipping',amount:'',pct:'',unit:''}, {lbl:'Cancellations and refunds',amount:'',pct:'',unit:''}, {lbl:'Cost of goods',amount:'£24,512',pct:'32.0%',unit:'£12.70'}, {lbl:'Other expenses',amount:'',pct:'',unit:''}, {lbl:'Total expenses',amount:'£50,270',pct:'65.6%',unit:'£26.05',total:true} ] },
-          { header:'Profit', rows:[ {lbl:'PROFIT',amount:'£26,330',pct:'34.4%',unit:'£13.64',total:true,profit:true}, {lbl:'Profit %',amount:'34.4%',pct:'',unit:'',accent:'green'} ] },
-          { header:'Metrics', rows:[ {lbl:'Estimated payout',amount:'£50,842',pct:'',unit:'£26.34'}, {lbl:'TACOS %',amount:'20.6%',pct:'',unit:''} ] }
+          { header:'Income', rows:[ {lbl:'Shipped product sales',amount:'£49,100',pct:'101.7%',unit:'£41.09'}, {lbl:'Sales tax',amount:'',pct:'',unit:''}, {lbl:'Refunds',amount:'',pct:'',unit:''}, {lbl:'Reimbursements',amount:'',pct:'',unit:''}, {lbl:'Promotions',amount:'−£1,590',pct:'−3.3%',unit:'−£1.33'}, {lbl:'Other income',amount:'£790',pct:'1.6%',unit:'£0.66'}, {lbl:'Net revenue',amount:'£48,300',pct:'100.0%',unit:'£40.42',total:true} ] },
+          { header:'Expenses', rows:[ {lbl:'Advertising',amount:'£9,900',pct:'20.5%',unit:'£8.28'}, {lbl:'Selling fees',amount:'£7,245',pct:'15.0%',unit:'£6.06'}, {lbl:'Fulfilment and shipping',amount:'',pct:'',unit:''}, {lbl:'Cancellations and refunds',amount:'',pct:'',unit:''}, {lbl:'Cost of goods',amount:'£15,456',pct:'32.0%',unit:'£12.93'}, {lbl:'Other expenses',amount:'',pct:'',unit:''}, {lbl:'Total expenses',amount:'£32,601',pct:'67.5%',unit:'£27.28',total:true} ] },
+          { header:'Profit', rows:[ {lbl:'PROFIT',amount:'£15,699',pct:'32.5%',unit:'£13.14',total:true,profit:true}, {lbl:'Profit %',amount:'32.5%',pct:'',unit:'',accent:'green'} ] },
+          { header:'Metrics', rows:[ {lbl:'Estimated payout',amount:'£31,155',pct:'',unit:'£26.07'}, {lbl:'TACOS %',amount:'20.5%',pct:'',unit:''} ] }
         ] }
       },
       products: {
@@ -120,14 +122,16 @@ window.DASHBOARD_DATA = {
       },
       pnl: {
         summary: [ {val:'£117,900',lbl:'Gross Revenue',color:'brand'}, {val:'£77,355*',lbl:'Total Costs',color:'red'}, {val:'£40,545*',lbl:'Net Profit',color:'green'} ],
-        portfolio: { total:23, profitable:21, breakeven:1, unprofitable:1, mostProfitable:{name:'Sport Hydration Mix',value:'£12,900'}, leastProfitable:{name:'Isotonic Mix 1kg',value:'−£90'} },
+        portfolio: { total:23, profitable:21, breakeven:1, unprofitable:1,
+          most:[ {name:'Sport Hydration Mix',profit:'£12,900',margin:'42%',marginCls:'bg'}, {name:'Energy Gel 25pk',profit:'£9,800',margin:'38%',marginCls:'bg'}, {name:'Recovery Powder',profit:'£7,900',margin:'36%',marginCls:'bg'} ],
+          least:[ {name:'Isotonic Mix 1kg',profit:'−£90',margin:'−1%',marginCls:'br',color:'var(--red)'}, {name:'Electrolyte Tabs 20pk',profit:'£480',margin:'3%',marginCls:'ba',color:'var(--amber)'}, {name:'Hydration Tabs 40s',profit:'£960',margin:'6%',marginCls:'ba',color:'var(--amber)'} ] },
         margin: { pct:'34.4%*', pctColor:'green', note:'*Estimated · COGS from cost sheet', rows:[ {lbl:'Gross Revenue',val:'£117,900'}, {lbl:'Marketplace Fees',val:'−£15,327*',color:'red'}, {lbl:'Ad Spend',val:'−£24,300',color:'red'}, {lbl:'COGS (est.)',val:'−£37,728*',color:'red'}, {lbl:'Net Profit',val:'£40,545*',color:'green',strong:true} ] },
         mkt: [ {name:'Amazon UK',flag:'gb',revenue:'£74,300',adspend:'£15,300',net:'£24,519*',netColor:'green',margin:'33.0%*',marginCls:'bg'}, {name:'eBay UK',flag:'gb',revenue:'£16,500',adspend:'£3,250',net:'£6,254*',netColor:'green',margin:'37.9%*',marginCls:'bg'}, {name:'D2C',flag:'gb',revenue:'£27,100',adspend:'£5,750',net:'£9,772*',netColor:'green',margin:'36.1%*',marginCls:'bg'} ],
         statement: { groups:[
-          { header:'Income', rows:[ {lbl:'Shipped product sales',amount:'£119,900',pct:'101.7%',unit:'£40.37'}, {lbl:'Sales tax',amount:'',pct:'',unit:''}, {lbl:'Refunds',amount:'',pct:'',unit:''}, {lbl:'Reimbursements',amount:'',pct:'',unit:''}, {lbl:'Promotions',amount:'−£3,891',pct:'−3.3%',unit:'−£1.31'}, {lbl:'Other income',amount:'£1,886',pct:'1.6%',unit:'£0.63'}, {lbl:'Net revenue',amount:'£117,900',pct:'100.0%',unit:'£39.70',total:true} ] },
-          { header:'Expenses', rows:[ {lbl:'Advertising',amount:'£24,300',pct:'20.6%',unit:'£8.18'}, {lbl:'Selling fees',amount:'£15,327',pct:'13.0%',unit:'£5.16'}, {lbl:'Fulfilment and shipping',amount:'',pct:'',unit:''}, {lbl:'Cancellations and refunds',amount:'',pct:'',unit:''}, {lbl:'Cost of goods',amount:'£37,728',pct:'32.0%',unit:'£12.70'}, {lbl:'Other expenses',amount:'',pct:'',unit:''}, {lbl:'Total expenses',amount:'£77,355',pct:'65.6%',unit:'£26.05',total:true} ] },
-          { header:'Profit', rows:[ {lbl:'PROFIT',amount:'£40,545',pct:'34.4%',unit:'£13.65',total:true,profit:true}, {lbl:'Profit %',amount:'34.4%',pct:'',unit:'',accent:'green'} ] },
-          { header:'Metrics', rows:[ {lbl:'Estimated payout',amount:'£78,273',pct:'',unit:'£26.35'}, {lbl:'TACOS %',amount:'20.6%',pct:'',unit:''} ] }
+          { header:'Income', rows:[ {lbl:'Shipped product sales',amount:'£75,600',pct:'101.7%',unit:'£41.09'}, {lbl:'Sales tax',amount:'',pct:'',unit:''}, {lbl:'Refunds',amount:'',pct:'',unit:''}, {lbl:'Reimbursements',amount:'',pct:'',unit:''}, {lbl:'Promotions',amount:'−£2,450',pct:'−3.3%',unit:'−£1.33'}, {lbl:'Other income',amount:'£1,150',pct:'1.6%',unit:'£0.63'}, {lbl:'Net revenue',amount:'£74,300',pct:'100.0%',unit:'£40.38',total:true} ] },
+          { header:'Expenses', rows:[ {lbl:'Advertising',amount:'£15,300',pct:'20.6%',unit:'£8.32'}, {lbl:'Selling fees',amount:'£11,145',pct:'15.0%',unit:'£6.06'}, {lbl:'Fulfilment and shipping',amount:'',pct:'',unit:''}, {lbl:'Cancellations and refunds',amount:'',pct:'',unit:''}, {lbl:'Cost of goods',amount:'£23,776',pct:'32.0%',unit:'£12.92'}, {lbl:'Other expenses',amount:'',pct:'',unit:''}, {lbl:'Total expenses',amount:'£50,221',pct:'67.6%',unit:'£27.30',total:true} ] },
+          { header:'Profit', rows:[ {lbl:'PROFIT',amount:'£24,079',pct:'32.4%',unit:'£13.09',total:true,profit:true}, {lbl:'Profit %',amount:'32.4%',pct:'',unit:'',accent:'green'} ] },
+          { header:'Metrics', rows:[ {lbl:'Estimated payout',amount:'£47,855',pct:'',unit:'£26.01'}, {lbl:'TACOS %',amount:'20.6%',pct:'',unit:''} ] }
         ] }
       },
       products: {
@@ -201,14 +205,16 @@ window.DASHBOARD_DATA = {
       },
       pnl: {
         summary: [ {val:'£239,900',lbl:'Gross Revenue',color:'brand'}, {val:'£156,855*',lbl:'Total Costs',color:'red'}, {val:'£83,045*',lbl:'Net Profit',color:'green'} ],
-        portfolio: { total:23, profitable:21, breakeven:0, unprofitable:2, mostProfitable:{name:'Sport Hydration Mix',value:'£26,300'}, leastProfitable:{name:'Isotonic Mix 1kg',value:'−£640'} },
+        portfolio: { total:23, profitable:21, breakeven:0, unprofitable:2,
+          most:[ {name:'Sport Hydration Mix',profit:'£26,300',margin:'42%',marginCls:'bg'}, {name:'Energy Gel 25pk',profit:'£19,900',margin:'38%',marginCls:'bg'}, {name:'Recovery Powder',profit:'£16,100',margin:'36%',marginCls:'bg'} ],
+          least:[ {name:'Isotonic Mix 1kg',profit:'−£640',margin:'−3%',marginCls:'br',color:'var(--red)'}, {name:'Electrolyte Tabs 20pk',profit:'£980',margin:'3%',marginCls:'ba',color:'var(--amber)'}, {name:'Hydration Tabs 40s',profit:'£1,960',margin:'6%',marginCls:'ba',color:'var(--amber)'} ] },
         margin: { pct:'34.6%*', pctColor:'green', note:'*Estimated · COGS from cost sheet', rows:[ {lbl:'Gross Revenue',val:'£239,900'}, {lbl:'Marketplace Fees',val:'−£31,187*',color:'red'}, {lbl:'Ad Spend',val:'−£48,900',color:'red'}, {lbl:'COGS (est.)',val:'−£76,768*',color:'red'}, {lbl:'Net Profit',val:'£83,045*',color:'green',strong:true} ] },
         mkt: [ {name:'Amazon UK',flag:'gb',revenue:'£151,100',adspend:'£30,800',net:'£49,863*',netColor:'green',margin:'33.0%*',marginCls:'bg'}, {name:'eBay UK',flag:'gb',revenue:'£33,600',adspend:'£6,850',net:'£12,734*',netColor:'green',margin:'37.9%*',marginCls:'bg'}, {name:'D2C',flag:'gb',revenue:'£55,200',adspend:'£11,250',net:'£20,448*',netColor:'green',margin:'37.0%*',marginCls:'bg'} ],
         statement: { groups:[
-          { header:'Income', rows:[ {lbl:'Shipped product sales',amount:'£244,000',pct:'101.7%',unit:'£40.40'}, {lbl:'Sales tax',amount:'',pct:'',unit:''}, {lbl:'Refunds',amount:'',pct:'',unit:''}, {lbl:'Reimbursements',amount:'',pct:'',unit:''}, {lbl:'Promotions',amount:'−£7,917',pct:'−3.3%',unit:'−£1.31'}, {lbl:'Other income',amount:'£3,838',pct:'1.6%',unit:'£0.64'}, {lbl:'Net revenue',amount:'£239,900',pct:'100.0%',unit:'£39.72',total:true} ] },
-          { header:'Expenses', rows:[ {lbl:'Advertising',amount:'£48,900',pct:'20.4%',unit:'£8.10'}, {lbl:'Selling fees',amount:'£31,187',pct:'13.0%',unit:'£5.16'}, {lbl:'Fulfilment and shipping',amount:'',pct:'',unit:''}, {lbl:'Cancellations and refunds',amount:'',pct:'',unit:''}, {lbl:'Cost of goods',amount:'£76,768',pct:'32.0%',unit:'£12.71'}, {lbl:'Other expenses',amount:'',pct:'',unit:''}, {lbl:'Total expenses',amount:'£156,855',pct:'65.4%',unit:'£25.97',total:true} ] },
-          { header:'Profit', rows:[ {lbl:'PROFIT',amount:'£83,045',pct:'34.6%',unit:'£13.75',total:true,profit:true}, {lbl:'Profit %',amount:'34.6%',pct:'',unit:'',accent:'green'} ] },
-          { header:'Metrics', rows:[ {lbl:'Estimated payout',amount:'£159,813',pct:'',unit:'£26.46'}, {lbl:'TACOS %',amount:'20.4%',pct:'',unit:''} ] }
+          { header:'Income', rows:[ {lbl:'Shipped product sales',amount:'£153,700',pct:'101.7%',unit:'£41.10'}, {lbl:'Sales tax',amount:'',pct:'',unit:''}, {lbl:'Refunds',amount:'',pct:'',unit:''}, {lbl:'Reimbursements',amount:'',pct:'',unit:''}, {lbl:'Promotions',amount:'−£4,990',pct:'−3.3%',unit:'−£1.33'}, {lbl:'Other income',amount:'£2,390',pct:'1.6%',unit:'£0.64'}, {lbl:'Net revenue',amount:'£151,100',pct:'100.0%',unit:'£40.40',total:true} ] },
+          { header:'Expenses', rows:[ {lbl:'Advertising',amount:'£30,800',pct:'20.4%',unit:'£8.24'}, {lbl:'Selling fees',amount:'£22,665',pct:'15.0%',unit:'£6.06'}, {lbl:'Fulfilment and shipping',amount:'',pct:'',unit:''}, {lbl:'Cancellations and refunds',amount:'',pct:'',unit:''}, {lbl:'Cost of goods',amount:'£48,352',pct:'32.0%',unit:'£12.93'}, {lbl:'Other expenses',amount:'',pct:'',unit:''}, {lbl:'Total expenses',amount:'£101,817',pct:'67.4%',unit:'£27.22',total:true} ] },
+          { header:'Profit', rows:[ {lbl:'PROFIT',amount:'£49,283',pct:'32.6%',unit:'£13.18',total:true,profit:true}, {lbl:'Profit %',amount:'32.6%',pct:'',unit:'',accent:'green'} ] },
+          { header:'Metrics', rows:[ {lbl:'Estimated payout',amount:'£97,635',pct:'',unit:'£26.10'}, {lbl:'TACOS %',amount:'20.4%',pct:'',unit:''} ] }
         ] }
       },
       products: {
@@ -275,8 +281,16 @@ window.DASHBOARD_DATA = {
         { val: '£10,184*', lbl: 'Net Profit',    color: 'green' }
       ],
       portfolio: { total: 23, profitable: 22, breakeven: 0, unprofitable: 1,
-        mostProfitable: { name: 'Sport Hydration Mix', value: '£3,200' },
-        leastProfitable: { name: 'Isotonic Mix 1kg', value: '−£180' } },
+        most: [
+          { name: 'Sport Hydration Mix', profit: '£3,200', margin: '42%', marginCls: 'bg' },
+          { name: 'Energy Gel 25pk', profit: '£2,450', margin: '38%', marginCls: 'bg' },
+          { name: 'Recovery Powder', profit: '£1,980', margin: '36%', marginCls: 'bg' }
+        ],
+        least: [
+          { name: 'Isotonic Mix 1kg', profit: '−£180', margin: '−4%', marginCls: 'br', color: 'var(--red)' },
+          { name: 'Electrolyte Tabs 20pk', profit: '£120', margin: '3%', marginCls: 'ba', color: 'var(--amber)' },
+          { name: 'Hydration Tabs 40s', profit: '£240', margin: '6%', marginCls: 'ba', color: 'var(--amber)' }
+        ] },
       margin: {
         pct: '34.6%*', pctColor: 'green', note: '*Estimated · COGS from cost sheet',
         rows: [
@@ -293,30 +307,30 @@ window.DASHBOARD_DATA = {
       statement: {
         groups: [
           { header: 'Income', rows: [
-            { lbl: 'Shipped product sales', amount: '£29,900', pct: '101.7%', unit: '£39.34' },
+            { lbl: 'Shipped product sales', amount: '£18,700', pct: '101.7%', unit: '£39.79' },
             { lbl: 'Sales tax', amount: '', pct: '', unit: '' },
             { lbl: 'Refunds', amount: '', pct: '', unit: '' },
             { lbl: 'Reimbursements', amount: '', pct: '', unit: '' },
-            { lbl: 'Promotions', amount: '−£980', pct: '−3.3%', unit: '−£1.29' },
-            { lbl: 'Other income', amount: '£480', pct: '1.6%', unit: '£0.63' },
-            { lbl: 'Net revenue', amount: '£29,400', pct: '100.0%', unit: '£38.68', total: true }
+            { lbl: 'Promotions', amount: '−£610', pct: '−3.3%', unit: '−£1.30' },
+            { lbl: 'Other income', amount: '£310', pct: '1.6%', unit: '£0.66' },
+            { lbl: 'Net revenue', amount: '£18,400', pct: '100.0%', unit: '£39.15', total: true }
           ] },
           { header: 'Expenses', rows: [
-            { lbl: 'Advertising', amount: '£6,000', pct: '20.4%', unit: '£7.89' },
-            { lbl: 'Selling fees', amount: '£3,808', pct: '13.0%', unit: '£5.01' },
+            { lbl: 'Advertising', amount: '£3,680', pct: '20.0%', unit: '£7.83' },
+            { lbl: 'Selling fees', amount: '£2,760', pct: '15.0%', unit: '£5.87' },
             { lbl: 'Fulfilment and shipping', amount: '', pct: '', unit: '' },
             { lbl: 'Cancellations and refunds', amount: '', pct: '', unit: '' },
-            { lbl: 'Cost of goods', amount: '£9,408', pct: '32.0%', unit: '£12.38' },
+            { lbl: 'Cost of goods', amount: '£5,888', pct: '32.0%', unit: '£12.53' },
             { lbl: 'Other expenses', amount: '', pct: '', unit: '' },
-            { lbl: 'Total expenses', amount: '£19,216', pct: '65.4%', unit: '£25.28', total: true }
+            { lbl: 'Total expenses', amount: '£12,328', pct: '67.0%', unit: '£26.23', total: true }
           ] },
           { header: 'Profit', rows: [
-            { lbl: 'PROFIT', amount: '£10,184', pct: '34.6%', unit: '£13.40', total: true, profit: true },
-            { lbl: 'Profit %', amount: '34.6%', pct: '', unit: '', accent: 'green' }
+            { lbl: 'PROFIT', amount: '£6,072', pct: '33.0%', unit: '£12.92', total: true, profit: true },
+            { lbl: 'Profit %', amount: '33.0%', pct: '', unit: '', accent: 'green' }
           ] },
           { header: 'Metrics', rows: [
-            { lbl: 'Estimated payout', amount: '£19,592', pct: '', unit: '£25.78' },
-            { lbl: 'TACOS %', amount: '20.4%', pct: '', unit: '' }
+            { lbl: 'Estimated payout', amount: '£11,960', pct: '', unit: '£25.45' },
+            { lbl: 'TACOS %', amount: '20.0%', pct: '', unit: '' }
           ] }
         ]
       },
