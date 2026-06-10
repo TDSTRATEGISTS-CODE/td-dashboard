@@ -63,6 +63,7 @@ window.DASHBOARD_DATA = {
       },
       pnl: {
         summary: [ {val:'£76,600',lbl:'Gross Revenue',color:'brand'}, {val:'£50,270*',lbl:'Total Costs',color:'red'}, {val:'£26,330*',lbl:'Net Profit',color:'green'} ],
+        portfolio: { total:23, profitable:22, breakeven:0, unprofitable:1, mostProfitable:{name:'Sport Hydration Mix',value:'£8,400'}, leastProfitable:{name:'Isotonic Mix 1kg',value:'−£140'} },
         margin: { pct:'34.4%*', pctColor:'green', note:'*Estimated · COGS from cost sheet', rows:[ {lbl:'Gross Revenue',val:'£76,600'}, {lbl:'Marketplace Fees',val:'−£9,958*',color:'red'}, {lbl:'Ad Spend',val:'−£15,800',color:'red'}, {lbl:'COGS (est.)',val:'−£24,512*',color:'red'}, {lbl:'Net Profit',val:'£26,330*',color:'green',strong:true} ] },
         mkt: [ {name:'Amazon UK',flag:'gb',revenue:'£48,300',adspend:'£9,900',net:'£15,939*',netColor:'green',margin:'33.0%*',marginCls:'bg'}, {name:'eBay UK',flag:'gb',revenue:'£10,700',adspend:'£2,100',net:'£4,055*',netColor:'green',margin:'37.9%*',marginCls:'bg'}, {name:'D2C',flag:'gb',revenue:'£17,600',adspend:'£3,800',net:'£6,336*',netColor:'green',margin:'36.0%*',marginCls:'bg'} ],
         statement: { groups:[
@@ -119,6 +120,7 @@ window.DASHBOARD_DATA = {
       },
       pnl: {
         summary: [ {val:'£117,900',lbl:'Gross Revenue',color:'brand'}, {val:'£77,355*',lbl:'Total Costs',color:'red'}, {val:'£40,545*',lbl:'Net Profit',color:'green'} ],
+        portfolio: { total:23, profitable:21, breakeven:1, unprofitable:1, mostProfitable:{name:'Sport Hydration Mix',value:'£12,900'}, leastProfitable:{name:'Isotonic Mix 1kg',value:'−£90'} },
         margin: { pct:'34.4%*', pctColor:'green', note:'*Estimated · COGS from cost sheet', rows:[ {lbl:'Gross Revenue',val:'£117,900'}, {lbl:'Marketplace Fees',val:'−£15,327*',color:'red'}, {lbl:'Ad Spend',val:'−£24,300',color:'red'}, {lbl:'COGS (est.)',val:'−£37,728*',color:'red'}, {lbl:'Net Profit',val:'£40,545*',color:'green',strong:true} ] },
         mkt: [ {name:'Amazon UK',flag:'gb',revenue:'£74,300',adspend:'£15,300',net:'£24,519*',netColor:'green',margin:'33.0%*',marginCls:'bg'}, {name:'eBay UK',flag:'gb',revenue:'£16,500',adspend:'£3,250',net:'£6,254*',netColor:'green',margin:'37.9%*',marginCls:'bg'}, {name:'D2C',flag:'gb',revenue:'£27,100',adspend:'£5,750',net:'£9,772*',netColor:'green',margin:'36.1%*',marginCls:'bg'} ],
         statement: { groups:[
@@ -199,6 +201,7 @@ window.DASHBOARD_DATA = {
       },
       pnl: {
         summary: [ {val:'£239,900',lbl:'Gross Revenue',color:'brand'}, {val:'£156,855*',lbl:'Total Costs',color:'red'}, {val:'£83,045*',lbl:'Net Profit',color:'green'} ],
+        portfolio: { total:23, profitable:21, breakeven:0, unprofitable:2, mostProfitable:{name:'Sport Hydration Mix',value:'£26,300'}, leastProfitable:{name:'Isotonic Mix 1kg',value:'−£640'} },
         margin: { pct:'34.6%*', pctColor:'green', note:'*Estimated · COGS from cost sheet', rows:[ {lbl:'Gross Revenue',val:'£239,900'}, {lbl:'Marketplace Fees',val:'−£31,187*',color:'red'}, {lbl:'Ad Spend',val:'−£48,900',color:'red'}, {lbl:'COGS (est.)',val:'−£76,768*',color:'red'}, {lbl:'Net Profit',val:'£83,045*',color:'green',strong:true} ] },
         mkt: [ {name:'Amazon UK',flag:'gb',revenue:'£151,100',adspend:'£30,800',net:'£49,863*',netColor:'green',margin:'33.0%*',marginCls:'bg'}, {name:'eBay UK',flag:'gb',revenue:'£33,600',adspend:'£6,850',net:'£12,734*',netColor:'green',margin:'37.9%*',marginCls:'bg'}, {name:'D2C',flag:'gb',revenue:'£55,200',adspend:'£11,250',net:'£20,448*',netColor:'green',margin:'37.0%*',marginCls:'bg'} ],
         statement: { groups:[
@@ -271,6 +274,9 @@ window.DASHBOARD_DATA = {
         { val: '£19,216*', lbl: 'Total Costs',   color: 'red' },
         { val: '£10,184*', lbl: 'Net Profit',    color: 'green' }
       ],
+      portfolio: { total: 23, profitable: 22, breakeven: 0, unprofitable: 1,
+        mostProfitable: { name: 'Sport Hydration Mix', value: '£3,200' },
+        leastProfitable: { name: 'Isotonic Mix 1kg', value: '−£180' } },
       margin: {
         pct: '34.6%*', pctColor: 'green', note: '*Estimated · COGS from cost sheet',
         rows: [

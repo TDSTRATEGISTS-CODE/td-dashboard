@@ -376,15 +376,29 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
   <!-- ========== PAGE: P&L ========== -->
   <div class="page-content" id="page-pnl">
-    <div>
-      <div class="sec-lbl" id="sec-pnl">P&amp;L Summary &mdash; <span id="sec-period-2">May 2026</span></div>
-      <div class="pl-summary fade" id="sec-pnl-summary">
-        <div class="pl-cell"><div class="pl-val" style="color:var(--brand)">&#8364;8,856</div><div class="pl-lbl">Gross Revenue</div></div>
-        <div class="pl-cell"><div class="pl-val" style="color:var(--red)">&#8364;5,890*</div><div class="pl-lbl">Total Costs</div></div>
-        <div class="pl-cell"><div class="pl-val" style="color:var(--green)">&#8364;2,966*</div><div class="pl-lbl">Net Profit</div></div>
+    <div style="order:1;">
+      <div class="sec-lbl" id="sec-pnl">Product Profitability &mdash; <span id="sec-period-2">May 2026</span></div>
+      <div class="card fade">
+        <div class="card-hdr"><div><div class="card-ttl">Product Portfolio Profitability</div><div class="card-sub">By product margin &middot; <span class="dr-period">May 2026</span></div></div></div>
+        <div class="card-body" style="display:flex;align-items:center;gap:32px;flex-wrap:wrap;">
+          <div id="chart-portfolio-pie" style="width:150px;height:150px;border-radius:50%;flex-shrink:0;background:conic-gradient(var(--green) 0 89%, var(--amber) 89% 95%, var(--red) 95% 100%);"></div>
+          <div id="sec-portfolio" style="flex:1;min-width:240px;">
+            <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;">Total Products</div>
+            <div style="font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-.5px;margin:2px 0 12px;">18</div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:11px;height:11px;border-radius:3px;background:var(--green);flex-shrink:0;"></span>Profitable<span style="margin-left:auto;font-weight:600;">16 (89%)</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:11px;height:11px;border-radius:3px;background:var(--amber);flex-shrink:0;"></span>Breakeven<span style="margin-left:auto;font-weight:600;">1 (6%)</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:11px;height:11px;border-radius:3px;background:var(--red);flex-shrink:0;"></span>Unprofitable<span style="margin-left:auto;font-weight:600;">1 (6%)</span></div>
+            </div>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;"><span style="color:var(--muted);">Most profitable</span><span style="font-weight:600;">Sport Drink Mix &middot; <span style="color:var(--green);">&#8364;1,840</span></span></div>
+              <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;"><span style="color:var(--muted);">Least profitable</span><span style="font-weight:600;">Energy Ice Gel &middot; <span style="color:var(--red);">&#8722;&#8364;210</span></span></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="g21 fade">
+    <div class="g21 fade" style="order:3;">
       <div class="card">
         <div class="card-hdr"><div><div class="card-ttl">Revenue Breakdown</div><div class="card-sub">Organic vs Paid &mdash; <span class="dr-period">May 2026</span></div></div></div>
         <div class="card-body" id="sec-pnl-revbreak" style="display:flex;flex-direction:column;gap:12px;">
@@ -407,7 +421,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         </div>
       </div>
     </div>
-    <div class="fade" id="sec-costs-wrap">
+    <div class="fade" id="sec-costs-wrap" style="order:4;">
       <div class="sec-lbl">Cost Breakdown</div>
       <div class="card">
         <div class="card-hdr"><div><div class="card-ttl">Expenses by Category</div><div class="card-sub"><span class="dr-period">May 2026</span> &mdash; <span class="cfg-scope">All EU</span></div></div></div>
@@ -418,15 +432,15 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         </div>
       </div>
     </div>
-    <div class="fade" id="sec-statement-wrap" style="display:none;">
+    <div class="fade" id="sec-statement-wrap" style="display:none;order:4;">
       <div class="sec-lbl">Profit &amp; Loss Statement</div>
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">P&amp;L</div><div class="card-sub">Income, expenses &amp; metrics &middot; <span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
-        <div class="tscroll"><table class="dtable" id="sec-pnl-statement"></table></div>
+        <div class="card-hdr"><div><div class="card-ttl">P&amp;L</div><div class="card-sub">Income, expenses &amp; metrics &middot; current vs one period up &middot; <span class="cfg-scope">All EU</span></div></div></div>
+        <div id="sec-pnl-statement" style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;"></div>
       </div>
     </div>
 
-    <div class="fade">
+    <div class="fade" style="order:2;">
       <div class="sec-lbl">P&amp;L by Marketplace</div>
       <div class="card">
         <div class="tscroll"><table class="dtable">
@@ -518,19 +532,30 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       </div>
     </div>
 
-    <div class="fade" id="sec-campaign-pie-wrap" style="display:none;">
-      <div class="sec-lbl">Campaign Mix</div>
-      <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Advertising Performance by Campaign Type</div><div class="card-sub">Sales share &amp; ACOS &middot; <span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
-        <div class="card-body" style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;">
-          <svg id="chart-campaign-pie" viewBox="0 0 180 180" style="width:180px;height:180px;flex-shrink:0;"></svg>
-          <div id="chart-campaign-pie-leg" style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:14px;"></div>
+    <div class="fade">
+      <div class="sec-lbl">Campaign Mix &amp; Spend by Market</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:stretch;">
+        <div class="card" id="sec-campaign-pie-wrap" style="flex:1 1 340px;display:none;">
+          <div class="card-hdr"><div><div class="card-ttl">Performance by Campaign Type</div><div class="card-sub">Sales share &amp; ACOS &middot; <span class="dr-period">May 2026</span></div></div></div>
+          <div class="card-body" style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+            <svg id="chart-campaign-pie" viewBox="0 0 180 180" style="width:160px;height:160px;flex-shrink:0;"></svg>
+            <div id="chart-campaign-pie-leg" style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:12px;"></div>
+          </div>
+        </div>
+        <div class="card" style="flex:1 1 340px;">
+          <div class="card-hdr"><div><div class="card-ttl">Ad Spend Actuals by Market</div><div class="card-sub">Actual spend vs budget &mdash; <span class="dr-period">May 2026</span></div></div></div>
+          <div class="tscroll">
+            <table class="dtable" id="mkt-spend-tbody-wrapper">
+              <thead><tr><th>Market</th><th>Actual Spend</th><th>Budget</th><th>vs Budget</th><th>TACOS</th></tr></thead>
+              <tbody id="mkt-spend-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="fade">
-      <div class="sec-lbl">Budget &amp; Actuals &mdash; <span id="sec-period-4">May 2026</span></div>
+      <div class="sec-lbl">Ad Budgets &amp; Forecast &mdash; <span id="sec-period-4">May 2026</span></div>
       <div class="g21">
         <div style="display:flex;flex-direction:column;gap:14px;">
           <!-- Ad Budgets -->
@@ -546,23 +571,6 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
                   <tr><td><img src="https://flagcdn.com/16x12/it.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="IT"> Italy</td><td style="font-weight:600;">&#8364;450</td><td>&#8364;650</td><td>&#8364;650</td><td>&#8364;750</td></tr>
                   <tr><td><img src="https://flagcdn.com/16x12/nl.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="NL"> Netherlands</td><td style="font-weight:600;">&#8364;0</td><td>&#8364;0</td><td>&#8364;0</td><td>&#8364;0</td></tr>
                   <tr style="background:var(--surface2);"><td style="font-weight:700;">Total EU</td><td style="font-weight:700;">&#8364;2,500</td><td style="font-weight:700;">&#8364;3,100</td><td style="font-weight:700;">&#8364;3,350</td><td style="font-weight:700;">&#8364;3,800</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <!-- Ad Actuals -->
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-ttl">Ad Spend Actuals by Market</div><div class="card-sub">Actual spend vs budget &mdash; <span class="dr-period">May 2026</span></div></div></div>
-            <div class="tscroll">
-              <table class="dtable" id="mkt-spend-tbody-wrapper">
-                <thead><tr><th>Market</th><th>Actual Spend</th><th>Budget</th><th>vs Budget</th><th>TACOS</th></tr></thead>
-                <tbody id="mkt-spend-tbody">
-                  <tr><td><img src="https://flagcdn.com/16x12/de.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="DE"> Germany</td><td style="font-weight:600;">&#8364;529</td><td>&#8364;1,200</td><td><span class="badge bg">&#9660; &#8364;671 under</span></td><td><span class="badge ba">25.3%</span></td></tr>
-                  <tr><td><img src="https://flagcdn.com/16x12/fr.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="FR"> France</td><td style="font-weight:600;">&#8364;575</td><td>&#8364;500</td><td><span class="badge br">&#9650; &#8364;75 over</span></td><td><span class="badge ba">26.1%</span></td></tr>
-                  <tr><td><img src="https://flagcdn.com/16x12/es.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="ES"> Spain</td><td style="font-weight:600;">&#8364;609</td><td>&#8364;350</td><td><span class="badge br">&#9650; &#8364;259 over</span></td><td><span class="badge br">28.1%</span></td></tr>
-                  <tr><td><img src="https://flagcdn.com/16x12/it.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="IT"> Italy</td><td style="font-weight:600;">&#8364;607</td><td>&#8364;450</td><td><span class="badge br">&#9650; &#8364;157 over</span></td><td><span class="badge ba">25.4%</span></td></tr>
-                  <tr><td><img src="https://flagcdn.com/16x12/nl.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="NL"> Netherlands</td><td style="font-weight:600;">&#8364;0</td><td>&#8364;0</td><td><span class="badge bb">Early launch</span></td><td><span class="badge bb">&#8212;</span></td></tr>
-                  <tr style="background:var(--surface2);"><td style="font-weight:700;">Total EU</td><td style="font-weight:700;">&#8364;2,320</td><td style="font-weight:700;">&#8364;2,500</td><td><span class="badge ba">93% utilised</span></td><td style="font-weight:700;"><span class="badge br">26.2%</span></td></tr>
                 </tbody>
               </table>
             </div>

@@ -128,9 +128,11 @@ function applyConfig() {
 
   var logo = document.getElementById('cfg-logo');
   if (logo) {
-    logo.src = 'clients/' + CLIENT + '/' + C.client.logo;
+    // logoSrc = shared logo relative to index.html (e.g. 'td-logo.svg'); else per-client folder.
+    logo.src = C.client.logoSrc ? C.client.logoSrc : ('clients/' + CLIENT + '/' + C.client.logo);
     logo.alt = C.client.logoAlt || C.client.name || '';
     logo.style.mixBlendMode = C.client.logoBlend || 'normal';
+    if (C.client.logoWidth) logo.style.width = C.client.logoWidth;
   }
   set('cfg-portal', C.client.portalLabel);
   set('cfg-client-name', C.client.name);
@@ -543,10 +545,10 @@ function renderPie(id, legId, spec) {
   }).join('');
 }
 
-// Full P&L statement (INCOME / EXPENSES / METRICS), grouped rows with bold totals.
-function renderStatement(spec) {
-  var t = el('sec-pnl-statement'); if (!t || !spec || !spec.groups) return;
-  var head = '<thead><tr><th>' + (spec.title || '') + '</th><th>Amount</th><th>%</th><th>Per unit</th></tr></thead>';
+// Full P&L statement (INCOME / EXPENSES / METRICS) with all three value columns
+// (Amount / % / Per unit), laid out as two side-by-side period blocks: current period on
+// the left, one period up (longer window) on the right. cmp may be null (longest period).
+function statementTable(spec, label) {
   var body = spec.groups.map(function (g) {
     var hdr = '<tr><td colspan="4" style="background:var(--surface2);font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:8px 14px;">' + g.header + '</td></tr>';
     var rows = g.rows.map(function (r) {
@@ -559,7 +561,15 @@ function renderStatement(spec) {
     }).join('');
     return hdr + rows;
   }).join('');
-  t.innerHTML = head + '<tbody>' + body + '</tbody>';
+  var head = '<thead><tr><th>' + (label || '') + '</th><th>Amount</th><th>%</th><th>Unit</th></tr></thead>';
+  return '<div class="tscroll" style="flex:1 1 320px;min-width:300px;"><table class="dtable">' + head + '<tbody>' + body + '</tbody></table></div>';
+}
+
+function renderStatement(cur, cmp, curLabel, cmpLabel) {
+  var w = el('sec-pnl-statement'); if (!w || !cur || !cur.groups) return;
+  var html = statementTable(cur, curLabel);
+  if (cmp && cmp.groups) html += statementTable(cmp, cmpLabel);
+  w.innerHTML = html;
 }
 
 // Product portfolio profitability: a conic-gradient pie + stats (total, profitable/breakeven/
@@ -656,7 +666,15 @@ function renderPeriodSections(d) {
   var pf = pick(spl.portfolio, pl.portfolio); if (pf) renderPortfolio(pf);
   var pmar = pick(spl.margin, pl.margin); if (pmar) renderMargin(pmar);
   var pmkt = pick(spl.mkt, pl.mkt); if (pmkt) renderPnlMkt(pmkt);
-  var pst = pick(spl.statement, pl.statement); if (pst) renderStatement(pst);
+  var pst = pick(spl.statement, pl.statement);
+  if (pst) {
+    // comparison = the next-longer period in the date-range selector (1m→3m→6m→12m).
+    var opts = CONFIG.dateRangeOptions || [], idx = -1, i;
+    for (i = 0; i < opts.length; i++) { if (opts[i].value === currentPeriod) { idx = i; break; } }
+    var cmpD = (idx >= 0 && idx + 1 < opts.length) ? dateRanges[opts[idx + 1].value] : null;
+    var cmpSt = cmpD ? ((cmpD.sec && cmpD.sec.pnl && cmpD.sec.pnl.statement) || (S.pnl && S.pnl.statement)) : null;
+    renderStatement(pst, cmpSt, d.shortLabel, cmpD ? cmpD.shortLabel : null);
+  }
 
   var prk = pick(spr.kpis, pr.kpis); if (prk) renderKpis('sec-prod-kpis', prk);
   var prt = pick(spr.table, pr.table); if (prt) renderProdTable(prt);

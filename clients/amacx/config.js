@@ -8,9 +8,11 @@ window.DASHBOARD_CONFIG = {
     title: 'AMACX EU — TD Strategists',     // browser tab <title>
     portalLabel: 'CLIENT PORTAL',           // small label under the logo
     reportPeriodLabel: 'May 2026 · Monthly Report',
-    logo: 'logo.jpg',                       // file inside this client folder
-    logoAlt: 'AMACX',
-    logoBlend: 'screen',                    // mix-blend-mode; '' to disable (use for transparent PNGs)
+    logo: 'logo.jpg',                       // per-client fallback (unused while logoSrc is set)
+    logoSrc: 'td-logo.png',                 // shared TD logo for now (all clients) — dashboard/td-logo.png
+    logoAlt: 'TD Strategists',
+    logoBlend: '',                          // TD SVG is light-on-dark — no blend trick needed
+    logoWidth: '160px',                     // match demo
     footer: {
       cadence: 'Updated monthly',
       next: 'Next: 1 Jun 2026',

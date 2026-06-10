@@ -8,14 +8,16 @@ window.DASHBOARD_CONFIG = {
     title: 'Demo Brand UK — TD Strategists',   // browser tab <title>
     portalLabel: 'CLIENT PORTAL',              // small label under the logo
     reportPeriodLabel: 'May 2026 · Monthly Report',
-    logo: 'logo.svg',                          // file inside this client folder
-    logoAlt: 'Demo Brand UK',
+    logo: 'logo.svg',                          // per-client fallback (unused while logoSrc is set)
+    logoSrc: 'td-logo.png',                    // shared TD logo for now (all clients) — dashboard/td-logo.png
+    logoAlt: 'TD Strategists',
     logoBlend: '',                             // SVG is light-on-dark already — no blend trick needed
+    logoWidth: '160px',                        // override the template's default 110px
     scopeLabel: 'All UK',                      // replaces every .cfg-scope span ("All EU" → "All UK")
     currencyIcon: '£',                         // P&L nav icon (€ → £)
     footer: {
-      cadence: 'Updated monthly',
-      next: 'Next: 1 Jul 2026',
+      cadence: 'Updated Monthly',
+      next: 'Next: 5 July 2026',
       managedBy: 'Managed by TD Strategists'
     }
   },
