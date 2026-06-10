@@ -70,12 +70,14 @@ window.switchDateRange = function (val) {
   var mktSub = (MKT[currentMarket] ? MKT[currentMarket].m : '') + ' · ' + d.label;
   var tbMkt = document.getElementById('tb-mkt'); if (tbMkt) tbMkt.textContent = mktSub;
   document.querySelectorAll('.dr-period').forEach(function (el) { el.textContent = d.shortLabel; });
+  document.querySelectorAll('.dr-chart-sub').forEach(function (el) { el.textContent = d.shortLabel; });
   [1, 2, 3, 4, 5, 6, 7].forEach(function (n) { var el = document.getElementById('sec-period-' + n); if (el) el.textContent = d.shortLabel; });
 
   set('k-rev', d.rev);     set('k-rev-d', d.revD);     cls('k-rev-d', d.revC);     set('k-rev-s', d.revS);
   set('k-ad', d.adSales);  set('k-ad-d', d.adSalesD);  cls('k-ad-d', d.adSalesC);  set('k-ad-s', d.adSalesS);
   set('k-tacos', d.tacos); set('k-tacos-d', d.tacosD); cls('k-tacos-d', d.tacosC); set('k-tacos-s', d.tacosS);
-  set('k-margin', d.roas); set('k-margin-d', d.roasD); cls('k-margin-d', d.roasC); set('k-margin-s', d.roasS);
+  // 4th overview KPI = AOV (the headline focus); ROAS remains on the Advertising page.
+  set('k-margin', d.aov); set('k-margin-d', d.aovD); cls('k-margin-d', d.aovC); set('k-margin-s', d.aovS);
 
   var adKpis = document.querySelectorAll('#page-advertising .kpi');
   if (adKpis.length >= 4) {
@@ -109,6 +111,9 @@ window.switchDateRange = function (val) {
       return '<tr' + rs + '><td' + ns + '>' + flagImg + name + '</td><td style="font-weight:600;">' + spend + '</td><td' + ns + '>' + budget + '</td><td><span class="badge ' + vs_cls + '">' + vs_txt + '</span></td><td><span class="badge ' + tacos_cls + '">' + tacos_txt + '</span></td></tr>';
     }).join('');
   }
+
+  // Period-aware charts + section content (clients with sections + per-period data).
+  if (DATA.sections) renderPeriodSections(d);
 
   updateMarketChips(d);
 };
@@ -278,10 +283,11 @@ function renderTasks(spec) {
   }).join('');
 }
 
-function renderFlags(spec) {
+// Shared renderer for the coloured alert lists (Flags & Warnings, Stock Warnings).
+function renderAlertList(id, badgeId, spec) {
   if (!spec) return;
-  if (spec.badge != null) set('sec-flags-badge', spec.badge);
-  var w = el('sec-flags'); if (!w || !spec.items) return;
+  if (badgeId && spec.badge != null) set(badgeId, spec.badge);
+  var w = el(id); if (!w || !spec.items) return;
   var lv = {
     red:   { bg: '#fdf0f0', dot: 'var(--red)',   col: 'var(--red)',   pulse: 'animation:pulse2 1.5s infinite;', wt: 600, sub: 'var(--muted)' },
     amber: { bg: '#fdf6e7', dot: 'var(--amber)', col: 'var(--amber)', pulse: '', wt: 600, sub: 'var(--muted)' },
@@ -296,6 +302,7 @@ function renderFlags(spec) {
       '<div style="font-size:11px;color:' + s.sub + ';margin-top:1px;">' + f.sub + '</div></div></div>';
   }).join('');
 }
+function renderFlags(spec) { renderAlertList('sec-flags', 'sec-flags-badge', spec); }
 
 function renderCvr(spec) {
   if (!spec) return;
@@ -469,6 +476,92 @@ function renderChart(id, legId, spec) {
   }
 }
 
+// Vertical stacked bar chart. series[0] sits at the bottom of each bar.
+function renderStackedBars(id, legId, spec) {
+  var svg = el(id); if (!svg || !spec) return;
+  var W = 440, H = 170, PADL = 46, PADR = 14, PADT = 16, PADB = 26;
+  var plotW = W - PADL - PADR, plotH = H - PADT - PADB, baseY = PADT + plotH;
+  var n = spec.xLabels.length;
+  var bw = Math.min(40, plotW / n * 0.55);
+  function cx(i) { return PADL + plotW * (i + 0.5) / n; }
+  function hh(v) { return plotH * v / spec.max; }
+  var p = [], T = spec.yTicks.length, k, gy;
+  for (k = 0; k < T; k++) {
+    gy = PADT + plotH * k / (T - 1);
+    p.push('<line x1="' + PADL + '" y1="' + gy.toFixed(1) + '" x2="' + (W - PADR) + '" y2="' + gy.toFixed(1) + '" stroke="#e4e2dc" stroke-width="1"/>');
+    p.push('<text x="' + (PADL - 6) + '" y="' + (gy + 3).toFixed(1) + '" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="end">' + spec.yTicks[k] + '</text>');
+  }
+  for (var i = 0; i < n; i++) {
+    var x = cx(i) - bw / 2, yb = baseY;
+    spec.series.forEach(function (s) {
+      var seg = hh(s.values[i]);
+      yb -= seg;
+      p.push('<rect x="' + x.toFixed(1) + '" y="' + yb.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(seg, 0).toFixed(1) + '" fill="' + s.color + '"/>');
+    });
+    p.push('<text x="' + cx(i).toFixed(1) + '" y="' + (H - 8) + '" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="middle">' + spec.xLabels[i] + '</text>');
+  }
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.innerHTML = p.join('');
+  if (legId && spec.legend) {
+    var lg = el(legId);
+    if (lg) lg.innerHTML = spec.legend.map(function (L) { return '<div class="leg-i"><div class="leg-dot" style="background:' + L.color + '"></div>' + L.name + '</div>'; }).join('');
+  }
+}
+
+// Revenue Breakdown card: swap the static two-bar markup for a stacked monthly bar chart.
+function renderRevBreak(spec) {
+  var w = el('sec-pnl-revbreak'); if (!w || !spec) return;
+  w.innerHTML = '<svg id="chart-revbreak" class="lc" viewBox="0 0 440 170" style="width:100%;"></svg>' +
+                '<div class="leg" id="chart-revbreak-leg" style="margin-top:6px;"></div>';
+  renderStackedBars('chart-revbreak', 'chart-revbreak-leg', spec);
+}
+
+// Pie chart by category, with a rich legend (sales share + ACOS).
+function renderPie(id, legId, spec) {
+  var svg = el(id); if (!svg || !spec || !spec.slices) return;
+  var cx = 90, cy = 90, r = 78;
+  var total = spec.slices.reduce(function (a, s) { return a + s.pct; }, 0) || 100;
+  var ang = -Math.PI / 2, p = [];
+  spec.slices.forEach(function (s) {
+    var frac = s.pct / total, a2 = ang + frac * 2 * Math.PI;
+    if (frac >= 0.999) { p.push('<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + s.color + '"/>'); }
+    else if (frac > 0) {
+      var x1 = cx + r * Math.cos(ang), y1 = cy + r * Math.sin(ang);
+      var x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+      var large = frac > 0.5 ? 1 : 0;
+      p.push('<path d="M' + cx + ',' + cy + ' L' + x1.toFixed(2) + ',' + y1.toFixed(2) + ' A' + r + ',' + r + ' 0 ' + large + ' 1 ' + x2.toFixed(2) + ',' + y2.toFixed(2) + ' Z" fill="' + s.color + '"/>');
+    }
+    ang = a2;
+  });
+  svg.innerHTML = p.join('');
+  var lg = legId ? el(legId) : null;
+  if (lg) lg.innerHTML = spec.slices.map(function (s) {
+    return '<div style="display:flex;gap:10px;align-items:flex-start;">' +
+      '<div style="width:11px;height:11px;border-radius:3px;background:' + s.color + ';flex-shrink:0;margin-top:2px;"></div>' +
+      '<div><div style="font-size:12px;font-weight:600;">' + s.name + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-top:1px;">Sales: ' + s.sales + ' (' + s.pct + '%) &middot; ACOS: ' + s.acos + '</div></div></div>';
+  }).join('');
+}
+
+// Full P&L statement (INCOME / EXPENSES / METRICS), grouped rows with bold totals.
+function renderStatement(spec) {
+  var t = el('sec-pnl-statement'); if (!t || !spec || !spec.groups) return;
+  var head = '<thead><tr><th>' + (spec.title || '') + '</th><th>Amount</th><th>%</th><th>Per unit</th></tr></thead>';
+  var body = spec.groups.map(function (g) {
+    var hdr = '<tr><td colspan="4" style="background:var(--surface2);font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:8px 14px;">' + g.header + '</td></tr>';
+    var rows = g.rows.map(function (r) {
+      var wt = r.total ? 'font-weight:700;' : '';
+      var amtCol = r.profit ? 'color:var(--green);' : (r.accent ? 'color:' + cvar(r.accent) + ';' : '');
+      return '<tr><td style="' + wt + '">' + r.lbl + '</td>' +
+        '<td style="' + wt + amtCol + '">' + (r.amount != null && r.amount !== '' ? r.amount : '&mdash;') + '</td>' +
+        '<td style="color:var(--muted);">' + (r.pct != null && r.pct !== '' ? r.pct : '&mdash;') + '</td>' +
+        '<td style="color:var(--muted);">' + (r.unit != null && r.unit !== '' ? r.unit : '&mdash;') + '</td></tr>';
+    }).join('');
+    return hdr + rows;
+  }).join('');
+  t.innerHTML = head + '<tbody>' + body + '</tbody>';
+}
+
 function renderMarketSelects() {
   var sels = document.querySelectorAll('.js-mkt-select');
   if (!sels.length) return;
@@ -477,44 +570,73 @@ function renderMarketSelects() {
   for (var i = 0; i < sels.length; i++) sels[i].innerHTML = opts;
 }
 
+// Boot: render the STATIC (non-period) sections once. Period-dependent sections are
+// rendered by renderPeriodSections (called from switchDateRange).
 function renderSections() {
   var S = DATA.sections; if (!S) return;
   renderMarketSelects();
   var o = S.overview || {};
   renderTasks(o.tasksSpec);
   renderFlags(o.flagsSpec);
-  if (o.revChart) renderChart('chart-rev', 'chart-rev-leg', o.revChart);
-  if (o.buyBox) renderProgress('sec-buybox', o.buyBox);
-  renderCvr(o.cvr);
+  renderAlertList('sec-stockwarn', 'sec-stockwarn-badge', o.stockWarn);   // inventory state → MCP live later
   renderEarlyLaunch(o.earlyLaunch);
 
   var pl = S.pnl || {};
-  if (pl.summary) renderPnlSummary(pl.summary);
-  if (pl.revBreak) renderBars('sec-pnl-revbreak', pl.revBreak);
-  if (pl.margin) renderMargin(pl.margin);
-  if (pl.costs) renderBars('sec-pnl-costs', pl.costs);
-  if (pl.mkt) renderPnlMkt(pl.mkt);
+  if (pl.revBreak) renderBars('sec-pnl-revbreak', pl.revBreak);           // static fallback only
+  if (pl.statement || (pl.summary)) {                                     // reveal full P&L, hide cost-breakdown
+    var sw = el('sec-statement-wrap'); if (sw) sw.style.display = '';
+    var cw = el('sec-costs-wrap'); if (cw) cw.style.display = 'none';
+  } else if (pl.costs) renderBars('sec-pnl-costs', pl.costs);
 
   var ad = S.advertising || {};
-  if (ad.adChart) renderChart('chart-adtrend', 'chart-adtrend-leg', ad.adChart);
-  if (ad.metrics) renderMetrics(ad.metrics);
-  if (ad.budgets) renderAdBudgets(ad.budgets);
+  if (ad.budgets) renderAdBudgets(ad.budgets);                            // forward-looking, not period-bound
   if (ad.forecast) renderForecast(ad.forecast);
-  if (ad.campaigns) renderCampaigns(ad.campaigns);
 
-  var iv = S.inventory || {};
+  var iv = S.inventory || {};                                            // whole page → MCP live later
   if (iv.kpis) renderKpis('sec-inv-kpis', iv.kpis);
   if (iv.stock) renderStock(iv.stock);
   if (iv.dispatch) renderProgress('sec-inv-dispatch', iv.dispatch.bars, iv.dispatch.note);
   if (iv.restock) renderRestock(iv.restock);
 
-  var pr = S.products || {};
-  if (pr.kpis) renderKpis('sec-prod-kpis', pr.kpis);
-  if (pr.table) renderProdTable(pr.table);
+  // Sections-level chart fallbacks (used only if a client supplies them statically, not per-period).
+  if (o.revChart) renderChart('chart-rev', 'chart-rev-leg', o.revChart);
+  if (ad.adChart) renderChart('chart-adtrend', 'chart-adtrend-leg', ad.adChart);
+}
 
-  var kw = S.keywords || {};
-  if (kw.kpis) renderKpis('sec-kw-kpis', kw.kpis);
-  if (kw.table) renderKwTable(kw.table);
+// Period-dependent sections. Reads the current period's d.sec.* overrides, falling back to the
+// top-level sections (the May/default values) when a period doesn't override a given piece.
+function renderPeriodSections(d) {
+  var S = DATA.sections; if (!S) return;
+  function pick(a, b) { return a != null ? a : b; }
+  var sec = d.sec || {};
+  var o = S.overview || {}, pl = S.pnl || {}, pr = S.products || {}, kw = S.keywords || {}, ad = S.advertising || {};
+  var so = sec.overview || {}, spl = sec.pnl || {}, spr = sec.products || {}, skw = sec.keywords || {}, sad = sec.advertising || {};
+
+  // Period charts (carried on the period object itself).
+  if (d.revChart) renderChart('chart-rev', 'chart-rev-leg', d.revChart);
+  if (d.adChart) renderChart('chart-adtrend', 'chart-adtrend-leg', d.adChart);
+  if (d.revBreakChart) renderRevBreak(d.revBreakChart);
+  if (d.campaignMix) {
+    renderPie('chart-campaign-pie', 'chart-campaign-pie-leg', d.campaignMix);
+    var pw = el('sec-campaign-pie-wrap'); if (pw) pw.style.display = '';
+  }
+
+  var bb = pick(so.buyBox, o.buyBox); if (bb) renderProgress('sec-buybox', bb);
+  var cv = pick(so.cvr, o.cvr); if (cv) renderCvr(cv);
+
+  var psum = pick(spl.summary, pl.summary); if (psum) renderPnlSummary(psum);
+  var pmar = pick(spl.margin, pl.margin); if (pmar) renderMargin(pmar);
+  var pmkt = pick(spl.mkt, pl.mkt); if (pmkt) renderPnlMkt(pmkt);
+  var pst = pick(spl.statement, pl.statement); if (pst) renderStatement(pst);
+
+  var prk = pick(spr.kpis, pr.kpis); if (prk) renderKpis('sec-prod-kpis', prk);
+  var prt = pick(spr.table, pr.table); if (prt) renderProdTable(prt);
+
+  var kwk = pick(skw.kpis, kw.kpis); if (kwk) renderKpis('sec-kw-kpis', kwk);
+  var kwt = pick(skw.table, kw.table); if (kwt) renderKwTable(kwt);
+
+  var am = pick(sad.metrics, ad.metrics); if (am) renderMetrics(am);
+  var ac = pick(sad.campaigns, ad.campaigns); if (ac) renderCampaigns(ac);
 }
 
 // ---------- boot ----------

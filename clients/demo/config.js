@@ -26,11 +26,10 @@ window.DASHBOARD_CONFIG = {
 
   // ---- Date-range selector (drives the topbar dropdown) ----
   dateRangeOptions: [
-    { value: 'may',  label: 'May 2026' },
-    { value: '3m',   label: 'Last 3 Months (Mar–May)' },
-    { value: '6m',   label: 'Jan–May 2026 (YTD)' },
-    { value: '2025', label: 'Full Year 2025' },
-    { value: '12m',  label: '2025 + 2026 YTD' }
+    { value: 'may', label: 'Last Month' },
+    { value: '3m',  label: 'Last 3 Months' },
+    { value: '6m',  label: 'Year to Date' },
+    { value: '12m', label: 'Last 12 Months' }
   ],
 
   // ---- Markets ----
@@ -44,18 +43,10 @@ window.DASHBOARD_CONFIG = {
     { key: 'd2c',  flag: 'gb', chip: 'D2C · Shopify', code: 'D2C',          t: 'D2C · Shopify', m: 'Direct-to-Consumer' }
   ],
 
-  // ---- Brand palette (written to :root CSS variables at runtime) ----
-  // Fresh navy/teal scheme so the demo reads as a distinct client from AMACX.
-  brand: {
-    'brand': '#1f2a44', 'brand2': '#161f33',
-    'accent': '#38bdf8', 'accent-l': '#eff6ff', 'accent-m': '#7dd3fc',
-    'bg': '#f1f5f9', 'surface': '#ffffff', 'surface2': '#f8fafc',
-    'border': '#e2e8f0', 'text': '#1e293b', 'muted': '#64748b', 'muted2': '#94a3b8',
-    'green': '#15803d', 'green-bg': '#ecfdf5', 'green-b': '#86efac',
-    'red': '#b91c1c', 'red-bg': '#fef2f2', 'red-b': '#fca5a5',
-    'amber': '#b45309', 'amber-bg': '#fffbeb', 'amber-b': '#fcd34d',
-    'blue': '#1d4ed8', 'blue-bg': '#eff6ff', 'blue-b': '#bfdbfe'
-  },
+  // ---- Brand palette ----
+  // Intentionally omitted: every account currently shares the house TD theme defined in
+  // index.html :root (olive/yellow). Add a `brand: {...}` block here later to white-label
+  // this client without touching the template.
 
   // ---- Live data source ----
   // Demo is fully self-contained: data.js only, no proxy.

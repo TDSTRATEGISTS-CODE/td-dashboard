@@ -141,13 +141,13 @@ svg.lc{width:100%;overflow:visible;display:block;}
 select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:49;}
 .overlay.open{display:block;}
-@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr);}.g3{grid-template-columns:repeat(2,1fr);}.g21,.g12{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(3,1fr);}.two-col{grid-template-columns:1fr;}}
+@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr);}.g3{grid-template-columns:repeat(2,1fr);}.g21,.g12{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(3,1fr);}.two-col{grid-template-columns:1fr;}.tasks-flags-grid{grid-template-columns:1fr;}}
 @media(max-width:768px){.sidebar{transform:translateX(-100%);z-index:200;}.sidebar.open{transform:translateX(0);box-shadow:4px 0 24px rgba(0,0,0,.18);}.main{margin-left:0;}.hamburger{display:flex;align-items:center;}.page-content{padding:14px;gap:14px;}.topbar{padding:0 14px;height:50px;}.page-tabs{padding:0 14px;gap:0;}.ptab{padding:10px 12px;font-size:12px;}.kpi-val{font-size:20px;}.kpi-s{display:none;}.tb-mkt{display:none;}.upd-badge span{display:none;}.upd-badge{padding:4px 8px;}.bar-lbl{width:90px;font-size:11px;}.g4{grid-template-columns:repeat(2,1fr);gap:10px;}.g3{grid-template-columns:repeat(2,1fr);gap:10px;}.g21,.g12,.two-col{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(5,1fr);}.pl-summary{grid-template-columns:repeat(3,1fr);}.card-hdr{flex-wrap:wrap;gap:8px;}.rpt-btn{font-size:11px;padding:5px 9px;}.tb-title{font-size:15px;}}
 @media(max-width:480px){.g4{grid-template-columns:repeat(2,1fr);gap:8px;}.g3{grid-template-columns:1fr;}.g2{grid-template-columns:1fr;}#tasks-flags{grid-template-columns:1fr;}.pl-summary{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(5,1fr);}.kpi{padding:12px;}.kpi-val{font-size:20px;}.page-content{padding:12px;gap:12px;}.topbar{padding:0 12px;}.page-tabs{padding:0 12px;}.ptab{padding:8px 10px;font-size:11px;}.dtable th,.dtable td{padding:8px 10px;font-size:11px;}.bar-lbl{width:80px;font-size:10px;}.bar-val{font-size:11px;width:55px;}select{font-size:10px;}}
 .fade{opacity:0;transform:translateY(8px);animation:fi .3s ease forwards;}
 @keyframes fi{to{opacity:1;transform:translateY(0);}}
 @keyframes pulse2{0%,100%{opacity:1;}50%{opacity:.3;}}
-.tasks-flags-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.tasks-flags-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
 .fade:nth-child(1){animation-delay:.04s}.fade:nth-child(2){animation-delay:.08s}
 .fade:nth-child(3){animation-delay:.12s}.fade:nth-child(4){animation-delay:.16s}
 .fade:nth-child(5){animation-delay:.20s}.fade:nth-child(6){animation-delay:.24s}
@@ -278,6 +278,26 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
           </div>
         </div>
       </div>
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-ttl">&#128230; Stock Warnings</div><div class="card-sub">Empty &amp; low stock</div></div>
+          <span id="sec-stockwarn-badge" style="font-size:10px;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b);border-radius:5px;padding:2px 8px;font-weight:500;">2 alerts</span>
+        </div>
+        <div id="sec-stockwarn" style="display:flex;flex-direction:column;gap:0;">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:#fdf0f0;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px;animation:pulse2 1.5s infinite;"></div>
+            <div><div style="font-size:12px;font-weight:600;color:var(--red);">Energy Ice Gel &mdash; OOS DE/ES/IT</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">B0F332LV9B &middot; 0 units &middot; suppressed</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:#fdf6e7;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:600;color:var(--amber);">Isotonic Mix 1kg &mdash; Low FR</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">203 units &middot; ~12 days cover</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;background:#fdf6e7;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:600;color:var(--amber);">Hydration Tabs 40s &mdash; Low IT</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">98 units &middot; ~10 days cover</div></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div>
@@ -286,7 +306,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         <div class="kpi fade"><div class="kpi-bar" style="background:#404935"></div><div class="kpi-lbl">Total Revenue</div><div class="kpi-val" id="k-rev">&#8364;8,856</div><div class="kpi-d du" id="k-rev-d">&#9650; 26.0% MoM</div><div class="kpi-s" id="k-rev-s">vs &#8364;7,026 Apr</div></div>
         <div class="kpi fade"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Ad Sales</div><div class="kpi-val" id="k-ad">&#8364;3,318</div><div class="kpi-d du" id="k-ad-d">&#9650; 14.7% MoM</div><div class="kpi-s" id="k-ad-s">37.5% of revenue</div></div>
         <div class="kpi fade"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">TACOS</div><div class="kpi-val" id="k-tacos">26.2%</div><div class="kpi-d dd" id="k-tacos-d">&#9650; 2.6pp vs Apr</div><div class="kpi-s" id="k-tacos-s">Target: reduce to &lt;20%</div></div>
-        <div class="kpi fade"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">ROAS</div><div class="kpi-val" id="k-margin">3.82&#215;</div><div class="kpi-d dd" id="k-margin-d">&#9660; 0.2 vs Apr</div><div class="kpi-s" id="k-margin-s">269 units &middot; AOV &#8364;48</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">AOV</div><div class="kpi-val" id="k-margin">&#8364;48</div><div class="kpi-d du" id="k-margin-d">&#9650; &#8364;1 MoM</div><div class="kpi-s" id="k-margin-s">185 orders May</div></div>
       </div>
     </div>
 
@@ -387,7 +407,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         </div>
       </div>
     </div>
-    <div class="fade">
+    <div class="fade" id="sec-costs-wrap">
       <div class="sec-lbl">Cost Breakdown</div>
       <div class="card">
         <div class="card-hdr"><div><div class="card-ttl">Expenses by Category</div><div class="card-sub"><span class="dr-period">May 2026</span> &mdash; <span class="cfg-scope">All EU</span></div></div></div>
@@ -398,6 +418,14 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         </div>
       </div>
     </div>
+    <div class="fade" id="sec-statement-wrap" style="display:none;">
+      <div class="sec-lbl">Profit &amp; Loss Statement</div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">P&amp;L</div><div class="card-sub">Income, expenses &amp; metrics &middot; <span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
+        <div class="tscroll"><table class="dtable" id="sec-pnl-statement"></table></div>
+      </div>
+    </div>
+
     <div class="fade">
       <div class="sec-lbl">P&amp;L by Marketplace</div>
       <div class="card">
@@ -429,7 +457,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
     <div class="g21 fade">
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Spend vs TACOS Trend</div><div class="card-sub">6-month view</div></div></div>
+        <div class="card-hdr"><div><div class="card-ttl">Spend vs TACOS Trend</div><div class="card-sub"><span class="dr-chart-sub">6-month view</span></div></div></div>
         <div class="card-body" style="padding:16px 16px 10px;">
           <svg class="lc" id="chart-adtrend" viewBox="0 0 440 150">
             <line x1="0" y1="15" x2="440" y2="15" stroke="#e4e2dc" stroke-width="1"/>
@@ -486,6 +514,17 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
             <span style="font-size:11px;color:var(--muted);font-weight:500;">Avg. CPC</span>
             <span style="font-family:var(--display);font-size:17px;font-weight:700;">&#8364;0.68</span>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fade" id="sec-campaign-pie-wrap" style="display:none;">
+      <div class="sec-lbl">Campaign Mix</div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Advertising Performance by Campaign Type</div><div class="card-sub">Sales share &amp; ACOS &middot; <span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
+        <div class="card-body" style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;">
+          <svg id="chart-campaign-pie" viewBox="0 0 180 180" style="width:180px;height:180px;flex-shrink:0;"></svg>
+          <div id="chart-campaign-pie-leg" style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:14px;"></div>
         </div>
       </div>
     </div>

@@ -19,6 +19,16 @@ window.DASHBOARD_DATA = {
       ['D2C','gb','£1,800','£1,560','bg','▼ £240 under','£6,800','ba','22.9%'],
       ['Total UK',null,'£6,400','£6,000','bg','94% utilised','£29,400','ba','20.4%'],
     ],
+    revBreakChart: { max: 32000, yTicks: ['£32k','£24k','£16k','£8k','£0'], xLabels: ['May'],
+      series: [ { color:'#404935', values:[11600] }, { color:'#a7ab90', values:[17800] } ],
+      legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
+    revChart: { max:32000, yTicks:['£32k','£24k','£16k','£8k','£0'], xLabels:['Dec','Jan','Feb','Mar','Apr','May'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[19500,19800,21500,22300,24900,29400],main:true,area:true}, {color:'#e8a87c',values:[19500,22000,23000,24000,26000,28000],dash:true}, {color:'#a7ab90',values:[4000,4100,4400,4600,5200,6000],dash:true} ],
+      legend:[ {name:'Revenue Actual',color:'#404935'}, {name:'Revenue Target',color:'#e8a87c'}, {name:'Ad Spend',color:'#a7ab90'} ] },
+    adChart: { max:32000, yTicks:['£32k','£24k','£16k','£8k','£0'], xLabels:['Dec','Jan','Feb','Mar','Apr','May'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[19500,19800,21500,22300,24900,29400],main:true,area:true}, {color:'#a7ab90',values:[4000,4100,4400,4600,5200,6000],dash:true} ],
+      legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:78.8,sales:'£21.6k',acos:'19.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.1,sales:'£3.6k',acos:'20.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.0,sales:'£2.2k',acos:'23.6%'} ] },
   },
   '3m': {
     label: 'Mar–May 2026', shortLabel: 'Mar–May 2026',
@@ -36,6 +46,45 @@ window.DASHBOARD_DATA = {
       ['D2C','gb','£4,100','£3,800','bg','▼ £300 under','£17,600','ba','21.6%'],
       ['Total UK',null,'£16,500','£15,800','bg','96% utilised','£76,600','ba','20.6%'],
     ],
+    revBreakChart: { max: 32000, yTicks: ['£32k','£24k','£16k','£8k','£0'], xLabels: ['Mar','Apr','May'],
+      series: [ { color:'#404935', values:[8700,9700,11600] }, { color:'#a7ab90', values:[13600,15200,17800] } ],
+      legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
+    revChart: { max:32000, yTicks:['£32k','£24k','£16k','£8k','£0'], xLabels:['Mar','Apr','May'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[22300,24900,29400],main:true,area:true}, {color:'#e8a87c',values:[24000,26000,28000],dash:true}, {color:'#a7ab90',values:[4600,5200,6000],dash:true} ],
+      legend:[ {name:'Revenue Actual',color:'#404935'}, {name:'Revenue Target',color:'#e8a87c'}, {name:'Ad Spend',color:'#a7ab90'} ] },
+    adChart: { max:32000, yTicks:['£32k','£24k','£16k','£8k','£0'], xLabels:['Mar','Apr','May'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[22300,24900,29400],main:true,area:true}, {color:'#a7ab90',values:[4600,5200,6000],dash:true} ],
+      legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:78.0,sales:'£55.4k',acos:'19.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.5,sales:'£9.6k',acos:'20.4%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.5,sales:'£6.0k',acos:'23.2%'} ] },
+    sec: {
+      overview: {
+        buyBox: [ {label:'Sport Hydration Mix',pct:97,color:'green'}, {label:'Energy Gel 25pk',pct:96,color:'green'}, {label:'Recovery Powder',pct:95,color:'green'}, {label:'Isotonic Mix 1kg',pct:90,color:'amber'} ],
+        cvr: { val:'10.8%', note:'3-mo avg · 128,400 sessions', sub:'All UK — Mar–May' }
+      },
+      pnl: {
+        summary: [ {val:'£76,600',lbl:'Gross Revenue',color:'brand'}, {val:'£50,270*',lbl:'Total Costs',color:'red'}, {val:'£26,330*',lbl:'Net Profit',color:'green'} ],
+        margin: { pct:'34.4%*', pctColor:'green', note:'*Estimated · COGS from cost sheet', rows:[ {lbl:'Gross Revenue',val:'£76,600'}, {lbl:'Marketplace Fees',val:'−£9,958*',color:'red'}, {lbl:'Ad Spend',val:'−£15,800',color:'red'}, {lbl:'COGS (est.)',val:'−£24,512*',color:'red'}, {lbl:'Net Profit',val:'£26,330*',color:'green',strong:true} ] },
+        mkt: [ {name:'Amazon UK',flag:'gb',revenue:'£48,300',adspend:'£9,900',net:'£15,939*',netColor:'green',margin:'33.0%*',marginCls:'bg'}, {name:'eBay UK',flag:'gb',revenue:'£10,700',adspend:'£2,100',net:'£4,055*',netColor:'green',margin:'37.9%*',marginCls:'bg'}, {name:'D2C',flag:'gb',revenue:'£17,600',adspend:'£3,800',net:'£6,336*',netColor:'green',margin:'36.0%*',marginCls:'bg'} ],
+        statement: { groups:[
+          { header:'Income', rows:[ {lbl:'Shipped product sales',amount:'£77,900',pct:'101.7%',unit:'£40.36'}, {lbl:'Sales tax',amount:'',pct:'',unit:''}, {lbl:'Refunds',amount:'',pct:'',unit:''}, {lbl:'Reimbursements',amount:'',pct:'',unit:''}, {lbl:'Promotions',amount:'−£2,528',pct:'−3.3%',unit:'−£1.31'}, {lbl:'Other income',amount:'£1,226',pct:'1.6%',unit:'£0.64'}, {lbl:'Net revenue',amount:'£76,600',pct:'100.0%',unit:'£39.69',total:true} ] },
+          { header:'Expenses', rows:[ {lbl:'Advertising',amount:'£15,800',pct:'20.6%',unit:'£8.19'}, {lbl:'Selling fees',amount:'£9,958',pct:'13.0%',unit:'£5.16'}, {lbl:'Fulfilment and shipping',amount:'',pct:'',unit:''}, {lbl:'Cancellations and refunds',amount:'',pct:'',unit:''}, {lbl:'Cost of goods',amount:'£24,512',pct:'32.0%',unit:'£12.70'}, {lbl:'Other expenses',amount:'',pct:'',unit:''}, {lbl:'Total expenses',amount:'£50,270',pct:'65.6%',unit:'£26.05',total:true} ] },
+          { header:'Profit', rows:[ {lbl:'PROFIT',amount:'£26,330',pct:'34.4%',unit:'£13.64',total:true,profit:true}, {lbl:'Profit %',amount:'34.4%',pct:'',unit:'',accent:'green'} ] },
+          { header:'Metrics', rows:[ {lbl:'Estimated payout',amount:'£50,842',pct:'',unit:'£26.34'}, {lbl:'TACOS %',amount:'20.6%',pct:'',unit:''} ] }
+        ] }
+      },
+      products: {
+        kpis: [ {bar:'#404935',lbl:'Top ASIN Rev.',val:'£21,400',dCls:'du',d:'Amazon UK',s:'27.9% of total'}, {bar:'green',lbl:'Orders',val:'1,824',dCls:'df',d:'3-month total',s:'~608/mo'}, {bar:'blue',lbl:'Avg. AoV',val:'£42',dCls:'df',d:'3-month avg',s:'stable'}, {bar:'amber',lbl:'ASP',val:'£28.60',dCls:'df',d:'3-month avg',s:'blended'} ],
+        table: [ {name:'Amazon UK',flag:'gb',revenue:'£48,300',units:'1,195',orders:'1,130',cvr:'12.4%',cvrCls:'bg',aov:'£41.3'}, {name:'eBay UK',flag:'gb',revenue:'£10,700',units:'270',orders:'255',cvr:'9.3%',cvrCls:'ba',aov:'£41.2'}, {name:'D2C',flag:'gb',revenue:'£17,600',units:'465',orders:'439',cvr:'3.0%',cvrCls:'ba',aov:'£40.9'} ]
+      },
+      keywords: {
+        kpis: [ {bar:'#404935',lbl:'Active KWs',val:'192',dCls:'du',d:'▲ 20 vs prior',s:'Across all campaigns'}, {bar:'green',lbl:'Avg. CPC',val:'£0.33',dCls:'du',d:'3-month avg',s:'Blended UK'}, {bar:'red',lbl:'High ACOS KWs',val:'9',dCls:'dd',d:'ACOS >30%',s:'Review & pause'}, {bar:'blue',lbl:'Top KW Rev.',val:'£14.8k',dCls:'du',d:'isotonic drink',s:'Amazon UK'} ],
+        table: [ {kw:'isotonic drink',geo:'Amazon UK · SP',match:'Exact',matchCls:'bg',spend:'£1,110',sales:'£14.8k',acos:'7.5%',acosCls:'bg',roas:'13.3×',cpc:'£0.28'}, {kw:'sports hydration powder',geo:'Amazon UK · SP',match:'Exact',matchCls:'bg',spend:'£1,020',sales:'£12.7k',acos:'8.0%',acosCls:'bg',roas:'12.5×',cpc:'£0.30'}, {kw:'energy gel marathon',geo:'Amazon UK · SP',match:'Phrase',matchCls:'bb',spend:'£775',sales:'£8.4k',acos:'9.2%',acosCls:'bg',roas:'10.8×',cpc:'£0.34'}, {kw:'electrolyte tablets',geo:'eBay UK · SP',match:'Exact',matchCls:'bg',spend:'£610',sales:'£5.8k',acos:'10.5%',acosCls:'bg',roas:'9.5×',cpc:'£0.26'}, {kw:'recovery protein drink',geo:'D2C · SP',match:'Phrase',matchCls:'bb',spend:'£510',sales:'£4.6k',acos:'11.0%',acosCls:'bg',roas:'9.1×',cpc:'£0.25'} ]
+      },
+      advertising: {
+        metrics: [ {lbl:'Total Spend',val:'£15,800',id:'a-spend'}, {lbl:'Period Budget',val:'£16,500',color:'brand'}, {lbl:'Utilisation',val:'96%',color:'green'}, {lbl:'TACOS',val:'20.6%',color:'amber',id:'a-tacos'}, {lbl:'ROAS',val:'4.85×',id:'a-roas'}, {lbl:'Avg. CPC',val:'£0.33'} ],
+        campaigns: [ {name:'SP — Sport Hydration UK',type:'Sponsored Products',spend:'£5.52k',sales:'£30.0k',acos:'18.4%',acosCls:'bg',roas:'5.4×',cpc:'£0.31',status:'Active',statusCls:'bg'}, {name:'SP — Energy Gel UK',type:'Sponsored Products',spend:'£3.10k',sales:'£16.0k',acos:'19.3%',acosCls:'bg',roas:'5.2×',cpc:'£0.34',status:'Active',statusCls:'bg'}, {name:'SB — Demo Brand UK',type:'Sponsored Brands',spend:'£1.95k',sales:'£9.5k',acos:'20.6%',acosCls:'ba',roas:'4.9×',cpc:'£0.45',status:'Active',statusCls:'bg'}, {name:'SP — Recovery Range UK',type:'Sponsored Products',spend:'£2.26k',sales:'£10.8k',acos:'21.0%',acosCls:'ba',roas:'4.8×',cpc:'£0.33',status:'Active',statusCls:'bg'}, {name:'SD — Display Retargeting',type:'Sponsored Display',spend:'£1.37k',sales:'£5.8k',acos:'23.6%',acosCls:'ba',roas:'4.2×',cpc:'£0.40',status:'Review',statusCls:'ba'} ]
+      }
+    },
   },
   '6m': {
     label: 'Jan–May 2026 (YTD)', shortLabel: 'Jan–May 2026',
@@ -53,6 +102,45 @@ window.DASHBOARD_DATA = {
       ['D2C','gb','£6,300','£5,750','bg','▼ £550 under','£27,100','ba','21.2%'],
       ['Total UK',null,'£25,500','£24,300','bg','95% utilised','£117,900','ba','20.6%'],
     ],
+    revBreakChart: { max: 32000, yTicks: ['£32k','£24k','£16k','£8k','£0'], xLabels: ['Jan','Feb','Mar','Apr','May'],
+      series: [ { color:'#404935', values:[7700,8400,8700,9700,11600] }, { color:'#a7ab90', values:[12100,13100,13600,15200,17800] } ],
+      legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
+    revChart: { max:32000, yTicks:['£32k','£24k','£16k','£8k','£0'], xLabels:['Jan','Feb','Mar','Apr','May'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[19800,21500,22300,24900,29400],main:true,area:true}, {color:'#e8a87c',values:[22000,23000,24000,26000,28000],dash:true}, {color:'#a7ab90',values:[4100,4400,4600,5200,6000],dash:true} ],
+      legend:[ {name:'Revenue Actual',color:'#404935'}, {name:'Revenue Target',color:'#e8a87c'}, {name:'Ad Spend',color:'#a7ab90'} ] },
+    adChart: { max:32000, yTicks:['£32k','£24k','£16k','£8k','£0'], xLabels:['Jan','Feb','Mar','Apr','May'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[19800,21500,22300,24900,29400],main:true,area:true}, {color:'#a7ab90',values:[4100,4400,4600,5200,6000],dash:true} ],
+      legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:77.5,sales:'£85.8k',acos:'18.8%'}, {name:'Sponsored Brands',color:'#6b7160',pct:14.0,sales:'£15.5k',acos:'20.2%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.5,sales:'£9.4k',acos:'23.0%'} ] },
+    sec: {
+      overview: {
+        buyBox: [ {label:'Sport Hydration Mix',pct:96,color:'green'}, {label:'Energy Gel 25pk',pct:95,color:'green'}, {label:'Recovery Powder',pct:94,color:'green'}, {label:'Isotonic Mix 1kg',pct:89,color:'amber'} ],
+        cvr: { val:'10.4%', note:'5-mo avg · 214,600 sessions', sub:'All UK — YTD' }
+      },
+      pnl: {
+        summary: [ {val:'£117,900',lbl:'Gross Revenue',color:'brand'}, {val:'£77,355*',lbl:'Total Costs',color:'red'}, {val:'£40,545*',lbl:'Net Profit',color:'green'} ],
+        margin: { pct:'34.4%*', pctColor:'green', note:'*Estimated · COGS from cost sheet', rows:[ {lbl:'Gross Revenue',val:'£117,900'}, {lbl:'Marketplace Fees',val:'−£15,327*',color:'red'}, {lbl:'Ad Spend',val:'−£24,300',color:'red'}, {lbl:'COGS (est.)',val:'−£37,728*',color:'red'}, {lbl:'Net Profit',val:'£40,545*',color:'green',strong:true} ] },
+        mkt: [ {name:'Amazon UK',flag:'gb',revenue:'£74,300',adspend:'£15,300',net:'£24,519*',netColor:'green',margin:'33.0%*',marginCls:'bg'}, {name:'eBay UK',flag:'gb',revenue:'£16,500',adspend:'£3,250',net:'£6,254*',netColor:'green',margin:'37.9%*',marginCls:'bg'}, {name:'D2C',flag:'gb',revenue:'£27,100',adspend:'£5,750',net:'£9,772*',netColor:'green',margin:'36.1%*',marginCls:'bg'} ],
+        statement: { groups:[
+          { header:'Income', rows:[ {lbl:'Shipped product sales',amount:'£119,900',pct:'101.7%',unit:'£40.37'}, {lbl:'Sales tax',amount:'',pct:'',unit:''}, {lbl:'Refunds',amount:'',pct:'',unit:''}, {lbl:'Reimbursements',amount:'',pct:'',unit:''}, {lbl:'Promotions',amount:'−£3,891',pct:'−3.3%',unit:'−£1.31'}, {lbl:'Other income',amount:'£1,886',pct:'1.6%',unit:'£0.63'}, {lbl:'Net revenue',amount:'£117,900',pct:'100.0%',unit:'£39.70',total:true} ] },
+          { header:'Expenses', rows:[ {lbl:'Advertising',amount:'£24,300',pct:'20.6%',unit:'£8.18'}, {lbl:'Selling fees',amount:'£15,327',pct:'13.0%',unit:'£5.16'}, {lbl:'Fulfilment and shipping',amount:'',pct:'',unit:''}, {lbl:'Cancellations and refunds',amount:'',pct:'',unit:''}, {lbl:'Cost of goods',amount:'£37,728',pct:'32.0%',unit:'£12.70'}, {lbl:'Other expenses',amount:'',pct:'',unit:''}, {lbl:'Total expenses',amount:'£77,355',pct:'65.6%',unit:'£26.05',total:true} ] },
+          { header:'Profit', rows:[ {lbl:'PROFIT',amount:'£40,545',pct:'34.4%',unit:'£13.65',total:true,profit:true}, {lbl:'Profit %',amount:'34.4%',pct:'',unit:'',accent:'green'} ] },
+          { header:'Metrics', rows:[ {lbl:'Estimated payout',amount:'£78,273',pct:'',unit:'£26.35'}, {lbl:'TACOS %',amount:'20.6%',pct:'',unit:''} ] }
+        ] }
+      },
+      products: {
+        kpis: [ {bar:'#404935',lbl:'Top ASIN Rev.',val:'£32,900',dCls:'du',d:'Amazon UK',s:'27.9% of total'}, {bar:'green',lbl:'Orders',val:'2,807',dCls:'df',d:'5-month total',s:'~561/mo'}, {bar:'blue',lbl:'Avg. AoV',val:'£42',dCls:'df',d:'5-month avg',s:'stable'}, {bar:'amber',lbl:'ASP',val:'£28.50',dCls:'df',d:'5-month avg',s:'blended'} ],
+        table: [ {name:'Amazon UK',flag:'gb',revenue:'£74,300',units:'1,840',orders:'1,740',cvr:'12.5%',cvrCls:'bg',aov:'£41.4'}, {name:'eBay UK',flag:'gb',revenue:'£16,500',units:'415',orders:'392',cvr:'9.4%',cvrCls:'ba',aov:'£41.3'}, {name:'D2C',flag:'gb',revenue:'£27,100',units:'715',orders:'675',cvr:'3.0%',cvrCls:'ba',aov:'£40.9'} ]
+      },
+      keywords: {
+        kpis: [ {bar:'#404935',lbl:'Active KWs',val:'198',dCls:'du',d:'▲ 26 YTD',s:'Across all campaigns'}, {bar:'green',lbl:'Avg. CPC',val:'£0.33',dCls:'du',d:'5-month avg',s:'Blended UK'}, {bar:'red',lbl:'High ACOS KWs',val:'10',dCls:'dd',d:'ACOS >30%',s:'Review & pause'}, {bar:'blue',lbl:'Top KW Rev.',val:'£22.7k',dCls:'du',d:'isotonic drink',s:'Amazon UK'} ],
+        table: [ {kw:'isotonic drink',geo:'Amazon UK · SP',match:'Exact',matchCls:'bg',spend:'£1,690',sales:'£22.7k',acos:'7.5%',acosCls:'bg',roas:'13.3×',cpc:'£0.28'}, {kw:'sports hydration powder',geo:'Amazon UK · SP',match:'Exact',matchCls:'bg',spend:'£1,550',sales:'£19.4k',acos:'8.0%',acosCls:'bg',roas:'12.5×',cpc:'£0.30'}, {kw:'energy gel marathon',geo:'Amazon UK · SP',match:'Phrase',matchCls:'bb',spend:'£1,180',sales:'£12.8k',acos:'9.2%',acosCls:'bg',roas:'10.8×',cpc:'£0.34'}, {kw:'electrolyte tablets',geo:'eBay UK · SP',match:'Exact',matchCls:'bg',spend:'£925',sales:'£8.8k',acos:'10.5%',acosCls:'bg',roas:'9.5×',cpc:'£0.26'}, {kw:'recovery protein drink',geo:'D2C · SP',match:'Phrase',matchCls:'bb',spend:'£775',sales:'£7.0k',acos:'11.0%',acosCls:'bg',roas:'9.1×',cpc:'£0.25'} ]
+      },
+      advertising: {
+        metrics: [ {lbl:'Total Spend',val:'£24,300',id:'a-spend'}, {lbl:'Period Budget',val:'£25,500',color:'brand'}, {lbl:'Utilisation',val:'95%',color:'green'}, {lbl:'TACOS',val:'20.6%',color:'amber',id:'a-tacos'}, {lbl:'ROAS',val:'4.85×',id:'a-roas'}, {lbl:'Avg. CPC',val:'£0.33'} ],
+        campaigns: [ {name:'SP — Sport Hydration UK',type:'Sponsored Products',spend:'£8.50k',sales:'£46.2k',acos:'18.4%',acosCls:'bg',roas:'5.4×',cpc:'£0.31',status:'Active',statusCls:'bg'}, {name:'SP — Energy Gel UK',type:'Sponsored Products',spend:'£4.78k',sales:'£24.7k',acos:'19.3%',acosCls:'bg',roas:'5.2×',cpc:'£0.34',status:'Active',statusCls:'bg'}, {name:'SB — Demo Brand UK',type:'Sponsored Brands',spend:'£3.00k',sales:'£14.6k',acos:'20.6%',acosCls:'ba',roas:'4.9×',cpc:'£0.45',status:'Active',statusCls:'bg'}, {name:'SP — Recovery Range UK',type:'Sponsored Products',spend:'£3.48k',sales:'£16.6k',acos:'21.0%',acosCls:'ba',roas:'4.8×',cpc:'£0.33',status:'Active',statusCls:'bg'}, {name:'SD — Display Retargeting',type:'Sponsored Display',spend:'£2.11k',sales:'£8.9k',acos:'23.6%',acosCls:'ba',roas:'4.2×',cpc:'£0.40',status:'Review',statusCls:'ba'} ]
+      }
+    },
   },
   '2025': {
     label: 'Full Year 2025', shortLabel: '2025',
@@ -72,21 +160,67 @@ window.DASHBOARD_DATA = {
     ],
   },
   '12m': {
-    label: '2025 + 2026 YTD', shortLabel: '2025–2026 YTD',
-    rev: '£315,900', revD: 'Actuals only', revC: 'du', revS: '2025: £198,000 · 2026 YTD: £117,900',
-    adSales: '£124,400', adSalesD: 'Combined total', adSalesC: 'df', adSalesS: '39.4% of revenue',
-    tacos: '20.8%', tacosD: 'Blended actuals', tacosC: 'df', tacosS: '2025 peak: Nov 24.8%',
-    roas: '4.80×', roasD: 'Blended avg', roasC: 'du', roasS: '7,433 orders · AOV £42.50',
-    spend: '£65,800', spendD: 'Combined total', spendC: 'df', spendS: '2025: £41,500 · 2026: £24,300',
-    tacosAd: '20.8%', tacosAdD: 'Blended', tacosAdC: 'df', tacosAdS: '2025 peak: Nov 24.8%',
-    roasAd: '4.80×', roasAdD: 'Blended avg', roasAdC: 'du', roasAdS: '£315,900 revenue',
-    aov: '£42.50', aovD: 'Blended avg', aovC: 'df', aovS: '7,433 orders combined',
+    label: 'Last 12 Months', shortLabel: 'Last 12 Months',
+    rev: '£239,900', revD: 'Trailing 12 months', revC: 'du', revS: 'Jun 2025 → May 2026',
+    adSales: '£89,300', adSalesD: '12-month total', adSalesC: 'df', adSalesS: '37.2% of revenue',
+    tacos: '20.4%', tacosD: '12-month blended', tacosC: 'df', tacosS: 'Consistent ~20% TACOS',
+    roas: '4.91×', roasD: '12-month avg', roasC: 'du', roasS: '5,712 orders · AOV £42',
+    spend: '£48,900', spendD: '12-month total', spendC: 'df', spendS: 'Budget £51,500',
+    tacosAd: '20.4%', tacosAdD: '12-month blended', tacosAdC: 'df', tacosAdS: 'On target',
+    roasAd: '4.91×', roasAdD: '12-month avg', roasAdC: 'du', roasAdS: '£239,900 revenue',
+    aov: '£42', aovD: '12-month avg', aovC: 'df', aovS: '5,712 orders total',
     mktRows: [
-      ['Amazon UK','gb','£43,000','£41,400','bg','Combined','£199,000','ba','20.8%'],
-      ['eBay UK','gb','£9,300','£8,850','bg','Combined','£44,200','ba','20.0%'],
-      ['D2C','gb','£16,800','£15,550','bg','Combined','£72,700','ba','21.4%'],
-      ['Total UK',null,'£69,100','£65,800','bg','95% utilised','£315,900','ba','20.8%'],
+      ['Amazon UK','gb','£32,000','£30,800','bg','▼ £1,200 under','£151,100','ba','20.4%'],
+      ['eBay UK','gb','£7,100','£6,850','bg','▼ £250 under','£33,600','ba','20.4%'],
+      ['D2C','gb','£12,400','£11,250','bg','▼ £1,150 under','£55,200','ba','20.4%'],
+      ['Total UK',null,'£51,500','£48,900','bg','95% utilised','£239,900','ba','20.4%'],
     ],
+    revBreakChart: { max: 32000, yTicks: ['£32k','£24k','£16k','£8k','£0'],
+      xLabels: ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'],
+      series: [ { color:'#404935', values:[5200,5400,5600,5800,6400,7800,7000,7700,8400,8700,9700,11600] },
+                { color:'#a7ab90', values:[9800,10100,10400,10700,11600,13700,12500,12100,13100,13600,15200,17800] } ],
+      legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
+    revChart: { max:32000, yTicks:['£32k','£24k','£16k','£8k','£0'], xHighlight:'#404935',
+      xLabels:['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'],
+      series:[ {color:'#404935',values:[15000,15500,16000,16500,18000,21500,19500,19800,21500,22300,24900,29400],main:true,area:true},
+               {color:'#e8a87c',values:[15500,16000,16500,17000,18000,20000,19500,22000,23000,24000,26000,28000],dash:true},
+               {color:'#a7ab90',values:[3050,3150,3250,3350,3700,4400,4000,4100,4400,4600,5200,6000],dash:true} ],
+      legend:[ {name:'Revenue Actual',color:'#404935'}, {name:'Revenue Target',color:'#e8a87c'}, {name:'Ad Spend',color:'#a7ab90'} ] },
+    adChart: { max:32000, yTicks:['£32k','£24k','£16k','£8k','£0'], xHighlight:'#404935',
+      xLabels:['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'],
+      series:[ {color:'#404935',values:[15000,15500,16000,16500,18000,21500,19500,19800,21500,22300,24900,29400],main:true,area:true},
+               {color:'#a7ab90',values:[3050,3150,3250,3350,3700,4400,4000,4100,4400,4600,5200,6000],dash:true} ],
+      legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:79.0,sales:'£176.0k',acos:'19.5%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.0,sales:'£29.0k',acos:'20.8%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.0,sales:'£18.0k',acos:'23.8%'} ] },
+    sec: {
+      overview: {
+        buyBox: [ {label:'Sport Hydration Mix',pct:95,color:'green'}, {label:'Energy Gel 25pk',pct:94,color:'green'}, {label:'Recovery Powder',pct:93,color:'green'}, {label:'Isotonic Mix 1kg',pct:88,color:'amber'} ],
+        cvr: { val:'10.1%', note:'12-mo avg · 472,300 sessions', sub:'All UK — 12 months' }
+      },
+      pnl: {
+        summary: [ {val:'£239,900',lbl:'Gross Revenue',color:'brand'}, {val:'£156,855*',lbl:'Total Costs',color:'red'}, {val:'£83,045*',lbl:'Net Profit',color:'green'} ],
+        margin: { pct:'34.6%*', pctColor:'green', note:'*Estimated · COGS from cost sheet', rows:[ {lbl:'Gross Revenue',val:'£239,900'}, {lbl:'Marketplace Fees',val:'−£31,187*',color:'red'}, {lbl:'Ad Spend',val:'−£48,900',color:'red'}, {lbl:'COGS (est.)',val:'−£76,768*',color:'red'}, {lbl:'Net Profit',val:'£83,045*',color:'green',strong:true} ] },
+        mkt: [ {name:'Amazon UK',flag:'gb',revenue:'£151,100',adspend:'£30,800',net:'£49,863*',netColor:'green',margin:'33.0%*',marginCls:'bg'}, {name:'eBay UK',flag:'gb',revenue:'£33,600',adspend:'£6,850',net:'£12,734*',netColor:'green',margin:'37.9%*',marginCls:'bg'}, {name:'D2C',flag:'gb',revenue:'£55,200',adspend:'£11,250',net:'£20,448*',netColor:'green',margin:'37.0%*',marginCls:'bg'} ],
+        statement: { groups:[
+          { header:'Income', rows:[ {lbl:'Shipped product sales',amount:'£244,000',pct:'101.7%',unit:'£40.40'}, {lbl:'Sales tax',amount:'',pct:'',unit:''}, {lbl:'Refunds',amount:'',pct:'',unit:''}, {lbl:'Reimbursements',amount:'',pct:'',unit:''}, {lbl:'Promotions',amount:'−£7,917',pct:'−3.3%',unit:'−£1.31'}, {lbl:'Other income',amount:'£3,838',pct:'1.6%',unit:'£0.64'}, {lbl:'Net revenue',amount:'£239,900',pct:'100.0%',unit:'£39.72',total:true} ] },
+          { header:'Expenses', rows:[ {lbl:'Advertising',amount:'£48,900',pct:'20.4%',unit:'£8.10'}, {lbl:'Selling fees',amount:'£31,187',pct:'13.0%',unit:'£5.16'}, {lbl:'Fulfilment and shipping',amount:'',pct:'',unit:''}, {lbl:'Cancellations and refunds',amount:'',pct:'',unit:''}, {lbl:'Cost of goods',amount:'£76,768',pct:'32.0%',unit:'£12.71'}, {lbl:'Other expenses',amount:'',pct:'',unit:''}, {lbl:'Total expenses',amount:'£156,855',pct:'65.4%',unit:'£25.97',total:true} ] },
+          { header:'Profit', rows:[ {lbl:'PROFIT',amount:'£83,045',pct:'34.6%',unit:'£13.75',total:true,profit:true}, {lbl:'Profit %',amount:'34.6%',pct:'',unit:'',accent:'green'} ] },
+          { header:'Metrics', rows:[ {lbl:'Estimated payout',amount:'£159,813',pct:'',unit:'£26.46'}, {lbl:'TACOS %',amount:'20.4%',pct:'',unit:''} ] }
+        ] }
+      },
+      products: {
+        kpis: [ {bar:'#404935',lbl:'Top ASIN Rev.',val:'£66,900',dCls:'du',d:'Amazon UK',s:'27.9% of total'}, {bar:'green',lbl:'Orders',val:'5,712',dCls:'df',d:'12-month total',s:'~476/mo'}, {bar:'blue',lbl:'Avg. AoV',val:'£42',dCls:'df',d:'12-month avg',s:'stable'}, {bar:'amber',lbl:'ASP',val:'£28.30',dCls:'df',d:'12-month avg',s:'blended'} ],
+        table: [ {name:'Amazon UK',flag:'gb',revenue:'£151,100',units:'3,740',orders:'3,540',cvr:'12.5%',cvrCls:'bg',aov:'£41.5'}, {name:'eBay UK',flag:'gb',revenue:'£33,600',units:'845',orders:'800',cvr:'9.4%',cvrCls:'ba',aov:'£41.4'}, {name:'D2C',flag:'gb',revenue:'£55,200',units:'1,455',orders:'1,372',cvr:'3.0%',cvrCls:'ba',aov:'£40.9'} ]
+      },
+      keywords: {
+        kpis: [ {bar:'#404935',lbl:'Active KWs',val:'205',dCls:'du',d:'▲ 33 YoY',s:'Across all campaigns'}, {bar:'green',lbl:'Avg. CPC',val:'£0.34',dCls:'df',d:'12-month avg',s:'Blended UK'}, {bar:'red',lbl:'High ACOS KWs',val:'12',dCls:'dd',d:'ACOS >30%',s:'Review & pause'}, {bar:'blue',lbl:'Top KW Rev.',val:'£44.1k',dCls:'du',d:'isotonic drink',s:'Amazon UK'} ],
+        table: [ {kw:'isotonic drink',geo:'Amazon UK · SP',match:'Exact',matchCls:'bg',spend:'£3,300',sales:'£44.1k',acos:'7.5%',acosCls:'bg',roas:'13.3×',cpc:'£0.28'}, {kw:'sports hydration powder',geo:'Amazon UK · SP',match:'Exact',matchCls:'bg',spend:'£3,030',sales:'£37.8k',acos:'8.0%',acosCls:'bg',roas:'12.5×',cpc:'£0.30'}, {kw:'energy gel marathon',geo:'Amazon UK · SP',match:'Phrase',matchCls:'bb',spend:'£2,305',sales:'£24.9k',acos:'9.2%',acosCls:'bg',roas:'10.8×',cpc:'£0.34'}, {kw:'electrolyte tablets',geo:'eBay UK · SP',match:'Exact',matchCls:'bg',spend:'£1,805',sales:'£17.2k',acos:'10.5%',acosCls:'bg',roas:'9.5×',cpc:'£0.26'}, {kw:'recovery protein drink',geo:'D2C · SP',match:'Phrase',matchCls:'bb',spend:'£1,515',sales:'£13.8k',acos:'11.0%',acosCls:'bg',roas:'9.1×',cpc:'£0.25'} ]
+      },
+      advertising: {
+        metrics: [ {lbl:'Total Spend',val:'£48,900',id:'a-spend'}, {lbl:'Period Budget',val:'£51,500',color:'brand'}, {lbl:'Utilisation',val:'95%',color:'green'}, {lbl:'TACOS',val:'20.4%',color:'amber',id:'a-tacos'}, {lbl:'ROAS',val:'4.91×',id:'a-roas'}, {lbl:'Avg. CPC',val:'£0.34'} ],
+        campaigns: [ {name:'SP — Sport Hydration UK',type:'Sponsored Products',spend:'£17.1k',sales:'£92.9k',acos:'18.4%',acosCls:'bg',roas:'5.4×',cpc:'£0.31',status:'Active',statusCls:'bg'}, {name:'SP — Energy Gel UK',type:'Sponsored Products',spend:'£9.62k',sales:'£49.7k',acos:'19.3%',acosCls:'bg',roas:'5.2×',cpc:'£0.34',status:'Active',statusCls:'bg'}, {name:'SB — Demo Brand UK',type:'Sponsored Brands',spend:'£6.03k',sales:'£29.3k',acos:'20.6%',acosCls:'ba',roas:'4.9×',cpc:'£0.45',status:'Active',statusCls:'bg'}, {name:'SP — Recovery Range UK',type:'Sponsored Products',spend:'£7.01k',sales:'£33.4k',acos:'21.0%',acosCls:'ba',roas:'4.8×',cpc:'£0.33',status:'Active',statusCls:'bg'}, {name:'SD — Display Retargeting',type:'Sponsored Display',spend:'£4.24k',sales:'£17.9k',acos:'23.6%',acosCls:'ba',roas:'4.2×',cpc:'£0.40',status:'Review',statusCls:'ba'} ]
+      }
+    },
   },
 },
 
@@ -112,20 +246,13 @@ window.DASHBOARD_DATA = {
           { level: 'muted', title: 'Recovery Range — D2C Launch Pending', sub: 'Awaiting product photography' }
         ]
       },
-      revChart: {
-        max: 32000,
-        yTicks: ['£32k', '£24k', '£16k', '£8k', '£0'],
-        xLabels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-        xHighlight: '#1f2a44',
-        series: [
-          { color: '#1f2a44', values: [19800, 21500, 22300, 24900, 29400], main: true, area: true },
-          { color: '#38bdf8', values: [22000, 23000, 24000, 26000, 28000], dash: true },
-          { color: '#94a3b8', values: [4100, 4400, 4600, 5200, 6000], dash: true }
-        ],
-        legend: [
-          { name: 'Revenue Actual', color: '#1f2a44' },
-          { name: 'Revenue Target', color: '#38bdf8' },
-          { name: 'Ad Spend', color: '#94a3b8' }
+      stockWarn: {
+        badge: '1 OOS · 3 low',
+        items: [
+          { level: 'red',   title: 'Isotonic Mix 1kg — OOS Amazon UK', sub: 'B0CXUK004 · 0 units · suppressed' },
+          { level: 'amber', title: 'Energy Gel — Low eBay UK', sub: '88 units · ~9 days cover' },
+          { level: 'amber', title: 'Isotonic Mix 1kg — Low Amazon UK', sub: '150 units · ~11 days cover' },
+          { level: 'amber', title: 'Sport Hydration — Low D2C', sub: '120 units · ~12 days cover' }
         ]
       },
       buyBox: [
@@ -141,12 +268,8 @@ window.DASHBOARD_DATA = {
     pnl: {
       summary: [
         { val: '£29,400',  lbl: 'Gross Revenue', color: 'brand' },
-        { val: '£19,220*', lbl: 'Total Costs',   color: 'red' },
-        { val: '£10,180*', lbl: 'Net Profit',    color: 'green' }
-      ],
-      revBreak: [
-        { lbl: 'Organic Sales', pct: 61, val: '£17,800', color: '#1f2a44' },
-        { lbl: 'Ad-Attributed', pct: 39, val: '£11,600', color: '#94a3b8' }
+        { val: '£19,216*', lbl: 'Total Costs',   color: 'red' },
+        { val: '£10,184*', lbl: 'Net Profit',    color: 'green' }
       ],
       margin: {
         pct: '34.6%*', pctColor: 'green', note: '*Estimated · COGS from cost sheet',
@@ -158,11 +281,39 @@ window.DASHBOARD_DATA = {
           { lbl: 'Net Profit',       val: '£10,184*', color: 'green', strong: true }
         ]
       },
-      costs: [
-        { lbl: 'COGS (est.)',   pct: 100, val: '£9,408*', color: '#1f2a44' },
-        { lbl: 'Marketplace Fee', pct: 40, val: '£3,808*', color: '#1f2a44' },
-        { lbl: 'Ad Spend',      pct: 64,  val: '£6,000',  color: '#2563eb' }
-      ],
+      // Full P&L statement (replaces the Expenses-by-Category card for this client).
+      // Reconciles to the summary/margin: Net revenue £29,400 − £19,216 costs = £10,184 profit.
+      // Per-unit column = amount / 760 May orders. MCP will populate this live later.
+      statement: {
+        groups: [
+          { header: 'Income', rows: [
+            { lbl: 'Shipped product sales', amount: '£29,900', pct: '101.7%', unit: '£39.34' },
+            { lbl: 'Sales tax', amount: '', pct: '', unit: '' },
+            { lbl: 'Refunds', amount: '', pct: '', unit: '' },
+            { lbl: 'Reimbursements', amount: '', pct: '', unit: '' },
+            { lbl: 'Promotions', amount: '−£980', pct: '−3.3%', unit: '−£1.29' },
+            { lbl: 'Other income', amount: '£480', pct: '1.6%', unit: '£0.63' },
+            { lbl: 'Net revenue', amount: '£29,400', pct: '100.0%', unit: '£38.68', total: true }
+          ] },
+          { header: 'Expenses', rows: [
+            { lbl: 'Advertising', amount: '£6,000', pct: '20.4%', unit: '£7.89' },
+            { lbl: 'Selling fees', amount: '£3,808', pct: '13.0%', unit: '£5.01' },
+            { lbl: 'Fulfilment and shipping', amount: '', pct: '', unit: '' },
+            { lbl: 'Cancellations and refunds', amount: '', pct: '', unit: '' },
+            { lbl: 'Cost of goods', amount: '£9,408', pct: '32.0%', unit: '£12.38' },
+            { lbl: 'Other expenses', amount: '', pct: '', unit: '' },
+            { lbl: 'Total expenses', amount: '£19,216', pct: '65.4%', unit: '£25.28', total: true }
+          ] },
+          { header: 'Profit', rows: [
+            { lbl: 'PROFIT', amount: '£10,184', pct: '34.6%', unit: '£13.40', total: true, profit: true },
+            { lbl: 'Profit %', amount: '34.6%', pct: '', unit: '', accent: 'green' }
+          ] },
+          { header: 'Metrics', rows: [
+            { lbl: 'Estimated payout', amount: '£19,592', pct: '', unit: '£25.78' },
+            { lbl: 'TACOS %', amount: '20.4%', pct: '', unit: '' }
+          ] }
+        ]
+      },
       mkt: [
         { name: 'Amazon UK', flag: 'gb', revenue: '£18,400', adspend: '£3,680', net: '£6,072*', netColor: 'green', margin: '33.0%*', marginCls: 'bg' },
         { name: 'eBay UK',   flag: 'gb', revenue: '£4,200',  adspend: '£760',   net: '£1,592*', netColor: 'green', margin: '37.9%*', marginCls: 'bg' },
@@ -171,20 +322,6 @@ window.DASHBOARD_DATA = {
     },
 
     advertising: {
-      adChart: {
-        max: 32000,
-        yTicks: ['£32k', '£24k', '£16k', '£8k', '£0'],
-        xLabels: ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'],
-        xHighlight: '#1f2a44',
-        series: [
-          { color: '#15803d', values: [23000, 19800, 21500, 22300, 24900, 29400], main: true, area: true },
-          { color: '#1f2a44', values: [4000, 4100, 4400, 4600, 5200, 6000], dash: true }
-        ],
-        legend: [
-          { name: 'Revenue', color: '#15803d' },
-          { name: 'Ad Spend', color: '#1f2a44' }
-        ]
-      },
       metrics: [
         { lbl: 'Total Spend',    val: '£6,000', id: 'a-spend' },
         { lbl: 'Monthly Budget', val: '£6,400', color: 'brand' },
@@ -251,7 +388,7 @@ window.DASHBOARD_DATA = {
 
     products: {
       kpis: [
-        { bar: '#1f2a44', lbl: 'Top ASIN Rev.', val: '£8,200',  dCls: 'du', d: 'Amazon UK',    s: '27.9% of total' },
+        { bar: '#404935', lbl: 'Top ASIN Rev.', val: '£8,200',  dCls: 'du', d: 'Amazon UK',    s: '27.9% of total' },
         { bar: 'green',   lbl: 'Orders',        val: '717',     dCls: 'du', d: '▲ 18.0% MoM',  s: '608 orders Apr' },
         { bar: 'blue',    lbl: 'Avg. AoV',      val: '£41',     dCls: 'du', d: '▲ £1 MoM',     s: '£40 Apr' },
         { bar: 'amber',   lbl: 'ASP',           val: '£28.40',  dCls: 'du', d: '▲ £0.20 MoM',  s: '£28.20 Apr' }
@@ -265,7 +402,7 @@ window.DASHBOARD_DATA = {
 
     keywords: {
       kpis: [
-        { bar: '#1f2a44', lbl: 'Active KWs',     val: '186',   dCls: 'du', d: '▲ 14 MoM',     s: 'Across all campaigns' },
+        { bar: '#404935', lbl: 'Active KWs',     val: '186',   dCls: 'du', d: '▲ 14 MoM',     s: 'Across all campaigns' },
         { bar: 'green',   lbl: 'Avg. CPC',       val: '£0.33', dCls: 'du', d: '▼ £0.02 MoM',  s: 'Blended UK' },
         { bar: 'red',     lbl: 'High ACOS KWs',  val: '8',     dCls: 'dd', d: 'ACOS >30%',     s: 'Review & pause' },
         { bar: 'blue',    lbl: 'Top KW Rev.',    val: '£5.1k', dCls: 'du', d: 'isotonic drink',s: 'Amazon UK' }
