@@ -220,7 +220,23 @@ function loadLiveData() {
 }
 
 function applyLive(j) {
-  if (!j || j.status !== 'ok' || !j.dateRanges) return;   // keep static values from data.js
+  if (!j) return;
+  var ds = CONFIG.dataSource || {};
+
+  // Sections-overlay mode (AMACX): MerchantSpring data is baked in data.js; the proxy supplies
+  // ONLY the live sheet-controlled sections (ad budgets/forecast, overview tasks/flags). Merge
+  // those into DATA.sections without disturbing the baked MerchantSpring sections, then re-render.
+  if (ds.overlay === 'sections') {
+    if (j.sections && !j.sections.error && DATA.sections) {
+      mergeSections(DATA.sections, j.sections);
+      if (typeof renderSections === 'function') renderSections();
+      switchDateRange(currentPeriod);
+    }
+    return;
+  }
+
+  // Legacy dateRanges overlay (sheet-based KPIs).
+  if (j.status !== 'ok' || !j.dateRanges) return;   // keep static values from data.js
   Object.keys(j.dateRanges).forEach(function (k) {
     if (!dateRanges[k]) { dateRanges[k] = j.dateRanges[k]; return; }
     var live = j.dateRanges[k];
@@ -231,6 +247,19 @@ function applyLive(j) {
     });
   });
   switchDateRange(currentPeriod);
+}
+
+// Overlay add's keys onto base, one level deep (so e.g. advertising.budgets merges in without
+// dropping the baked advertising.campaigns). Used for the live sheet-controlled sections.
+function mergeSections(base, add) {
+  if (!base || !add) return;
+  Object.keys(add).forEach(function (k) {
+    if (base[k] && typeof base[k] === 'object' && typeof add[k] === 'object' && !Array.isArray(add[k])) {
+      Object.keys(add[k]).forEach(function (kk) { base[k][kk] = add[k][kk]; });
+    } else {
+      base[k] = add[k];
+    }
+  });
 }
 
 // ---------- Phase 2: opt-in section rendering ----------

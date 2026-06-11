@@ -113,7 +113,13 @@ window.DASHBOARD_DATA = {
         {flag:'es',label:'Spain',pct:93,valText:'93.1%',color:'green'},
         {flag:'it',label:'Italy',pct:94,valText:'94.3%',color:'green'}
       ],
-      cvr: { val:'4.4%', note:'recent month · 5,543 sessions', sub:'All EU · session conversion' }
+      cvr: { val:'4.4%', note:'recent month · 5,543 sessions', sub:'All EU · session conversion' },
+      stockWarn: { badge:'6 OOS SKUs', items:[
+        {level:'red',title:'Fast Bar Lemon — OOS all markets',sub:'B086XB1N46 · since 14 May'},
+        {level:'red',title:'Hydro Tabs Orange — DE/FR/ES',sub:'B0CCJW62HZ · since 3 Jun'},
+        {level:'amber',title:'Energy Drink Lemon 1kg — FR/ES/IT',sub:'B0GS21WT66 · since 15 Apr'},
+        {level:'amber',title:'Turbo Drink Watermelon — FR/ES/IT',sub:'B0GSWHPXQV · since 5 Jun'}
+      ] }
     },
     pnl: {
       fixedLabel: 'Last 12 months (Jun 2025–May 2026) · financial basis',

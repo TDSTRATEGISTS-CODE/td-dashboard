@@ -67,11 +67,13 @@ window.DASHBOARD_CONFIG = {
   },
 
   // ---- Live data source ----
-  // type: 'static' (data.js only) | 'appsScript' (Google Sheets proxy) | 'merchantSpring' (Phase 2+)
-  // STATIC: data.js is now a MerchantSpring+budget snapshot built by tools/build-amacx-data.ps1.
-  // Re-run that generator to refresh actuals. (appsScript URL kept for reference / the budget pull.)
+  // MerchantSpring data is baked into data.js (snapshot, via tools/build-amacx-data.ps1).
+  // overlay:'sections' = fetch the Apps Script proxy on load and merge ONLY the live sheet-controlled
+  // sections (ad budgets/forecast, overview tasks/flags) onto the baked sections — the MerchantSpring
+  // sections + dateRanges are NOT touched. So Sheet edits to budgets/scope show on reload.
   dataSource: {
-    type: 'static',
+    type: 'appsScript',
+    overlay: 'sections',
     url: 'https://script.google.com/macros/s/AKfycbygyf0FT3jCCBKHle-IJuiocBebz5dn2squMMdza8v4ViLP8Vn3l9fK94CxJogqf5WDdw/exec'
   }
 };

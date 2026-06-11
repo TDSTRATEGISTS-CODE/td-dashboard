@@ -296,7 +296,13 @@ $ovJs = @"
         {flag:'es',label:'Spain',pct:93,valText:'93.1%',color:'green'},
         {flag:'it',label:'Italy',pct:94,valText:'94.3%',color:'green'}
       ],
-      cvr: { val:'4.4%', note:'recent month ${DOT} 5,543 sessions', sub:'All EU ${DOT} session conversion' }
+      cvr: { val:'4.4%', note:'recent month ${DOT} 5,543 sessions', sub:'All EU ${DOT} session conversion' },
+      stockWarn: { badge:'6 OOS SKUs', items:[
+        {level:'red',title:'Fast Bar Lemon ${EMD} OOS all markets',sub:'B086XB1N46 ${DOT} since 14 May'},
+        {level:'red',title:'Hydro Tabs Orange ${EMD} DE/FR/ES',sub:'B0CCJW62HZ ${DOT} since 3 Jun'},
+        {level:'amber',title:'Energy Drink Lemon 1kg ${EMD} FR/ES/IT',sub:'B0GS21WT66 ${DOT} since 15 Apr'},
+        {level:'amber',title:'Turbo Drink Watermelon ${EMD} FR/ES/IT',sub:'B0GSWHPXQV ${DOT} since 5 Jun'}
+      ] }
     }
 "@
 $footer = "`n  },`n  sections: {`n    overview: $ovJs,`n    pnl: $pnlJs,`n    advertising: $advJs,`n    inventory: $invJs,`n    products: $prodJs`n  }`n};`n"
