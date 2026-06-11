@@ -19,46 +19,49 @@ $OutFile = Join-Path $PSScriptRoot '..\clients\amacx\data.js'
 $EUR=[char]0x20AC; $DOT=[char]0x00B7; $ND=[char]0x2013; $EMD=[char]0x2014; $UP=[char]0x25B2; $DN=[char]0x25BC; $MUL=[char]0x00D7
 
 # ---------------- MerchantSpring actuals (clean monthly series) ----------------
+# sales = GROSS / inc-VAT (includeTax:true) — re-pulled 2026-06-11 to match Seller Central. units/orders/adSpend
+# unchanged; adSales refreshed (Apr-26 attribution settled higher). Clean interval=M series, NOT single-month.
 $M = @{
   DE = @{
-    sales   = @(352.99,674.56,1115.94,1372.32,2748.47,3035.00,4527.28,4836.32,3364.72,1458.53,1095.79,896.57,2028.63,1077.44,1797.40,2098.74,1948.26)
+    sales   = @(399.86,717.81,1180.18,1467.06,2919.53,3237.85,4835.34,5180.57,3597.35,1563.41,1170.27,946.24,2154.35,1150.25,1913.67,2240.07,2094.59)
     units   = @(15,26,39,50,91,106,154,169,115,50,39,35,72,38,59,70,66)
     orders  = @(15,24,39,48,83,97,143,155,108,47,37,27,61,36,53,62,62)
     adSpend = @(0,0,175.99,370.74,296.90,755.81,1495.07,1588.14,776.39,625.25,300.69,54.99,143.76,82.10,402.12,642.66,531.75)
-    adSales = @(0,0,320.06,762.16,1203.74,1578.14,2917.88,2808.71,1968.47,946.73,490.89,663.49,919.27,377.35,1121.66,1164.93,1223.68)
+    adSales = @(0,0,320.06,762.16,1203.74,1578.14,2917.88,2808.71,1968.47,946.73,490.89,663.49,919.27,377.35,1149.65,1963.87,1223.68)
   }
   FR = @{
-    sales   = @(0,0,28.39,0,368.74,109.49,909.84,1049.06,713.49,533.77,329.35,486.40,540.22,481.90,824.21,1500.81,2090.61)
+    sales   = @(0,0,29.95,0,388.55,115.68,955.12,1103.77,750.26,561.77,347.13,511.77,569.04,503.23,868.14,1577.44,2201.05)
     units   = @(0,0,1,0,13,4,33,37,24,17,11,16,20,18,28,47,68)
     orders  = @(0,0,1,0,13,4,33,33,19,15,10,15,18,18,26,46,63)
     adSpend = @(0,0,0,10.09,278.04,129.58,387.33,314.50,255.50,181.95,95.90,19.28,58.35,30.67,172.97,477.07,586.36)
-    adSales = @(0,0,0,28.39,155.97,47.20,460.73,648.92,189.20,227.12,91.80,160.81,243.09,214.23,225.22,729.43,1154.60)
+    adSales = @(0,0,0,28.39,155.97,47.20,460.73,648.92,189.20,227.12,91.80,160.81,243.09,214.23,225.22,1034.22,1154.60)
   }
   ES = @{
-    sales   = @(0,29.31,0,85.91,72.55,471.95,585.90,664.40,937.03,528.47,536.40,632.61,320.31,562.77,945.11,1470.69,1948.28)
+    sales   = @(0,36.05,0,102.25,79.07,548.20,648.62,731.29,1021.48,583.23,588.84,693.44,351.85,616.90,1034.02,1630.37,2166.81)
     units   = @(0,1,0,3,3,16,21,26,37,19,19,24,13,20,33,52,68)
     orders  = @(0,1,0,3,3,15,18,24,36,18,18,23,12,19,30,50,63)
     adSpend = @(0,0,0,0,0,160.99,150.39,193.43,290.79,306.03,104.82,27.11,21.48,46.29,229.31,404.01,601.87)
-    adSales = @(0,0,0,0,0,55.37,157.02,429.09,422.28,333.12,249.61,247.79,77.10,222.38,456.61,619.22,1077.32)
+    adSales = @(0,0,0,0,0,55.37,157.02,429.09,422.28,333.12,249.61,247.79,77.10,222.38,456.61,904.24,1077.32)
   }
   IT = @{
-    sales   = @(0,52.60,81.60,182.42,306.77,570.35,907.73,1178.26,1100.61,721.62,960.09,790.45,795.97,1211.86,1052.18,1434.89,2191.17)
+    sales   = @(0,57.85,89.75,200.65,336.71,620.03,995.44,1290.47,1202.05,791.09,1053.21,865.74,853.25,1328.87,1144.99,1574.68,2392.84)
     units   = @(0,2,3,6,11,21,33,43,38,24,33,28,28,40,35,46,67)
     orders  = @(0,2,3,6,11,19,33,41,38,24,32,27,23,37,33,41,58)
     adSpend = @(0,0,0,0,333.76,187.44,324.77,427.44,303.09,216.26,139.28,58.99,52.71,65.04,201.99,484.38,586.79)
-    adSales = @(0,0,0,0,135.23,345.75,611.85,881.57,543.61,255.06,541.71,413.01,320.37,480.10,487.50,446.61,1290.91)
+    adSales = @(0,0,0,0,135.23,345.75,611.85,881.57,543.61,255.06,541.71,413.01,320.37,480.10,487.50,706.22,1290.91)
   }
 }
 $MARKETS = 'DE','FR','ES','IT'         # NLD pending launch — excluded
 $FLAG = @{ DE='de'; FR='fr'; ES='es'; IT='it' }
 
 # ---------------- Sheet budgets (from the Apps Script proxy) ----------------
+# Synced to the live sheet (Apps Script proxy) 2026-06-11. 2025 matched; may/3m/6m/12m were stale.
 $BUD = @{
-  may   = @{ DE=1200;  FR=500;  ES=350;  IT=450  }
-  '3m'  = @{ DE=2450;  FR=1350; ES=950;  IT=1200 }
-  '6m'  = @{ DE=3300;  FR=1850; ES=1300; IT=1800 }
+  may   = @{ DE=1200;  FR=550;  ES=450;  IT=500  }
+  '3m'  = @{ DE=2450;  FR=1400; ES=1150; IT=1250 }
+  '6m'  = @{ DE=3300;  FR=1900; ES=1500; IT=1850 }
   '2025'= @{ DE=12680; FR=2400; ES=1300; IT=2500 }
-  '12m' = @{ DE=14500; FR=3850; ES=2600; IT=4150 }   # trailing-12 (Jun25-May26) per-market ad budgets
+  '12m' = @{ DE=14500; FR=3900; ES=2800; IT=4200 }   # trailing-12 (Jun25-May26) = Jun-Dec25 + new 6m
 }
 
 # ---------------- Period -> month indices ----------------
@@ -80,6 +83,9 @@ function MoM($cur,$prev){ if($prev -le 0){return $EMD}; $p=(($cur-$prev)/$prev)*
 function TacosBadge($t){ if($t -le 0){'bb'} elseif($t -lt 19){'bg'} elseif($t -le 27){'ba'} else {'br'} }
 function MonShort($i){ @('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec')[$i % 12] }
 function JStr($s){ if($null -eq $s){'null'} else { "'" + ([string]$s).Replace("'","\'") + "'" } }
+# Trend-chart series helpers (trailing window): rounded monthly values + monthly TACOS%.
+function NumArr($arr,$idx){ ($idx | ForEach-Object { [string][math]::Round([double]$arr[$_]) }) -join ',' }
+function TacosArr($salesArr,$spendArr,$idx){ ($idx | ForEach-Object { $s=[double]$salesArr[$_]; $sp=[double]$spendArr[$_]; $t= if($s){[math]::Round(($sp/$s)*100,1)}else{0}; [string]$t }) -join ',' }
 
 # EU monthly totals (sum of 4 markets)
 $EU = @{ sales=@(); units=@(); orders=@(); adSpend=@(); adSales=@() }
@@ -93,6 +99,43 @@ for($i=0;$i -lt 17;$i++){
 
 # Campaign-mix pie (fixed trailing-12, by spend share; SD spends but barely converts).
 $mixJs = "{ slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'${EUR}28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'${EUR}4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'${EUR}0.0k',acos:'n/a'} ] }"
+
+# Per-market KPI fields — same maths/format as the EU cards above, computed for ONE market so the
+# sidebar market filter can overlay the headline KPIs (Overview + Advertising) with that market's
+# numbers instead of the EU total. Returns an ordered hashtable keyed by the data.js KPI field names.
+function MarketKpi($sales,$adSpend,$adSales,$units,$orders,$idx,$prior,$pk){
+  $rev=Sum $sales $idx; $spend=Sum $adSpend $idx; $u=Sum $units $idx; $o=Sum $orders $idx; $as=Sum $adSales $idx
+  $tacos= if($rev){($spend/$rev)*100}else{0}
+  $roas = if($spend){$rev/$spend}else{0}
+  $aov  = if($o){$rev/$o}else{0}
+  $h=[ordered]@{}
+  $h.rev=Money $rev; $h.adSales=Money $as; $h.tacos=Pct1 $tacos; $h.roas=RoasF $roas; $h.spend=Money $spend; $h.aov=AovF $aov
+  $h.tacosAd=Pct1 $tacos; $h.roasAd=RoasF $roas
+  $h.revC='du'; $h.adSalesC='df'; $h.tacosC='df'; $h.roasC='df'; $h.spendC='df'; $h.aovC='df'; $h.tacosAdC='df'; $h.roasAdC='df'
+  $h.tacosS='Target <20%'; $h.roasS=''; $h.roasAdS=(Money $rev)+' revenue'; $h.aovD=''; $h.aovS=''
+  $h.adSalesS= if($rev){(Pct1 (($as/$rev)*100))+' of revenue'}else{''}
+  if($pk -eq 'may'){
+    $pm=MonShort 3
+    $pRev=[double]$sales[$prior]; $pSpend=[double]$adSpend[$prior]; $pAdSal=[double]$adSales[$prior]
+    $pTacos= if($pRev){($pSpend/$pRev)*100}else{0}; $pRoas= if($pSpend){$pRev/$pSpend}else{0}
+    $h.revD=(MoM $rev $pRev)+' MoM'; $h.revC= if($rev -ge $pRev){'du'}else{'dd'}; $h.revS='vs '+(Money $pRev)+" $pm"
+    $h.spendD=(MoM $spend $pSpend)+' MoM'; $h.spendS='vs '+(Money $pSpend)+" $pm"
+    $ppd=$tacos-$pTacos; $tA= if($ppd -le 0){$DN}else{$UP}
+    $h.tacosD="$tA "+('{0:N1}' -f [math]::Abs($ppd))+"pp vs $pm"; $h.tacosC= if($ppd -le 0){'du'}else{'dd'}
+    $h.tacosAdD=$h.tacosD; $h.tacosAdC=$h.tacosC
+    $rd=$roas-$pRoas; $rA= if($rd -ge 0){$UP}else{$DN}
+    $h.roasD="$rA "+('{0:N2}' -f [math]::Abs($rd))+$MUL+" vs $pm"; $h.roasC= if($rd -ge 0){'du'}else{'dd'}
+    $h.roasAdD=$h.roasD; $h.roasAdC=$h.roasC
+    $h.roasS=('{0:N0}' -f $u)+" units $DOT AOV "+(AovF $aov)
+    $h.aovS=('{0:N0}' -f $o)+' orders '+(MonShort 4)
+    $h.adSalesD=(MoM $as $pAdSal)+' MoM'; $h.adSalesC= if($as -ge $pAdSal){'du'}else{'dd'}
+  } else {
+    $desc=@{ '3m'='3-month actuals'; '6m'='5-month actuals'; '2025'='Full year actuals'; '12m'='Trailing 12 months' }[$pk]
+    $h.revD=$desc; $h.revS=''; $h.spendD=$desc; $h.spendS=''; $h.tacosD=''; $h.tacosAdD=''
+    $h.roasD=''; $h.roasAdD=''; $h.adSalesD=$desc
+  }
+  return $h
+}
 
 $jsPeriods = @()
 $summary = @()
@@ -146,6 +189,15 @@ foreach($pk in $PERIODS.Keys){
 
   $rowsJs=($rows | ForEach-Object { '['+(($_ | ForEach-Object { JStr $_ }) -join ',')+']' }) -join ",`n      "
 
+  # Per-market KPI overlay (de/fr/es/it) — read by app.js applyMarketKpis when a market is selected.
+  $mkpis=@()
+  foreach($mk in $MARKETS){
+    $k = MarketKpi $M[$mk].sales $M[$mk].adSpend $M[$mk].adSales $M[$mk].units $M[$mk].orders $idx $def.prior $pk
+    $fields = ($k.GetEnumerator() | ForEach-Object { "$($_.Key):'" + (([string]$_.Value).Replace('\','\\').Replace("'","\'")) + "'" }) -join ', '
+    $mkpis += "      $($FLAG[$mk]): { $fields }"
+  }
+  $marketKpisJs = "{`n" + ($mkpis -join ",`n") + "`n    }"
+
   $obj=@"
   '$pk': {
     label: '$($def.label)', shortLabel: '$($def.short)',
@@ -160,6 +212,7 @@ foreach($pk in $PERIODS.Keys){
     mktRows: [
       $rowsJs
     ],
+    marketKpis: $marketKpisJs,
     campaignMix: $mixJs,
   }
 "@
@@ -286,6 +339,13 @@ $prodJs = @"
         {name:'France',flag:'fr',revenue:'${EUR}8,801',units:'298',orders:'199',cvr:'7.8%',cvrCls:'bg',aov:'${EUR}44.23'},
         {name:'Spain',flag:'es',revenue:'${EUR}8,728',units:'317',orders:'214',cvr:'5.8%',cvrCls:'ba',aov:'${EUR}40.79'},
         {name:'Italy',flag:'it',revenue:'${EUR}11,967',units:'406',orders:'308',cvr:'3.6%',cvrCls:'ba',aov:'${EUR}38.85'}
+      ],
+      groups: [
+        {name:'Energy Gels',sales:'${EUR}19,760',units:'705',pct:'34%',oosRate:'0%',oosCls:'bg'},
+        {name:'Energy Bars',sales:'${EUR}17,170',units:'625',pct:'30%',oosRate:'6%',oosCls:'bg'},
+        {name:'Drinks &amp; Powders',sales:'${EUR}8,730',units:'315',pct:'15%',oosRate:'57%',oosCls:'br'},
+        {name:'Recovery &amp; Protein',sales:'${EUR}6,835',units:'140',pct:'12%',oosRate:'0%',oosCls:'bg'},
+        {name:'Hydration Tabs',sales:'${EUR}4,940',units:'200',pct:'9%',oosRate:'33%',oosCls:'ba'}
       ]
     }
 "@
@@ -308,7 +368,20 @@ $ovJs = @"
       ] }
     }
 "@
-$footer = "`n  },`n  sections: {`n    overview: $ovJs,`n    pnl: $pnlJs,`n    advertising: $advJs,`n    inventory: $invJs,`n    products: $prodJs`n  }`n};`n"
+# ---- sections.charts: trailing-6-month trend series (Dec 2025 - May 2026), EU + per market. ----
+# Drives the Revenue Trend (monthly revenue) and Spend vs TACOS (monthly ad spend + TACOS%) cards.
+# app.js renderMarketCharts() picks the series for the selected market; 'all' = EU (sum of markets).
+$cidx = 11..16
+$monLabels = ($cidx | ForEach-Object { "'" + (MonShort $_) + "'" }) -join ','
+$chartsJs = @"
+{
+      months: [$monLabels],
+      rev: { all:[$(NumArr $EU.sales $cidx)], de:[$(NumArr $M.DE.sales $cidx)], fr:[$(NumArr $M.FR.sales $cidx)], es:[$(NumArr $M.ES.sales $cidx)], it:[$(NumArr $M.IT.sales $cidx)] },
+      adSpend: { all:[$(NumArr $EU.adSpend $cidx)], de:[$(NumArr $M.DE.adSpend $cidx)], fr:[$(NumArr $M.FR.adSpend $cidx)], es:[$(NumArr $M.ES.adSpend $cidx)], it:[$(NumArr $M.IT.adSpend $cidx)] },
+      adTacos: { all:[$(TacosArr $EU.sales $EU.adSpend $cidx)], de:[$(TacosArr $M.DE.sales $M.DE.adSpend $cidx)], fr:[$(TacosArr $M.FR.sales $M.FR.adSpend $cidx)], es:[$(TacosArr $M.ES.sales $M.ES.adSpend $cidx)], it:[$(TacosArr $M.IT.sales $M.IT.adSpend $cidx)] }
+    }
+"@
+$footer = "`n  },`n  sections: {`n    overview: $ovJs,`n    pnl: $pnlJs,`n    advertising: $advJs,`n    inventory: $invJs,`n    products: $prodJs,`n    charts: $chartsJs`n  }`n};`n"
 $content=$header+"`n"+($jsPeriods -join ",`n")+$footer
 [IO.File]::WriteAllText($OutFile, $content, (New-Object System.Text.UTF8Encoding($false)))
 Write-Host ("WROTE {0} ({1} chars)`n" -f $OutFile, $content.Length)

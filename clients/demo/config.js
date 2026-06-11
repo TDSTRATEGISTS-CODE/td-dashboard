@@ -17,7 +17,7 @@ window.DASHBOARD_CONFIG = {
     currencyIcon: '£',                         // P&L nav icon (€ → £)
     footer: {
       cadence: 'Updated Monthly',
-      next: 'Next: 5 July 2026',
+      autoNext: true,            // always the 5th of next month (computed at load)
       managedBy: 'Managed by TD Strategists'
     }
   },

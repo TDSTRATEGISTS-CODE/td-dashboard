@@ -314,7 +314,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
     <div class="g21 fade">
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Revenue Trend</div><div class="card-sub">Total vs Target &mdash; <span class="dr-chart-sub">Jan&ndash;May 2026</span></div></div></div>
+        <div class="card-hdr"><div><div class="card-ttl">Revenue Trend</div><div class="card-sub">Monthly revenue &middot; last 6 months</div></div></div>
         <div class="card-body" style="padding:16px 16px 10px;">
           <svg class="lc" id="chart-rev" viewBox="0 0 440 160">
             <line x1="40" y1="15"  x2="440" y2="15"  stroke="#e4e2dc" stroke-width="1"/>
@@ -504,7 +504,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   <!-- ========== PAGE: AMAZON P&L (upsell) ========== -->
   <div class="page-content" id="page-amazonpnl">
     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:62vh;gap:20px;padding:40px 24px;">
-      <div style="width:68px;height:68px;border-radius:18px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 6px 20px rgba(0,0,0,.08);">&#128274;</div>
+      <div style="width:68px;height:68px;border-radius:18px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 6px 20px rgba(0,0,0,.10);">&#128274;</div>
       <div style="font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-.4px;color:var(--brand);">Amazon P&amp;L</div>
       <div style="font-size:15px;color:var(--muted);max-width:470px;line-height:1.6;">Full income &amp; expenses statement, net margins, per-channel P&amp;L and product-level profitability &mdash; straight from your Amazon settlement data.</div>
       <div style="margin-top:8px;font-family:var(--display);font-size:18px;font-weight:700;color:#fff;background:var(--green);border:1px solid var(--green);border-radius:12px;padding:16px 32px;box-shadow:0 4px 14px rgba(0,0,0,.10);">Available with Advanced Subscription</div>
@@ -526,7 +526,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
     <div class="g21 fade">
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Spend vs TACOS Trend</div><div class="card-sub"><span class="dr-chart-sub">6-month view</span></div></div></div>
+        <div class="card-hdr"><div><div class="card-ttl">Spend vs TACOS Trend</div><div class="card-sub">Monthly ad spend &amp; TACOS &middot; last 6 months</div></div></div>
         <div class="card-body" style="padding:16px 16px 10px;">
           <svg class="lc" id="chart-adtrend" viewBox="0 0 440 150">
             <line x1="0" y1="15" x2="440" y2="15" stroke="#e4e2dc" stroke-width="1"/>
@@ -648,7 +648,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
     <div class="fade">
       <div class="sec-lbl">Campaign Performance</div>
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Active Campaigns</div><div class="card-sub"><span class="dr-period">May 2026</span> &mdash; <span class="cfg-scope">All EU</span></div></div><select class="js-mkt-select"><option>All Markets</option><option>DE</option><option>ES</option><option>IT</option><option>FR</option></select></div>
+        <div class="card-hdr"><div><div class="card-ttl">Active Campaigns</div><div class="card-sub"><span class="dr-period">May 2026</span> &mdash; <span class="cfg-scope">All EU</span></div></div></div>
         <div class="tscroll"><table class="dtable">
           <thead><tr><th>Campaign</th><th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th><th>CPC</th><th>Status</th></tr></thead>
           <tbody id="sec-campaigns">
@@ -676,7 +676,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
     </div>
     <div class="g21 fade">
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Stock by ASIN</div><div class="card-sub"><span class="cfg-scope">All marketplaces</span> &mdash; current</div></div><select class="js-mkt-select"><option>All Markets</option><option>DE</option><option>ES</option><option>IT</option><option>FR</option></select></div>
+        <div class="card-hdr"><div><div class="card-ttl">Stock by ASIN</div><div class="card-sub"><span class="cfg-scope">All marketplaces</span> &mdash; current</div></div></div>
         <div class="inv-list" id="sec-inv-stock">
           <div class="inv-row"><div class="sdot dg"></div><div class="inv-info"><div class="inv-name">Sport Drink Mix &mdash; DE</div><div class="inv-note">B0CX1234DE &middot; Healthy</div></div><div class="inv-r"><div class="inv-u">842 units</div><div class="inv-d">~34 days</div></div></div>
           <div class="inv-row"><div class="sdot dg"></div><div class="inv-info"><div class="inv-name">Sport Drink Mix &mdash; ES</div><div class="inv-note">B0CX1234ES &middot; Healthy</div></div><div class="inv-r"><div class="inv-u">421 units</div><div class="inv-d">~28 days</div></div></div>
@@ -724,7 +724,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
     </div>
     <div class="fade">
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Performance by Market</div><div class="card-sub"><span class="dr-period">May 2026</span></div></div><select class="js-mkt-select"><option>All Markets</option><option>DE</option><option>ES</option><option>IT</option><option>FR</option></select></div>
+        <div class="card-hdr"><div><div class="card-ttl">Performance by Market</div><div class="card-sub"><span class="dr-period">May 2026</span></div></div></div>
         <div class="tscroll"><table class="dtable">
           <thead><tr><th>Market</th><th>Revenue</th><th>Units</th><th>Orders</th><th>CVR</th><th>AoV</th></tr></thead>
           <tbody id="sec-prod-table">
@@ -734,6 +734,15 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
             <tr><td><img src="https://flagcdn.com/16x12/it.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="IT"> Italy</td><td>&#8364;2,393</td><td>69</td><td>43</td><td><span class="badge ba">8.7%</span></td><td>&#8364;55.7</td></tr>
             <tr><td><img src="https://flagcdn.com/16x12/nl.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="NL"> Netherlands</td><td>&#8364;0</td><td>0</td><td>0</td><td><span class="badge bb">Launch</span></td><td>&mdash;</td></tr>
           </tbody>
+        </table></div>
+      </div>
+    </div>
+    <div class="fade" id="sec-prod-groups-card" style="display:none;">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Sales by Product Group</div><div class="card-sub">Trailing 12 months &middot; <span class="cfg-scope">All EU</span></div></div></div>
+        <div class="tscroll"><table class="dtable">
+          <thead><tr><th>Group</th><th>Sales</th><th>Units</th><th>% Sales</th><th>OOS Rate</th></tr></thead>
+          <tbody id="sec-prod-groups"></tbody>
         </table></div>
       </div>
     </div>
@@ -752,7 +761,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
     </div>
     <div class="fade">
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Top Performing Keywords</div><div class="card-sub">By revenue &mdash; <span class="dr-period">May 2026</span></div></div><select class="js-mkt-select"><option>All Markets</option><option>DE</option><option>ES</option><option>IT</option><option>FR</option></select></div>
+        <div class="card-hdr"><div><div class="card-ttl">Top Performing Keywords</div><div class="card-sub">By revenue &mdash; <span class="dr-period">May 2026</span></div></div></div>
         <div class="tscroll"><table class="dtable">
           <thead><tr><th>Keyword</th><th>Match</th><th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th><th>CPC</th></tr></thead>
           <tbody id="sec-kw-table">

@@ -43,15 +43,43 @@ window.switchMarket = function (k, el) {
   currentMarket = k;
   document.querySelectorAll('.mkt-btn').forEach(function (b) { b.classList.remove('active'); });
   if (el) el.classList.add('active');
-  var m = MKT[k];
-  var d = dateRanges[currentPeriod];
-  if (m) {
-    set('tb-title', m.t);
-    document.getElementById('tb-mkt').textContent = m.m + (d ? ' · ' + d.label : '');
-  }
-  applyMarketFilter();
+  if (MKT[k]) set('tb-title', MKT[k].t);
+  // Repaint the whole period for this market: EU KPIs + per-market overlay + row filter + topbar.
+  switchDateRange(currentPeriod);
   closeSidebar();
 };
+
+// Overlay the headline KPI cards (Overview + Advertising) with the selected market's numbers.
+// Runs at the end of switchDateRange after the EU cards are painted; a no-op for 'All EU' or for
+// markets without a marketKpis entry, so those keep the EU totals. Data: dateRanges[p].marketKpis.
+function applyMarketKpis(d) {
+  if (!d || !d.marketKpis) return;
+  var mk = (currentMarket && currentMarket !== 'all') ? d.marketKpis[currentMarket] : null;
+  if (!mk) return;
+  set('k-rev', mk.rev);    set('k-rev-d', mk.revD);    cls('k-rev-d', mk.revC);    set('k-rev-s', mk.revS);
+  set('k-ad', mk.adSales); set('k-ad-d', mk.adSalesD); cls('k-ad-d', mk.adSalesC); set('k-ad-s', mk.adSalesS);
+  set('k-tacos', mk.tacos); set('k-tacos-d', mk.tacosD); cls('k-tacos-d', mk.tacosC); set('k-tacos-s', mk.tacosS);
+  set('k-margin', mk.aov); set('k-margin-d', mk.aovD); cls('k-margin-d', mk.aovC); set('k-margin-s', mk.aovS);
+  var adKpis = document.querySelectorAll('#page-advertising .kpi');
+  if (adKpis.length >= 4) {
+    var kd = [
+      [mk.spend, mk.spendD, mk.spendC, mk.spendS],
+      [mk.tacosAd, mk.tacosAdD, mk.tacosAdC, mk.tacosAdS],
+      [mk.roasAd, mk.roasAdD, mk.roasAdC, mk.roasAdS],
+      [mk.aov, mk.aovD, mk.aovC, mk.aovS]
+    ];
+    adKpis.forEach(function (kpi, i) {
+      if (!kd[i]) return;
+      var ve = kpi.querySelector('.kpi-val'), de = kpi.querySelector('.kpi-d'), se = kpi.querySelector('.kpi-s');
+      if (ve) ve.textContent = kd[i][0];
+      if (de) { de.textContent = kd[i][1]; de.className = 'kpi-d ' + kd[i][2]; }
+      if (se) se.textContent = kd[i][3];
+    });
+  }
+  // NOTE: the "Ad Metrics" detail card (a-spend/a-tacos/a-roas + Budget/Utilisation/CPC) is left on
+  // the EU total on purpose — it is explicitly labelled "All EU" and its budget/utilisation/CPC have
+  // no clean per-market source, so overlaying only spend/tacos/roas would make it a mixed card.
+}
 
 // ---------- market filter (sidebar chips filter every per-market table/list across all tabs) ----------
 // "Filter rows only": picking a market hides the rows in the per-market tables/lists that don't
@@ -241,6 +269,8 @@ window.switchDateRange = function (val) {
   // Period-aware charts + section content (clients with sections + per-period data).
   if (DATA.sections) renderPeriodSections(d);
 
+  applyMarketKpis(d);    // overlay headline KPI cards with the selected market (no-op for All EU)
+  renderMarketCharts();  // repaint the two trend charts for the selected market (EU for All EU)
   updateMarketChips(d);
   applyMarketFilter();   // re-filter the freshly-rendered per-market rows to the current market
 };
@@ -274,7 +304,15 @@ function applyConfig() {
   var f = document.getElementById('cfg-footer');
   if (f && C.client.footer) {
     var ft = C.client.footer;
-    f.innerHTML = [ft.cadence, ft.next].filter(Boolean).join('<br>') + (ft.managedBy ? '<br><br>' + ft.managedBy : '');
+    var nextLine = ft.next;
+    if (ft.autoNext) {   // always "the Nth of next month" (default 5th), computed at load
+      var nd = ft.autoNextDay || 5;
+      var nx = new Date();
+      nx = new Date(nx.getFullYear(), nx.getMonth() + 1, nd);
+      var MON = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      nextLine = 'Next: ' + nd + ' ' + MON[nx.getMonth()] + ' ' + nx.getFullYear();
+    }
+    f.innerHTML = [ft.cadence, nextLine].filter(Boolean).join('<br>') + (ft.managedBy ? '<br><br>' + ft.managedBy : '');
   }
 
   var sel = document.getElementById('date-range-select');
@@ -634,6 +672,16 @@ function renderProdTable(arr) {
   }));
 }
 
+function renderProdGroups(arr) {
+  var card = el('sec-prod-groups-card');
+  if (!arr || !arr.length) { if (card) card.style.display = 'none'; return; }
+  renderRowsTable('sec-prod-groups', arr.map(function (g) {
+    return '<tr><td>' + g.name + '</td><td>' + g.sales + '</td><td>' + g.units +
+      '</td><td>' + g.pct + '</td><td><span class="badge ' + (g.oosCls || 'bg') + '">' + g.oosRate + '</span></td></tr>';
+  }));
+  if (card) card.style.display = '';
+}
+
 function renderKwTable(arr) {
   if (!arr) return;
   renderRowsTable('sec-kw-table', arr.map(function (k) {
@@ -644,28 +692,35 @@ function renderKwTable(arr) {
 }
 
 // Generic auto-scaling multi-line chart. Replaces hand-computed SVG coordinates.
-// spec = { max, yTicks:[top→bottom], xLabels:[...], xHighlight?, series:[{values,color,dash,area,main}], legend:[{name,color}] }
+// spec = { max, yTicks:[top→bottom], xLabels:[...], xHighlight?, series:[{values,color,dash,area,main,axis}], legend:[{name,color}] }
+// Optional secondary (right) axis: set spec.maxRight + spec.yTicksRight and mark a series with axis:'right'.
 function renderChart(id, legId, spec) {
   var svg = el(id); if (!svg || !spec) return;
-  var W = 440, H = 160, PADL = 46, PADR = 14, PADT = 18, PADB = 22;
+  var hasRight = spec.maxRight != null;
+  var W = 440, H = 160, PADL = 46, PADR = hasRight ? 42 : 14, PADT = 18, PADB = 22;
   var plotW = W - PADL - PADR, plotH = H - PADT - PADB, baseY = PADT + plotH;
   var n = spec.xLabels.length;
   function X(i) { return PADL + (n <= 1 ? 0 : plotW * i / (n - 1)); }
   function Y(v) { return PADT + plotH * (1 - v / spec.max); }
+  function Yr(v) { return PADT + plotH * (1 - v / spec.maxRight); }
   var p = [], T = spec.yTicks.length, k, gy;
   for (k = 0; k < T; k++) {
     gy = PADT + plotH * k / (T - 1);
     p.push('<line x1="' + PADL + '" y1="' + gy.toFixed(1) + '" x2="' + (W - PADR) + '" y2="' + gy.toFixed(1) + '" stroke="#e4e2dc" stroke-width="1"/>');
     p.push('<text x="' + (PADL - 6) + '" y="' + (gy + 3).toFixed(1) + '" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="end">' + spec.yTicks[k] + '</text>');
+    if (hasRight && spec.yTicksRight && spec.yTicksRight[k] != null) {
+      p.push('<text x="' + (W - PADR + 6) + '" y="' + (gy + 3).toFixed(1) + '" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="start">' + spec.yTicksRight[k] + '</text>');
+    }
   }
   spec.series.forEach(function (s) {
-    var pts = s.values.map(function (v, i) { return X(i).toFixed(1) + ',' + Y(v).toFixed(1); });
+    var yf = (s.axis === 'right') ? Yr : Y;
+    var pts = s.values.map(function (v, i) { return X(i).toFixed(1) + ',' + yf(v).toFixed(1); });
     if (s.area) {
       p.push('<polygon points="' + pts.join(' ') + ' ' + X(n - 1).toFixed(1) + ',' + baseY + ' ' + X(0).toFixed(1) + ',' + baseY + '" fill="' + s.color + '" opacity="0.08"/>');
     }
     p.push('<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + s.color + '" stroke-width="' + (s.main ? 1.8 : 1.4) + '" stroke-linecap="round" stroke-linejoin="round"' + (s.dash ? ' stroke-dasharray="5 3"' : '') + '/>');
     s.values.forEach(function (v, i) {
-      p.push('<circle cx="' + X(i).toFixed(1) + '" cy="' + Y(v).toFixed(1) + '" r="' + (s.main ? 2.5 : 1.8) + '" fill="' + s.color + '" stroke="#fff" stroke-width="1.3"/>');
+      p.push('<circle cx="' + X(i).toFixed(1) + '" cy="' + yf(v).toFixed(1) + '" r="' + (s.main ? 2.5 : 1.8) + '" fill="' + s.color + '" stroke="#fff" stroke-width="1.3"/>');
     });
   });
   spec.xLabels.forEach(function (lb, i) {
@@ -678,6 +733,48 @@ function renderChart(id, legId, spec) {
     var lg = el(legId);
     if (lg) lg.innerHTML = spec.legend.map(function (L) { return '<div class="leg-i"><div class="leg-dot" style="background:' + L.color + '"></div>' + L.name + '</div>'; }).join('');
   }
+}
+
+// --- trend-chart axis helpers ---
+function niceMax(v) {
+  if (!(v > 0)) return 1;
+  var mag = Math.pow(10, Math.floor(Math.log10(v))), f = v / mag, steps = [1, 1.5, 2, 3, 4, 5, 6, 8, 10];
+  for (var i = 0; i < steps.length; i++) { if (f <= steps[i]) return steps[i] * mag; }
+  return 10 * mag;
+}
+function axisTicks(max, fmt) { var T = 5, a = []; for (var k = 0; k < T; k++) a.push(fmt(max * (1 - k / (T - 1)))); return a; }
+function moneyK(v) { v = Math.round(v); if (v >= 1000) { var t = v / 1000; return '€' + (t === Math.floor(t) ? t : t.toFixed(1)) + 'k'; } return '€' + v; }
+function arrMax(a) { return Math.max.apply(null, (a && a.length ? a : [1])); }
+
+// Render the two trend cards (Revenue Trend, Spend vs TACOS) for the current market, or EU for
+// 'All EU'. Data: DATA.sections.charts (trailing-6-month series, EU + per market, from the generator).
+function renderMarketCharts() {
+  var C = DATA.sections && DATA.sections.charts;
+  if (!C || !C.rev) return;                                  // only AMACX ships sections.charts
+  var m = (currentMarket && currentMarket !== 'all' && C.rev[currentMarket]) ? currentMarket : 'all';
+  var months = C.months;
+
+  var rev = C.rev[m] || [];
+  var rMax = niceMax(arrMax(rev));
+  renderChart('chart-rev', 'chart-rev-leg', {
+    max: rMax, yTicks: axisTicks(rMax, moneyK), xLabels: months, xHighlight: '#404935',
+    series: [{ values: rev, color: '#404935', area: true, main: true }],
+    legend: [{ name: 'Revenue', color: '#404935' }]
+  });
+
+  var sp = C.adSpend[m] || [], ta = C.adTacos[m] || [];
+  var spMax = niceMax(arrMax(sp));
+  var taMax = Math.max(40, Math.ceil(arrMax(ta) / 20) * 20);
+  renderChart('chart-adtrend', 'chart-adtrend-leg', {
+    max: spMax, yTicks: axisTicks(spMax, moneyK), xHighlight: '#404935',
+    maxRight: taMax, yTicksRight: axisTicks(taMax, function (v) { return Math.round(v) + '%'; }),
+    xLabels: months,
+    series: [
+      { values: sp, color: '#404935', area: true, main: true },
+      { values: ta, color: '#2d6a4f', axis: 'right' }
+    ],
+    legend: [{ name: 'Ad Spend', color: '#404935' }, { name: 'TACOS', color: '#2d6a4f' }]
+  });
 }
 
 // Vertical stacked bar chart. series[0] sits at the bottom of each bar.
@@ -904,6 +1001,7 @@ function renderPeriodSections(d) {
 
   var prk = pick(spr.kpis, pr.kpis); if (prk) renderKpis('sec-prod-kpis', prk);
   var prt = pick(spr.table, pr.table); if (prt) renderProdTable(prt);
+  renderProdGroups(pick(spr.groups, pr.groups));
 
   var kwk = pick(skw.kpis, kw.kpis); if (kwk) renderKpis('sec-kw-kpis', kwk);
   var kwt = pick(skw.table, kw.table); if (kwt) renderKwTable(kwt);

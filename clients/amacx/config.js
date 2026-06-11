@@ -14,8 +14,8 @@ window.DASHBOARD_CONFIG = {
     logoBlend: '',                          // TD SVG is light-on-dark — no blend trick needed
     logoWidth: '110px',                     // square TD emblem — keep compact in the sidebar
     footer: {
-      cadence: 'Updated monthly',
-      next: 'Next: 1 Jun 2026',
+      cadence: 'Updated Monthly',
+      autoNext: true,            // always the 5th of next month (computed at load)
       managedBy: 'Managed by TD Strategists'
     }
   },
