@@ -58,7 +58,7 @@ $BUD = @{
   '3m'  = @{ DE=2450;  FR=1350; ES=950;  IT=1200 }
   '6m'  = @{ DE=3300;  FR=1850; ES=1300; IT=1800 }
   '2025'= @{ DE=12680; FR=2400; ES=1300; IT=2500 }
-  '12m' = @{ DE=15980; FR=4250; ES=2600; IT=4300 }
+  '12m' = @{ DE=14500; FR=3850; ES=2600; IT=4150 }   # trailing-12 (Jun25-May26) per-market ad budgets
 }
 
 # ---------------- Period -> month indices ----------------
@@ -67,7 +67,7 @@ $PERIODS = [ordered]@{
   '3m'   = @{ idx=@(14,15,16);       prior=$null; label="Mar${ND}May 2026";        short="Mar${ND}May 2026" }
   '6m'   = @{ idx=@(12,13,14,15,16); prior=$null; label="Jan${ND}May 2026 (YTD)";  short="Jan${ND}May 2026" }
   '2025' = @{ idx=@(0..11);          prior=$null; label='Full Year 2025';          short='FY 2025' }
-  '12m'  = @{ idx=@(0..16);          prior=$null; label='2025 + 2026 YTD';         short="2025${ND}26 YTD" }
+  '12m'  = @{ idx=@(5..16);          prior=$null; label='Last 12 Months';          short='Last 12 Months' }
 }
 
 # ---------------- helpers ----------------
@@ -123,7 +123,7 @@ foreach($pk in $PERIODS.Keys){
     $adSalesD=(MoM $adSal $prevAdSal)+' MoM'; $adSalesC= if($adSal -ge $prevAdSal){'du'}else{'dd'}
     $adSalesS=(Pct1 (($adSal/$rev)*100))+' of revenue'
   } else {
-    $desc=@{ '3m'='3-month actuals'; '6m'='5-month actuals'; '2025'='Full year actuals'; '12m'='2025 + 2026 actuals' }[$pk]
+    $desc=@{ '3m'='3-month actuals'; '6m'='5-month actuals'; '2025'='Full year actuals'; '12m'='Trailing 12 months' }[$pk]
     $revD=$desc; $spendD=$desc; $adSalesD=$desc; $adSalesS=(Pct1 (($adSal/$rev)*100))+' of revenue'
   }
 

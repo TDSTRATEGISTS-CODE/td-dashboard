@@ -30,12 +30,12 @@ window.DASHBOARD_CONFIG = {
   hiddenPages: ['keywords'],
 
   // ---- Date-range selector (drives the topbar dropdown) ----
+  // Matches the demo's generic 4-option set. ('2025' still exists in data.js but is not selectable.)
   dateRangeOptions: [
-    { value: 'may',  label: 'May 2026' },
-    { value: '3m',   label: 'Last 3 Months (Mar–May)' },
-    { value: '6m',   label: 'Jan–May 2026 (YTD)' },
-    { value: '2025', label: 'Full Year 2025' },
-    { value: '12m',  label: '2025 + 2026 YTD' }
+    { value: 'may', label: 'Last Month' },
+    { value: '3m',  label: 'Last 3 Months' },
+    { value: '6m',  label: 'Year to Date' },
+    { value: '12m', label: 'Last 12 Months' }
   ],
 
   // ---- Markets (sidebar chips, market switching, topbar labels) ----

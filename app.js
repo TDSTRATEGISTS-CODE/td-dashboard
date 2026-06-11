@@ -396,6 +396,8 @@ function renderPnlMkt(arr) {
 
 function renderAdBudgets(spec) {
   if (!spec || !spec.rows) return;
+  if (spec.headers) { for (var h = 0; h < spec.headers.length; h++) { var th = el('ad-bud-h' + h); if (th) th.textContent = spec.headers[h]; } }
+  if (spec.subLabel) { var sb = el('ad-bud-sub'); if (sb) sb.textContent = spec.subLabel; }
   renderRowsTable('sec-ad-budgets', spec.rows.map(function (r) {
     var rs = r.total ? ' style="background:var(--surface2);"' : '';
     var name = '<td' + (r.total ? ' style="font-weight:700;"' : '') + '>' + (r.total ? '' : flagTag(r.flag, r.name)) + r.name + '</td>';
