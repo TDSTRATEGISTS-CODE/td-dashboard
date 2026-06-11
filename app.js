@@ -156,6 +156,16 @@ function applyConfig() {
     sel.value = currentPeriod;
   }
 
+  // Hide any pages this client doesn't use (e.g. AMACX keywords — no MerchantSpring source yet).
+  (C.hiddenPages || []).forEach(function (key) {
+    var pg = document.getElementById('page-' + key);
+    if (pg) pg.style.display = 'none';
+    document.querySelectorAll('.nav-item, .ptab').forEach(function (el) {
+      var oc = el.getAttribute('onclick') || '';
+      if (oc.indexOf("'" + key + "'") !== -1) el.style.display = 'none';
+    });
+  });
+
   buildMarketChips();
 }
 
@@ -637,6 +647,11 @@ function renderSections() {
     var sw = el('sec-statement-wrap'); if (sw) sw.style.display = '';
     var cw = el('sec-costs-wrap'); if (cw) cw.style.display = 'none';
   } else if (pl.costs) renderBars('sec-pnl-costs', pl.costs);
+  // Client took over the P&L page but supplied no portfolio data → hide the Product Profitability
+  // row rather than show the static placeholder products. (AMACX: no 12-mo product-P&L source.)
+  if ((pl.statement || pl.summary || pl.margin || pl.mkt) && !pl.portfolio) {
+    var pfr = el('sec-portfolio-row'); if (pfr) pfr.style.display = 'none';
+  }
 
   var ad = S.advertising || {};
   if (ad.budgets) renderAdBudgets(ad.budgets);                            // forward-looking, not period-bound
@@ -646,6 +661,8 @@ function renderSections() {
   if (iv.kpis) renderKpis('sec-inv-kpis', iv.kpis);
   if (iv.stock) renderStock(iv.stock);
   if (iv.dispatch) renderProgress('sec-inv-dispatch', iv.dispatch.bars, iv.dispatch.note);
+  // No FBM dispatch-rate source → hide the card when a client supplies inventory but no dispatch data.
+  else if (iv.kpis) { var dc = el('sec-inv-dispatch-card'); if (dc) dc.style.display = 'none'; }
   if (iv.restock) renderRestock(iv.restock);
 
   // Sections-level chart fallbacks (used only if a client supplies them statically, not per-period).
@@ -680,12 +697,17 @@ function renderPeriodSections(d) {
   var pmkt = pick(spl.mkt, pl.mkt); if (pmkt) renderPnlMkt(pmkt);
   var pst = pick(spl.statement, pl.statement);
   if (pst) {
-    // comparison = the next-longer period in the date-range selector (1m→3m→6m→12m).
-    var opts = CONFIG.dateRangeOptions || [], idx = -1, i;
-    for (i = 0; i < opts.length; i++) { if (opts[i].value === currentPeriod) { idx = i; break; } }
-    var cmpD = (idx >= 0 && idx + 1 < opts.length) ? dateRanges[opts[idx + 1].value] : null;
-    var cmpSt = cmpD ? ((cmpD.sec && cmpD.sec.pnl && cmpD.sec.pnl.statement) || (S.pnl && S.pnl.statement)) : null;
-    renderStatement(pst, cmpSt, d.shortLabel, cmpD ? cmpD.shortLabel : null);
+    if (pst.fixedLabel) {
+      // Fixed view (e.g. AMACX trailing-12 P&L) — same regardless of the period selector, no comparison column.
+      renderStatement(pst, null, pst.fixedLabel, null);
+    } else {
+      // comparison = the next-longer period in the date-range selector (1m→3m→6m→12m).
+      var opts = CONFIG.dateRangeOptions || [], idx = -1, i;
+      for (i = 0; i < opts.length; i++) { if (opts[i].value === currentPeriod) { idx = i; break; } }
+      var cmpD = (idx >= 0 && idx + 1 < opts.length) ? dateRanges[opts[idx + 1].value] : null;
+      var cmpSt = cmpD ? ((cmpD.sec && cmpD.sec.pnl && cmpD.sec.pnl.statement) || (S.pnl && S.pnl.statement)) : null;
+      renderStatement(pst, cmpSt, d.shortLabel, cmpD ? cmpD.shortLabel : null);
+    }
   }
 
   var prk = pick(spr.kpis, pr.kpis); if (prk) renderKpis('sec-prod-kpis', prk);

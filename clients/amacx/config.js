@@ -24,6 +24,11 @@ window.DASHBOARD_CONFIG = {
   defaultPeriod: 'may',
   defaultMarket: 'all',
 
+  // Pages to hide for this client (nav item + tab + page).
+  // 'keywords' dropped for now — MerchantSpring's MCP exposes no keyword-level data;
+  // its web UI has a Keywords report, so revisit (CSV export or API) to build it back.
+  hiddenPages: ['keywords'],
+
   // ---- Date-range selector (drives the topbar dropdown) ----
   dateRangeOptions: [
     { value: 'may',  label: 'May 2026' },
@@ -63,8 +68,10 @@ window.DASHBOARD_CONFIG = {
 
   // ---- Live data source ----
   // type: 'static' (data.js only) | 'appsScript' (Google Sheets proxy) | 'merchantSpring' (Phase 2+)
+  // STATIC: data.js is now a MerchantSpring+budget snapshot built by tools/build-amacx-data.ps1.
+  // Re-run that generator to refresh actuals. (appsScript URL kept for reference / the budget pull.)
   dataSource: {
-    type: 'appsScript',
+    type: 'static',
     url: 'https://script.google.com/macros/s/AKfycbygyf0FT3jCCBKHle-IJuiocBebz5dn2squMMdza8v4ViLP8Vn3l9fK94CxJogqf5WDdw/exec'
   }
 };

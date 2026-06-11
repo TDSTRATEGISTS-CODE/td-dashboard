@@ -1,0 +1,306 @@
+<#
+  build-amacx-data.ps1  —  AMACX snapshot generator (on-demand)
+  --------------------------------------------------------------
+  Merges MerchantSpring ACTUALS (sales/spend/units/orders/adSales, by month, by market)
+  with the SHEET BUDGETS (which MerchantSpring doesn't have) and writes
+  clients/amacx/data.js as a static snapshot (dataSource.type must be 'static').
+
+  Monthly actuals below are from MerchantSpring getSalesByPeriod (interval=M, the CLEAN
+  series — NOT the single-month call, which double-counts ad/traffic metrics).
+  Pulled 2026-06 for Jan 2025 -> May 2026. Re-run after refreshing these arrays.
+
+  Months index: 0=Jan2025 .. 11=Dec2025, 12=Jan2026 .. 16=May2026
+#>
+
+$ErrorActionPreference = 'Stop'
+$OutFile = Join-Path $PSScriptRoot '..\clients\amacx\data.js'
+
+# non-ASCII as char codes so PS 5.1 script-reading can't mangle them
+$EUR=[char]0x20AC; $DOT=[char]0x00B7; $ND=[char]0x2013; $EMD=[char]0x2014; $UP=[char]0x25B2; $DN=[char]0x25BC; $MUL=[char]0x00D7
+
+# ---------------- MerchantSpring actuals (clean monthly series) ----------------
+$M = @{
+  DE = @{
+    sales   = @(352.99,674.56,1115.94,1372.32,2748.47,3035.00,4527.28,4836.32,3364.72,1458.53,1095.79,896.57,2028.63,1077.44,1797.40,2098.74,1948.26)
+    units   = @(15,26,39,50,91,106,154,169,115,50,39,35,72,38,59,70,66)
+    orders  = @(15,24,39,48,83,97,143,155,108,47,37,27,61,36,53,62,62)
+    adSpend = @(0,0,175.99,370.74,296.90,755.81,1495.07,1588.14,776.39,625.25,300.69,54.99,143.76,82.10,402.12,642.66,531.75)
+    adSales = @(0,0,320.06,762.16,1203.74,1578.14,2917.88,2808.71,1968.47,946.73,490.89,663.49,919.27,377.35,1121.66,1164.93,1223.68)
+  }
+  FR = @{
+    sales   = @(0,0,28.39,0,368.74,109.49,909.84,1049.06,713.49,533.77,329.35,486.40,540.22,481.90,824.21,1500.81,2090.61)
+    units   = @(0,0,1,0,13,4,33,37,24,17,11,16,20,18,28,47,68)
+    orders  = @(0,0,1,0,13,4,33,33,19,15,10,15,18,18,26,46,63)
+    adSpend = @(0,0,0,10.09,278.04,129.58,387.33,314.50,255.50,181.95,95.90,19.28,58.35,30.67,172.97,477.07,586.36)
+    adSales = @(0,0,0,28.39,155.97,47.20,460.73,648.92,189.20,227.12,91.80,160.81,243.09,214.23,225.22,729.43,1154.60)
+  }
+  ES = @{
+    sales   = @(0,29.31,0,85.91,72.55,471.95,585.90,664.40,937.03,528.47,536.40,632.61,320.31,562.77,945.11,1470.69,1948.28)
+    units   = @(0,1,0,3,3,16,21,26,37,19,19,24,13,20,33,52,68)
+    orders  = @(0,1,0,3,3,15,18,24,36,18,18,23,12,19,30,50,63)
+    adSpend = @(0,0,0,0,0,160.99,150.39,193.43,290.79,306.03,104.82,27.11,21.48,46.29,229.31,404.01,601.87)
+    adSales = @(0,0,0,0,0,55.37,157.02,429.09,422.28,333.12,249.61,247.79,77.10,222.38,456.61,619.22,1077.32)
+  }
+  IT = @{
+    sales   = @(0,52.60,81.60,182.42,306.77,570.35,907.73,1178.26,1100.61,721.62,960.09,790.45,795.97,1211.86,1052.18,1434.89,2191.17)
+    units   = @(0,2,3,6,11,21,33,43,38,24,33,28,28,40,35,46,67)
+    orders  = @(0,2,3,6,11,19,33,41,38,24,32,27,23,37,33,41,58)
+    adSpend = @(0,0,0,0,333.76,187.44,324.77,427.44,303.09,216.26,139.28,58.99,52.71,65.04,201.99,484.38,586.79)
+    adSales = @(0,0,0,0,135.23,345.75,611.85,881.57,543.61,255.06,541.71,413.01,320.37,480.10,487.50,446.61,1290.91)
+  }
+}
+$MARKETS = 'DE','FR','ES','IT'         # NLD pending launch — excluded
+$FLAG = @{ DE='de'; FR='fr'; ES='es'; IT='it' }
+
+# ---------------- Sheet budgets (from the Apps Script proxy) ----------------
+$BUD = @{
+  may   = @{ DE=1200;  FR=500;  ES=350;  IT=450  }
+  '3m'  = @{ DE=2450;  FR=1350; ES=950;  IT=1200 }
+  '6m'  = @{ DE=3300;  FR=1850; ES=1300; IT=1800 }
+  '2025'= @{ DE=12680; FR=2400; ES=1300; IT=2500 }
+  '12m' = @{ DE=15980; FR=4250; ES=2600; IT=4300 }
+}
+
+# ---------------- Period -> month indices ----------------
+$PERIODS = [ordered]@{
+  may    = @{ idx=@(16);             prior=15;    label='May 2026';                short='May 2026' }
+  '3m'   = @{ idx=@(14,15,16);       prior=$null; label="Mar${ND}May 2026";        short="Mar${ND}May 2026" }
+  '6m'   = @{ idx=@(12,13,14,15,16); prior=$null; label="Jan${ND}May 2026 (YTD)";  short="Jan${ND}May 2026" }
+  '2025' = @{ idx=@(0..11);          prior=$null; label='Full Year 2025';          short='FY 2025' }
+  '12m'  = @{ idx=@(0..16);          prior=$null; label='2025 + 2026 YTD';         short="2025${ND}26 YTD" }
+}
+
+# ---------------- helpers ----------------
+function Sum($arr,$idx){ $s=0.0; foreach($i in $idx){ $s+=[double]$arr[$i] }; $s }
+function Money($n){ $EUR + ('{0:N0}' -f [math]::Round([double]$n)) }
+function Pct1($n){ ('{0:N1}' -f [double]$n) + '%' }
+function RoasF($n){ ('{0:N2}' -f [double]$n) + $MUL }
+function AovF($n){ $EUR + ('{0:N2}' -f [double]$n) }
+function MoM($cur,$prev){ if($prev -le 0){return $EMD}; $p=(($cur-$prev)/$prev)*100; $a=if($p -ge 0){$UP}else{$DN}; "$a " + ('{0:N1}' -f [math]::Abs($p)) + '%' }
+function TacosBadge($t){ if($t -le 0){'bb'} elseif($t -lt 19){'bg'} elseif($t -le 27){'ba'} else {'br'} }
+function MonShort($i){ @('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec')[$i % 12] }
+function JStr($s){ if($null -eq $s){'null'} else { "'" + ([string]$s).Replace("'","\'") + "'" } }
+
+# EU monthly totals (sum of 4 markets)
+$EU = @{ sales=@(); units=@(); orders=@(); adSpend=@(); adSales=@() }
+for($i=0;$i -lt 17;$i++){
+  $EU.sales   += ($MARKETS | ForEach-Object { [double]$M[$_].sales[$i] }   | Measure-Object -Sum).Sum
+  $EU.units   += ($MARKETS | ForEach-Object { [double]$M[$_].units[$i] }   | Measure-Object -Sum).Sum
+  $EU.orders  += ($MARKETS | ForEach-Object { [double]$M[$_].orders[$i] }  | Measure-Object -Sum).Sum
+  $EU.adSpend += ($MARKETS | ForEach-Object { [double]$M[$_].adSpend[$i] } | Measure-Object -Sum).Sum
+  $EU.adSales += ($MARKETS | ForEach-Object { [double]$M[$_].adSales[$i] } | Measure-Object -Sum).Sum
+}
+
+# Campaign-mix pie (fixed trailing-12, by spend share; SD spends but barely converts).
+$mixJs = "{ slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'${EUR}28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'${EUR}4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'${EUR}0.0k',acos:'n/a'} ] }"
+
+$jsPeriods = @()
+$summary = @()
+
+foreach($pk in $PERIODS.Keys){
+  $def = $PERIODS[$pk]; $idx = $def.idx
+
+  $rev=Sum $EU.sales $idx; $spend=Sum $EU.adSpend $idx; $units=Sum $EU.units $idx
+  $orders=Sum $EU.orders $idx; $adSal=Sum $EU.adSales $idx
+  $tacos= if($rev){($spend/$rev)*100}else{0}
+  $roas = if($spend){$rev/$spend}else{0}
+  $aov  = if($orders){$rev/$orders}else{0}
+
+  $revD='';$revC='du';$revS='';$spendD='';$spendC='df';$spendS='';$tacosD='';$tacosC='df';$roasD='';$roasC='df';$roasS='';$aovS='';$adSalesD='';$adSalesC='df';$adSalesS=''
+  if($pk -eq 'may'){
+    $pr=$def.prior; $pm=MonShort 3
+    $prevRev=$EU.sales[$pr]; $prevSpend=$EU.adSpend[$pr]; $prevAdSal=$EU.adSales[$pr]
+    $prevTacos= if($prevRev){($prevSpend/$prevRev)*100}else{0}
+    $prevRoas = if($prevSpend){$prevRev/$prevSpend}else{0}
+    $revD=(MoM $rev $prevRev)+' MoM'; $revC= if($rev -ge $prevRev){'du'}else{'dd'}; $revS='vs '+(Money $prevRev)+" $pm"
+    $spendD=(MoM $spend $prevSpend)+' MoM'; $spendS='vs '+(Money $prevSpend)+" $pm"
+    $ppd=$tacos-$prevTacos; $tA= if($ppd -le 0){$DN}else{$UP}
+    $tacosD="$tA "+('{0:N1}' -f [math]::Abs($ppd))+"pp vs $pm"; $tacosC= if($ppd -le 0){'du'}else{'dd'}
+    $rd=$roas-$prevRoas; $rA= if($rd -ge 0){$UP}else{$DN}
+    $roasD="$rA "+('{0:N2}' -f [math]::Abs($rd))+$MUL+" vs $pm"; $roasC= if($rd -ge 0){'du'}else{'dd'}
+    $roasS=('{0:N0}' -f $units)+" units $DOT AOV "+(AovF $aov)
+    $aovS=('{0:N0}' -f $orders)+' orders '+(MonShort 4)
+    $adSalesD=(MoM $adSal $prevAdSal)+' MoM'; $adSalesC= if($adSal -ge $prevAdSal){'du'}else{'dd'}
+    $adSalesS=(Pct1 (($adSal/$rev)*100))+' of revenue'
+  } else {
+    $desc=@{ '3m'='3-month actuals'; '6m'='5-month actuals'; '2025'='Full year actuals'; '12m'='2025 + 2026 actuals' }[$pk]
+    $revD=$desc; $spendD=$desc; $adSalesD=$desc; $adSalesS=(Pct1 (($adSal/$rev)*100))+' of revenue'
+  }
+
+  $rows=@()
+  $budPer = $BUD[$pk]
+  foreach($mk in $MARKETS){
+    $ms = Sum $M[$mk].sales $idx
+    $msp = Sum $M[$mk].adSpend $idx
+    $mBud = [double]($budPer[$mk])
+    $mt = if($ms){ ($msp/$ms)*100 } else { 0 }
+    $diff = [math]::Round($mBud-$msp)
+    if($diff -ge 0){ $vsCls='bg'; $vsTxt="$DN "+(Money ([math]::Abs($diff)))+' under' }
+    else           { $vsCls='br'; $vsTxt="$UP "+(Money ([math]::Abs($diff)))+' over' }
+    $rows += ,@($mk,$FLAG[$mk],(Money $mBud),(Money $msp),$vsCls,$vsTxt,(Money $ms),(TacosBadge $mt),(Pct1 $mt))
+  }
+  $rows += ,@('NLD','nl',(Money 0),(Money 0),'bb','Early launch',(Money 0),'bb',[string]$EMD)
+  $budTot = 0.0; foreach($mm in $MARKETS){ $budTot += [double]($budPer[$mm]) }
+  $util= if($budTot){[math]::Round(($spend/$budTot)*100)}else{0}
+  $rows+= ,@('Total EU',$null,(Money $budTot),(Money $spend),'bg',"$util% utilised",(Money $rev),(TacosBadge $tacos),(Pct1 $tacos))
+
+  $rowsJs=($rows | ForEach-Object { '['+(($_ | ForEach-Object { JStr $_ }) -join ',')+']' }) -join ",`n      "
+
+  $obj=@"
+  '$pk': {
+    label: '$($def.label)', shortLabel: '$($def.short)',
+    rev: '$(Money $rev)', revD: '$revD', revC: '$revC', revS: '$revS',
+    adSales: '$(Money $adSal)', adSalesD: '$adSalesD', adSalesC: '$adSalesC', adSalesS: '$adSalesS',
+    tacos: '$(Pct1 $tacos)', tacosD: '$tacosD', tacosC: '$tacosC', tacosS: 'Target <20%',
+    roas: '$(RoasF $roas)', roasD: '$roasD', roasC: '$roasC', roasS: '$roasS',
+    spend: '$(Money $spend)', spendD: '$spendD', spendC: '$spendC', spendS: '$spendS',
+    tacosAd: '$(Pct1 $tacos)', tacosAdD: '$tacosD', tacosAdC: '$tacosC', tacosAdS: 'Target <20%',
+    roasAd: '$(RoasF $roas)', roasAdD: '$roasD', roasAdC: '$roasC', roasAdS: '$(Money $rev) revenue',
+    aov: '$(AovF $aov)', aovD: '', aovC: 'df', aovS: '$aovS',
+    mktRows: [
+      $rowsJs
+    ],
+    campaignMix: $mixJs,
+  }
+"@
+  $jsPeriods += $obj
+  $summary += [pscustomobject]@{ Period=$def.label; Rev=(Money $rev); Spend=(Money $spend); TACOS=(Pct1 $tacos); ROAS=(RoasF $roas); Units=[int]$units; Orders=[int]$orders }
+}
+
+$header=@'
+/* AMACX EU - client data (window.DASHBOARD_DATA).
+   GENERATED by tools/build-amacx-data.ps1 - do not hand-edit; re-run the generator.
+   ACTUALS: MerchantSpring (clean monthly series). BUDGETS: Google Sheet. NLD excluded (pending launch).
+   dataSource.type must be 'static' so the live proxy overlay does not replace these. */
+window.DASHBOARD_DATA = {
+  dateRanges: {
+'@
+# ---- sections.pnl: fixed trailing-12-month P&L (Jun 2025 - May 2026), financial basis ----
+# From generateChannelProfitAndLossReport (4 channels, summed to EU). Footnoted as a different
+# basis to the Overview (sales-attribution). Fixed view: same regardless of the period selector.
+$pnlJs = @"
+{
+      fixedLabel: 'Last 12 months (Jun 2025${ND}May 2026) ${DOT} financial basis',
+      summary: [ {val:'${EUR}58,530',lbl:'Net Revenue',color:'brand'}, {val:'${EUR}37,697',lbl:'Total Costs',color:'red'}, {val:'${EUR}20,833',lbl:'Net Profit',color:'green'} ],
+      margin: { pct:'35.6%', pctColor:'green', note:'Trailing 12 months ${DOT} financial basis (MerchantSpring) ${DOT} differs from Overview which is on a sales-attribution basis', rows:[
+        {lbl:'Net Revenue', val:'${EUR}58,530'},
+        {lbl:'Marketplace Fees', val:'-${EUR}9,838', color:'red'},
+        {lbl:'Ad Spend', val:'-${EUR}16,035', color:'red'},
+        {lbl:'COGS', val:'-${EUR}11,824', color:'red'},
+        {lbl:'Net Profit', val:'${EUR}20,833', color:'green', strong:true}
+      ] },
+      mkt: [
+        {name:'Germany',flag:'de',revenue:'${EUR}30,826',adspend:'${EUR}7,723',net:'${EUR}12,184',netColor:'green',margin:'39.5%',marginCls:'bg'},
+        {name:'France',flag:'fr',revenue:'${EUR}8,145',adspend:'${EUR}2,760',net:'${EUR}2,251',netColor:'green',margin:'27.6%',marginCls:'ba'},
+        {name:'Spain',flag:'es',revenue:'${EUR}7,941',adspend:'${EUR}2,332',net:'${EUR}2,536',netColor:'green',margin:'31.9%',marginCls:'bg'},
+        {name:'Italy',flag:'it',revenue:'${EUR}11,618',adspend:'${EUR}3,220',net:'${EUR}3,862',netColor:'green',margin:'33.2%',marginCls:'bg'}
+      ],
+      statement: { groups:[
+        { header:'Income', rows:[
+          {lbl:'Product sales', amount:'${EUR}57,435', pct:'98.1%', unit:'${EUR}28.93'},
+          {lbl:'Refunds', amount:'-${EUR}905', pct:'-1.5%', unit:'-${EUR}0.46'},
+          {lbl:'Reimbursements', amount:'${EUR}2', pct:'0.0%', unit:'${EUR}0.00'},
+          {lbl:'Promotions', amount:'-${EUR}2,600', pct:'-4.4%', unit:'-${EUR}1.31'},
+          {lbl:'Other income', amount:'${EUR}4,598', pct:'7.9%', unit:'${EUR}2.32'},
+          {lbl:'Net revenue', amount:'${EUR}58,530', pct:'100.0%', unit:'${EUR}29.49', total:true}
+        ] },
+        { header:'Expenses', rows:[
+          {lbl:'Advertising', amount:'${EUR}16,035', pct:'27.4%', unit:'${EUR}8.08'},
+          {lbl:'Selling fees', amount:'${EUR}9,803', pct:'16.7%', unit:'${EUR}4.94'},
+          {lbl:'Cost of goods', amount:'${EUR}11,824', pct:'20.2%', unit:'${EUR}5.96'},
+          {lbl:'Refunds and returns', amount:'${EUR}35', pct:'0.1%', unit:'${EUR}0.02'},
+          {lbl:'Total expenses', amount:'${EUR}37,697', pct:'64.4%', unit:'${EUR}18.99', total:true}
+        ] },
+        { header:'Profit', rows:[
+          {lbl:'PROFIT', amount:'${EUR}20,833', pct:'35.6%', unit:'${EUR}10.49', total:true, profit:true},
+          {lbl:'Profit %', amount:'35.6%', accent:'green'}
+        ] },
+        { header:'Metrics', rows:[
+          {lbl:'Estimated payout', amount:'${EUR}32,657', unit:'${EUR}16.45'},
+          {lbl:'TACOS %', amount:'27.4%'}
+        ] }
+      ] }
+    }
+"@
+# ---- sections.advertising: top campaigns (fixed trailing-12). Budgets/forecast stay sheet-controlled. ----
+$advJs = @"
+{
+      campaigns: [
+        {name:'DE ${DOT} Brand Protection',type:'Sponsored Brands',spend:'${EUR}916',sales:'${EUR}3,818',acos:'24.0%',acosCls:'bg',roas:'4.17${MUL}',cpc:'${EUR}0.96',status:'Active',statusCls:'bg'},
+        {name:'IT ${DOT} Brand Defence',type:'Sponsored Products',spend:'${EUR}902',sales:'${EUR}4,586',acos:'19.7%',acosCls:'bg',roas:'5.08${MUL}',cpc:'${EUR}0.86',status:'Active',statusCls:'bg'},
+        {name:'DE ${DOT} Turbo Gels',type:'Sponsored Products',spend:'${EUR}854',sales:'${EUR}640',acos:'133.5%',acosCls:'br',roas:'0.75${MUL}',cpc:'${EUR}1.60',status:'Paused',statusCls:'ba'},
+        {name:'FR ${DOT} Brand Defense',type:'Sponsored Products',spend:'${EUR}702',sales:'${EUR}2,836',acos:'24.8%',acosCls:'bg',roas:'4.04${MUL}',cpc:'${EUR}1.20',status:'Active',statusCls:'bg'},
+        {name:'DE ${DOT} PAT Brand Defence',type:'Sponsored Products',spend:'${EUR}695',sales:'${EUR}4,858',acos:'14.3%',acosCls:'bg',roas:'6.99${MUL}',cpc:'${EUR}0.77',status:'Active',statusCls:'bg'},
+        {name:'ES ${DOT} PAT Brand Defence',type:'Sponsored Products',spend:'${EUR}607',sales:'${EUR}2,746',acos:'22.1%',acosCls:'bg',roas:'4.52${MUL}',cpc:'${EUR}0.69',status:'Active',statusCls:'bg'},
+        {name:'DE ${DOT} Energy Gels (Auto)',type:'Sponsored Products',spend:'${EUR}558',sales:'${EUR}556',acos:'100.4%',acosCls:'br',roas:'1.00${MUL}',cpc:'${EUR}1.47',status:'Active',statusCls:'ba'},
+        {name:'DE ${DOT} Fast Oat & Recovery Bars',type:'Sponsored Products',spend:'${EUR}463',sales:'${EUR}1,109',acos:'41.7%',acosCls:'ba',roas:'2.40${MUL}',cpc:'${EUR}1.65',status:'Active',statusCls:'bg'}
+      ]
+    }
+"@
+# ---- sections.inventory: FBM stock from getSalesByProduct (quantity/daysCover/OOS). ----
+# Reshaped for FBM: KPIs = active/in-stock/OOS/SKUs-to-restock; stock list = OOS + healthy; restock = OOS priorities.
+# Dispatch card hidden (no FBM late-dispatch source). EU: 140 listings, 124 in stock, 16 OOS (6 unique SKUs).
+$invJs = @"
+{
+      kpis: [
+        {bar:'green',lbl:'In Stock',val:'124',dCls:'du',d:'listings',s:'across DE/FR/ES/IT'},
+        {bar:'red',lbl:'Out of Stock',val:'16',dCls:'dd',d:'listings suppressed',s:'6 unique SKUs'},
+        {bar:'#404935',lbl:'Active SKUs',val:'140',dCls:'df',d:'EU listings',s:'~35 per market'},
+        {bar:'amber',lbl:'SKUs to Restock',val:'6',dCls:'df',dColor:'amber',d:'OOS in 1+ market',s:'see priority list'}
+      ],
+      stock: [
+        {dot:'dr',name:'Fast Bar Lemon ${EMD} DE/FR/ES/IT',note:'B086XB1N46 ${DOT} OOS all markets (14 May)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Hydro Tabs Orange ${EMD} DE/FR/ES',note:'B0CCJW62HZ ${DOT} OOS (3 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Energy Drink Lemon 1kg ${EMD} FR/ES/IT',note:'B0GS21WT66 ${DOT} OOS (15 Apr)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Turbo Drink Watermelon ${EMD} FR/ES/IT',note:'B0GSWHPXQV ${DOT} OOS (5 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Energy Drink Forest Fruit 320g ${EMD} DE/FR',note:'B0GZ469Z98 ${DOT} OOS (10 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Turbo Drink Lemon 850g ${EMD} IT',note:'B0C9MXWW77 ${DOT} OOS (17 Mar)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dg',name:'Energy Drink Forest Fruit 1kg ${EMD} DE',note:'B0GSWK3DNX ${DOT} Healthy',units:'560 units',days:'>12 mo'},
+        {dot:'dg',name:'Turbo Drink Lemon 850g ${EMD} DE',note:'B0GSWW3HW2 ${DOT} Healthy',units:'305 units',days:'>12 mo'},
+        {dot:'dg',name:'Energy Gel Citrus ${EMD} DE',note:'B0CRFD8L2X ${DOT} Healthy',units:'297 units',days:'>12 mo'},
+        {dot:'dg',name:'Energy Gel Cola/Caffeine ${EMD} DE',note:'B0CRFB42XS ${DOT} Healthy',units:'277 units',days:'>12 mo'}
+      ],
+      restock: [
+        {level:'red',title:'Fast Bar Lemon ${EMD} all 4 markets',sub:'B086XB1N46 ${DOT} OOS since 14 May ${DOT} top restock priority'},
+        {level:'red',title:'Energy Drink Lemon 1kg ${EMD} FR/ES/IT',sub:'B0GS21WT66 ${DOT} OOS since 15 Apr'},
+        {level:'red',title:'Turbo Drink Watermelon ${EMD} FR/ES/IT',sub:'B0GSWHPXQV ${DOT} OOS since 5 Jun'},
+        {level:'amber',title:'Hydro Tabs Orange ${EMD} DE/FR/ES',sub:'B0CCJW62HZ ${DOT} OOS since 3 Jun'}
+      ]
+    }
+"@
+# ---- sections.products: per-market performance (fixed trailing-12, from channel P&L reports + getSalesByProduct). ----
+# revenue/units/orders are trailing-12 (Jun25-May26); CVR = recent session-conversion per market.
+$prodJs = @"
+{
+      kpis: [
+        {bar:'#404935',lbl:'Active SKUs',val:'140',dCls:'df',d:'EU listings',s:'~35 per market'},
+        {bar:'green',lbl:'Orders (12mo)',val:'1,361',dCls:'du',d:'trailing 12 months',s:'~113/mo'},
+        {bar:'blue',lbl:'AOV',val:'${EUR}42',dCls:'df',d:'12-mo avg',s:'blended EU'},
+        {bar:'amber',lbl:'ASP',val:'${EUR}28.90',dCls:'df',d:'12-mo avg',s:'per unit'}
+      ],
+      table: [
+        {name:'Germany',flag:'de',revenue:'${EUR}27,939',units:'964',orders:'640',cvr:'4.4%',cvrCls:'ba',aov:'${EUR}43.65'},
+        {name:'France',flag:'fr',revenue:'${EUR}8,801',units:'298',orders:'199',cvr:'7.8%',cvrCls:'bg',aov:'${EUR}44.23'},
+        {name:'Spain',flag:'es',revenue:'${EUR}8,728',units:'317',orders:'214',cvr:'5.8%',cvrCls:'ba',aov:'${EUR}40.79'},
+        {name:'Italy',flag:'it',revenue:'${EUR}11,967',units:'406',orders:'308',cvr:'3.6%',cvrCls:'ba',aov:'${EUR}38.85'}
+      ]
+    }
+"@
+# ---- sections.overview: Buy Box win-rate by market + EU session CVR (recent month, from getSalesByPeriod). ----
+# tasks/flags/stockWarn left unset → stay sheet-controlled (static markup). DE buy box low (lost buy box on shipping).
+$ovJs = @"
+{
+      buyBox: [
+        {flag:'de',label:'Germany',pct:50,valText:'49.8%',color:'red'},
+        {flag:'fr',label:'France',pct:99,valText:'98.9%',color:'green'},
+        {flag:'es',label:'Spain',pct:93,valText:'93.1%',color:'green'},
+        {flag:'it',label:'Italy',pct:94,valText:'94.3%',color:'green'}
+      ],
+      cvr: { val:'4.4%', note:'recent month ${DOT} 5,543 sessions', sub:'All EU ${DOT} session conversion' }
+    }
+"@
+$footer = "`n  },`n  sections: {`n    overview: $ovJs,`n    pnl: $pnlJs,`n    advertising: $advJs,`n    inventory: $invJs,`n    products: $prodJs`n  }`n};`n"
+$content=$header+"`n"+($jsPeriods -join ",`n")+$footer
+[IO.File]::WriteAllText($OutFile, $content, (New-Object System.Text.UTF8Encoding($false)))
+Write-Host ("WROTE {0} ({1} chars)`n" -f $OutFile, $content.Length)
+$summary | Format-Table -AutoSize
