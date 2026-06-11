@@ -91,7 +91,7 @@ var MKT_FILTER_IDS = [
   'mkt-spend-tbody',  // Advertising · Ad Spend Actuals by Market
   'sec-pnl-mkt',      // P&L · P&L by Marketplace
   'sec-campaigns',    // Advertising · Active Campaigns (rows tagged "DE ·", "IT ·", …)
-  'sec-inv-stock',    // Inventory · Stock by ASIN (names tagged "— DE/FR/ES/IT")
+  'sec-inv-stock',    // Inventory · Stock by ASIN (note line tagged "ASIN · DE FR ES IT")
   'sec-inv-restock',  // Inventory · Restock Priority
   'sec-prod-table',   // Products · Performance by Market
   'sec-kw-table'      // Keywords · Top Performing Keywords (geo tagged "DE · SP")
@@ -529,10 +529,12 @@ function renderAlertList(id, badgeId, spec) {
   if (badgeId && spec.badge != null) set(badgeId, spec.badge);
   var w = el(id); if (!w || !spec.items) return;
   var lv = {
-    red:   { bg: '#fdf0f0', dot: 'var(--red)',   col: 'var(--red)',   pulse: 'animation:pulse2 1.5s infinite;', wt: 600, sub: 'var(--muted)' },
-    amber: { bg: '#fdf6e7', dot: 'var(--amber)', col: 'var(--amber)', pulse: '', wt: 600, sub: 'var(--muted)' },
-    muted: { bg: '',        dot: 'var(--muted2)',col: 'var(--muted)', pulse: '', wt: 500, sub: 'var(--muted2)' }
+    red:    { bg: '#fdf0f0', dot: 'var(--red)',   col: 'var(--red)',   pulse: 'animation:pulse2 1.5s infinite;', wt: 600, sub: 'var(--muted)' },
+    amber:  { bg: '#fdf6e7', dot: 'var(--amber)', col: 'var(--amber)', pulse: '', wt: 600, sub: 'var(--muted)' },
+    green:  { bg: '#eaf4ef', dot: 'var(--green)', col: 'var(--green)', pulse: '', wt: 600, sub: 'var(--muted)' },
+    muted:  { bg: '',        dot: 'var(--muted2)',col: 'var(--muted)', pulse: '', wt: 500, sub: 'var(--muted2)' }
   };
+  lv.orange = lv.amber;   // sheet cell-colour urgency: red / orange / green
   w.innerHTML = spec.items.map(function (f, i) {
     var last = i === spec.items.length - 1;
     var s = lv[f.level] || lv.muted;

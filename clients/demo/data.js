@@ -382,14 +382,14 @@ window.DASHBOARD_DATA = {
         { bar: 'blue',  lbl: 'Late Dispatch', val: '0.6%', dCls: 'du', d: '▼ 0.2pp MoM',        s: 'Target <4%' }
       ],
       stock: [
-        { dot: 'dg', name: 'Sport Hydration Mix — Amazon UK', note: 'B0CXUK001 · Healthy', units: '980 units', days: '~32 days' },
-        { dot: 'dg', name: 'Energy Gel 25pk — Amazon UK',     note: 'B0CXUK002 · Healthy', units: '740 units', days: '~30 days' },
-        { dot: 'dg', name: 'Recovery Powder — D2C',           note: 'SKU-RP-01 · Healthy', units: '410 units', days: '~26 days' },
-        { dot: 'dg', name: 'Hydration Tabs 40s — eBay UK',    note: 'B0CXUK003 · Healthy', units: '360 units', days: '~24 days' },
-        { dot: 'da', name: 'Isotonic Mix 1kg — Amazon UK',    note: 'B0CXUK004 · Low — reorder', units: '150 units', unitsColor: 'amber', days: '~11 days' },
-        { dot: 'da', name: 'Energy Gel — eBay UK',            note: 'B0CXUK005 · Low', units: '88 units', unitsColor: 'amber', days: '~9 days' },
-        { dot: 'da', name: 'Sport Hydration — D2C',           note: 'SKU-SH-02 · Low', units: '120 units', unitsColor: 'amber', days: '~12 days' },
-        { dot: 'dr', name: 'Isotonic Mix 1kg — Amazon UK',    note: 'B0CXUK004 · OOS · suppressed', units: '0 units', unitsColor: 'red', days: 'OOS', daysColor: 'red' }
+        { dot: 'dg', name: 'Sport Hydration Mix', note: 'B0CXUK001 · Amazon UK · Healthy', units: '980 units', days: '~32 days' },
+        { dot: 'dg', name: 'Energy Gel 25pk',     note: 'B0CXUK002 · Amazon UK · Healthy', units: '740 units', days: '~30 days' },
+        { dot: 'dg', name: 'Recovery Powder',     note: 'SKU-RP-01 · D2C · Healthy', units: '410 units', days: '~26 days' },
+        { dot: 'dg', name: 'Hydration Tabs 40s',  note: 'B0CXUK003 · eBay UK · Healthy', units: '360 units', days: '~24 days' },
+        { dot: 'da', name: 'Isotonic Mix 1kg',    note: 'B0CXUK004 · Amazon UK · Low — reorder', units: '150 units', unitsColor: 'amber', days: '~11 days' },
+        { dot: 'da', name: 'Energy Gel',          note: 'B0CXUK005 · eBay UK · Low', units: '88 units', unitsColor: 'amber', days: '~9 days' },
+        { dot: 'da', name: 'Sport Hydration',     note: 'SKU-SH-02 · D2C · Low', units: '120 units', unitsColor: 'amber', days: '~12 days' },
+        { dot: 'dr', name: 'Isotonic Mix 1kg',    note: 'B0CXUK004 · Amazon UK · OOS · suppressed', units: '0 units', unitsColor: 'red', days: 'OOS', daysColor: 'red' }
       ],
       dispatch: {
         bars: [

@@ -283,13 +283,25 @@ $advJs = @"
 {
       campaigns: [
         {name:'DE ${DOT} Brand Protection',type:'Sponsored Brands',spend:'${EUR}916',sales:'${EUR}3,818',acos:'24.0%',acosCls:'bg',roas:'4.17${MUL}',cpc:'${EUR}0.96',status:'Active',statusCls:'bg'},
-        {name:'IT ${DOT} Brand Defence',type:'Sponsored Products',spend:'${EUR}902',sales:'${EUR}4,586',acos:'19.7%',acosCls:'bg',roas:'5.08${MUL}',cpc:'${EUR}0.86',status:'Active',statusCls:'bg'},
-        {name:'DE ${DOT} Turbo Gels',type:'Sponsored Products',spend:'${EUR}854',sales:'${EUR}640',acos:'133.5%',acosCls:'br',roas:'0.75${MUL}',cpc:'${EUR}1.60',status:'Paused',statusCls:'ba'},
-        {name:'FR ${DOT} Brand Defense',type:'Sponsored Products',spend:'${EUR}702',sales:'${EUR}2,836',acos:'24.8%',acosCls:'bg',roas:'4.04${MUL}',cpc:'${EUR}1.20',status:'Active',statusCls:'bg'},
+        {name:'DE ${DOT} Turbo Gels (Manual)',type:'Sponsored Products',spend:'${EUR}854',sales:'${EUR}640',acos:'133.4%',acosCls:'br',roas:'0.75${MUL}',cpc:'${EUR}1.60',status:'Paused',statusCls:'ba'},
         {name:'DE ${DOT} PAT Brand Defence',type:'Sponsored Products',spend:'${EUR}695',sales:'${EUR}4,858',acos:'14.3%',acosCls:'bg',roas:'6.99${MUL}',cpc:'${EUR}0.77',status:'Active',statusCls:'bg'},
+        {name:'DE ${DOT} Energy Gels (Auto)',type:'Sponsored Products',spend:'${EUR}558',sales:'${EUR}556',acos:'100.4%',acosCls:'br',roas:'1.00${MUL}',cpc:'${EUR}1.47',status:'Active',statusCls:'bg'},
+        {name:'DE ${DOT} Fast Oat & Recovery Bars',type:'Sponsored Products',spend:'${EUR}463',sales:'${EUR}1,109',acos:'41.7%',acosCls:'ba',roas:'2.40${MUL}',cpc:'${EUR}1.65',status:'Active',statusCls:'bg'},
+        {name:'FR ${DOT} Brand Defense',type:'Sponsored Products',spend:'${EUR}702',sales:'${EUR}2,836',acos:'24.8%',acosCls:'bg',roas:'4.04${MUL}',cpc:'${EUR}1.20',status:'Active',statusCls:'bg'},
+        {name:'FR ${DOT} Energy Gels (Turbo & OG) (Auto)',type:'Sponsored Products',spend:'${EUR}458',sales:'${EUR}441',acos:'103.9%',acosCls:'br',roas:'0.96${MUL}',cpc:'${EUR}1.03',status:'Active',statusCls:'bg'},
+        {name:'FR ${DOT} Oat Bars (Auto)',type:'Sponsored Products',spend:'${EUR}362',sales:'${EUR}333',acos:'108.7%',acosCls:'br',roas:'0.92${MUL}',cpc:'${EUR}1.21',status:'Active',statusCls:'bg'},
+        {name:'FR ${DOT} Energy Gels (Turbo & OG) (Manual)',type:'Sponsored Products',spend:'${EUR}289',sales:'${EUR}312',acos:'92.6%',acosCls:'br',roas:'1.08${MUL}',cpc:'${EUR}1.38',status:'Active',statusCls:'bg'},
+        {name:'FR ${DOT} Turbo Drink (Manual)',type:'Sponsored Products',spend:'${EUR}150',sales:'${EUR}274',acos:'54.7%',acosCls:'br',roas:'1.83${MUL}',cpc:'${EUR}2.08',status:'Active',statusCls:'bg'},
         {name:'ES ${DOT} PAT Brand Defence',type:'Sponsored Products',spend:'${EUR}607',sales:'${EUR}2,746',acos:'22.1%',acosCls:'bg',roas:'4.52${MUL}',cpc:'${EUR}0.69',status:'Active',statusCls:'bg'},
-        {name:'DE ${DOT} Energy Gels (Auto)',type:'Sponsored Products',spend:'${EUR}558',sales:'${EUR}556',acos:'100.4%',acosCls:'br',roas:'1.00${MUL}',cpc:'${EUR}1.47',status:'Active',statusCls:'ba'},
-        {name:'DE ${DOT} Fast Oat & Recovery Bars',type:'Sponsored Products',spend:'${EUR}463',sales:'${EUR}1,109',acos:'41.7%',acosCls:'ba',roas:'2.40${MUL}',cpc:'${EUR}1.65',status:'Active',statusCls:'bg'}
+        {name:'ES ${DOT} Category Banner',type:'Sponsored Brands',spend:'${EUR}415',sales:'${EUR}601',acos:'69.1%',acosCls:'br',roas:'1.45${MUL}',cpc:'${EUR}0.67',status:'Active',statusCls:'bg'},
+        {name:'ES ${DOT} Energy Gels (Turbo & OG) (Auto)',type:'Sponsored Products',spend:'${EUR}344',sales:'${EUR}317',acos:'108.5%',acosCls:'br',roas:'0.92${MUL}',cpc:'${EUR}0.84',status:'Active',statusCls:'bg'},
+        {name:'ES ${DOT} Hydro Tabs (Auto)',type:'Sponsored Products',spend:'${EUR}328',sales:'${EUR}243',acos:'135.0%',acosCls:'br',roas:'0.74${MUL}',cpc:'${EUR}0.76',status:'Active',statusCls:'bg'},
+        {name:'ES ${DOT} Hydro Tabs (Manual)',type:'Sponsored Products',spend:'${EUR}266',sales:'${EUR}335',acos:'79.4%',acosCls:'br',roas:'1.26${MUL}',cpc:'${EUR}0.81',status:'Active',statusCls:'bg'},
+        {name:'IT ${DOT} Brand Defence',type:'Sponsored Products',spend:'${EUR}902',sales:'${EUR}4,586',acos:'19.7%',acosCls:'bg',roas:'5.08${MUL}',cpc:'${EUR}0.86',status:'Active',statusCls:'bg'},
+        {name:'IT ${DOT} Top of Funnel Full Catalogue',type:'Sponsored Display',spend:'${EUR}326',sales:'${EUR}0',acos:'n/a',acosCls:'br',roas:'0.00${MUL}',cpc:'${EUR}0.64',status:'Paused',statusCls:'ba'},
+        {name:'IT ${DOT} Energy Gels (Manual)',type:'Sponsored Products',spend:'${EUR}289',sales:'${EUR}312',acos:'92.6%',acosCls:'br',roas:'1.08${MUL}',cpc:'${EUR}0.82',status:'Active',statusCls:'bg'},
+        {name:'IT ${DOT} Energy Gels (Auto)',type:'Sponsored Products',spend:'${EUR}269',sales:'${EUR}213',acos:'126.3%',acosCls:'br',roas:'0.79${MUL}',cpc:'${EUR}0.57',status:'Active',statusCls:'bg'},
+        {name:'IT ${DOT} Nougat Bar (Auto)',type:'Sponsored Products',spend:'${EUR}225',sales:'${EUR}145',acos:'155.2%',acosCls:'br',roas:'0.64${MUL}',cpc:'${EUR}0.68',status:'Active',statusCls:'bg'}
       ]
     }
 "@
@@ -305,16 +317,16 @@ $invJs = @"
         {bar:'amber',lbl:'SKUs to Restock',val:'6',dCls:'df',dColor:'amber',d:'OOS in 1+ market',s:'see priority list'}
       ],
       stock: [
-        {dot:'dr',name:'Fast Bar Lemon ${EMD} DE/FR/ES/IT',note:'B086XB1N46 ${DOT} OOS all markets (14 May)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Hydro Tabs Orange ${EMD} DE/FR/ES',note:'B0CCJW62HZ ${DOT} OOS (3 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Energy Drink Lemon 1kg ${EMD} FR/ES/IT',note:'B0GS21WT66 ${DOT} OOS (15 Apr)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Turbo Drink Watermelon ${EMD} FR/ES/IT',note:'B0GSWHPXQV ${DOT} OOS (5 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Energy Drink Forest Fruit 320g ${EMD} DE/FR',note:'B0GZ469Z98 ${DOT} OOS (10 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Turbo Drink Lemon 850g ${EMD} IT',note:'B0C9MXWW77 ${DOT} OOS (17 Mar)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dg',name:'Energy Drink Forest Fruit 1kg ${EMD} DE',note:'B0GSWK3DNX ${DOT} Healthy',units:'560 units',days:'>12 mo'},
-        {dot:'dg',name:'Turbo Drink Lemon 850g ${EMD} DE',note:'B0GSWW3HW2 ${DOT} Healthy',units:'305 units',days:'>12 mo'},
-        {dot:'dg',name:'Energy Gel Citrus ${EMD} DE',note:'B0CRFD8L2X ${DOT} Healthy',units:'297 units',days:'>12 mo'},
-        {dot:'dg',name:'Energy Gel Cola/Caffeine ${EMD} DE',note:'B0CRFB42XS ${DOT} Healthy',units:'277 units',days:'>12 mo'}
+        {dot:'dr',name:'Fast Bar Lemon',note:'B086XB1N46 ${DOT} DE FR ES IT (14 May)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Hydro Tabs Orange',note:'B0CCJW62HZ ${DOT} DE FR ES (3 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Energy Drink Lemon 1kg',note:'B0GS21WT66 ${DOT} FR ES IT (15 Apr)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Turbo Drink Watermelon',note:'B0GSWHPXQV ${DOT} FR ES IT (5 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Energy Drink Forest Fruit 320g',note:'B0GZ469Z98 ${DOT} DE FR (10 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Turbo Drink Lemon 850g',note:'B0C9MXWW77 ${DOT} IT (17 Mar)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dg',name:'Energy Drink Forest Fruit 1kg',note:'B0GSWK3DNX ${DOT} DE ${DOT} Healthy',units:'560 units',days:'>12 mo'},
+        {dot:'dg',name:'Turbo Drink Lemon 850g',note:'B0GSWW3HW2 ${DOT} DE ${DOT} Healthy',units:'305 units',days:'>12 mo'},
+        {dot:'dg',name:'Energy Gel Citrus',note:'B0CRFD8L2X ${DOT} DE ${DOT} Healthy',units:'297 units',days:'>12 mo'},
+        {dot:'dg',name:'Energy Gel Cola/Caffeine',note:'B0CRFB42XS ${DOT} DE ${DOT} Healthy',units:'277 units',days:'>12 mo'}
       ],
       restock: [
         {level:'red',title:'Fast Bar Lemon ${EMD} all 4 markets',sub:'B086XB1N46 ${DOT} OOS since 14 May ${DOT} top restock priority'},
