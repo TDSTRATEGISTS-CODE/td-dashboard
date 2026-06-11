@@ -25,9 +25,9 @@ window.DASHBOARD_CONFIG = {
   defaultMarket: 'all',
 
   // Pages to hide for this client (nav item + tab + page).
-  // 'keywords' dropped for now — MerchantSpring's MCP exposes no keyword-level data;
-  // its web UI has a Keywords report, so revisit (CSV export or API) to build it back.
-  hiddenPages: ['keywords'],
+  // 'keywords' dropped — MerchantSpring's MCP exposes no keyword-level data (revisit).
+  // 'pnl' hidden — the full P&L is gated behind the Advanced tier; the 'amazonpnl' upsell page shows instead.
+  hiddenPages: ['keywords', 'pnl'],
 
   // ---- Date-range selector (drives the topbar dropdown) ----
   // Matches the demo's generic 4-option set. ('2025' still exists in data.js but is not selectable.)

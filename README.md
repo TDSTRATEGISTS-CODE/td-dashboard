@@ -81,6 +81,19 @@ The right column is the **`sections`** mechanism (see above). AMACX leaves it un
 EU markup); the UK demo supplies it in full. The **MerchantSpring MCP** feed will plug in via
 `dataSource.type: 'merchantSpring'`, populating both `dateRanges` and `sections` live.
 
+### Sidebar market filter (`applyMarketFilter` in `app.js`)
+
+Picking a market chip in the sidebar filters **every per-market table/list across all tabs** to that
+market's rows (Buy Box, market-spend, P&L-by-market, campaigns, stock/restock, products-by-market,
+keywords). It is **rows-only by design**: aggregate KPI cards and trend charts have no per-market
+breakdown in the data, so they deliberately stay on the EU/all total. A card with no rows for the
+chosen market shows a "No data for … in this view" placeholder.
+
+The match is **derived from `CONFIG.markets`** (each market's `flag` / `code` / `chip`), so it stays
+client-agnostic — the UK demo gets per-**channel** filtering (Amazon/eBay/D2C) for free. A flag shared
+by several markets (the demo's `gb`) is ignored as non-discriminating; matching falls back to the
+distinct code/chip text. No per-client code lives in `app.js`.
+
 ## Data flow
 
 ```

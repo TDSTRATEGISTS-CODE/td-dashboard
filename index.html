@@ -178,6 +178,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   <div class="sb-sec">Pages</div>
   <div class="nav-item active" onclick="switchPage('overview',this)"><span class="nav-ic">&#9635;</span> Overview</div>
   <div class="nav-item" onclick="switchPage('pnl',this)"><span class="nav-ic" id="cfg-pnl-icon">&#8364;</span> P&amp;L &amp; Expenses</div>
+  <div class="nav-item" onclick="switchPage('amazonpnl',this)"><span class="nav-ic">&#128274;</span> Amazon P&amp;L</div>
   <div class="nav-item" onclick="switchPage('advertising',this)"><span class="nav-ic">&#9670;</span> Advertising</div>
   <div class="nav-item" onclick="switchPage('inventory',this)"><span class="nav-ic">&#9723;</span> Inventory</div>
   <div class="nav-item" onclick="switchPage('products',this)"><span class="nav-ic">&#9737;</span> Products</div>
@@ -212,6 +213,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   <div class="page-tabs">
     <div class="ptab active" onclick="switchPage('overview',null,this)">Overview</div>
     <div class="ptab" onclick="switchPage('pnl',null,this)">P&amp;L &amp; Expenses</div>
+    <div class="ptab" onclick="switchPage('amazonpnl',null,this)">Amazon P&amp;L</div>
     <div class="ptab" onclick="switchPage('advertising',null,this)">Advertising</div>
     <div class="ptab" onclick="switchPage('inventory',null,this)">Inventory</div>
     <div class="ptab" onclick="switchPage('products',null,this)">Products</div>
@@ -496,6 +498,17 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
           </tbody>
         </table></div>
       </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: AMAZON P&L (upsell) ========== -->
+  <div class="page-content" id="page-amazonpnl">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:62vh;gap:20px;padding:40px 24px;">
+      <div style="width:68px;height:68px;border-radius:18px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 6px 20px rgba(0,0,0,.08);">&#128274;</div>
+      <div style="font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-.4px;color:var(--brand);">Amazon P&amp;L</div>
+      <div style="font-size:15px;color:var(--muted);max-width:470px;line-height:1.6;">Full income &amp; expenses statement, net margins, per-channel P&amp;L and product-level profitability &mdash; straight from your Amazon settlement data.</div>
+      <div style="margin-top:8px;font-family:var(--display);font-size:18px;font-weight:700;color:#fff;background:var(--green);border:1px solid var(--green);border-radius:12px;padding:16px 32px;box-shadow:0 4px 14px rgba(0,0,0,.10);">Available with Advanced Subscription</div>
+      <div style="font-size:12px;color:var(--muted2);margin-top:2px;">Contact Those Digital Strategists to upgrade.</div>
     </div>
   </div>
 

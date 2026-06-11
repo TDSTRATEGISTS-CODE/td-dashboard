@@ -26,6 +26,9 @@ window.DASHBOARD_CONFIG = {
   defaultPeriod: 'may',
   defaultMarket: 'all',
 
+  // Hide the 'amazonpnl' upsell page — the demo uses its own real P&L page.
+  hiddenPages: ['amazonpnl'],
+
   // ---- Date-range selector (drives the topbar dropdown) ----
   dateRangeOptions: [
     { value: 'may', label: 'Last Month' },

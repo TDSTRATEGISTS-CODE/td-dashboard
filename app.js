@@ -32,7 +32,7 @@ window.switchPage = function (key, sideNavEl, tabEl) {
   document.getElementById('page-' + key).classList.add('active');
   if (sideNavEl) sideNavEl.classList.add('active');
   if (tabEl) tabEl.classList.add('active');
-  var pages = ['overview', 'pnl', 'advertising', 'inventory', 'products', 'keywords'];
+  var pages = ['overview', 'pnl', 'amazonpnl', 'advertising', 'inventory', 'products', 'keywords'];
   var idx = pages.indexOf(key);
   if (!tabEl) { var tabs = document.querySelectorAll('.ptab'); if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active'); }
   if (!sideNavEl) { var navs = document.querySelectorAll('.nav-item'); if (idx >= 0 && navs[idx]) navs[idx].classList.add('active'); }
@@ -49,7 +49,133 @@ window.switchMarket = function (k, el) {
     set('tb-title', m.t);
     document.getElementById('tb-mkt').textContent = m.m + (d ? ' · ' + d.label : '');
   }
+  applyMarketFilter();
   closeSidebar();
+};
+
+// ---------- market filter (sidebar chips filter every per-market table/list across all tabs) ----------
+// "Filter rows only": picking a market hides the rows in the per-market tables/lists that don't
+// pertain to it, on every tab. Aggregate KPI cards and trend charts are deliberately LEFT on the
+// EU total (they have no per-market breakdown in the data) — they stay labelled "All EU".
+// Re-applied after every render (switchDateRange / live overlay) so the filter survives repaints.
+var MKT_FILTER_IDS = [
+  'sec-buybox',       // Overview · Buy Box win-rate rows
+  'mkt-spend-tbody',  // Advertising · Ad Spend Actuals by Market
+  'sec-pnl-mkt',      // P&L · P&L by Marketplace
+  'sec-campaigns',    // Advertising · Active Campaigns (rows tagged "DE ·", "IT ·", …)
+  'sec-inv-stock',    // Inventory · Stock by ASIN (names tagged "— DE/FR/ES/IT")
+  'sec-inv-restock',  // Inventory · Restock Priority
+  'sec-prod-table',   // Products · Performance by Market
+  'sec-kw-table'      // Keywords · Top Performing Keywords (geo tagged "DE · SP")
+];
+
+// Join a row's text nodes with a separator so codes at element boundaries stay intact
+// (plain textContent glues "…ES/IT" to the next cell's "B086…", corrupting the "IT" token).
+function rowText(row) {
+  var parts = [], w = document.createTreeWalker(row, NodeFilter.SHOW_TEXT, null, false), n;
+  while ((n = w.nextNode())) { var t = n.nodeValue; if (t && t.trim()) parts.push(t.trim()); }
+  return parts.join('\n');
+}
+
+// Match tokens are DERIVED FROM CONFIG.markets so this stays client-agnostic (no hard-coded
+// country list): each market contributes its flag code, its table code (e.g. 'DE') and its
+// sidebar chip label (e.g. 'Germany'). A row pertains to a market if any of those appear in it.
+// A flag shared by several markets (e.g. UK channels all flagged 'gb') is NOT discriminating, so
+// it's dropped and matching falls back to the code/chip text (which stays distinct per channel).
+var MARKET_MATCHERS = (function () {
+  var ms = (CONFIG.markets || []).filter(function (m) { return m.key !== 'all'; });
+  var flagCount = {};
+  ms.forEach(function (m) { var f = (m.flag || '').toLowerCase(); if (f) flagCount[f] = (flagCount[f] || 0) + 1; });
+  return ms.map(function (m) {
+    var f = (m.flag || '').toLowerCase();
+    return {
+      key: m.key,
+      flag: (f && flagCount[f] === 1) ? f : '',                    // unique flagcdn code only, e.g. 'de'
+      code: (m.code || '').toUpperCase().replace(/[^A-Z0-9]/g, ''), // table code, e.g. 'DE' / 'NLD'
+      chip: (m.chip || '').toLowerCase()                           // sidebar/channel label, e.g. 'germany'
+    };
+  });
+})();
+
+// Infer which market(s) a rendered row refers to, from its flag images + visible text.
+function rowMarketInfo(row) {
+  var html = (row.innerHTML || '').toLowerCase(), text = rowText(row);
+  var low = text.toLowerCase();
+  var tokens = text.toUpperCase().split(/[^A-Z0-9]+/);   // catches "DE", "FR/ES/IT" style codes
+  var set = {};
+  MARKET_MATCHERS.forEach(function (m) {
+    if (m.flag && html.indexOf('flagcdn.com/16x12/' + m.flag + '.png') >= 0) set[m.key] = 1;
+    else if (m.code && tokens.indexOf(m.code) >= 0) set[m.key] = 1;
+    else if (m.chip && low.indexOf(m.chip) >= 0) set[m.key] = 1;
+  });
+  return {
+    set: set,
+    any: Object.keys(set).length > 0,
+    universal: /all markets|all \d+ markets|all four markets|all eu|all uk|across all/i.test(text),
+    total: /\btotal\b/i.test(low)
+  };
+}
+
+function mktEmptyRow(container) {
+  var kids = container.children;
+  for (var i = 0; i < kids.length; i++) {
+    if (kids[i].className && String(kids[i].className).indexOf('mkt-empty') >= 0) return kids[i];
+  }
+  return null;
+}
+
+// Show a tidy placeholder when a market has no rows in a given card (e.g. NLD early-launch),
+// rather than leaving a blank card. Removed again as soon as that card has visible rows.
+function setMktEmptyState(container, label, hasRows) {
+  var ph = mktEmptyRow(container);
+  if (hasRows) { if (ph && ph.parentNode) ph.parentNode.removeChild(ph); return; }
+  if (ph) return;
+  if (container.tagName === 'TBODY') {
+    ph = document.createElement('tr');
+    ph.className = 'mkt-empty';
+    ph.innerHTML = '<td colspan="12" style="text-align:center;color:var(--muted);font-size:12px;padding:14px;">No data for ' + label + ' in this view</td>';
+  } else {
+    ph = document.createElement('div');
+    ph.className = 'mkt-empty';
+    ph.style.cssText = 'text-align:center;color:var(--muted);font-size:12px;padding:14px;';
+    ph.textContent = 'No data for ' + label + ' in this view';
+  }
+  container.appendChild(ph);
+}
+
+// Keep the per-card "All Markets" dropdowns reflecting the sidebar choice (display only).
+function syncMarketSelects(showAll) {
+  var hit = showAll ? null : CONFIG.markets.filter(function (m) { return m.key === currentMarket; })[0];
+  var chip = (showAll || !hit) ? 'All Markets' : hit.chip;
+  var sels = document.querySelectorAll('.js-mkt-select');
+  for (var i = 0; i < sels.length; i++) {
+    var opts = sels[i].options;
+    for (var j = 0; j < opts.length; j++) { if (opts[j].text === chip) { sels[i].selectedIndex = j; break; } }
+  }
+}
+
+window.applyMarketFilter = function () {
+  var M = currentMarket, showAll = (!M || M === 'all');
+  var label = (MKT[M] && MKT[M].t) || M;
+  MKT_FILTER_IDS.forEach(function (id) {
+    var c = document.getElementById(id);
+    if (!c) return;
+    var anyVisible = false;
+    Array.prototype.slice.call(c.children).forEach(function (row) {
+      if (row.className && String(row.className).indexOf('mkt-empty') >= 0) return;
+      var show = true;
+      if (!showAll) {
+        var info = rowMarketInfo(row);
+        // total/EU rows drop out on a single market; "all markets" rows always pertain; rows with
+        // an explicit market set show only if they include the chosen one; untagged rows stay.
+        show = info.total ? false : info.universal ? true : info.any ? !!info.set[M] : true;
+      }
+      row.style.display = show ? '' : 'none';
+      if (show) anyVisible = true;
+    });
+    setMktEmptyState(c, label, showAll || anyVisible);
+  });
+  syncMarketSelects(showAll);
 };
 
 window.toggleSidebar = function () {
@@ -116,6 +242,7 @@ window.switchDateRange = function (val) {
   if (DATA.sections) renderPeriodSections(d);
 
   updateMarketChips(d);
+  applyMarketFilter();   // re-filter the freshly-rendered per-market rows to the current market
 };
 
 // ---------- config-driven identity / brand / chips ----------
@@ -227,11 +354,14 @@ function applyLive(j) {
   // ONLY the live sheet-controlled sections (ad budgets/forecast, overview tasks/flags). Merge
   // those into DATA.sections without disturbing the baked MerchantSpring sections, then re-render.
   if (ds.overlay === 'sections') {
+    var changed = false;
     if (j.sections && !j.sections.error && DATA.sections) {
       mergeSections(DATA.sections, j.sections);
       if (typeof renderSections === 'function') renderSections();
-      switchDateRange(currentPeriod);
+      changed = true;
     }
+    if (j.dateRanges) { overlayBudgets(j.dateRanges); changed = true; }   // live per-market budgets from the sheet
+    if (changed) switchDateRange(currentPeriod);
     return;
   }
 
@@ -258,6 +388,37 @@ function mergeSections(base, add) {
       Object.keys(add[k]).forEach(function (kk) { base[k][kk] = add[k][kk]; });
     } else {
       base[k] = add[k];
+    }
+  });
+}
+
+// Overlay the live per-market BUDGET (from the sheet, via the proxy's dateRanges) onto the baked
+// market-spend table, keeping the MerchantSpring spend/sales. Recomputes the under/over variance
+// and Total-EU utilisation. Skips '12m' (our trailing-12 ≠ the proxy's 2025+2026 YTD) and NLD.
+function overlayBudgets(pdr) {
+  function eur(s) { return Number(String(s).replace(/[^0-9.\-]/g, '')) || 0; }
+  function money(n) { return '€' + Math.round(n).toLocaleString('en-US'); }
+  Object.keys(pdr).forEach(function (pk) {
+    if (pk === '12m') return;
+    var bd = dateRanges[pk], pd = pdr[pk];
+    if (!bd || !pd || !bd.mktRows || !pd.mktRows) return;
+    var budByCode = {};
+    pd.mktRows.forEach(function (r) { budByCode[r[0]] = r[2]; });
+    var totBud = 0, totSpend = 0;
+    bd.mktRows.forEach(function (r) {
+      if (r[0] === 'Total EU' || r[0] === 'NLD') return;
+      var nb = budByCode[r[0]]; if (nb == null) return;
+      r[2] = nb;
+      var b = eur(nb), sp = eur(r[3]);
+      totBud += b; totSpend += sp;
+      var diff = Math.round(b - sp);
+      r[4] = diff >= 0 ? 'bg' : 'br';
+      r[5] = (diff >= 0 ? '▼ ' : '▲ ') + money(Math.abs(diff)) + (diff >= 0 ? ' under' : ' over');
+    });
+    var tot = bd.mktRows[bd.mktRows.length - 1];
+    if (tot && tot[0] === 'Total EU') {
+      tot[2] = money(totBud);
+      tot[5] = (totBud ? Math.round(totSpend / totBud * 100) : 0) + '% utilised';
     }
   });
 }

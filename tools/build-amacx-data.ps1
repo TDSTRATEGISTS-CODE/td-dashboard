@@ -219,7 +219,10 @@ $pnlJs = @"
           {lbl:'Estimated payout', amount:'${EUR}32,657', unit:'${EUR}16.45'},
           {lbl:'TACOS %', amount:'27.4%'}
         ] }
-      ] }
+      ] },
+      portfolio: { total:35, profitable:35, breakeven:0, unprofitable:0,
+        most:[ {name:'Energy Gel Cola/Caffeine',profit:'${EUR}456',margin:'58%',marginCls:'bg'}, {name:'Energy Gel Orange',profit:'${EUR}319',margin:'60%',marginCls:'bg'}, {name:'Recovery Shake Chocolate',profit:'${EUR}249',margin:'53%',marginCls:'bg'} ],
+        least:[ {name:'Energy Drink Forest Fruit 1kg',profit:'${EUR}131',margin:'42%',marginCls:'ba',color:'var(--green)'}, {name:'Energy Gel Raspberry',profit:'${EUR}124',margin:'45%',marginCls:'ba',color:'var(--green)'}, {name:'Protein Shake Banana',profit:'${EUR}94',margin:'45%',marginCls:'ba',color:'var(--green)'} ] }
     }
 "@
 # ---- sections.advertising: top campaigns (fixed trailing-12). Budgets/forecast stay sheet-controlled. ----
