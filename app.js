@@ -461,7 +461,23 @@ function applyLive(j) {
     if (j.founder && DATA.sections) {
       DATA.sections.founder = DATA.sections.founder || {};
       deepMerge(DATA.sections.founder, j.founder);
+      // Sidebar chips + topbar read dateRanges (not the founder overlay), so sync them to the live
+      // total — otherwise the "All" chip shows the stale baked figure next to live KPIs.
+      var ov = DATA.sections.founder.overview;
+      var trk = ov && ov.kpis && ov.kpis.filter(function (k) { return /total revenue/i.test(k.lbl); })[0];
+      var dr = dateRanges[currentPeriod];
+      if (trk && trk.val && dr) {
+        dr.rev = trk.val;
+        // The proxy has no per-market split → put the whole total on the single revenue market
+        // (one with no launchPill); placeholder markets (e.g. US 'Soon') keep their value.
+        var liveMkts = (CONFIG.markets || []).filter(function (m) { return m.key !== 'all' && !m.launchPill; });
+        if (Array.isArray(dr.mktRows) && liveMkts.length === 1) {
+          var code = (liveMkts[0].code || '').toUpperCase();
+          dr.mktRows.forEach(function (r) { if (String(r[0]).toUpperCase() === code) r[6] = trk.val; });
+        }
+      }
       if (typeof renderFounderSections === 'function') renderFounderSections();
+      switchDateRange(currentPeriod);   // repaint sidebar chips + topbar subtitle with the synced total
     }
     if (j.actuals) DATA.sections.founderActuals = j.actuals;   // stashed for a forecast-vs-actual view later
     return;
