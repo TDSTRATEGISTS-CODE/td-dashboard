@@ -13,6 +13,67 @@ if (!CONFIG || !DATA) {
 var CLIENT = new URLSearchParams(location.search).get('client') || 'amacx';
 var dateRanges = DATA.dateRanges || {};
 
+// ---------- page registry + client templates ----------
+// Every navigable page is registered here (label + sidebar/tab icon). A `page-<key>` block must
+// exist in index.html. `currency:true` swaps the icon for the client's currencyIcon (€ / £ / $).
+// Templates pick + order pages; `maintenance` keys route to the shared #page-maintenance stub
+// (used by Founder clients to expose not-yet-built Amazon pages). New pages added here become
+// available to ANY client/template — that's how founder pages can later be offered to others.
+var PAGE_REGISTRY = {
+  'overview':         { label: 'Overview',              icon: '&#9635;' },
+  'pnl':              { label: 'P&amp;L &amp; Expenses', icon: '&#8364;', currency: true },
+  'advertising':      { label: 'Advertising',           icon: '&#9670;' },
+  'inventory':        { label: 'Inventory',             icon: '&#9723;' },
+  'products':         { label: 'Products',              icon: '&#9737;' },
+  'keywords':         { label: 'Keywords',              icon: '&#9650;' },
+  'amazonpnl':        { label: 'Amazon P&amp;L',        icon: '&#128274;' },
+  'founder-overview': { label: 'Overview',              icon: '&#9635;' },
+  'founder-pnl':      { label: 'P&amp;L Detail',        icon: '&#8364;', currency: true },
+  'founder-stock':    { label: 'Stock &amp; COGS',      icon: '&#128230;' },
+  'founder-loan':     { label: "Director's Loan",       icon: '&#127974;' }
+};
+var TEMPLATES = {
+  // Amazon analytics clients (amacx, demo) — the original page set. Default when no template set.
+  amazon: { pages: ['overview', 'pnl', 'advertising', 'inventory', 'products', 'keywords', 'amazonpnl'] },
+  // Founder clients (harvaza) — founder-native pages first, then every Amazon page as a
+  // maintenance stub until a founder version is built (drop a key from `maintenance` to go live).
+  founder: {
+    pages: ['founder-overview', 'amazonpnl', 'founder-pnl', 'founder-stock', 'founder-loan',
+            'advertising', 'inventory', 'products', 'keywords'],
+    maintenance: ['amazonpnl', 'advertising', 'inventory', 'products', 'keywords']
+  }
+};
+var PAGES = [];   // resolved [{key,label,icon,maintenance}] for the active client (set by buildNav)
+
+// Resolve the ordered page list for this client from its template (default 'amazon'), honouring
+// an explicit CONFIG.pages override and CONFIG.hiddenPages. maintenance comes from the template or
+// a CONFIG.maintenancePages override.
+function resolvePages() {
+  var tmpl = TEMPLATES[CONFIG.template] || TEMPLATES.amazon;
+  var keys = CONFIG.pages || tmpl.pages;
+  var maint = {}; (CONFIG.maintenancePages || tmpl.maintenance || []).forEach(function (k) { maint[k] = 1; });
+  var hidden = {}; (CONFIG.hiddenPages || []).forEach(function (k) { hidden[k] = 1; });
+  return keys.filter(function (k) { return !hidden[k]; }).map(function (k) {
+    var m = PAGE_REGISTRY[k] || { label: k, icon: '&#9635;' };
+    var icon = m.currency ? ((CONFIG.client && CONFIG.client.currencyIcon) || '&#8364;') : m.icon;
+    return { key: k, label: m.label, icon: icon, maintenance: !!maint[k] };
+  });
+}
+
+// Generate the sidebar nav + top tab bar from PAGES (same order, so switchPage's index alignment
+// holds). Replaces the formerly-hardcoded markup so any template renders correctly.
+function buildNav() {
+  PAGES = resolvePages();
+  var nav = document.getElementById('sb-nav');
+  if (nav) nav.innerHTML = PAGES.map(function (p) {
+    return '<div class="nav-item" onclick="switchPage(\'' + p.key + '\')"><span class="nav-ic">' + p.icon + '</span> ' + p.label + '</div>';
+  }).join('');
+  var tabs = document.getElementById('page-tabs');
+  if (tabs) tabs.innerHTML = PAGES.map(function (p) {
+    return '<div class="ptab" onclick="switchPage(\'' + p.key + '\')">' + p.label + '</div>';
+  }).join('');
+}
+
 // MKT lookup (topbar title/subtitle per market) is derived from config.markets.
 var MKT = {};
 CONFIG.markets.forEach(function (m) { MKT[m.key] = { t: m.t, m: m.m }; });
@@ -29,13 +90,16 @@ window.switchPage = function (key, sideNavEl, tabEl) {
   document.querySelectorAll('.page-content').forEach(function (p) { p.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active'); });
   document.querySelectorAll('.ptab').forEach(function (t) { t.classList.remove('active'); });
-  document.getElementById('page-' + key).classList.add('active');
+  var idx = -1, pg = null;
+  for (var i = 0; i < PAGES.length; i++) { if (PAGES[i].key === key) { idx = i; pg = PAGES[i]; break; } }
+  // Maintenance pages route to the shared stub (with the page's title); others to their own block.
+  var pageEl = document.getElementById((pg && pg.maintenance) ? 'page-maintenance' : 'page-' + key);
+  if (pageEl) pageEl.classList.add('active');
+  if (pg && pg.maintenance) { var mt = document.getElementById('maint-title'); if (mt) mt.innerHTML = pg.label; }  // innerHTML: render entities (e.g. P&amp;L)
+  var navs = document.querySelectorAll('.nav-item'); if (idx >= 0 && navs[idx]) navs[idx].classList.add('active');
+  var tabs = document.querySelectorAll('.ptab'); if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active');
   if (sideNavEl) sideNavEl.classList.add('active');
   if (tabEl) tabEl.classList.add('active');
-  var pages = ['overview', 'pnl', 'advertising', 'inventory', 'products', 'keywords', 'amazonpnl'];
-  var idx = pages.indexOf(key);
-  if (!tabEl) { var tabs = document.querySelectorAll('.ptab'); if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active'); }
-  if (!sideNavEl) { var navs = document.querySelectorAll('.nav-item'); if (idx >= 0 && navs[idx]) navs[idx].classList.add('active'); }
   closeSidebar();
 };
 
@@ -294,6 +358,7 @@ function applyConfig() {
   set('cfg-portal', C.client.portalLabel);
   set('cfg-client-name', C.client.name);
   set('cfg-client-period', C.client.reportPeriodLabel);
+  if (C.client.statusBadge) set('upd-badge-text', C.client.statusBadge);   // topbar badge text (default 'Live')
 
   if (C.client.scopeLabel) {
     var sc = document.querySelectorAll('.cfg-scope');
@@ -331,6 +396,7 @@ function applyConfig() {
     });
   });
 
+  buildNav();          // generate sidebar nav + tabs from the client's template/page list
   buildMarketChips();
 }
 
@@ -388,6 +454,19 @@ function applyLive(j) {
   if (!j) return;
   var ds = CONFIG.dataSource || {};
 
+  // Founder-overlay mode (Harvaza): the Apps Script proxy supplies the sheet-derived financial
+  // sections (overview KPIs + revenue chart, P&L KPIs/chart/table). Deep-merge them onto the baked
+  // sections.founder so the STATIC parts (tasks, milestones, loan, stock phases) survive, then repaint.
+  if (ds.overlay === 'founder') {
+    if (j.founder && DATA.sections) {
+      DATA.sections.founder = DATA.sections.founder || {};
+      deepMerge(DATA.sections.founder, j.founder);
+      if (typeof renderFounderSections === 'function') renderFounderSections();
+    }
+    if (j.actuals) DATA.sections.founderActuals = j.actuals;   // stashed for a forecast-vs-actual view later
+    return;
+  }
+
   // Sections-overlay mode (AMACX): MerchantSpring data is baked in data.js; the proxy supplies
   // ONLY the live sheet-controlled sections (ad budgets/forecast, overview tasks/flags). Merge
   // those into DATA.sections without disturbing the baked MerchantSpring sections, then re-render.
@@ -419,6 +498,23 @@ function applyLive(j) {
 
 // Overlay add's keys onto base, one level deep (so e.g. advertising.budgets merges in without
 // dropping the baked advertising.campaigns). Used for the live sheet-controlled sections.
+// Recursive merge for the founder overlay: recurse into plain objects, REPLACE arrays + primitives.
+// So the proxy's founder.pnl.table (array) swaps in wholesale, while founder.overview keeps its
+// static tasks/milestones because only overview.kpis / overview.revChart are present in the payload.
+function deepMerge(base, add) {
+  if (!base || !add) return base;
+  Object.keys(add).forEach(function (k) {
+    var v = add[k];
+    if (v && typeof v === 'object' && !Array.isArray(v) &&
+        base[k] && typeof base[k] === 'object' && !Array.isArray(base[k])) {
+      deepMerge(base[k], v);
+    } else {
+      base[k] = v;
+    }
+  });
+  return base;
+}
+
 function mergeSections(base, add) {
   if (!base || !add) return;
   Object.keys(add).forEach(function (k) {
@@ -921,6 +1017,121 @@ function renderMarketSelects() {
   for (var i = 0; i < sels.length; i++) sels[i].innerHTML = opts;
 }
 
+// ---------- Founder Dashboard renderers (opt-in: DATA.sections.founder) ----------
+// Fire ONLY when a client supplies sections.founder. Amazon clients are untouched. Each renderer
+// fills the container IDs in the founder page blocks; missing data simply leaves a section empty.
+
+// Coloured dot list shared by the founder overview cards (tasks / stock warnings / milestones).
+// item: { dot:'amber'|'red'|'green'|'muted', title, sub, tint?:bool, titleColor? }
+function fDotList(id, badgeId, spec) {
+  if (!spec) return;
+  if (badgeId && spec.badge != null) set(badgeId, spec.badge);
+  var w = el(id); if (!w || !spec.items) return;
+  var dotc = { amber: 'var(--accent)', accent: 'var(--accent)', red: 'var(--red)', green: 'var(--green)', muted: 'var(--muted2)' };
+  var tintc = { red: '#fdf0f0', amber: '#fdf6e7', green: '#eaf4ef' };
+  w.innerHTML = spec.items.map(function (it, i) {
+    var last = i === spec.items.length - 1;
+    var dc = dotc[it.dot] || 'var(--muted2)';
+    var bg = it.tint ? (tintc[it.dot] || '') : '';
+    var pulse = (it.dot === 'red' && it.tint) ? 'animation:pulse2 1.5s infinite;' : '';
+    var col = it.titleColor ? cvar(it.titleColor)
+      : (bg ? (it.dot === 'red' ? 'var(--red)' : it.dot === 'amber' ? 'var(--amber)' : 'var(--text)') : 'var(--text)');
+    return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;' + (last ? '' : 'border-bottom:1px solid var(--border);') + (bg ? 'background:' + bg + ';' : '') + '">' +
+      '<div style="width:7px;height:7px;border-radius:50%;background:' + dc + ';flex-shrink:0;margin-top:4px;' + pulse + '"></div>' +
+      '<div><div style="font-size:12px;font-weight:' + (bg ? 600 : 500) + ';color:' + col + ';">' + it.title + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-top:1px;">' + (it.sub || '') + '</div></div></div>';
+  }).join('');
+}
+
+function fInfoBar(id, text, kind) {
+  var w = el(id); if (!w) return;
+  if (!text) { w.style.display = 'none'; return; }
+  w.style.display = '';
+  var icon = kind === 'alert' ? '&#9888;' : '&#9432;';   // ⚠ / ℹ
+  w.innerHTML = '<span style="font-size:14px;flex-shrink:0;">' + icon + '</span><span>' + text + '</span>';
+}
+
+function renderFounderOverview(o) {
+  if (!o) return;
+  fInfoBar('f-ov-alert', o.alert, 'alert');
+  fDotList('f-ov-tasks', 'f-ov-tasks-badge', o.tasks);
+  fDotList('f-ov-stockwarn', 'f-ov-stockwarn-badge', o.stockWarn);
+  fDotList('f-ov-milestones', 'f-ov-milestones-badge', o.milestones);
+  renderKpis('f-ov-kpis', o.kpis);
+  if (o.revChart) renderChart('f-chart-frev', 'f-chart-frev-leg', o.revChart);
+  if (o.loanCard) {
+    var lc = o.loanCard, w = el('f-ov-loan');
+    if (lc.sub != null) set('f-ov-loan-sub', lc.sub);
+    if (w) w.innerHTML =
+      '<div style="font-family:var(--display);font-size:20px;font-weight:700;color:var(--text);">' + lc.big + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">' + (lc.bigSub || '') + '</div>' +
+      '<div class="prog-wrap" style="height:8px;"><div class="prog-fill" style="width:' + (lc.fillPct || 0) + '%;background:var(--brand);"></div></div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted2);margin-top:6px;">' + (lc.meta || []).map(function (m) { return '<span>' + m + '</span>'; }).join('') + '</div>';
+  }
+  if (o.waterfall) renderBars('f-ov-waterfall', o.waterfall);
+}
+
+// Generic founder data table (P&L detail + stock phases): cols + rows of pre-formatted cell HTML.
+// row: { cells:[...] , total?:bool } or { section:'Header' } spanning all columns.
+function founderTable(cols, rows, extraStyle) {
+  var head = '<thead><tr>' + cols.map(function (c, i) { return '<th' + (i === 0 ? '' : ' style="text-align:right"') + '>' + c + '</th>'; }).join('') + '</tr></thead>';
+  var body = rows.map(function (r) {
+    if (r.section) return '<tr><td colspan="' + cols.length + '" style="background:var(--surface2);font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:8px 14px;">' + r.section + '</td></tr>';
+    var ts = r.total ? ' style="background:var(--surface2);font-weight:700;"' : '';
+    // r.cls (e.g. 'red'/'green'/'amber') colours the value cells (all but the first label cell).
+    return '<tr' + ts + '>' + r.cells.map(function (c, i) {
+      var st = (i > 0 && r.cls) ? ' style="color:' + cvar(r.cls) + '"' : '';
+      return '<td' + st + '>' + c + '</td>';
+    }).join('') + '</tr>';
+  }).join('');
+  return '<div class="tscroll"><table class="dtable"' + (extraStyle ? ' style="' + extraStyle + '"' : '') + '>' + head + '<tbody>' + body + '</tbody></table></div>';
+}
+
+function renderFounderPnl(p) {
+  if (!p) return;
+  renderKpis('f-pnl-kpis', p.kpis);
+  if (p.chart) renderChart('f-chart-fpnl', 'f-chart-fpnl-leg', p.chart);
+  if (p.table) { var w = el('f-pnl-table'); if (w) w.innerHTML = founderTable(p.table.cols, p.table.rows, 'white-space:nowrap;'); }
+}
+
+function renderFounderStock(s) {
+  if (!s) return;
+  fInfoBar('f-stock-info', s.info, 'info');
+  renderKpis('f-stock-kpis', s.kpis);
+  var w = el('f-stock-phases'); if (!w || !s.phases) return;
+  w.innerHTML = s.phases.map(function (ph) {
+    var tag = ph.tag ? '<span class="badge ' + (ph.tag.cls || 'bb') + '">' + ph.tag.text + '</span>' : '';
+    return '<div class="card" style="margin-bottom:14px;"><div class="card-hdr"><div><div class="card-ttl">' + ph.title + '</div></div>' + tag + '</div>' +
+      founderTable(ph.cols, ph.rows) + '</div>';
+  }).join('');
+}
+
+function renderFounderLoan(l) {
+  if (!l) return;
+  var sg = el('f-loan-stats');
+  if (sg && l.stats) sg.innerHTML = l.stats.map(function (s) {
+    return '<div class="f-stat"><div class="f-stat-lbl">' + s.lbl + '</div><div class="f-stat-val">' + s.val + '</div></div>';
+  }).join('');
+  if (l.progress) {
+    var pr = l.progress, w = el('f-loan-progress');
+    if (w) w.innerHTML =
+      '<div style="font-size:11px;color:var(--muted);margin-bottom:6px;">' + (pr.note || '') + '</div>' +
+      '<div class="prog-wrap" style="height:10px;"><div class="prog-fill" style="width:' + (pr.fillPct || 0) + '%;background:var(--brand);"></div></div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted2);margin-top:6px;">' + (pr.meta || []).map(function (m) { return '<span>' + m + '</span>'; }).join('') + '</div>';
+  }
+  renderKpis('f-loan-kpis', l.kpis);
+  if (l.chart) renderChart('f-chart-floan', 'f-chart-floan-leg', l.chart);
+  fInfoBar('f-loan-info', l.info, 'info');
+}
+
+function renderFounderSections() {
+  var F = DATA.sections && DATA.sections.founder; if (!F) return;
+  renderFounderOverview(F.overview);
+  renderFounderPnl(F.pnl);
+  renderFounderStock(F.stock);
+  renderFounderLoan(F.loan);
+}
+
 // Boot: render the STATIC (non-period) sections once. Period-dependent sections are
 // rendered by renderPeriodSections (called from switchDateRange).
 function renderSections() {
@@ -959,6 +1170,8 @@ function renderSections() {
   // Sections-level chart fallbacks (used only if a client supplies them statically, not per-period).
   if (o.revChart) renderChart('chart-rev', 'chart-rev-leg', o.revChart);
   if (ad.adChart) renderChart('chart-adtrend', 'chart-adtrend-leg', ad.adChart);
+
+  renderFounderSections();   // Founder-template pages (no-op unless sections.founder exists)
 }
 
 // Period-dependent sections. Reads the current period's d.sec.* overrides, falling back to the
@@ -1018,6 +1231,7 @@ function boot() {
   renderSections();                               // deep-page content (clients with data.sections only)
   switchDateRange(currentPeriod);                 // paints KPIs, market table, sidebar chips, topbar subtitle
   if (MKT[currentMarket]) set('tb-title', MKT[currentMarket].t);
+  if (PAGES.length) switchPage(PAGES[0].key);     // activate the first page (nav/tabs are generated)
   loadLiveData();
 }
 

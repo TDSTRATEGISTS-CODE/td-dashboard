@@ -1,20 +1,27 @@
 # Client Reporting Dashboard — split architecture
 
-A single shared template that renders any client's dashboard, selected by a URL parameter.
+A single shared template that renders any client's dashboard, selected by a URL parameter. Each client
+picks a **template** (a page set): `amazon` (seller analytics) or `founder` (acquired-brand forecast).
 
 ```
 dashboard/
-  index.html        ← shared TEMPLATE (markup + CSS + loader). Identical for every client — no client values here.
-  app.js            ← shared LOGIC. Reads config + data, paints the UI, overlays live data. No client values.
+  index.html        ← shared TEMPLATE: markup + CSS + client loader. Holds EVERY page block for both
+                       templates — Amazon pages, the founder-* pages, and the shared maintenance stub.
+                       No client values live here.
+  app.js            ← shared LOGIC: page registry + templates, generated nav/tabs, all renderers, the
+                       live-data overlay. Reads config + data and paints the UI. No client values.
   td-logo.png       ← shared TD Strategists logo (used by every client for now).
   clients/
-    amacx/
-      config.js     ← window.DASHBOARD_CONFIG — identity, brand colours, markets, hiddenPages, footer, data source
+    amacx/          ← AMAZON-template client (EU · MerchantSpring · live Apps Script overlay)
+      config.js     ← window.DASHBOARD_CONFIG — identity, brand, markets, template, hiddenPages, dataSource
       data.js       ← window.DASHBOARD_DATA  — dateRanges (KPIs + market table) + a FULL `sections` object
                        (GENERATED — do not hand-edit; see "Re-baking AMACX" below)
-    demo/
-      config.js     ← UK-only demo client (GBP, channels Amazon/eBay/D2C, static data)
+    demo/           ← AMAZON-template demo (UK · GBP · channels Amazon/eBay/D2C · static)
+      config.js
       data.js       ← dateRanges + a full `sections` object that data-drives every deep page
+    harvaza/        ← FOUNDER-template client (brand "Bervera" · GBP · static Year-1 forecast)
+      config.js     ← template:'founder', olive/gold brand, markets = Harvaza UK + Harvaza US ('Soon')
+      data.js       ← minimal dateRanges + a `sections.founder` object (overview / pnl / stock / loan)
   tools/
     build-amacx-data.ps1  ← generator that writes clients/amacx/data.js from a baked MerchantSpring + sheet snapshot
 ```
@@ -23,9 +30,40 @@ The page reads `?client=<name>` and loads `clients/<name>/config.js` + `data.js`
 
 - **AMACX:** `https://<your-host>/dashboard/index.html?client=amacx`
 - **UK demo:** `https://<your-host>/dashboard/index.html?client=demo`
+- **Harvaza:** `https://<your-host>/dashboard/index.html?client=harvaza`
 - Default client (no param) is `amacx`.
 
-> **Deploy note:** this folder is not a git repo — changed files are uploaded to GitHub manually. After any edit, push the files you touched (commonly `app.js`, `index.html`, `clients/amacx/data.js`, `tools/build-amacx-data.ps1`).
+> **Deploy note:** this folder is not a git repo — changed files are uploaded to GitHub manually. After any edit, push the files you touched (commonly `app.js`, `index.html`, the edited `clients/<name>/` files, `tools/build-amacx-data.ps1`).
+
+### Client templates: which pages exist
+
+A client's `config.template` decides *which pages exist and in what order*. Two layers in `app.js` drive it:
+
+- **`PAGE_REGISTRY`** — every navigable page key → `{ label, icon }`. A matching `page-<key>` block must
+  exist in `index.html`. `currency:true` swaps the icon for the client's `currencyIcon` (€ / £ / $).
+- **`TEMPLATES`** — named, ordered page sets:
+
+  | Template | Pages | Used by |
+  |---|---|---|
+  | `amazon` *(default when unset)* | Overview · P&L & Expenses · Advertising · Inventory · Products · Keywords · Amazon P&L | `amacx`, `demo` |
+  | `founder` | Overview · P&L Detail · Stock & COGS · Director's Loan · *then every Amazon page as a maintenance stub* | `harvaza` |
+
+At boot, `resolvePages()` builds the list: **template → optional `config.pages` override → minus
+`config.hiddenPages`**. `buildNav()` then **generates** the sidebar nav (`#sb-nav`) and the tab bar
+(`#page-tabs`) from that list — neither is hardcoded in `index.html` any more. So the template fully
+determines a client's navigation, and `switchPage` activates the first page.
+
+**Maintenance stubs.** A template's `maintenance` list (or `config.maintenancePages`) marks pages that
+aren't built yet. Those keys route to one shared `#page-maintenance` block ("This page is undergoing
+maintenance"), titled with the page name. Founder clients use this to **expose every Amazon page before a
+founder version exists** — to make one go live, drop its key from `TEMPLATES.founder.maintenance`.
+
+**Founder pages live in the shared shell.** The `founder-overview / founder-pnl / founder-stock /
+founder-loan` blocks sit in `index.html` and are filled by `renderFounderSections()` from
+`DATA.sections.founder` — **opt-in**, a no-op for Amazon clients (zero regression). That's deliberate: the
+founder pages are reusable by any future founder client. Founder charts reuse the shell's SVG `renderChart`
+(no Chart.js). Adding a brand-new page = register it in `PAGE_REGISTRY`, add it to a template's `pages`, and
+add a `page-<key>` block to `index.html`.
 
 ### Deep pages: the `sections` object
 
@@ -37,12 +75,67 @@ lower Overview, campaign/forecast tables, the two SVG charts). A client override
   auto-scaled SVG charts, so the client is fully self-consistent.
 - **No `sections`** → the static markup in `index.html` renders unchanged.
 
-**Both AMACX and the demo now ship a full `sections` object.** AMACX's is generated from real MerchantSpring
-data (see below); the demo's is hand-authored UK/GBP. Renderers guard every field, so a partial `sections`
-is safe — anything a client omits falls back to the template markup.
+**All three clients ship a `sections` object.** AMACX's is generated from real MerchantSpring data (see
+below); the demo's is hand-authored UK/GBP for the Amazon pages. Harvaza's is a `sections.founder` object
+(`overview` / `pnl` / `stock` / `loan`) that drives the four founder pages. Renderers guard every field, so a
+partial `sections` is safe — anything an Amazon client omits falls back to the template markup, and a missing
+`sections.founder` simply leaves the founder pages unrendered.
 
 Per-period overrides: `dateRanges[period].sec` can override any `sections` block for that date range;
 `app.js` uses `pick(periodOverride, topLevelDefault)` so a period only overrides what it specifies.
+
+### Founder `sections.founder` shape
+
+Founder clients (`template:'founder'`) drive their four pages from `data.js` → `sections.founder`. Each
+key maps to one page; every field is optional (omit it and that part stays empty). The renderers live in
+`app.js` (`renderFounderOverview / renderFounderPnl / renderFounderStock / renderFounderLoan`).
+
+```js
+sections.founder = {
+  overview: {
+    alert:      "string",                         // amber banner; omit to hide
+    tasks:      { badge, items:[ DOT ] },          // Upcoming Tasks card
+    stockWarn:  { badge, items:[ DOT ] },          // Stock Warnings card (use tint:true for the filled rows)
+    milestones: { badge, items:[ DOT ] },          // Key Milestones card
+    kpis:       [ KPI, KPI, KPI, KPI ],            // 4 KPI cards
+    revChart:   CHART,                             // revenue (area+line) + profit-before-debt (dashed)
+    loanCard:   { sub, big, bigSub, fillPct, meta:[a,b,c] },   // Director's-Loan side card
+    waterfall:  [ BAR, ... ]                       // P&L Waterfall bars
+  },
+  pnl: {
+    kpis:  [ KPI x4 ],
+    chart: CHART,                                  // revenue / gross / net lines
+    table: { cols:[ "Line item", ...months, "Total" ],
+             rows:[ { section:"Header" } | { cells:[ ...cellHTML ], total?:bool } ] }
+  },
+  stock: {
+    info:   "string",                              // blue info bar; omit to hide
+    kpis:   [ KPI x3 ],
+    phases: [ { title, tag:{ text, cls:"bg|ba|bb|br" }, cols:[...], rows:[ { cells, total? } ] }, ... ]
+  },
+  loan: {
+    stats:    [ { lbl, val }, ... ],               // top stat grid (6)
+    progress: { note, fillPct, meta:[a,b,c] },     // repayment progress bar
+    kpis:     [ KPI x4 ],
+    chart:    CHART,                               // declining balance (area+line)
+    info:     "string"                             // blue info bar; omit to hide
+  }
+}
+```
+
+Shared building blocks (same helpers the Amazon pages use):
+
+- **KPI** = `{ bar, lbl, val, dCls, d, dColor?, s? }` — `bar` is a hex/`var(--…)` for the coloured top
+  stripe; `dCls` is `'du'` (green) / `'dd'` (red) / `'df'` (muted) for the delta line.
+- **DOT** = `{ dot:'amber'|'red'|'green'|'muted', title, sub, tint?:bool, titleColor? }` — `tint:true`
+  adds the soft row background (and a pulsing dot for `red`).
+- **BAR** = `{ lbl, pct, val, color }` — `color` is a palette name (`green`/`muted`/…) or raw hex.
+- **CHART** = the shell's `renderChart` spec: `{ max, yTicks:[top→bottom], xLabels, xHighlight?,
+  series:[ { values, color, area?, main?, dash? } ], legend:[ { name, color } ] }`. Founder pages reuse
+  this SVG renderer — no Chart.js. Table/phase `cells` are pre-formatted strings and may contain inline
+  HTML (e.g. `'<span style="color:var(--red)">OOS</span>'`).
+
+`clients/harvaza/data.js` is the worked reference for every one of these.
 
 ---
 
@@ -77,8 +170,12 @@ Notes:
 
 | Field | What it does |
 |---|---|
-| `logoSrc` / `logoWidth` | Logo image + size (both clients use `td-logo.png`, `110px`). |
+| `template` | Page set: `'amazon'` (default if unset) or `'founder'`. Decides the nav + which `page-<key>` blocks show. |
+| `pages` | *(optional)* explicit page-key list, overriding the template's order. Rarely needed. |
+| `maintenancePages` | *(optional)* page keys forced to the shared maintenance stub. Founder stubs all Amazon pages by default. |
+| `logoSrc` / `logoWidth` | Logo image + size (all clients use `td-logo.png`, `110px`). |
 | `hiddenPages` | Array of page keys to hide entirely (nav item + tab + page). AMACX: `['keywords','pnl']`. Demo: `['amazonpnl']`. |
+| `currencyIcon` | P&L nav icon + scope currency (`€` / `£` / `$`). Demo + Harvaza use `£`. |
 | `footer.autoNext` | Footer shows "Updated Monthly / Next: 5 <month>" — always the 5th of next month, rolling. |
 | `dataSource` | `static` (use only `data.js`) or an Apps Script proxy `overlay` (live values overlaid onto `data.js`). |
 | `markets` | Sidebar chips + the per-market row filter (see below). |
@@ -91,10 +188,13 @@ hides `amazonpnl` and shows its own real P&L. All the AMACX P&L data still lives
 
 ## Add a new client (≈5 minutes)
 
-1. **Copy** `clients/amacx/` → `clients/<newclient>/` (or start from `demo/` for a hand-authored client).
-2. **`config.js`** — edit identity (`client.name`, `title`, footer), `brand` colours, `markets`, `hiddenPages`,
-   and `dataSource` (`type:'static'` to use only `data.js`, or an Apps Script `/exec` URL to overlay live values).
-3. **`data.js`** — supply `dateRanges` (and a `sections` object if you want to data-drive the deep pages).
+1. **Copy** a like-for-like client: `demo/` for an Amazon client, `harvaza/` for a founder client →
+   `clients/<newclient>/`.
+2. **`config.js`** — edit identity (`client.name`, `title`, footer), set `template` (`'amazon'` or
+   `'founder'`), `brand` colours, `markets`, `hiddenPages`, and `dataSource` (`type:'static'`, or an Apps
+   Script `/exec` URL to overlay live values).
+3. **`data.js`** — supply `dateRanges`, plus the matching `sections` (Amazon pages) or `sections.founder`
+   (founder pages) to data-drive the deep pages.
 4. **Logo** — set `config.logoSrc` (drop `td-logo.png` in, or a client logo; if it's a transparent PNG leave
    `logoBlend:''`).
 5. Open `index.html?client=<newclient>` and check.
@@ -140,15 +240,17 @@ No per-client code lives in `app.js`.
 
 ## Test locally (before pushing to GitHub)
 
-From inside the `dashboard/` folder, start any static file server, then open the URL.
+Start any static file server with `dashboard/` as the root, then open the URL.
 
-```bash
-cd dashboard && python -m http.server 8080
+**Bundled (Windows, no deps)** — serves `dashboard/` on port 8137:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/static-server.ps1 -Port 8137
 ```
 
-Then open: **http://localhost:8080/index.html?client=amacx**
+Then open: **http://localhost:8137/index.html?client=harvaza**
 
-> Node user instead? `cd dashboard && npx serve -l 8080`.
+> Python instead? `cd dashboard && python -m http.server 8080`. Node? `cd dashboard && npx serve -l 8080`.
 > You must use a server, not double-click the file — `file://` blocks the `?client=` script loading and the
 > live-data overlay fetch.
 
@@ -158,8 +260,10 @@ Then open: **http://localhost:8080/index.html?client=amacx**
 
 ```
 config.js + data.js  ──►  app.js boot:
-   applyConfig()  → identity, brand, chips, dropdown, hiddenPages, footer
-   switchDateRange(defaultPeriod) → KPIs, market table, chip revenue, sections render (from data.js)
+   applyConfig()  → identity, brand, chips, dropdown, hiddenPages, footer, buildNav (nav + tabs from template)
+   renderSections() → static deep-page content, incl. renderFounderSections() for founder clients
+   switchDateRange(defaultPeriod) → KPIs, market table, chip revenue, per-period sections
+   switchPage(firstPage) → activate the first page in the resolved page list
    loadLiveData() → if dataSource is a proxy, fetch it, overlay live values, repaint
                     (skip-empty overlay: live wins; blank live fields keep data.js values; any error keeps data.js)
 ```

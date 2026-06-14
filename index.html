@@ -161,6 +161,15 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 .fade:nth-child(3){animation-delay:.12s}.fade:nth-child(4){animation-delay:.16s}
 .fade:nth-child(5){animation-delay:.20s}.fade:nth-child(6){animation-delay:.24s}
 .fade:nth-child(7){animation-delay:.28s}.fade:nth-child(8){animation-delay:.32s}
+/* ===== Founder Dashboard template (opt-in via CONFIG.template:'founder') ===== */
+.f-alert{background:var(--amber-bg);border:1px solid var(--amber-b);border-radius:8px;padding:9px 13px;font-size:12px;color:var(--amber);display:flex;align-items:center;gap:8px;}
+.f-info{background:var(--blue-bg);border:1px solid var(--blue-b);border-radius:8px;padding:9px 13px;font-size:12px;color:var(--blue);display:flex;align-items:center;gap:8px;}
+.f-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.f-stat{background:var(--surface);padding:14px 16px;}
+.f-stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:500;}
+.f-stat-val{font-family:var(--display);font-size:18px;font-weight:700;margin-top:4px;letter-spacing:-.2px;}
+@media(max-width:768px){.f-stat-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.f-stat-grid{grid-template-columns:1fr;}}
 </style>
 <script>
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
@@ -185,13 +194,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
     <div class="cl-per" id="cfg-client-period"></div>
   </div>
   <div class="sb-sec">Pages</div>
-  <div class="nav-item active" onclick="switchPage('overview',this)"><span class="nav-ic">&#9635;</span> Overview</div>
-  <div class="nav-item" onclick="switchPage('pnl',this)"><span class="nav-ic" id="cfg-pnl-icon">&#8364;</span> P&amp;L &amp; Expenses</div>
-  <div class="nav-item" onclick="switchPage('advertising',this)"><span class="nav-ic">&#9670;</span> Advertising</div>
-  <div class="nav-item" onclick="switchPage('inventory',this)"><span class="nav-ic">&#9723;</span> Inventory</div>
-  <div class="nav-item" onclick="switchPage('products',this)"><span class="nav-ic">&#9737;</span> Products</div>
-  <div class="nav-item" onclick="switchPage('keywords',this)"><span class="nav-ic">&#9650;</span> Keywords</div>
-  <div class="nav-item" onclick="switchPage('amazonpnl',this)"><span class="nav-ic">&#128274;</span> Amazon P&amp;L</div>
+  <div id="sb-nav"></div>
   <div class="sb-sec2">Marketplace</div>
   <div id="cfg-markets"></div>
   <div class="sb-footer" id="cfg-footer"></div>
@@ -209,7 +212,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       <div class="tb-mkt" id="tb-mkt">All Marketplaces &middot; May 2026</div>
     </div>
     <div class="tb-right">
-      <div class="upd-badge"><div class="upd-dot"></div><span>Live</span></div>
+      <div class="upd-badge" id="upd-badge"><div class="upd-dot"></div><span id="upd-badge-text">Live</span></div>
       <div class="date-select-wrap">
         <select id="date-range-select" onchange="switchDateRange(this.value)" style="font-size:12px;font-weight:500;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:6px 28px 6px 10px;cursor:pointer;appearance:none;-webkit-appearance:none;font-family:var(--sans);box-shadow:0 1px 3px rgba(0,0,0,.06);">
         </select>
@@ -219,15 +222,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   </div>
 
   <!-- Page tabs -->
-  <div class="page-tabs">
-    <div class="ptab active" onclick="switchPage('overview',null,this)">Overview</div>
-    <div class="ptab" onclick="switchPage('pnl',null,this)">P&amp;L &amp; Expenses</div>
-    <div class="ptab" onclick="switchPage('advertising',null,this)">Advertising</div>
-    <div class="ptab" onclick="switchPage('inventory',null,this)">Inventory</div>
-    <div class="ptab" onclick="switchPage('products',null,this)">Products</div>
-    <div class="ptab" onclick="switchPage('keywords',null,this)">Keywords</div>
-    <div class="ptab" onclick="switchPage('amazonpnl',null,this)">Amazon P&amp;L</div>
-  </div>
+  <div class="page-tabs" id="page-tabs"></div>
 
   <!-- ========== PAGE: OVERVIEW ========== -->
   <div class="page-content active" id="page-overview">
@@ -782,6 +777,108 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
           </tbody>
         </table></div>
       </div>
+    </div>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- ===== FOUNDER DASHBOARD PAGES (template:'founder' only) ====== -->
+  <!-- Hidden from Amazon clients (not in their template's page list). -->
+  <!-- Content is rendered from DATA.sections.founder by app.js.       -->
+  <!-- ============================================================= -->
+
+  <!-- ========== PAGE: FOUNDER OVERVIEW ========== -->
+  <div class="page-content" id="page-founder-overview">
+    <div class="f-alert fade" id="f-ov-alert" style="display:none;"></div>
+    <div class="tasks-flags-grid fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">&#128203; Upcoming Tasks</div><div class="card-sub">Pre-launch actions</div></div><span id="f-ov-tasks-badge" style="font-size:10px;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span></div>
+        <div id="f-ov-tasks"></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">&#128230; Stock Warnings</div><div class="card-sub">OOS &amp; supply risk</div></div><span id="f-ov-stockwarn-badge" style="font-size:10px;background:var(--red-bg);color:var(--red);border:1px solid var(--red-b);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span></div>
+        <div id="f-ov-stockwarn"></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">&#127919; Key Milestones</div><div class="card-sub">Year 1 calendar</div></div><span id="f-ov-milestones-badge" style="font-size:10px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span></div>
+        <div id="f-ov-milestones"></div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-lbl">Year 1 Forecast</div>
+      <div class="g4" id="f-ov-kpis"></div>
+    </div>
+    <div class="g21 fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Revenue Trend</div><div class="card-sub">Monthly forecast &middot; revenue &amp; profit before debt</div></div></div>
+        <div class="card-body" style="padding:16px 16px 10px;">
+          <svg class="lc" id="f-chart-frev" viewBox="0 0 440 160"></svg>
+          <div class="leg" id="f-chart-frev-leg"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-ttl">Director's Loan</div><div class="card-sub" id="f-ov-loan-sub"></div></div></div>
+          <div class="card-body" id="f-ov-loan"></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-ttl">P&amp;L Waterfall</div><div class="card-sub">Full year summary</div></div></div>
+          <div class="card-body" id="f-ov-waterfall" style="display:flex;flex-direction:column;gap:0;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: FOUNDER P&L DETAIL ========== -->
+  <div class="page-content" id="page-founder-pnl">
+    <div>
+      <div class="sec-lbl">P&amp;L Summary &mdash; Year 1</div>
+      <div class="g4" id="f-pnl-kpis"></div>
+    </div>
+    <div class="card fade">
+      <div class="card-hdr"><div><div class="card-ttl">Monthly P&amp;L Breakdown</div><div class="card-sub">Revenue &middot; gross profit &middot; net after debt</div></div></div>
+      <div class="card-body" style="padding:16px 16px 10px;">
+        <svg class="lc" id="f-chart-fpnl" viewBox="0 0 440 160"></svg>
+        <div class="leg" id="f-chart-fpnl-leg"></div>
+      </div>
+    </div>
+    <div class="card fade">
+      <div class="card-hdr"><div><div class="card-ttl">Monthly P&amp;L Detail</div><div class="card-sub">Jun 2026 &ndash; May 2027</div></div></div>
+      <div id="f-pnl-table"></div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: FOUNDER STOCK & COGS ========== -->
+  <div class="page-content" id="page-founder-stock">
+    <div class="f-info fade" id="f-stock-info" style="display:none;"></div>
+    <div class="g3 fade" id="f-stock-kpis"></div>
+    <div class="fade" id="f-stock-phases"></div>
+  </div>
+
+  <!-- ========== PAGE: FOUNDER DIRECTOR'S LOAN ========== -->
+  <div class="page-content" id="page-founder-loan">
+    <div class="f-stat-grid fade" id="f-loan-stats"></div>
+    <div class="card fade">
+      <div class="card-hdr"><div><div class="card-ttl">Repayment Progress</div></div></div>
+      <div class="card-body" id="f-loan-progress"></div>
+    </div>
+    <div class="g4" id="f-loan-kpis"></div>
+    <div class="card fade">
+      <div class="card-hdr"><div><div class="card-ttl">Loan Balance Over Time</div><div class="card-sub">Outstanding balance &middot; declining to zero</div></div></div>
+      <div class="card-body" style="padding:16px 16px 10px;">
+        <svg class="lc" id="f-chart-floan" viewBox="0 0 440 160"></svg>
+        <div class="leg" id="f-chart-floan-leg"></div>
+      </div>
+    </div>
+    <div class="f-info fade" id="f-loan-info" style="display:none;"></div>
+  </div>
+
+  <!-- ========== PAGE: MAINTENANCE (shared stub for not-yet-built pages) ========== -->
+  <div class="page-content" id="page-maintenance">
+    <div class="pnl-gate">
+      <div style="width:68px;height:68px;border-radius:18px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--muted);">&#9881;</div>
+      <div style="font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-.4px;color:var(--brand);"><span id="maint-title">Page</span></div>
+      <div style="font-size:15px;color:var(--muted);max-width:360px;line-height:1.7;text-wrap:balance;">This page is undergoing maintenance &mdash;<br>we&rsquo;re building it and it&rsquo;ll be available soon.</div>
+      <div style="font-size:12px;color:var(--muted2);margin-top:2px;">Managed by Those Digital Strategists.</div>
     </div>
   </div>
 
