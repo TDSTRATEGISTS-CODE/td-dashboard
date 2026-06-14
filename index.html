@@ -64,6 +64,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .ptab.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600;}
 .page-content{display:none;padding:24px 28px;flex-direction:column;gap:24px;overflow-x:hidden;max-width:100%;}
 .page-content.active{display:flex;}
+/* Locked Amazon-P&L upsell: centred in the viewport on desktop, top-aligned on mobile so it
+   isn't pushed far down by vertical-centring inside a tall min-height box. */
+.pnl-gate{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:62vh;gap:20px;padding:40px 24px;}
+@media(max-width:768px){.pnl-gate{min-height:auto;justify-content:flex-start;padding:24px 18px 32px;gap:16px;}}
 .sec-lbl{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted2);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;font-family:var(--display);}
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
@@ -71,6 +75,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
 .g21{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;}
 .g12{display:grid;grid-template-columns:1fr 1.6fr;gap:16px;}
+/* Grid/flex items default to min-width:auto, which makes a wide table EXPAND its card past the
+   viewport (clipping the last column) instead of letting the .tscroll inside scroll. min-width:0
+   lets the card shrink to its track so the table scrolls. Safe at all widths. */
+.g4>*,.g3>*,.g2>*,.g21>*,.g12>*,.two-col>*,.tasks-flags-grid>*{min-width:0;}
+.tscroll{min-width:0;}
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;overflow:hidden;}
 .kpi-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0;}
 .kpi-lbl{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:5px;}
@@ -503,7 +512,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
   <!-- ========== PAGE: AMAZON P&L (upsell) ========== -->
   <div class="page-content" id="page-amazonpnl">
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:62vh;gap:20px;padding:40px 24px;">
+    <div class="pnl-gate">
       <div style="width:68px;height:68px;border-radius:18px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 6px 20px rgba(0,0,0,.10);">&#128274;</div>
       <div style="font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-.4px;color:var(--brand);">Amazon P&amp;L</div>
       <div style="font-size:15px;color:var(--muted);max-width:470px;line-height:1.6;">Full income &amp; expenses statement, net margins, per-channel P&amp;L and product-level profitability &mdash; straight from your Amazon settlement data.</div>
