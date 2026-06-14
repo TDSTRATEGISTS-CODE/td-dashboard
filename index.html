@@ -378,6 +378,14 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         <div><div class="nld-ttl">Early Launch &mdash; May 2026</div><div class="nld-body">NLD live with 3 ASINs. &#8364;1.2k revenue in first 6 weeks &mdash; early traction positive. Organic ranking building; ad seeding underway. Buy Box secured on all active listings. Full reporting from Month 3.</div></div>
       </div>
     </div>
+    <!-- Account Health: hidden unless a client supplies sections.overview.healthSpec -->
+    <div class="fade" id="sec-health-wrap" style="display:none;">
+      <div class="sec-lbl">Account Health</div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">&#128153; Account Health</div><div class="card-sub">Strategy &amp; performance alerts</div></div><span id="sec-health-badge" style="font-size:10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span></div>
+        <div id="sec-health" style="display:flex;flex-direction:column;gap:0;"></div>
+      </div>
+    </div>
   </div>
 
   <!-- ========== PAGE: P&L ========== -->
@@ -711,6 +719,16 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
             <div style="background:#fdf6e7;border:1px solid #f0d070;border-radius:8px;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:var(--amber)">Energy Gel &mdash; IT</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">10 days cover &middot; Order this week</div></div>
           </div>
         </div>
+      </div>
+    </div>
+    <!-- Supplier Purchase Orders: hidden unless a client supplies sections.inventory.supplierPOs -->
+    <div class="fade" id="sec-inv-po-card" style="display:none;">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Supplier Purchase Orders</div><div class="card-sub">Manufacturer reorder forecast &middot; <span class="cfg-scope">All marketplaces</span></div></div></div>
+        <div class="tscroll"><table class="dtable">
+          <thead><tr><th>Product</th><th>Stock Lasts Until</th><th>Check Again</th><th>Order By Latest</th><th>Notes</th></tr></thead>
+          <tbody id="sec-inv-po"></tbody>
+        </table></div>
       </div>
     </div>
   </div>

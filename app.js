@@ -778,6 +778,20 @@ function renderRestock(arr) {
   }).join('');
 }
 
+// Supplier Purchase Orders (manufacturer reorder forecast). Hidden unless a client supplies the data.
+// item: { product, lastsUntil, checkAgain, orderBy, level:'red'|'amber'|'green'|'', note }
+function renderSupplierPOs(arr) {
+  var card = el('sec-inv-po-card');
+  if (!arr || !arr.length) { if (card) card.style.display = 'none'; return; }
+  var cls = { red: 'br', amber: 'ba', green: 'bg' };
+  renderRowsTable('sec-inv-po', arr.map(function (p) {
+    var ob = p.level ? '<span class="badge ' + (cls[p.level] || 'bb') + '">' + (p.orderBy || '—') + '</span>' : (p.orderBy || '—');
+    return '<tr><td style="font-weight:600">' + p.product + '</td><td>' + (p.lastsUntil || '—') + '</td><td>' +
+      (p.checkAgain || '—') + '</td><td>' + ob + '</td><td style="color:var(--muted)">' + (p.note || '') + '</td></tr>';
+  }));
+  if (card) card.style.display = '';
+}
+
 function renderProdTable(arr) {
   if (!arr) return;
   renderRowsTable('sec-prod-table', arr.map(function (r) {
@@ -1157,6 +1171,8 @@ function renderSections() {
   renderTasks(o.tasksSpec);
   renderFlags(o.flagsSpec);
   renderAlertList('sec-stockwarn', 'sec-stockwarn-badge', o.stockWarn);   // inventory state → MCP live later
+  renderAlertList('sec-health', 'sec-health-badge', o.healthSpec);        // Account Health (strategy alerts)
+  var healthWrap = el('sec-health-wrap'); if (healthWrap) healthWrap.style.display = o.healthSpec ? '' : 'none';
   renderEarlyLaunch(o.earlyLaunch);
 
   var pl = S.pnl || {};
@@ -1182,6 +1198,7 @@ function renderSections() {
   // No FBM dispatch-rate source → hide the card when a client supplies inventory but no dispatch data.
   else if (iv.kpis) { var dc = el('sec-inv-dispatch-card'); if (dc) dc.style.display = 'none'; }
   if (iv.restock) renderRestock(iv.restock);
+  renderSupplierPOs(iv.supplierPOs);                                      // hidden unless supplied
 
   // Sections-level chart fallbacks (used only if a client supplies them statically, not per-period).
   if (o.revChart) renderChart('chart-rev', 'chart-rev-leg', o.revChart);

@@ -121,17 +121,19 @@ window.DASHBOARD_DATA = {
         {flag:'ie',label:'Ireland',pct:0,valText:'n/a',color:'amber'}
       ],
       cvr: { val:'9.6%', note:'May 2026 · 6,168 sessions', sub:'UK · session conversion' },
-      // Account-health alerts (real, derived from MerchantSpring — May 2026, UK). Populates the
-      // Overview "Stock Warnings" card (the only warnings list in the shared index.html); NOT touched
-      // by the live sheet proxy, so these persist when live. Ordered by severity. A properly-titled
-      // "Account Health" card would need a shared-template (index.html) change.
-      stockWarn: { badge:'6 to review', items:[
+      // Stock Warnings = Amazon FBA low-stock / availability only (real, MerchantSpring May 2026).
+      // (Account-health/strategy alerts moved to their own section — see ACCOUNT-HEALTH note below.)
+      stockWarn: { badge:'2 low stock', items:[
+        {level:'amber',title:'Contours Rx 2-Pack (6mm) — low stock',sub:'B0C12KT8L6 · ~11 days cover · 3 units — reorder'},
+        {level:'amber',title:'Newnique Advanced Hair Growth Serum — low stock',sub:'B0F8QMT775 · ~15 days cover · 12 units — reorder'},
+        {level:'green',title:'No suppressed listings',sub:'0 content/policy blocks · catalogue clean'}
+      ] },
+      // Account Health = strategy / performance alerts (real, MerchantSpring May 2026). Renders in the
+      // bottom-of-Overview "Account Health" card (separate from the stock-only Stock Warnings card).
+      healthSpec: { badge:'3 alerts', items:[
         {level:'red',title:'High-ACOS campaigns wasting spend',sub:'Whitening Kits 52.7% · Advanced Hair Growth 159% — review bids & keywords'},
         {level:'amber',title:'Buy Box lost on Contours Rx Assortment',sub:'B0FYR8DQ2G (top SKU) — competing sellers winning the box'},
-        {level:'amber',title:'Refund rate 3.3%, up from 2.5%',sub:'16 units refunded in May · watch Contours Rx returns'},
-        {level:'amber',title:'2 SKUs under 15 days cover',sub:'Contours Rx 2-pack (B0C12KT8L6), Newnique serum (B0F8QMT775) — reorder'},
-        {level:'amber',title:'Out-of-stock time 36.4% in May',sub:'buy-box / availability lost during May — now restocked'},
-        {level:'green',title:'No suppressed listings',sub:'0 content/policy blocks · catalogue clean'}
+        {level:'amber',title:'Refund rate 3.3%, up from 2.5%',sub:'16 units refunded in May · watch Contours Rx returns'}
       ] }
     },
     pnl: {
@@ -241,6 +243,15 @@ window.DASHBOARD_DATA = {
       restock: [
         {level:'amber',title:'Contours Rx Lids 2-Pack (6mm) — UK',sub:'B0C12KT8L6 · ~11 days cover · 3 units · selling — order this week'},
         {level:'amber',title:'Newnique Advanced Hair Growth Serum — UK',sub:'B0F8QMT775 · ~15 days cover · 12 units · order soon'}
+      ],
+      // Supplier Purchase Orders (manufacturer reorder forecast). STATIC fallback transcribed from the
+      // tracker; the nkv-sheet-proxy overlays this live once deployed. level = Order-By-Latest urgency.
+      supplierPOs: [
+        {product:'Contours Rx', lastsUntil:'June', checkAgain:'July', orderBy:'18th August', level:'amber', note:'Nailah is aware'},
+        {product:'Newnique', lastsUntil:'March', checkAgain:'October', orderBy:'November', level:'green', note:'Check ZQ Portal'},
+        {product:'White Luxe (Kits)', lastsUntil:'August', checkAgain:'July', orderBy:'August', level:'amber', note:'Make sure enough stock for Dec/Jan'},
+        {product:'Girlactik', lastsUntil:'July', checkAgain:'May', orderBy:'June/July', level:'red', note:'?'},
+        {product:'White Luxe (Strips)', lastsUntil:'Good for now', checkAgain:'January', orderBy:'—', level:'', note:''}
       ]
     },
     products: {
