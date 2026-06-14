@@ -32,7 +32,7 @@ window.switchPage = function (key, sideNavEl, tabEl) {
   document.getElementById('page-' + key).classList.add('active');
   if (sideNavEl) sideNavEl.classList.add('active');
   if (tabEl) tabEl.classList.add('active');
-  var pages = ['overview', 'pnl', 'amazonpnl', 'advertising', 'inventory', 'products', 'keywords'];
+  var pages = ['overview', 'pnl', 'advertising', 'inventory', 'products', 'keywords', 'amazonpnl'];
   var idx = pages.indexOf(key);
   if (!tabEl) { var tabs = document.querySelectorAll('.ptab'); if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active'); }
   if (!sideNavEl) { var navs = document.querySelectorAll('.nav-item'); if (idx >= 0 && navs[idx]) navs[idx].classList.add('active'); }
