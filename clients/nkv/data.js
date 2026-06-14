@@ -102,14 +102,36 @@ window.DASHBOARD_DATA = {
   },
   sections: {
     overview: {
+      // Tasks + flags = STATIC SNAPSHOT of the NKV Project Scope board (NKV Beauty Account Tracker,
+      // 14 Jun 2026). These become live once the nkv-sheet-proxy is deployed (see tools/nkv-sheet-proxy.gs)
+      // and config.dataSource is switched to appsScript/overlay:'sections'.
+      // 'Upcoming Tasks' card ← sheet "Upcoming" column.
+      tasksSpec: { badge: 'Project scope', items: [
+        {text:'Keyword update & optimise', sub:'Upcoming', active:false},
+        {text:'Request listing images (Newnique)', sub:'Upcoming', active:false}
+      ] },
+      // 'In Progress' card ← sheet "In Progress" column.
+      flagsSpec: { badge: '3 in progress', items: [
+        {level:'amber', title:"Connecting Beckdale's WMS", sub:'Shipping · in progress'},
+        {level:'amber', title:'Google Ads verification', sub:'Account queries · in progress'},
+        {level:'amber', title:'Newnique listing optimisations', sub:'Graphics / A+ · in progress'}
+      ] },
       buyBox: [
         {flag:'gb',label:'United Kingdom',pct:99,valText:'99.3%',color:'green'},
         {flag:'ie',label:'Ireland',pct:0,valText:'n/a',color:'amber'}
       ],
       cvr: { val:'9.6%', note:'May 2026 · 6,168 sessions', sub:'UK · session conversion' },
-      stockWarn: { badge:'36% OOS', items:[
-        {level:'amber',title:'UK out-of-stock rate 36.4% in May',sub:'Lost-buy-box / OOS time across the catalogue — restock review recommended'},
-        {level:'green',title:'No suppressed listings',sub:'0 content/policy suppressions on the UK catalogue'}
+      // Account-health alerts (real, derived from MerchantSpring — May 2026, UK). Populates the
+      // Overview "Stock Warnings" card (the only warnings list in the shared index.html); NOT touched
+      // by the live sheet proxy, so these persist when live. Ordered by severity. A properly-titled
+      // "Account Health" card would need a shared-template (index.html) change.
+      stockWarn: { badge:'6 to review', items:[
+        {level:'red',title:'High-ACOS campaigns wasting spend',sub:'Whitening Kits 52.7% · Advanced Hair Growth 159% — review bids & keywords'},
+        {level:'amber',title:'Buy Box lost on Contours Rx Assortment',sub:'B0FYR8DQ2G (top SKU) — competing sellers winning the box'},
+        {level:'amber',title:'Refund rate 3.3%, up from 2.5%',sub:'16 units refunded in May · watch Contours Rx returns'},
+        {level:'amber',title:'2 SKUs under 15 days cover',sub:'Contours Rx 2-pack (B0C12KT8L6), Newnique serum (B0F8QMT775) — reorder'},
+        {level:'amber',title:'Out-of-stock time 36.4% in May',sub:'buy-box / availability lost during May — now restocked'},
+        {level:'green',title:'No suppressed listings',sub:'0 content/policy blocks · catalogue clean'}
       ] }
     },
     pnl: {
@@ -156,6 +178,31 @@ window.DASHBOARD_DATA = {
       }
     },
     advertising: {
+      // Real May 2026 ad totals (MerchantSpring advertising report, UK channel, GBP).
+      metrics: [
+        {lbl:'Total Spend',  val:'£3,201', id:'a-spend'},
+        {lbl:'Ad Sales',     val:'£7,637', color:'brand'},
+        {lbl:'ACOS',         val:'41.9%',  color:'amber'},
+        {lbl:'TACOS',        val:'21.0%',  color:'amber', id:'a-tacos'},
+        {lbl:'ROAS',         val:'2.39×',  id:'a-roas'},
+        {lbl:'Avg. CPC',     val:'£0.87'},
+        {lbl:'Impressions',  val:'1.58M'},
+        {lbl:'New-to-Brand', val:'10.5%',  color:'green'}
+      ],
+      // Ad budget = £3,000/mo (NKV tracker · Marketing Activity sheet) vs real May actual spend.
+      // Overwrites the template's AMACX placeholder budget table. Goes live via nkv-sheet-proxy.
+      budgets: {
+        subLabel: 'May 2026 · budget vs actual',
+        headers: ['Monthly Budget','May Actual','Variance','Utilisation'],
+        rows: [
+          {name:'United Kingdom', flag:'gb', cells:['£3,000','£3,201','▲ £201 over','107%']},
+          {name:'Total', total:true,         cells:['£3,000','£3,201','▲ £201 over','107%']}
+        ]
+      },
+      // No clean forward ad forecast in the tracker yet (the "Forecast Document" is being rebuilt).
+      forecast: [
+        {month:'—', budget:'Forecast being rebuilt — see tracker', pct:0, tacos:'—', roas:'—'}
+      ],
       campaigns: [
         {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£880',sales:'£1,668',acos:'52.7%',acosCls:'br',roas:'1.90×',cpc:'£0.98',status:'Active',statusCls:'bg'},
         {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£678',sales:'£1,731',acos:'39.2%',acosCls:'ba',roas:'2.55×',cpc:'£1.05',status:'Active',statusCls:'bg'},
@@ -173,36 +220,51 @@ window.DASHBOARD_DATA = {
       ]
     },
     inventory: {
+      // Real FBA stock snapshot from MerchantSpring product report (qty + days-cover per SKU). All
+      // sold SKUs are currently in stock; the 36.4% is OOS *time during May* (buy-box lost), now restocked.
+      // No dispatch-rate source → the Dispatch card auto-hides (app.js).
       kpis: [
-        {bar:'#404935',lbl:'Active SKUs',val:'46',dCls:'df',d:'UK listings',s:'beauty catalogue'},
-        {bar:'red',lbl:'Out-of-Stock Rate',val:'36.4%',dCls:'dd',d:'OOS time in May',s:'restock review needed'},
-        {bar:'green',lbl:'Suppressed Listings',val:'0',dCls:'du',d:'no content issues',s:'UK catalogue clean'},
-        {bar:'blue',lbl:'Buy Box Win',val:'99.3%',dCls:'du',d:'May avg',s:'UK · strong'}
+        {bar:'green',lbl:'In Stock',val:'44',dCls:'du',d:'SKUs · 0 OOS now',s:'all sold listings live'},
+        {bar:'#404935',lbl:'Units on Hand',val:'1,407',dCls:'df',d:'FBA total',s:'across 44 SKUs'},
+        {bar:'amber',lbl:'Reorder Watch',val:'2',dCls:'df',dColor:'amber',d:'selling · <15d cover',s:'see priority list'},
+        {bar:'red',lbl:'OOS Time (May)',val:'36.4%',dCls:'dd',d:'buy-box lost in May',s:'now restocked'}
+      ],
+      stock: [
+        {dot:'dg',name:'Contours Rx Lids by Design — Assortment 4–7mm',note:'B0FYR8DQ2G · UK · Contours Rx',units:'84 units',days:'~41 days'},
+        {dot:'dg',name:'White Luxe Teeth Whitening Kit',note:'B08SCS43Q1 · UK · White Luxe',units:'74 units',days:'~57 days'},
+        {dot:'dg',name:'Contours Rx Lids by Design — 4mm',note:'B08MJ1PSXN · UK · Contours Rx',units:'101 units',days:'~74 days'},
+        {dot:'dg',name:'Contours Rx Lids by Design — 7mm',note:'B018EDU1DA · UK · Contours Rx',units:'63 units',days:'~51 days'},
+        {dot:'da',name:'Contours Rx Lids by Design — 2-Pack 6mm',note:'B0C12KT8L6 · UK · low cover',units:'3 units',unitsColor:'amber',days:'~11 days',daysColor:'amber'},
+        {dot:'da',name:'Newnique Advanced Hair Growth Serum',note:'B0F8QMT775 · UK · low cover',units:'12 units',unitsColor:'amber',days:'~15 days',daysColor:'amber'},
+        {dot:'dg',name:'Newnique Hair Growth Kit — GrowPod',note:'B0FCFVGD6Y · UK · Newnique',units:'30 units',days:'~129 days'}
       ],
       restock: [
-        {level:'amber',title:'UK · Out-of-stock rate 36.4% in May',sub:'Buy-box / availability gaps across the catalogue — SKU-level stock feed not yet connected'},
-        {level:'green',title:'UK · No suppressed or policy-blocked listings',sub:'All 46 active SKUs eligible to sell'}
+        {level:'amber',title:'Contours Rx Lids 2-Pack (6mm) — UK',sub:'B0C12KT8L6 · ~11 days cover · 3 units · selling — order this week'},
+        {level:'amber',title:'Newnique Advanced Hair Growth Serum — UK',sub:'B0F8QMT775 · ~15 days cover · 12 units · order soon'}
       ]
     },
     products: {
+      // KPIs + by-market table = May 2026 (page period). Groups card = trailing 12 months (its label).
       kpis: [
-        {bar:'#404935',lbl:'Active SKUs',val:'46',dCls:'df',d:'UK listings',s:'beauty catalogue'},
-        {bar:'green',lbl:'Orders (May)',val:'573',dCls:'du',d:'UK + IRL',s:'~558 UK'},
-        {bar:'blue',lbl:'AOV',val:'£27.39',dCls:'df',d:'May blended',s:'per order'},
-        {bar:'amber',lbl:'ASP',val:'£26.05',dCls:'df',d:'May avg',s:'per unit'}
+        {bar:'#404935',lbl:'Active SKUs',val:'46',dCls:'df',d:'UK listings',s:'44 sold in May'},
+        {bar:'var(--green)',lbl:'Top Brand Rev.',val:'£10,472',dCls:'du',d:'Contours Rx',s:'69% of May sales'},
+        {bar:'var(--blue)',lbl:'Orders (May)',val:'558',dCls:'du',d:'▲ 31.9% MoM',s:'423 orders Apr'},
+        {bar:'var(--amber)',lbl:'ASP',val:'£26.17',dCls:'df',d:'May avg',s:'per unit'}
       ],
       table: [
         {name:'United Kingdom',flag:'gb',revenue:'£15,213',units:'584',orders:'558',cvr:'9.6%',cvrCls:'bg',aov:'£27.26'},
         {name:'Ireland',flag:'ie',revenue:'£480',units:'18',orders:'15',cvr:'4.4%',cvrCls:'ba',aov:'£32.00'},
         {name:'United States',flag:'us',revenue:'£0',units:'0',orders:'0',cvr:'—',cvrCls:'bb',aov:'£0.00'}
       ],
+      // Trailing 12 months (Jun 2025–May 2026) by brand · UK · real MerchantSpring product report.
+      // OOS Rate = share of the brand's SKUs currently out of stock (all 0% — catalogue fully in stock now,
+      // 40–80 days cover; contrast the period OOS-time metric on the Overview).
       groups: [
-        {name:'Eyelid Strips (Contours Rx)',sales:'£10,640',units:'—',pct:'70%',oosRate:'—',oosCls:'bg'},
-        {name:'Teeth Whitening (White Luxe)',sales:'£1,701',units:'—',pct:'11%',oosRate:'—',oosCls:'bb'},
-        {name:'Other / Long-tail SKUs',sales:'£1,192',units:'—',pct:'8%',oosRate:'—',oosCls:'bb'},
-        {name:'Hair Growth (Newnique)',sales:'£854',units:'—',pct:'6%',oosRate:'—',oosCls:'bb'},
-        {name:'Eyeliner (Girlactik)',sales:'£586',units:'—',pct:'4%',oosRate:'—',oosCls:'bb'},
-        {name:'Brow Shapers (Lilibeth)',sales:'£240',units:'—',pct:'2%',oosRate:'—',oosCls:'bb'}
+        {name:'Contours Rx — Eyelid Strips',sales:'£102,401',units:'3,103',pct:'70%',oosRate:'0%',oosCls:'bg'},
+        {name:'White Luxe — Teeth Whitening',sales:'£20,120',units:'572',pct:'14%',oosRate:'0%',oosCls:'bg'},
+        {name:'Lilibeth — Brow & Dermaplaning',sales:'£11,352',units:'1,148',pct:'8%',oosRate:'0%',oosCls:'bg'},
+        {name:'Newnique — Hair Growth',sales:'£8,861',units:'336',pct:'6%',oosRate:'0%',oosCls:'bg'},
+        {name:'Girlactik — Eyeliner',sales:'£4,534',units:'289',pct:'3%',oosRate:'0%',oosCls:'bg'}
       ]
     },
     charts: {

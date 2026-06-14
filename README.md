@@ -22,15 +22,24 @@ dashboard/
     harvaza/        ← FOUNDER-template client (brand "Bervera" · GBP · static Year-1 forecast)
       config.js     ← template:'founder', olive/gold brand, markets = Harvaza UK + Harvaza US ('Soon')
       data.js       ← minimal dateRanges + a `sections.founder` object (overview / pnl / stock / loan)
+    nkv/            ← AMAZON-template client (UK · GBP · MerchantSpring · live Apps Script overlay)
+      config.js     ← markets = UK + Ireland + USA('Soon'), scopeLabel 'UK', maintenancePages:['amazonpnl']
+      data.js       ← dateRanges + sections, hand-baked from MerchantSpring (UK actuals); the sheet
+                       overlay supplies live overview tasks/flags + advertising budget
   tools/
     build-amacx-data.ps1  ← generator that writes clients/amacx/data.js from a baked MerchantSpring + sheet snapshot
 ```
+
+> **Apps Script proxies** (`amacx-data-proxy.gs`, `harvaza-sheet-proxy.gs`, `nkv-sheet-proxy.gs`) live at the
+> repo **root, OUTSIDE this `dashboard/` folder** — they're deployed in Google Apps Script and are **not**
+> served from GitHub, so they're kept out of the `dashboard/` upload.
 
 The page reads `?client=<name>` and loads `clients/<name>/config.js` + `data.js` before `app.js` boots.
 
 - **AMACX:** `https://<your-host>/dashboard/index.html?client=amacx`
 - **UK demo:** `https://<your-host>/dashboard/index.html?client=demo`
 - **Harvaza:** `https://<your-host>/dashboard/index.html?client=harvaza`
+- **NKV Beauty:** `https://<your-host>/dashboard/index.html?client=nkv`
 - Default client (no param) is `amacx`.
 
 > **Deploy note:** this folder is not a git repo — changed files are uploaded to GitHub manually. After any edit, push the files you touched (commonly `app.js`, `index.html`, the edited `clients/<name>/` files, `tools/build-amacx-data.ps1`).
@@ -45,7 +54,7 @@ A client's `config.template` decides *which pages exist and in what order*. Two 
 
   | Template | Pages | Used by |
   |---|---|---|
-  | `amazon` *(default when unset)* | Overview · P&L & Expenses · Advertising · Inventory · Products · Keywords · Amazon P&L | `amacx`, `demo` |
+  | `amazon` *(default when unset)* | Overview · P&L & Expenses · Advertising · Inventory · Products · Keywords · Amazon P&L | `amacx`, `demo`, `nkv` |
   | `founder` | Overview · P&L Detail · Stock & COGS · Director's Loan · *then every Amazon page as a maintenance stub* | `harvaza` |
 
 At boot, `resolvePages()` builds the list: **template → optional `config.pages` override → minus

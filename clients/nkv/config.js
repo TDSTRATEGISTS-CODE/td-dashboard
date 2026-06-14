@@ -10,6 +10,7 @@ window.DASHBOARD_CONFIG = {
     title: 'NKV Beauty — TD Strategists',     // browser tab <title>
     portalLabel: 'CLIENT PORTAL',             // small label under the logo
     reportPeriodLabel: 'May 2026 · Monthly Report',
+    scopeLabel: 'UK',                         // replaces the template's '.cfg-scope' default ('All EU')
     logo: 'logo.jpg',                         // per-client fallback (unused while logoSrc is set)
     logoSrc: 'td-logo.png',                   // shared TD logo for now (all clients) — dashboard/td-logo.png
     logoAlt: 'TD Strategists',
@@ -28,9 +29,14 @@ window.DASHBOARD_CONFIG = {
 
   // Pages to hide for this client (nav item + tab + page).
   // 'keywords' dropped — MerchantSpring's MCP exposes no keyword-level data (matches AMACX).
-  // 'amazonpnl' (locked upsell) dropped — NKV is Full Service and gets the REAL 'pnl' page instead,
-  // populated from MerchantSpring's store P&L (COGS held there). Mirrors the demo client.
-  hiddenPages: ['keywords', 'amazonpnl'],
+  // 'pnl' (the real P&L & Expenses page) hidden for now — Amazon P&L is shown as a maintenance
+  //   stub instead (see maintenancePages). The real P&L data still lives baked in data.js, ready
+  //   to expose later by removing 'pnl' here and dropping 'amazonpnl' from maintenancePages.
+  hiddenPages: ['keywords', 'pnl'],
+
+  // Pages routed to the shared "under maintenance" stub (nav item shows, content is the stub).
+  // 'amazonpnl' → the Amazon P&L tab reads "closed for maintenance" until we go live with it.
+  maintenancePages: ['amazonpnl'],
 
   // ---- Date-range selector (drives the topbar dropdown) ----
   dateRangeOptions: [
@@ -66,11 +72,17 @@ window.DASHBOARD_CONFIG = {
     'blue': '#1e4fa0', 'blue-bg': '#edf2fc', 'blue-b': '#b3c9f0'
   },
 
-  // ---- Live data source ----
-  // NKV has no Google Sheet / Apps Script proxy yet, so the dashboard runs purely off the
-  // baked static data below. Switch type to 'appsScript' + overlay 'sections' once a tracker
-  // sheet + proxy are deployed for NKV (see AMACX config for the pattern).
+  // ---- Live data source (LIVE) ----
+  // overlay:'sections' fetches the Apps Script proxy (via JSONP) and merges ONLY the live
+  // sheet-controlled sections (overview tasks/flags, advertising budgets/forecast) onto the baked
+  // data — the MerchantSpring sections + dateRanges in data.js are left untouched.
+  // Proxy source: nkv-sheet-proxy.gs (lives at the repo ROOT, outside dashboard/ — it's deployed in
+  // Google Apps Script, NOT served from GitHub). It reads the NATIVE Google Sheet copy of the
+  // "NKV Beauty Account Tracker" (id 15h_Eo36PhnyX-a4cOlo6yvyhLwS2U9BDbz1fcnruwE4 · "Projects" tab).
+  // data.js still holds a static snapshot of these sections as the fallback if the proxy is down.
   dataSource: {
-    type: 'static'
+    type: 'appsScript',
+    overlay: 'sections',
+    url: 'https://script.google.com/macros/s/AKfycbwhuC4YZZNmyNZZkKEW3iWRz9oQCVCJblKpNcS3Tkh3ZL8DWgCtsa9OGhQXm8ycr-nDwg/exec'
   }
 };
