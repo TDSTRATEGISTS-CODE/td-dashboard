@@ -909,8 +909,8 @@ function renderChart(id, legId, spec) {
     if (s.area) {
       p.push('<polygon points="' + pts.join(' ') + ' ' + X(n - 1).toFixed(1) + ',' + baseY + ' ' + X(0).toFixed(1) + ',' + baseY + '" fill="' + s.color + '" opacity="0.08"/>');
     }
-    p.push('<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + s.color + '" stroke-width="' + (s.main ? 1.8 : 1.4) + '" stroke-linecap="round" stroke-linejoin="round"' + (s.dash ? ' stroke-dasharray="5 3"' : '') + '/>');
-    s.values.forEach(function (v, i) {
+    p.push('<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + s.color + '" stroke-width="' + (s.main ? 1.8 : 1.4) + '" stroke-linecap="round" stroke-linejoin="round"' + (s.dash ? ' stroke-dasharray="' + (typeof s.dash === 'string' ? s.dash : '5 3') + '"' : '') + '/>');
+    if (s.dots !== false) s.values.forEach(function (v, i) {
       p.push('<circle cx="' + X(i).toFixed(1) + '" cy="' + yf(v).toFixed(1) + '" r="' + (s.main ? 2.5 : 1.8) + '" fill="' + s.color + '" stroke="#fff" stroke-width="1.3"/>');
     });
   });
@@ -946,25 +946,41 @@ function renderMarketCharts() {
   var months = C.months;
 
   var rev = C.rev[m] || [];
-  var rMax = niceMax(arrMax(rev));
+  // Revenue target = dotted reference line, EU only (no per-market target) → shown only for 'All EU'.
+  var tgt = (m === 'all' && C.revTarget && C.revTarget.length) ? C.revTarget : null;
+  var rMax = niceMax(Math.max(arrMax(rev), tgt ? arrMax(tgt) : 0));
+  var revSeries = [{ values: rev, color: '#404935', area: true, main: true }];
+  var revLegend = [{ name: 'Revenue', color: '#404935' }];
+  if (tgt) {
+    revSeries.push({ values: tgt, color: '#b08900', dash: '2 3', dots: false });
+    revLegend.push({ name: 'Target', color: '#b08900' });
+  }
   renderChart('chart-rev', 'chart-rev-leg', {
     max: rMax, yTicks: axisTicks(rMax, moneyK), xLabels: months, xHighlight: '#404935',
-    series: [{ values: rev, color: '#404935', area: true, main: true }],
-    legend: [{ name: 'Revenue', color: '#404935' }]
+    series: revSeries, legend: revLegend
   });
 
-  var sp = C.adSpend[m] || [], ta = C.adTacos[m] || [];
-  var spMax = niceMax(arrMax(sp));
+  var sp = C.adSpend[m] || [], sl = (C.adSales && C.adSales[m]) || [], ta = C.adTacos[m] || [];
+  var mnMax = niceMax(Math.max(arrMax(sp), arrMax(sl)));   // left € axis spans both Ad Spend + Ad Sales
   var taMax = Math.max(40, Math.ceil(arrMax(ta) / 20) * 20);
+  var TACOS_TARGET = 20;                                   // ad-efficiency goal: keep TACOS under 20%
+  // Draw order (last on top): Ad Spend area, Ad Sales line, TACOS line, dotted TACOS target.
+  var adSeries = [{ values: sp, color: '#404935', area: true, main: true }];
+  var adLegend = [{ name: 'Ad Spend', color: '#404935' }];
+  if (sl.length) {
+    adSeries.push({ values: sl, color: '#1e4fa0', main: true });
+    adLegend.push({ name: 'Ad Sales', color: '#1e4fa0' });
+  }
+  adSeries.push({ values: ta, color: '#2d6a4f', axis: 'right' });
+  adLegend.push({ name: 'TACOS', color: '#2d6a4f' });
+  adSeries.push({ values: months.map(function () { return TACOS_TARGET; }), color: '#b08900', dash: '2 3', dots: false, axis: 'right' });
+  adLegend.push({ name: 'Target <20%', color: '#b08900' });
   renderChart('chart-adtrend', 'chart-adtrend-leg', {
-    max: spMax, yTicks: axisTicks(spMax, moneyK), xHighlight: '#404935',
+    max: mnMax, yTicks: axisTicks(mnMax, moneyK), xHighlight: '#404935',
     maxRight: taMax, yTicksRight: axisTicks(taMax, function (v) { return Math.round(v) + '%'; }),
     xLabels: months,
-    series: [
-      { values: sp, color: '#404935', area: true, main: true },
-      { values: ta, color: '#2d6a4f', axis: 'right' }
-    ],
-    legend: [{ name: 'Ad Spend', color: '#404935' }, { name: 'TACOS', color: '#2d6a4f' }]
+    series: adSeries,
+    legend: adLegend
   });
 }
 
@@ -1284,9 +1300,17 @@ function renderPeriodSections(d) {
   if (d.revChart) renderChart('chart-rev', 'chart-rev-leg', d.revChart);
   if (d.adChart) renderChart('chart-adtrend', 'chart-adtrend-leg', d.adChart);
   if (d.revBreakChart) renderRevBreak(d.revBreakChart);
-  if (d.campaignMix) {
-    renderPie('chart-campaign-pie', 'chart-campaign-pie-leg', d.campaignMix);
+  // Performance by Campaign Type pie — follows BOTH the date range and the market chip:
+  // campaignMixByPeriod[period][market] (EU 'all' for All-EU / NLD). Falls back to d.campaignMix (static).
+  var cmByP = ad.campaignMixByPeriod;
+  var cmix = cmByP && cmByP[currentPeriod];
+  var cmMkt = (currentMarket && currentMarket !== 'all') ? currentMarket : 'all';
+  var cmSel = cmix ? (cmix[cmMkt] || cmix.all) : d.campaignMix;
+  if (cmSel) {
+    renderPie('chart-campaign-pie', 'chart-campaign-pie-leg', cmSel);
     var pw = el('sec-campaign-pie-wrap'); if (pw) pw.style.display = '';
+    var cscope = document.querySelector('#sec-campaign-pie-wrap .cfg-scope');
+    if (cscope) cscope.textContent = (cmMkt !== 'all') ? ((MKT[cmMkt] && MKT[cmMkt].t) || cmMkt) : 'All EU';
   }
 
   var bb = pick(so.buyBox, o.buyBox); if (bb) renderProgress('sec-buybox', bb);

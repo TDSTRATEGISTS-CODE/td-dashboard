@@ -219,7 +219,44 @@ window.DASHBOARD_DATA = {
         {name:'IT · Energy Gels (Manual)',type:'Sponsored Products',spend:'€289',sales:'€312',acos:'92.6%',acosCls:'br',roas:'1.08×',cpc:'€0.82',status:'Active',statusCls:'bg'},
         {name:'IT · Energy Gels (Auto)',type:'Sponsored Products',spend:'€269',sales:'€213',acos:'126.3%',acosCls:'br',roas:'0.79×',cpc:'€0.57',status:'Active',statusCls:'bg'},
         {name:'IT · Nougat Bar (Auto)',type:'Sponsored Products',spend:'€225',sales:'€145',acos:'155.2%',acosCls:'br',roas:'0.64×',cpc:'€0.68',status:'Active',statusCls:'bg'}
-      ]
+      ],
+      campaignMixByPeriod: {
+        'may': {
+          all: { slices:[ {name:'Sponsored Products',color:'#404935',pct:80.7,sales:'€3.8k',acos:'42.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:19.3,sales:'€0.9k',acos:'45.3%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          de: { slices:[ {name:'Sponsored Products',color:'#404935',pct:61.9,sales:'€0.8k',acos:'46.7%'}, {name:'Sponsored Brands',color:'#6b7160',pct:38.1,sales:'€0.5k',acos:'31.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          fr: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'€1.2k',acos:'50.8%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'€0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          es: { slices:[ {name:'Sponsored Products',color:'#404935',pct:58.1,sales:'€0.6k',acos:'54.3%'}, {name:'Sponsored Brands',color:'#6b7160',pct:41.9,sales:'€0.5k',acos:'58.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          it: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'€1.3k',acos:'25.7%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'€0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] }
+        },
+        '3m': {
+          all: { slices:[ {name:'Sponsored Products',color:'#404935',pct:78.9,sales:'€9.2k',acos:'41.9%'}, {name:'Sponsored Brands',color:'#6b7160',pct:21.1,sales:'€2.5k',acos:'31.9%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          de: { slices:[ {name:'Sponsored Products',color:'#404935',pct:57,sales:'€2.5k',acos:'45.9%'}, {name:'Sponsored Brands',color:'#6b7160',pct:43,sales:'€1.9k',acos:'19.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          fr: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'€2.4k',acos:'46.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'€0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          es: { slices:[ {name:'Sponsored Products',color:'#404935',pct:75.4,sales:'€1.8k',acos:'44.6%'}, {name:'Sponsored Brands',color:'#6b7160',pct:24.6,sales:'€0.6k',acos:'69.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          it: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'€2.5k',acos:'32.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'€0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] }
+        },
+        '6m': {
+          all: { slices:[ {name:'Sponsored Products',color:'#404935',pct:80.5,sales:'€12.9k',acos:'33.8%'}, {name:'Sponsored Brands',color:'#6b7160',pct:19.5,sales:'€3.1k',acos:'30.4%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          de: { slices:[ {name:'Sponsored Products',color:'#404935',pct:59.9,sales:'€3.8k',acos:'33.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:40.1,sales:'€2.5k',acos:'20.9%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          fr: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'€3.0k',acos:'40.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'€0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          es: { slices:[ {name:'Sponsored Products',color:'#404935',pct:79.9,sales:'€2.4k',acos:'38.4%'}, {name:'Sponsored Brands',color:'#6b7160',pct:20.1,sales:'€0.6k',acos:'69.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          it: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'€3.7k',acos:'26.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'€0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] }
+        },
+        '2025': {
+          all: { slices:[ {name:'Sponsored Products',color:'#404935',pct:92,sales:'€19.6k',acos:'50.6%'}, {name:'Sponsored Brands',color:'#6b7160',pct:7.8,sales:'€1.7k',acos:'34.7%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.2,sales:'€0.0k',acos:'n/a'} ] },
+          de: { slices:[ {name:'Sponsored Products',color:'#404935',pct:87.8,sales:'€12.0k',acos:'44.8%'}, {name:'Sponsored Brands',color:'#6b7160',pct:12,sales:'€1.6k',acos:'33.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.3,sales:'€0.0k',acos:'n/a'} ] },
+          fr: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'€2.0k',acos:'72.4%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'€0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          es: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'€1.9k',acos:'65.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'€0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          it: { slices:[ {name:'Sponsored Products',color:'#404935',pct:99.4,sales:'€3.7k',acos:'50.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0.6,sales:'€0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] }
+        },
+        '12m': {
+          all: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.4,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.4,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.1,sales:'€0.0k',acos:'n/a'} ] },
+          de: { slices:[ {name:'Sponsored Products',color:'#404935',pct:77.2,sales:'€13.1k',acos:'44.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:22.6,sales:'€3.8k',acos:'26.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.2,sales:'€0.0k',acos:'n/a'} ] },
+          fr: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'€4.7k',acos:'52.9%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'€0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          es: { slices:[ {name:'Sponsored Products',color:'#404935',pct:87,sales:'€4.0k',acos:'52.6%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13,sales:'€0.6k',acos:'69.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] },
+          it: { slices:[ {name:'Sponsored Products',color:'#404935',pct:99.7,sales:'€6.9k',acos:'37.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0.3,sales:'€0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'€0.0k',acos:'n/a'} ] }
+        }
+      }
     },
     inventory: {
       kpis: [
@@ -275,8 +312,10 @@ window.DASHBOARD_DATA = {
     },
     charts: {
       months: ['Dec','Jan','Feb','Mar','Apr','May'],
+      revTarget: [7680,4500,5700,5120,8497,10206],
       rev: { all:[3017,3928,3599,4961,7023,8855], de:[946,2154,1150,1914,2240,2095], fr:[512,569,503,868,1577,2201], es:[693,352,617,1034,1630,2167], it:[866,853,1329,1145,1575,2393] },
       adSpend: { all:[163,275,220,950,2009,2317], de:[59,142,77,364,677,529], fr:[19,58,28,168,464,575], es:[27,23,46,221,402,608], it:[59,52,69,196,466,604] },
+      adSales: { all:[1528,1588,1209,2376,4390,4967], de:[706,947,349,1150,1903,1286], fr:[161,243,157,282,904,1285], es:[248,77,222,457,877,1105], it:[413,320,480,488,706,1291] },
       adTacos: { all:[5.4,7,6.1,19.2,28.6,26.2], de:[6.2,6.6,6.7,19,30.2,25.3], fr:[3.8,10.3,5.5,19.3,29.4,26.1], es:[3.9,6.4,7.5,21.4,24.7,28.1], it:[6.8,6.1,5.2,17.2,29.6,25.2] }
     }
   }

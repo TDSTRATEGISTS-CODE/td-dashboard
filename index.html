@@ -64,6 +64,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .ptab.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600;}
 .page-content{display:none;padding:24px 28px;flex-direction:column;gap:24px;overflow-x:hidden;max-width:100%;}
 .page-content.active{display:flex;}
+/* Products page wraps its cards in #sec-prod-main (for the NLD toggle), so re-create the page's
+   column gap inside it — otherwise the KPIs / market table / group table stack flush together. */
+#sec-prod-main{display:flex;flex-direction:column;gap:24px;}
 /* Locked Amazon-P&L upsell: centred in the viewport on desktop, top-aligned on mobile so it
    isn't pushed far down by vertical-centring inside a tall min-height box. */
 .pnl-gate{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:62vh;gap:20px;padding:40px 24px;}
@@ -558,7 +561,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
     <div class="g21 fade">
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Spend vs TACOS Trend</div><div class="card-sub">Monthly ad spend &amp; TACOS &middot; last 6 months</div></div></div>
+        <div class="card-hdr"><div><div class="card-ttl">Ad Spend vs Ad Sales vs TACOS</div><div class="card-sub">Monthly spend, ad sales &amp; TACOS &middot; last 6 months</div></div></div>
         <div class="card-body" style="padding:16px 16px 10px;">
           <svg class="lc" id="chart-adtrend" viewBox="0 0 440 150">
             <line x1="0" y1="15" x2="440" y2="15" stroke="#e4e2dc" stroke-width="1"/>
@@ -623,7 +626,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       <div class="sec-lbl">Campaign Mix &amp; Spend by Market</div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:stretch;">
         <div class="card" id="sec-campaign-pie-wrap" style="flex:1 1 340px;display:none;">
-          <div class="card-hdr"><div><div class="card-ttl">Performance by Campaign Type</div><div class="card-sub">Sales share &amp; ACOS &middot; <span class="dr-period">May 2026</span></div></div></div>
+          <div class="card-hdr"><div><div class="card-ttl">Performance by Campaign Type</div><div class="card-sub">Sales share &amp; ACOS &middot; <span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
           <div class="card-body" style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
             <svg id="chart-campaign-pie" viewBox="0 0 180 180" style="width:160px;height:160px;flex-shrink:0;"></svg>
             <div id="chart-campaign-pie-leg" style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:12px;"></div>

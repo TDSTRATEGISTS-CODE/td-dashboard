@@ -312,7 +312,44 @@ $advJs = @"
         {name:'IT ${DOT} Energy Gels (Manual)',type:'Sponsored Products',spend:'${EUR}289',sales:'${EUR}312',acos:'92.6%',acosCls:'br',roas:'1.08${MUL}',cpc:'${EUR}0.82',status:'Active',statusCls:'bg'},
         {name:'IT ${DOT} Energy Gels (Auto)',type:'Sponsored Products',spend:'${EUR}269',sales:'${EUR}213',acos:'126.3%',acosCls:'br',roas:'0.79${MUL}',cpc:'${EUR}0.57',status:'Active',statusCls:'bg'},
         {name:'IT ${DOT} Nougat Bar (Auto)',type:'Sponsored Products',spend:'${EUR}225',sales:'${EUR}145',acos:'155.2%',acosCls:'br',roas:'0.64${MUL}',cpc:'${EUR}0.68',status:'Active',statusCls:'bg'}
-      ]
+      ],
+      campaignMixByPeriod: {
+        'may': {
+          all: { slices:[ {name:'Sponsored Products',color:'#404935',pct:80.7,sales:'${EUR}3.8k',acos:'42.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:19.3,sales:'${EUR}0.9k',acos:'45.3%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          de: { slices:[ {name:'Sponsored Products',color:'#404935',pct:61.9,sales:'${EUR}0.8k',acos:'46.7%'}, {name:'Sponsored Brands',color:'#6b7160',pct:38.1,sales:'${EUR}0.5k',acos:'31.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          fr: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'${EUR}1.2k',acos:'50.8%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'${EUR}0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          es: { slices:[ {name:'Sponsored Products',color:'#404935',pct:58.1,sales:'${EUR}0.6k',acos:'54.3%'}, {name:'Sponsored Brands',color:'#6b7160',pct:41.9,sales:'${EUR}0.5k',acos:'58.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          it: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'${EUR}1.3k',acos:'25.7%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'${EUR}0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] }
+        },
+        '3m': {
+          all: { slices:[ {name:'Sponsored Products',color:'#404935',pct:78.9,sales:'${EUR}9.2k',acos:'41.9%'}, {name:'Sponsored Brands',color:'#6b7160',pct:21.1,sales:'${EUR}2.5k',acos:'31.9%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          de: { slices:[ {name:'Sponsored Products',color:'#404935',pct:57,sales:'${EUR}2.5k',acos:'45.9%'}, {name:'Sponsored Brands',color:'#6b7160',pct:43,sales:'${EUR}1.9k',acos:'19.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          fr: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'${EUR}2.4k',acos:'46.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'${EUR}0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          es: { slices:[ {name:'Sponsored Products',color:'#404935',pct:75.4,sales:'${EUR}1.8k',acos:'44.6%'}, {name:'Sponsored Brands',color:'#6b7160',pct:24.6,sales:'${EUR}0.6k',acos:'69.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          it: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'${EUR}2.5k',acos:'32.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'${EUR}0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] }
+        },
+        '6m': {
+          all: { slices:[ {name:'Sponsored Products',color:'#404935',pct:80.5,sales:'${EUR}12.9k',acos:'33.8%'}, {name:'Sponsored Brands',color:'#6b7160',pct:19.5,sales:'${EUR}3.1k',acos:'30.4%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          de: { slices:[ {name:'Sponsored Products',color:'#404935',pct:59.9,sales:'${EUR}3.8k',acos:'33.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:40.1,sales:'${EUR}2.5k',acos:'20.9%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          fr: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'${EUR}3.0k',acos:'40.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'${EUR}0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          es: { slices:[ {name:'Sponsored Products',color:'#404935',pct:79.9,sales:'${EUR}2.4k',acos:'38.4%'}, {name:'Sponsored Brands',color:'#6b7160',pct:20.1,sales:'${EUR}0.6k',acos:'69.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          it: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'${EUR}3.7k',acos:'26.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'${EUR}0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] }
+        },
+        '2025': {
+          all: { slices:[ {name:'Sponsored Products',color:'#404935',pct:92,sales:'${EUR}19.6k',acos:'50.6%'}, {name:'Sponsored Brands',color:'#6b7160',pct:7.8,sales:'${EUR}1.7k',acos:'34.7%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.2,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          de: { slices:[ {name:'Sponsored Products',color:'#404935',pct:87.8,sales:'${EUR}12.0k',acos:'44.8%'}, {name:'Sponsored Brands',color:'#6b7160',pct:12,sales:'${EUR}1.6k',acos:'33.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.3,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          fr: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'${EUR}2.0k',acos:'72.4%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'${EUR}0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          es: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'${EUR}1.9k',acos:'65.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'${EUR}0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          it: { slices:[ {name:'Sponsored Products',color:'#404935',pct:99.4,sales:'${EUR}3.7k',acos:'50.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0.6,sales:'${EUR}0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] }
+        },
+        '12m': {
+          all: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.4,sales:'${EUR}28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.4,sales:'${EUR}4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.1,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          de: { slices:[ {name:'Sponsored Products',color:'#404935',pct:77.2,sales:'${EUR}13.1k',acos:'44.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:22.6,sales:'${EUR}3.8k',acos:'26.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.2,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          fr: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'${EUR}4.7k',acos:'52.9%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0,sales:'${EUR}0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          es: { slices:[ {name:'Sponsored Products',color:'#404935',pct:87,sales:'${EUR}4.0k',acos:'52.6%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13,sales:'${EUR}0.6k',acos:'69.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] },
+          it: { slices:[ {name:'Sponsored Products',color:'#404935',pct:99.7,sales:'${EUR}6.9k',acos:'37.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:0.3,sales:'${EUR}0.0k',acos:'n/a'}, {name:'Sponsored Display',color:'#a7ab90',pct:0,sales:'${EUR}0.0k',acos:'n/a'} ] }
+        }
+      }
     }
 "@
 # ---- sections.inventory: FBM stock from getSalesByProduct (quantity/daysCover/OOS). ----
@@ -430,11 +467,17 @@ $ovJs = @"
 # app.js renderMarketCharts() picks the series for the selected market; 'all' = EU (sum of markets).
 $cidx = 11..16
 $monLabels = ($cidx | ForEach-Object { "'" + (MonShort $_) + "'" }) -join ','
+# EU revenue TARGET (dotted chart line, All EU only) — Performance Tracker row 8 "Revenue Target
+# (past vs future)". Monthly, idx 0=Jan2025 … 16=May2026. NOT from MCP — SYNC from the sheet each bake.
+# Sliced by $cidx so it always aligns to the same trailing window as the rev series.
+$REVTGT = @(820,1020,1935,2800,4180,6160,8280,8400,11000,10750,7600,7680,4500,5700,5120,8497,10206)
 $chartsJs = @"
 {
       months: [$monLabels],
+      revTarget: [$(NumArr $REVTGT $cidx)],
       rev: { all:[$(NumArr $EU.sales $cidx)], de:[$(NumArr $M.DE.sales $cidx)], fr:[$(NumArr $M.FR.sales $cidx)], es:[$(NumArr $M.ES.sales $cidx)], it:[$(NumArr $M.IT.sales $cidx)] },
       adSpend: { all:[$(NumArr $EU.adSpend $cidx)], de:[$(NumArr $M.DE.adSpend $cidx)], fr:[$(NumArr $M.FR.adSpend $cidx)], es:[$(NumArr $M.ES.adSpend $cidx)], it:[$(NumArr $M.IT.adSpend $cidx)] },
+      adSales: { all:[$(NumArr $EU.adSales $cidx)], de:[$(NumArr $M.DE.adSales $cidx)], fr:[$(NumArr $M.FR.adSales $cidx)], es:[$(NumArr $M.ES.adSales $cidx)], it:[$(NumArr $M.IT.adSales $cidx)] },
       adTacos: { all:[$(TacosArr $EU.sales $EU.adSpend $cidx)], de:[$(TacosArr $M.DE.sales $M.DE.adSpend $cidx)], fr:[$(TacosArr $M.FR.sales $M.FR.adSpend $cidx)], es:[$(TacosArr $M.ES.sales $M.ES.adSpend $cidx)], it:[$(TacosArr $M.IT.sales $M.IT.adSpend $cidx)] }
     }
 "@
