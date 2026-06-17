@@ -155,10 +155,17 @@ function MarketKpi($sales,$adSpend,$adSales,$units,$orders,$idx,$prior,$pk,$cvr,
     $h.roasS=('{0:N0}' -f $u)+" units $DOT AOV "+(AovF $aov)
     $h.aovS=('{0:N0}' -f $o)+' orders '+(MonShort 4)
     $h.adSalesD=(MoM $as $pAdSal)+' MoM'; $h.adSalesC= if($as -ge $pAdSal){'du'}else{'dd'}
+    $pImpr=[double]$impr[$prior]; $pClicks=[double]$clicks[$prior]
+    $h.imprD=(MoM $im $pImpr)+' MoM'; $h.imprC= if($im -ge $pImpr){'du'}else{'dd'}; $h.imprS='vs '+(ImprF $pImpr)+" $pm"
+    $cpcCur= if($cl){$spend/$cl}else{0}; $pCpc= if($pClicks){$pSpend/$pClicks}else{0}; $cd=$cpcCur-$pCpc; $cA= if($cd -le 0){$DN}else{$UP}
+    $h.cpcD="$cA "+(AovF ([math]::Abs($cd)))+" MoM"; $h.cpcC= if($cd -le 0){'du'}else{'dd'}; $h.cpcS='vs '+(AovF $pCpc)+" $pm"
+    $ctrCur= if($im){($cl/$im)*100}else{0}; $pCtr= if($pImpr){($pClicks/$pImpr)*100}else{0}; $ctd=$ctrCur-$pCtr; $ctA= if($ctd -ge 0){$UP}else{$DN}
+    $h.ctrD="$ctA "+('{0:N2}' -f [math]::Abs($ctd))+"pp vs $pm"; $h.ctrC= if($ctd -ge 0){'du'}else{'dd'}; $h.ctrS=''
   } else {
     $desc=@{ '3m'='3-month actuals'; '6m'='5-month actuals'; '2025'='Full year actuals'; '12m'='Trailing 12 months' }[$pk]
     $h.revD=$desc; $h.revS=''; $h.spendD=$desc; $h.spendS=''; $h.tacosD=''; $h.tacosAdD=''
     $h.roasD=''; $h.roasAdD=''; $h.adSalesD=$desc
+    $h.imprD=$desc; $h.imprC='df'; $h.imprS=''; $h.cpcD=$desc; $h.cpcC='df'; $h.cpcS=''; $h.ctrD=$desc; $h.ctrC='df'; $h.ctrS=''
   }
   return $h
 }
@@ -244,6 +251,18 @@ foreach($pk in $PERIODS.Keys){
   $cpcEUtxt  = if($adIncomplete -or -not $clicksEU){'n/a'}else{ AovF ($spend/$clicksEU) }
   $budEU = ($MARKETS | ForEach-Object { [double]$budPer[$_] } | Measure-Object -Sum).Sum
   $utilEUtxt = if($budEU){ [string]([math]::Round(($spend/$budEU)*100))+'%' }else{'-'}
+  # Impressions / CPC / CTR vs-prior-period deltas (MoM for may; descriptor otherwise) for the 3 ad KPI cards.
+  if($pk -eq 'may'){
+    $prI=[double]$EU.impr[$def.prior]; $prCl=[double]$EU.clicks[$def.prior]; $prSp=[double]$EU.adSpend[$def.prior]; $pm2=MonShort 3
+    $imprDtxt=(MoM $imprEU $prI)+' MoM'; $imprCtxt= if($imprEU -ge $prI){'du'}else{'dd'}; $imprStxt='vs '+(ImprF $prI)+" $pm2"
+    $cpcCurE= if($clicksEU){$spend/$clicksEU}else{0}; $pCpcE= if($prCl){$prSp/$prCl}else{0}; $cdE=$cpcCurE-$pCpcE; $cAE= if($cdE -le 0){$DN}else{$UP}
+    $cpcDtxt="$cAE "+(AovF ([math]::Abs($cdE)))+" MoM"; $cpcCtxt= if($cdE -le 0){'du'}else{'dd'}; $cpcStxt='vs '+(AovF $pCpcE)+" $pm2"
+    $ctrCurE= if($imprEU){($clicksEU/$imprEU)*100}else{0}; $pCtrE= if($prI){($prCl/$prI)*100}else{0}; $ctdE=$ctrCurE-$pCtrE; $ctAE= if($ctdE -ge 0){$UP}else{$DN}
+    $ctrDtxt="$ctAE "+('{0:N2}' -f [math]::Abs($ctdE))+"pp vs $pm2"; $ctrCtxt= if($ctdE -ge 0){'du'}else{'dd'}; $ctrStxt=''
+  } else {
+    $dsc2=@{ '3m'='3-month actuals'; '6m'='5-month actuals'; '2025'='Full year actuals'; '12m'='Trailing 12 months' }[$pk]
+    $imprDtxt=$dsc2;$imprCtxt='df';$imprStxt=''; $cpcDtxt=$dsc2;$cpcCtxt='df';$cpcStxt=''; $ctrDtxt=$dsc2;$ctrCtxt='df';$ctrStxt=''
+  }
 
   $obj=@"
   '$pk': {
@@ -258,8 +277,10 @@ foreach($pk in $PERIODS.Keys){
     aov: '$(AovF $aov)', aovD: '', aovC: 'df', aovS: '$aovS',
     cvr: '$cvrEUtxt', cvrD: '', cvrC: 'df', cvrS: 'page-view conversion',
     orders: '$ordersTxt', ordersD: '', ordersC: 'df', ordersS: '$ordersSub',
-    impr: '$imprEUtxt', imprD: '', imprC: 'df', imprS: 'ad impressions',
-    ctr: '$ctrEUtxt', cpc: '$cpcEUtxt', adBudget: '$(Money $budEU)', util: '$utilEUtxt',
+    impr: '$imprEUtxt', imprD: '$imprDtxt', imprC: '$imprCtxt', imprS: '$imprStxt',
+    ctr: '$ctrEUtxt', ctrD: '$ctrDtxt', ctrC: '$ctrCtxt', ctrS: '$ctrStxt',
+    cpc: '$cpcEUtxt', cpcD: '$cpcDtxt', cpcC: '$cpcCtxt', cpcS: '$cpcStxt',
+    adBudget: '$(Money $budEU)', util: '$utilEUtxt',
     mktRows: [
       $rowsJs
     ],
@@ -411,7 +432,7 @@ $invJs = @"
         {bar:'#404935',lbl:'Active SKUs',val:'69',dCls:'df',d:'unique products',s:'199 EU listings'},
         {bar:'amber',lbl:'Restock 30d+',val:'25',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'see priority list'}
       ],
-      // Per-market KPI cards — counts are that marketplace's own listings (unique-SKU basis, getSalesByProduct
+      // Per-market KPI cards ${EMD} counts are that marketplace's own listings (unique-SKU basis, getSalesByProduct
       // quantity==0 = OOS). app.js swaps these in when a market chip is selected; EU 'kpis' above = unique products.
       kpisByMarket: {
         de: [ {bar:'green',lbl:'In Stock',val:'34',dCls:'du',d:'SKUs',s:'Germany'}, {bar:'red',lbl:'Out of Stock',val:'16',dCls:'dd',d:'SKUs suppressed',s:'Germany'}, {bar:'#404935',lbl:'Active SKUs',val:'50',dCls:'df',d:'DE listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'11',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Germany'} ],
@@ -496,10 +517,27 @@ $prodJs = @"
       },
     }
 "@
+# ---- Target attainment (EU): revenue + units actual vs Performance-Tracker targets, per period. ----
+# EU-only — the sheet has no per-market target (rows 148 Revenue Target / 145 Units Sold Target). Volume target
+# = UNITS (the sheet tracks units, not orders). Re-sync both monthly arrays from the sheet on each bake.
+$REVTGTm   = @(820,1020,1935,2800,4180,6160,8280,8400,11000,10750,7600,7680,4500,5700,5120,8497,10206)
+$UNITSTGTm = @(20,30,45,70,95,140,180,200,250,250,190,160,150,190,160,260,310)
+function AttCls($pct){ if($pct -ge 100){'du'} elseif($pct -ge 90){'df'} else {'dd'} }
+$taParts=@()
+foreach($pk in $PERIODS.Keys){
+  $idx=$PERIODS[$pk].idx
+  $rA=[math]::Round((Sum $EU.sales $idx)); $rT=[math]::Round((Sum $REVTGTm $idx))
+  $uA=[math]::Round((Sum $EU.units $idx)); $uT=[math]::Round((Sum $UNITSTGTm $idx))
+  $rP= if($rT){[math]::Round($rA/$rT*100)}else{0}
+  $uP= if($uT){[math]::Round($uA/$uT*100)}else{0}
+  $taParts += "'$pk': { rev:{actual:'$(Money $rA)',target:'$(Money $rT)',pct:$rP,pctTxt:'$rP%',cls:'$(AttCls $rP)'}, units:{actual:'$('{0:N0}' -f $uA)',target:'$('{0:N0}' -f $uT)',pct:$uP,pctTxt:'$uP%',cls:'$(AttCls $uP)'} }"
+}
+$taJs = "{ " + ($taParts -join ', ') + " }"
 # ---- sections.overview: Buy Box win-rate by market + EU session CVR (recent month, from getSalesByPeriod). ----
 # tasks/flags/stockWarn left unset → stay sheet-controlled (static markup). DE buy box low (lost buy box on shipping).
 $ovJs = @"
 {
+      targetAttainment: $taJs,
       buyBox: [
         {flag:'de',label:'Germany',pct:50,valText:'49.8%',color:'red'},
         {flag:'fr',label:'France',pct:99,valText:'98.9%',color:'green'},
@@ -507,11 +545,11 @@ $ovJs = @"
         {flag:'it',label:'Italy',pct:94,valText:'94.3%',color:'green'}
       ],
       buyBoxByPeriod: {
-        'may': { all: {pct:82,pctTxt:'82%',delta:'▼ 1.5pp',deltaCls:'dd'}, de: {pct:49.7,pctTxt:'49.7%',delta:'▼ 7.3pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'▼ 0.2pp',deltaCls:'dd'}, es: {pct:93.4,pctTxt:'93.4%',delta:'▲ 0.5pp',deltaCls:'du'}, it: {pct:94.4,pctTxt:'94.4%',delta:'▼ 0.9pp',deltaCls:'dd'} },
-        '3m': { all: {pct:82.9,pctTxt:'82.9%',delta:'▲ 1.4pp',deltaCls:'du'}, de: {pct:55.7,pctTxt:'55.7%',delta:'▼ 7.3pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'▲ 0.1pp',deltaCls:'du'}, es: {pct:93.2,pctTxt:'93.2%',delta:'▲ 10.5pp',deltaCls:'du'}, it: {pct:95.2,pctTxt:'95.2%',delta:'▼ 2.5pp',deltaCls:'dd'} },
-        '6m': { all: {pct:83.2,pctTxt:'83.2%',delta:'▼ 8.3pp',deltaCls:'dd'}, de: {pct:59.2,pctTxt:'59.2%',delta:'▼ 22.7pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'▲ 0.4pp',deltaCls:'du'}, es: {pct:91.3,pctTxt:'91.3%',delta:'▼ 0.7pp',deltaCls:'dd'}, it: {pct:96.1,pctTxt:'96.1%',delta:'▼ 2.7pp',deltaCls:'dd'} },
-        '2025': { all: {pct:94.1,pctTxt:'94.1%',delta:'▲ 7.4pp',deltaCls:'du'}, de: {pct:90.9,pctTxt:'90.9%',delta:'▲ 8.8pp',deltaCls:'du'}, fr: {pct:97.2,pctTxt:'97.2%',delta:'▼ 0.7pp',deltaCls:'dd'}, es: {pct:95,pctTxt:'95%',delta:'▼ 5pp',deltaCls:'dd'}, it: {pct:98.5,pctTxt:'98.5%',delta:'▲ 0.6pp',deltaCls:'du'} },
-        '12m': { all: {pct:89.6,pctTxt:'89.6%',delta:'▼ 7.3pp',deltaCls:'dd'}, de: {pct:80.8,pctTxt:'80.8%',delta:'▼ 13.9pp',deltaCls:'dd'}, fr: {pct:97.7,pctTxt:'97.7%',delta:'▼ 1.6pp',deltaCls:'dd'}, es: {pct:93.3,pctTxt:'93.3%',delta:'▲ 3.7pp',deltaCls:'du'}, it: {pct:97.4,pctTxt:'97.4%',delta:'▼ 0.6pp',deltaCls:'dd'} }
+        'may': { all: {pct:82,pctTxt:'82%',delta:'${DN} 1.5pp',deltaCls:'dd'}, de: {pct:49.7,pctTxt:'49.7%',delta:'${DN} 7.3pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'${DN} 0.2pp',deltaCls:'dd'}, es: {pct:93.4,pctTxt:'93.4%',delta:'${UP} 0.5pp',deltaCls:'du'}, it: {pct:94.4,pctTxt:'94.4%',delta:'${DN} 0.9pp',deltaCls:'dd'} },
+        '3m': { all: {pct:82.9,pctTxt:'82.9%',delta:'${UP} 1.4pp',deltaCls:'du'}, de: {pct:55.7,pctTxt:'55.7%',delta:'${DN} 7.3pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'${UP} 0.1pp',deltaCls:'du'}, es: {pct:93.2,pctTxt:'93.2%',delta:'${UP} 10.5pp',deltaCls:'du'}, it: {pct:95.2,pctTxt:'95.2%',delta:'${DN} 2.5pp',deltaCls:'dd'} },
+        '6m': { all: {pct:83.2,pctTxt:'83.2%',delta:'${DN} 8.3pp',deltaCls:'dd'}, de: {pct:59.2,pctTxt:'59.2%',delta:'${DN} 22.7pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'${UP} 0.4pp',deltaCls:'du'}, es: {pct:91.3,pctTxt:'91.3%',delta:'${DN} 0.7pp',deltaCls:'dd'}, it: {pct:96.1,pctTxt:'96.1%',delta:'${DN} 2.7pp',deltaCls:'dd'} },
+        '2025': { all: {pct:94.1,pctTxt:'94.1%',delta:'${UP} 7.4pp',deltaCls:'du'}, de: {pct:90.9,pctTxt:'90.9%',delta:'${UP} 8.8pp',deltaCls:'du'}, fr: {pct:97.2,pctTxt:'97.2%',delta:'${DN} 0.7pp',deltaCls:'dd'}, es: {pct:95,pctTxt:'95%',delta:'${DN} 5pp',deltaCls:'dd'}, it: {pct:98.5,pctTxt:'98.5%',delta:'${UP} 0.6pp',deltaCls:'du'} },
+        '12m': { all: {pct:89.6,pctTxt:'89.6%',delta:'${DN} 7.3pp',deltaCls:'dd'}, de: {pct:80.8,pctTxt:'80.8%',delta:'${DN} 13.9pp',deltaCls:'dd'}, fr: {pct:97.7,pctTxt:'97.7%',delta:'${DN} 1.6pp',deltaCls:'dd'}, es: {pct:93.3,pctTxt:'93.3%',delta:'${UP} 3.7pp',deltaCls:'du'}, it: {pct:97.4,pctTxt:'97.4%',delta:'${DN} 0.6pp',deltaCls:'dd'} }
       },
       buyBoxLosses: [
         {name:'Turbo Gel Blackcurrant',asin:'B0C9R21RSR',ean:'8714411000529',market:'de',reason:'Losing to Others',rc:'ba',your:'${EUR}42.95',winner:'${EUR}46.49',gap:'-${EUR}3.54'},

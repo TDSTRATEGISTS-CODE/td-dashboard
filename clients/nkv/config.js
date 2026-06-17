@@ -40,9 +40,10 @@ window.DASHBOARD_CONFIG = {
   //   to expose later by removing 'pnl' here and dropping 'amazonpnl' from maintenancePages.
   hiddenPages: ['keywords', 'pnl'],
 
-  // Pages routed to the shared "under maintenance" stub (nav item shows, content is the stub).
-  // 'amazonpnl' → the Amazon P&L tab reads "closed for maintenance" until we go live with it.
-  maintenancePages: ['amazonpnl'],
+  // Pages routed to the shared "under maintenance" / pay-gate stub (nav item shows, content is the
+  // stub). 'amazonpnl' → Amazon P&L; 'shopifypnl' → Shopify P&L is gated for now (its real builder +
+  // live proxy stay intact in data.js / nkv-sheet-proxy.gs — drop the key here to expose it).
+  maintenancePages: ['amazonpnl', 'shopifypnl'],
 
   // ---- Date-range selector (drives the topbar dropdown) ----
   dateRangeOptions: [

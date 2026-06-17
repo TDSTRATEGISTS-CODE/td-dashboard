@@ -186,7 +186,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 <script>
   /* Cache-buster: bump APP_VER on every GitHub upload so browsers fetch the new config/data/app
      instead of a stale cached copy. Appended as ?v= to all three script loads below + app.js. */
-  var APP_VER = '2026-06-18a';
+  var APP_VER = '2026-06-18b';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -390,6 +390,20 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card" id="sec-targets-card">
+          <div class="card-hdr"><div><div class="card-ttl">Actual vs Target</div><div class="card-sub"><span class="dr-period">May 2026</span> &middot; All EU</div></div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:13px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Revenue</span><span><b id="ta-rev-actual">&#8364;8,855</b> <span style="color:var(--muted2);">/ <span id="ta-rev-target">&#8364;10,206</span></span> &middot; <span class="dd" id="ta-rev-pct" style="font-weight:600;">87%</span></span></div>
+              <div class="prog-wrap"><div class="prog-fill" id="ta-rev-bar" style="width:87%;background:var(--amber);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Units</span><span><b id="ta-units-actual">269</b> <span style="color:var(--muted2);">/ <span id="ta-units-target">310</span></span> &middot; <span class="dd" id="ta-units-pct" style="font-weight:600;">87%</span></span></div>
+              <div class="prog-wrap"><div class="prog-fill" id="ta-units-bar" style="width:87%;background:var(--amber);"></div></div>
+            </div>
+            <div style="font-size:10px;color:var(--muted2);">Target = Performance Tracker &middot; units (no per-market target)</div>
+          </div>
+        </div>
         <div class="card">
           <div class="card-hdr"><div><div class="card-ttl">Buy Box</div><div class="card-sub">Featured-offer % &middot; <span class="dr-period">May 2026</span> &middot; <span class="cfg-scope" id="bb-scope">All EU</span></div></div></div>
           <div class="card-body">

@@ -748,6 +748,22 @@ function renderBuyBoxLosses(arr) {
   var sc = el('bbl-scope'); if (sc) sc.textContent = (currentMarket && currentMarket !== 'all') ? ((MKT[currentMarket] && MKT[currentMarket].t) || currentMarket) : 'All EU';
 }
 
+// Actual-vs-Target card (revenue + units) for the period. EU-only — the sheet has no per-market target,
+// so the card hides when a specific market chip is selected (same rule as the revenue-target chart line).
+function renderTargetAttainment(o) {
+  var card = el('sec-targets-card');
+  var ta = o.targetAttainment && o.targetAttainment[currentPeriod];
+  if (!ta || (currentMarket && currentMarket !== 'all')) { if (card) card.style.display = 'none'; return; }
+  if (card) card.style.display = '';
+  [['rev', ta.rev], ['units', ta.units]].forEach(function (p) {
+    var k = p[0], v = p[1]; if (!v) return;
+    set('ta-' + k + '-actual', v.actual); set('ta-' + k + '-target', v.target);
+    var pc = el('ta-' + k + '-pct'); if (pc) { pc.textContent = v.pctTxt; pc.className = v.cls; }
+    var bar = el('ta-' + k + '-bar');
+    if (bar) { bar.style.width = Math.min(v.pct, 100) + '%'; bar.style.background = v.pct >= 100 ? 'var(--green)' : 'var(--amber)'; }
+  });
+}
+
 function renderTasks(spec) {
   if (!spec) return;
   if (spec.badge != null) set('sec-tasks-badge', spec.badge);
@@ -1408,6 +1424,7 @@ function renderPeriodSections(d) {
     if (cscope) cscope.textContent = (cmMkt !== 'all') ? ((MKT[cmMkt] && MKT[cmMkt].t) || cmMkt) : 'All EU';
   }
 
+  renderTargetAttainment(o);                // Revenue + Units actual vs target (EU-only, period aware)
   renderBuyBox(o);                          // official Buy Box % + per-market bars (period + market aware)
   renderBuyBoxLosses(o.buyBoxLosses);       // loss list (market-filtered by applyMarketFilter)
   var cv = pick(so.cvr, o.cvr); if (cv) renderCvr(cv);
