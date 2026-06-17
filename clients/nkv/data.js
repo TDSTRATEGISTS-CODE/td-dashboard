@@ -293,3 +293,270 @@ window.DASHBOARD_DATA = {
     }
   }
 };
+
+/* ============================================================================================
+   SHOPIFY (D2C) — sections.shopify  ·  brand-filtered: All / Newnique / Contours Rx (2 stores)
+   --------------------------------------------------------------------------------------------
+   Source: Shopify Admin API + ShopifyQL, pulled in-session 17 Jun 2026, native GBP.
+   • Contours Rx UK (contours-rx.co.uk · 658f4a.myshopify.com): MONTH-level sales, sessions/CVR,
+     product mix, returning-customer rate, traffic, and live stock-on-hand are EXACT MCP actuals.
+   • Newnique: a STUB — the store needs a Shopify re-auth before it can be pulled; numbers populate
+     at the next bake. 'all' currently equals Contours Rx (see the derivation at the bottom).
+   ESTIMATES (clearly marked 'est' in the cards): per-unit ASP + unit counts for the 3-mo / YTD /
+   12-mo periods (units estimated at ~1.05/order), the cart/checkout funnel steps for those longer
+   periods (scaled from May's 6.2% cart / 4.5% checkout ratios), the returning-customer rate beyond
+   May, and the per-product split for longer periods (Lids ≈ 97.8% of net). Re-bake to make exact.
+   Read by app.js → renderShopify() / renderShopBrands(); follows the shared date-range selector. */
+window.DASHBOARD_DATA.sections.shopify = {
+  brands: [
+    { key: 'all',        label: 'All' },
+    { key: 'newnique',   label: 'Newnique' },
+    { key: 'contoursrx', label: 'Contours Rx' }
+  ],
+  data: {
+    contoursrx: {
+      label: 'Contours Rx UK', store: 'contours-rx.co.uk',
+      // 6-month net-sales trend (Dec 2025 → May 2026), exact MCP actuals.
+      chart: {
+        max: 4000, yTicks: ['£4k', '£3k', '£2k', '£1k', '£0'],
+        xLabels: ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'], xHighlight: '#404935',
+        series: [ { values: [1863, 2127, 2907, 3243, 2621, 2416], color: '#404935', area: true, main: true } ],
+        legend: [ { name: 'Net Sales', color: '#404935' } ]
+      },
+      // Current on-hand snapshot (Admin API, 17 Jun 2026). Cover = vs ~May run-rate.
+      stock: [
+        { name: 'Lids by Design Eyelid Lift Strips', note: '7 size variants · Healthy',        level: 'g', units: '2,123 units', cover: '~690 days' },
+        { name: 'Exfoliating B5 Prep Pads 30pk',     note: 'SKU CR B5PREP · Healthy',          level: 'g', units: '72 units',    cover: 'ample cover' },
+        { name: 'Botanical Lash & Brow Serum',       note: 'SKU CR BLBS · New launch (Oct)',   level: 'g', units: '47 units',    cover: 'ample cover' },
+        { name: 'Dermal Blade (3 pack)',             note: 'SKU CR DERMA · Restock needed',    level: 'r', units: '0 units',     cover: 'OOS' }
+      ],
+      // Traffic by referrer (May actual). Bar widths floored so near-zero channels stay visible.
+      traffic: [
+        { lbl: 'Search', pct: 72, val: '1,298', color: 'brand' },
+        { lbl: 'Direct', pct: 27, val: '486',   color: 'blue' },
+        { lbl: 'Social', pct: 1,  val: '7',     color: 'amber' },
+        { lbl: 'Email',  pct: 1,  val: '2',     color: 'green' }
+      ],
+      byPeriod: {
+        may: {
+          kpis1: [
+            { bar: '#404935',      lbl: 'Net Sales', val: '£2,416',  dCls: 'dd', d: '▼ 7.8% MoM',   s: 'vs £2,621 Apr' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '90',      dCls: 'du', d: '▲ 1.1% MoM',   s: '89 orders Apr' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£27.17',  dCls: 'dd', d: '▼ £2.85 MoM',  s: '£30.02 Apr' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£25.43',  dCls: 'df', d: 'net ÷ units',  s: '95 units sold' }
+          ],
+          kpis2: [
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.88%',  dCls: 'dd', d: '▼ 0.70pp MoM', s: '52 of 1,804 sessions' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '1,804',  dCls: 'du', d: '▲ 5.8% MoM',   s: 'vs 1,705 Apr' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '95',     dCls: 'df', d: 'Lids 92 · B5 3', s: '2 active SKUs' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '7.8%',   dCls: 'df', d: '7 of 90',      s: 'May actual' }
+          ],
+          funnel: [
+            { lbl: 'Sessions',         val: '1,804', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '111',   pct: '6.2%', w: 6.2, sub: '6.2% of sessions' },
+            { lbl: 'Reached Checkout', val: '81',    pct: '4.5%', w: 4.5, sub: '73% of carts retained' },
+            { lbl: 'Purchased',        val: '52',    pct: '2.9%', w: 2.9, sub: '64% of checkouts retained' }
+          ],
+          products: [
+            { name: 'Lids by Design Eyelid Lift Strips', net: '£2,362', units: '92', asp: '£25.67', orders: '90', share: '97.8%', shareCls: 'bg' },
+            { name: 'Exfoliating B5 Prep Pads 30pk',     net: '£54',    units: '3',  asp: '£17.97', orders: '3',  share: '2.2%',  shareCls: 'bb' },
+            { name: 'Botanical Lash & Brow Serum',       net: '£0',     units: '0',  asp: '—',      orders: '0',  share: '—',     shareCls: 'bb' },
+            { name: 'Dermal Blade (3 pack)',             net: '£0',     units: '0',  asp: '—',      orders: '0',  share: 'OOS',   shareCls: 'br' }
+          ]
+        },
+        '3m': {
+          kpis1: [
+            { bar: '#404935',      lbl: 'Net Sales', val: '£8,280', dCls: 'df', d: '3-mo actuals',  s: 'Mar–May 2026' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '293',    dCls: 'df', d: '3-mo actuals',  s: 'AOV £28.54' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£28.54', dCls: 'df', d: '3-mo blended',  s: '' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£26.88', dCls: 'df', d: 'est · per unit', s: '~308 units' }
+          ],
+          kpis2: [
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '3.66%', dCls: 'df', d: '3-mo blended', s: '187 purchases' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '5,109', dCls: 'df', d: '3-mo actuals', s: 'Mar–May' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '~308',  dCls: 'df', d: 'est',          s: 'Lids-dominant' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~10%',  dCls: 'df', d: 'est',          s: '3-mo window' }
+          ],
+          funnel: [
+            { lbl: 'Sessions',         val: '5,109', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '~317',  pct: '6.2%', w: 6.2, sub: 'est · May ratio' },
+            { lbl: 'Reached Checkout', val: '~230',  pct: '4.5%', w: 4.5, sub: 'est · May ratio' },
+            { lbl: 'Purchased',        val: '187',   pct: '3.7%', w: 3.7, sub: '3.66% conversion' }
+          ],
+          products: [
+            { name: 'Lids by Design Eyelid Lift Strips', net: '£8,096', units: '~301', asp: '~£27', orders: '286', share: '97.8%', shareCls: 'bg' },
+            { name: 'Other SKUs (B5 · Serum)',           net: '£184',   units: '~11',  asp: '—',    orders: '7',   share: '2.2%',  shareCls: 'bb' }
+          ]
+        },
+        '6m': {
+          kpis1: [
+            { bar: '#404935',      lbl: 'Net Sales', val: '£13,314', dCls: 'df', d: 'YTD actuals',   s: 'Jan–May 2026' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '475',     dCls: 'df', d: 'YTD actuals',   s: 'AOV £28.26' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£28.26',  dCls: 'df', d: 'YTD blended',   s: '' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£26.68',  dCls: 'df', d: 'est · per unit', s: '~499 units' }
+          ],
+          kpis2: [
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '3.67%', dCls: 'df', d: 'YTD blended', s: '315 purchases' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '8,578', dCls: 'df', d: 'YTD actuals', s: 'Jan–May' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '~499',  dCls: 'df', d: 'est',         s: 'Lids-dominant' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~12%',  dCls: 'df', d: 'est',         s: 'YTD window' }
+          ],
+          funnel: [
+            { lbl: 'Sessions',         val: '8,578', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '~532',  pct: '6.2%', w: 6.2, sub: 'est · May ratio' },
+            { lbl: 'Reached Checkout', val: '~386',  pct: '4.5%', w: 4.5, sub: 'est · May ratio' },
+            { lbl: 'Purchased',        val: '315',   pct: '3.7%', w: 3.7, sub: '3.67% conversion' }
+          ],
+          products: [
+            { name: 'Lids by Design Eyelid Lift Strips', net: '£13,021', units: '~492', asp: '~£26.5', orders: '465', share: '97.8%', shareCls: 'bg' },
+            { name: 'Other SKUs (B5 · Serum)',           net: '£293',    units: '~17',  asp: '—',      orders: '10',  share: '2.2%',  shareCls: 'bb' }
+          ]
+        },
+        '12m': {
+          kpis1: [
+            { bar: '#404935',      lbl: 'Net Sales', val: '£19,786', dCls: 'df', d: '12-mo actuals',  s: 'Jun 25–May 26' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '689',     dCls: 'df', d: '12-mo actuals',  s: 'AOV £28.88' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£28.88',  dCls: 'df', d: '12-mo blended',  s: '' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£27.36',  dCls: 'df', d: 'est · per unit', s: '~723 units' }
+          ],
+          kpis2: [
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.92%',  dCls: 'df', d: '12-mo blended', s: '~457 purchases' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '15,663', dCls: 'df', d: '12-mo actuals', s: 'trailing year' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '~723',   dCls: 'df', d: 'est',           s: 'Lids-dominant' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~15%',   dCls: 'df', d: 'est',           s: '12-mo window' }
+          ],
+          funnel: [
+            { lbl: 'Sessions',         val: '15,663', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '~971',   pct: '6.2%', w: 6.2, sub: 'est · May ratio' },
+            { lbl: 'Reached Checkout', val: '~705',   pct: '4.5%', w: 4.5, sub: 'est · May ratio' },
+            { lbl: 'Purchased',        val: '457',    pct: '2.9%', w: 2.9, sub: '2.92% conversion' }
+          ],
+          products: [
+            { name: 'Lids by Design Eyelid Lift Strips', net: '£19,350', units: '~707', asp: '~£27', orders: '674', share: '97.8%', shareCls: 'bg' },
+            { name: 'Other SKUs (B5 · Serum · Dermal)',  net: '£436',    units: '~16',  asp: '—',    orders: '15',  share: '2.2%',  shareCls: 'bb' }
+          ]
+        }
+      }
+    },
+    // STUB until the Newnique store is re-authorized in Shopify and baked.
+    newnique: {
+      label: 'Newnique', store: 'awaiting Shopify connection',
+      placeholder: 'Awaiting Newnique store connection (Shopify re-auth in progress) — numbers populate at the next bake.',
+      chart: null, stock: [], traffic: [],
+      byPeriod: { may: {
+        kpis1: [
+          { bar: '#404935',      lbl: 'Net Sales', val: '—', dCls: 'df', d: 'Not connected', s: 'Awaiting Newnique' },
+          { bar: 'var(--blue)',  lbl: 'Orders',    val: '—', dCls: 'df', d: 'Not connected', s: '' },
+          { bar: 'var(--green)', lbl: 'AOV',       val: '—', dCls: 'df', d: 'Not connected', s: '' },
+          { bar: 'var(--amber)', lbl: 'ASP',       val: '—', dCls: 'df', d: 'Not connected', s: '' }
+        ],
+        kpis2: [
+          { bar: '#404935',      lbl: 'Conversion Rate', val: '—', dCls: 'df', d: 'Not connected', s: '' },
+          { bar: 'var(--blue)',  lbl: 'Sessions',        val: '—', dCls: 'df', d: 'Not connected', s: '' },
+          { bar: 'var(--green)', lbl: 'Units Sold',      val: '—', dCls: 'df', d: 'Not connected', s: '' },
+          { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '—', dCls: 'df', d: 'Not connected', s: '' }
+        ],
+        funnel: null, products: []
+      } }
+    }
+  }
+};
+
+/* 'All' = Newnique + Contours Rx combined. Until Newnique is baked, Newnique = 0, so All == Contours
+   Rx (reuses its objects by reference — read-only). After the Newnique bake, replace this with the
+   actual brand-summed figures. */
+window.DASHBOARD_DATA.sections.shopify.data.all = (function (c) {
+  return {
+    label: 'All Brands', store: 'Newnique + Contours Rx (combined)',
+    chart: c.chart, stock: c.stock, traffic: c.traffic, byPeriod: c.byPeriod
+  };
+})(window.DASHBOARD_DATA.sections.shopify.data.contoursrx);
+
+/* ============================================================================================
+   SHOPIFY P&L — sections.shopifypnl  ·  same brand filter (All / Newnique / Contours Rx) + periods
+   --------------------------------------------------------------------------------------------
+   Revenue lines (Gross Sales, Discounts & Returns, Net Revenue) are LIVE Shopify actuals (baked,
+   same source as sections.shopify). COGS (30%) and platform/transaction fees (2.4%) are clearly-
+   FLAGGED ESTIMATES. The remaining operating expenses — other ad spend, shipping/fulfilment,
+   software, other opex — plus the NKV GOOGLE ADS spend are CLIENT INPUTS that drop in later, so
+   Operating Expenses + Net Profit read 'Pending inputs' until provided. Built per-period from the
+   revenue figures so the four periods stay consistent; replace the rates / input lines on bake. */
+(function () {
+  var COGS_RATE = 0.30, FEE_RATE = 0.024;
+  function gbp(n) { return '£' + Math.round(n).toLocaleString('en-GB'); }
+  function neg(n) { return '(£' + Math.round(n).toLocaleString('en-GB') + ')'; }
+  function pct(x) { return (x * 100).toFixed(1) + '%'; }
+
+  // Net + gross revenue per period (exact Shopify actuals, matching sections.shopify).
+  var P = {
+    may:  { net: 2416,  gross: 2641,  label: 'May 2026' },
+    '3m': { net: 8280,  gross: 9090,  label: 'Mar–May 2026' },
+    '6m': { net: 13314, gross: 14496, label: 'Jan–May 2026 (YTD)' },
+    '12m':{ net: 19786, gross: 21516, label: 'Jun 25–May 26' }
+  };
+
+  function build(p) {
+    var net = p.net, gross = p.gross, dr = gross - net;       // discounts + returns
+    var cogs = net * COGS_RATE, gp = net - cogs, fees = gross * FEE_RATE;
+    return {
+      info: 'Revenue is live from Shopify. COGS and platform fees are estimates; the remaining operating expenses (including the NKV Google Ads spend) are awaiting your inputs — Net Profit finalises once they are provided.',
+      kpis: [
+        { bar: '#404935',      lbl: 'Net Revenue',  val: gbp(net), dCls: 'df', d: 'Shopify live',                 s: p.label },
+        { bar: 'var(--green)', lbl: 'Gross Profit', val: gbp(gp),  dCls: 'df', d: 'est · ' + pct(gp / net) + ' margin', s: 'COGS estimated' },
+        { bar: 'var(--blue)',  lbl: 'Gross Margin', val: pct(gp / net), dCls: 'df', d: 'est',          s: 'net of est. COGS' },
+        { bar: 'var(--amber)', lbl: 'Net Profit',   val: '—',      dCls: 'df', d: 'Pending inputs',    s: 'expenses + Google Ads' }
+      ],
+      rows: [
+        { kind: 'header', label: 'Revenue' },
+        { label: 'Gross Sales',          val: gbp(gross) },
+        { label: 'Discounts & Returns',  val: neg(dr) },
+        { kind: 'sub', label: 'Net Revenue', val: gbp(net), pct: '100%' },
+        { kind: 'header', label: 'Cost of Sales' },
+        { label: 'COGS', note: 'Estimate ' + pct(COGS_RATE) + ' — provide actual unit costs', val: neg(cogs), pct: pct(cogs / net) },
+        { kind: 'sub', label: 'Gross Profit', val: gbp(gp), pct: pct(gp / net) },
+        { kind: 'header', label: 'Operating Expenses' },
+        { label: 'Advertising — Google Ads',        note: 'Pending NKV Google Ads script integration', val: 'Pending', muted: true },
+        { label: 'Advertising — Other (Meta etc.)', note: 'Input required', val: '—', muted: true },
+        { label: 'Shipping & Fulfilment',           note: 'Input required', val: '—', muted: true },
+        { label: 'Platform & Transaction Fees',     note: 'Estimate ' + pct(FEE_RATE) + ' — Shopify + payments', val: neg(fees), pct: pct(fees / net) },
+        { label: 'Software & Subscriptions',        note: 'Input required', val: '—', muted: true },
+        { label: 'Other Operating Costs',           note: 'Input required', val: '—', muted: true },
+        { kind: 'sub', label: 'Total Operating Expenses', val: 'Pending inputs', muted: true },
+        { kind: 'total', label: 'Net Profit', note: 'Finalises once expenses + Google Ads are provided', val: 'Pending inputs', muted: true }
+      ]
+    };
+  }
+
+  var statusList = [
+    { label: 'Revenue (Shopify)',            status: 'live',    note: 'Live · Shopify Admin API' },
+    { label: 'COGS / unit costs',            status: 'est',     note: '30% estimate — provide actuals (auto-fillable from Shopify)' },
+    { label: 'Google Ads spend',             status: 'pending', note: 'Pending NKV Google Ads script integration' },
+    { label: 'Other ad spend (Meta etc.)',   status: 'input',   note: 'Input required' },
+    { label: 'Shipping & fulfilment',        status: 'input',   note: 'Input required' },
+    { label: 'Platform & transaction fees',  status: 'est',     note: '2.4% estimate' },
+    { label: 'Software & subscriptions',     status: 'input',   note: 'Input required' },
+    { label: 'Other operating costs',        status: 'input',   note: 'Input required' }
+  ];
+
+  var contours = { label: 'Contours Rx UK', store: 'contours-rx.co.uk', statusList: statusList, byPeriod: {} };
+  Object.keys(P).forEach(function (k) { contours.byPeriod[k] = build(P[k]); });
+
+  var newnique = {
+    label: 'Newnique', store: 'awaiting Shopify connection',
+    placeholder: 'Awaiting Newnique store connection (Shopify re-auth in progress) — P&L populates at the next bake.',
+    statusList: [], byPeriod: { may: {
+      info: '',
+      kpis: [
+        { bar: '#404935',      lbl: 'Net Revenue',  val: '—', dCls: 'df', d: 'Not connected', s: 'Awaiting Newnique' },
+        { bar: 'var(--green)', lbl: 'Gross Profit', val: '—', dCls: 'df', d: 'Not connected', s: '' },
+        { bar: 'var(--blue)',  lbl: 'Gross Margin', val: '—', dCls: 'df', d: 'Not connected', s: '' },
+        { bar: 'var(--amber)', lbl: 'Net Profit',   val: '—', dCls: 'df', d: 'Not connected', s: '' }
+      ], rows: []
+    } }
+  };
+
+  // 'All' = Contours Rx until Newnique is baked (shares the period objects by reference).
+  var all = { label: 'All Brands', store: 'Newnique + Contours Rx (combined)', statusList: statusList, byPeriod: contours.byPeriod };
+
+  window.DASHBOARD_DATA.sections.shopifypnl = { data: { contoursrx: contours, newnique: newnique, all: all } };
+})();

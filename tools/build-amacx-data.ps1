@@ -354,15 +354,20 @@ $advJs = @"
 "@
 # ---- sections.inventory: FBM stock from getSalesByProduct (quantity/daysCover/OOS). ----
 # Reshaped for FBM: KPIs = active/in-stock/OOS/SKUs-to-restock; stock list = OOS + healthy; restock = OOS priorities.
+# DISCONTINUED SKUs are EXCLUDED from every stock section (lists AND counts) — filter the pull against
+# $DISCONTINUED on each inventory re-bake. Discontinued = the sheet SKU list "Discontinued" status:
+#   B0F32S8KRN Cherry Juice Booster (was OOS FR/ES/IT), B0CZ9QMR9F Energy Drink Grape (OOS FR/ES),
+#   B0F331NKWY Beet Shot (on-hold all markets, already suppressed/not listed).
 # Dispatch card hidden (no FBM late-dispatch source). REFRESHED 2026-06-17 from getSalesByProduct (4 channels,
-# sortKey:quantity asc): EU 199 listings, 140 in stock, 59 OOS (31 unique SKUs); 7 SKUs OOS across all 4 markets.
+# sortKey:quantity asc), EXCL. discontinued: EU 194 active listings, 140 in stock, 54 OOS (29 unique SKUs).
+$DISCONTINUED = @('B0F32S8KRN','B0CZ9QMR9F','B0F331NKWY')   # never report these ASINs in any stock section
 $invJs = @"
 {
       kpis: [
         {bar:'green',lbl:'In Stock',val:'140',dCls:'du',d:'listings',s:'across DE/FR/ES/IT'},
-        {bar:'red',lbl:'Out of Stock',val:'59',dCls:'dd',d:'listings suppressed',s:'31 unique SKUs'},
-        {bar:'#404935',lbl:'Active SKUs',val:'199',dCls:'df',d:'EU listings',s:'~50 per market'},
-        {bar:'amber',lbl:'SKUs to Restock',val:'11',dCls:'df',dColor:'amber',d:'OOS in 2+ markets',s:'see priority list'}
+        {bar:'red',lbl:'Out of Stock',val:'54',dCls:'dd',d:'listings suppressed',s:'29 unique SKUs'},
+        {bar:'#404935',lbl:'Active SKUs',val:'194',dCls:'df',d:'EU listings',s:'~48 per market'},
+        {bar:'amber',lbl:'SKUs to Restock',val:'9',dCls:'df',dColor:'amber',d:'OOS in 2+ markets',s:'see priority list'}
       ],
       stock: [
         {dot:'dr',name:'Fast Bar Lemon',note:'B086XB1N46 ${DOT} DE ES FR IT (14 May)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
@@ -370,7 +375,6 @@ $invJs = @"
         {dot:'dr',name:'Energy Ice Gel Lemon-Lime',note:'B0F332LV9B ${DOT} DE ES FR IT (18 Feb)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Energy Drink Forest Fruit 320g',note:'B0GZ469Z98 ${DOT} DE ES FR IT (10 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Hydro Tabs Orange',note:'B0CCJW62HZ ${DOT} DE ES FR (3 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Cherry Juice Booster 6x500ml',note:'B0F32S8KRN ${DOT} ES FR IT (22 Apr)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Turbo Drink Lemon',note:'B0GM195X6S ${DOT} DE ES FR IT (16 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Fast Bar Vanilla',note:'B0868T4MCP ${DOT} DE ES FR IT (15 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Energy Drink Forest Fruit 1kg',note:'B0GSWK3DNX ${DOT} DE ES FR IT (17 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
@@ -383,7 +387,6 @@ $invJs = @"
         {level:'red',title:'Fast Bar Lemon ${EMD} all 4 markets',sub:'B086XB1N46 ${DOT} OOS since 14 May ${DOT} top restock priority'},
         {level:'red',title:'Energy Drink Lemon 1kg ${EMD} all 4 markets',sub:'B0GS21WT66 ${DOT} OOS since 15 Apr'},
         {level:'red',title:'Energy Ice Gel Lemon-Lime ${EMD} all 4 markets',sub:'B0F332LV9B ${DOT} OOS since 18 Feb ${DOT} longest outage'},
-        {level:'amber',title:'Cherry Juice Booster ${EMD} ES/FR/IT',sub:'B0F32S8KRN ${DOT} OOS since 22 Apr'},
         {level:'amber',title:'Hydro Tabs Orange ${EMD} DE/ES/FR',sub:'B0CCJW62HZ ${DOT} OOS since 3 Jun'}
       ]
     }

@@ -62,6 +62,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .ptab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;user-select:none;}
 .ptab:hover{color:var(--text);}
 .ptab.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600;}
+.shop-brands{display:inline-flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:4px;}
+.shop-brand{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;user-select:none;transition:all .15s;white-space:nowrap;}
+.shop-brand:hover{color:var(--text);}
+.shop-brand.active{background:var(--surface);color:var(--brand);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08);}
 .page-content{display:none;padding:24px 28px;flex-direction:column;gap:24px;overflow-x:hidden;max-width:100%;}
 .page-content.active{display:flex;}
 /* Products page wraps its cards in #sec-prod-main (for the NLD toggle), so re-create the page's
@@ -333,13 +337,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       </div>
     </div>
 
-    <div class="fade nld-ph" id="sec-ov-nld" style="display:none;">
-      <div class="card" style="padding:56px 24px;text-align:center;">
-        <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>
-        <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>
-        <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>
-      </div>
-    </div>
+    <div class="fade nld-ph" id="sec-ov-nld" style="display:none;">       <div class="card" style="padding:56px 24px;text-align:center;">         <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>         <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>         <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>       </div>     </div>
 
     <div>
       <div class="sec-lbl" id="sec-toplevel">Top-Level &mdash; <span id="sec-period-1">May 2026</span></div>
@@ -561,13 +559,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
   <!-- ========== PAGE: ADVERTISING ========== -->
   <div class="page-content" id="page-advertising">
-    <div class="fade nld-ph" id="sec-adv-nld" style="display:none;">
-      <div class="card" style="padding:56px 24px;text-align:center;">
-        <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>
-        <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>
-        <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>
-      </div>
-    </div>
+    <div class="fade nld-ph" id="sec-adv-nld" style="display:none;">       <div class="card" style="padding:56px 24px;text-align:center;">         <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>         <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>         <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>       </div>     </div>
     <div>
       <div class="sec-lbl" id="sec-adperf">Ad Performance &mdash; <span id="sec-period-3">May 2026</span></div>
       <div class="g4">
@@ -719,13 +711,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
   <!-- ========== PAGE: INVENTORY ========== -->
   <div class="page-content" id="page-inventory">
-    <div class="fade nld-ph" id="sec-inv-nld" style="display:none;">
-      <div class="card" style="padding:56px 24px;text-align:center;">
-        <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>
-        <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>
-        <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>
-      </div>
-    </div>
+    <div class="fade nld-ph" id="sec-inv-nld" style="display:none;">       <div class="card" style="padding:56px 24px;text-align:center;">         <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>         <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>         <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>       </div>     </div>
     <div>
       <div class="sec-lbl">Stock Status &mdash; Last Update</div>
       <div class="g4" id="sec-inv-kpis">
@@ -824,6 +810,92 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>
         <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>
         <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: SHOPIFY ========== -->
+  <!-- D2C Shopify performance, brand-filtered (ALL / Newnique / Contours Rx = 2 stores). Brand chips
+       + all values are DATA-driven from sections.shopify (baked from the Shopify MCP). Follows the
+       shared date-range selector. NKV-only via config.pages; hidden for every other client. -->
+  <div class="page-content" id="page-shopify">
+    <div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+        <div>
+          <div class="sec-lbl" style="margin-bottom:6px;">Shopify Sales Performance &mdash; <span class="dr-period">May 2026</span></div>
+          <div style="font-size:11px;color:var(--muted);" id="sec-shop-store"></div>
+        </div>
+        <div class="shop-brands" id="shop-brands"></div>
+      </div>
+      <div class="g4" id="sec-shop-kpis1"></div>
+      <div class="g4" id="sec-shop-kpis2" style="margin-top:12px;"></div>
+    </div>
+
+    <div class="g21 fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Net Sales Trend</div><div class="card-sub">Monthly net sales &middot; last 6 months</div></div></div>
+        <div class="card-body" style="padding:16px 16px 10px;">
+          <svg class="lc" id="chart-shop-rev" viewBox="0 0 440 160"></svg>
+          <div class="leg" id="chart-shop-rev-leg" style="justify-content:center;"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Conversion Funnel</div><div class="card-sub"><span class="dr-period">May 2026</span></div></div></div>
+        <div class="card-body" id="sec-shop-funnel" style="padding:16px;"></div>
+      </div>
+    </div>
+
+    <div class="fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Product Performance</div><div class="card-sub"><span class="dr-period">May 2026</span></div></div></div>
+        <div class="tscroll"><table class="dtable">
+          <thead><tr><th>Product</th><th>Net Sales</th><th>Units</th><th>ASP</th><th>Orders</th><th>% Sales</th></tr></thead>
+          <tbody id="sec-shop-products"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="g21 fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Stock Health</div><div class="card-sub">Current on-hand &middot; days of cover</div></div></div>
+        <div class="inv-list" id="sec-shop-stock"></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Traffic Sources</div><div class="card-sub">Sessions by referrer &middot; <span class="dr-period">May 2026</span></div></div></div>
+        <div class="card-body" id="sec-shop-traffic" style="display:flex;flex-direction:column;gap:10px;padding:16px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: SHOPIFY P&L ========== -->
+  <!-- D2C profit & loss, brand-filtered. Revenue is live from Shopify (baked); COGS + fees are flagged
+       estimates; operating-expense lines + the NKV Google Ads spend are client inputs that drop in
+       later. DATA-driven from sections.shopifypnl. NKV-only via config.pages. -->
+  <div class="page-content" id="page-shopifypnl">
+    <div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+        <div>
+          <div class="sec-lbl" style="margin-bottom:6px;">Shopify P&amp;L &mdash; <span class="dr-period">May 2026</span></div>
+          <div style="font-size:11px;color:var(--muted);" id="sec-spnl-store"></div>
+        </div>
+        <div class="shop-brands" id="shop-brands-pnl"></div>
+      </div>
+      <div class="g4" id="sec-spnl-kpis"></div>
+    </div>
+
+    <div class="fade" id="sec-spnl-info"></div>
+
+    <div class="g21 fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Profit &amp; Loss Statement</div><div class="card-sub"><span class="dr-period">May 2026</span> &middot; % of net revenue</div></div></div>
+        <div class="tscroll"><table class="dtable">
+          <thead><tr><th>Line item</th><th style="text-align:right;">Amount</th><th style="text-align:right;">% Net Rev.</th></tr></thead>
+          <tbody id="sec-spnl-rows"></tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">P&amp;L Inputs &amp; Status</div><div class="card-sub">What's live vs. awaiting input</div></div></div>
+        <div class="card-body" id="sec-spnl-status" style="padding:6px 16px 12px;"></div>
       </div>
     </div>
   </div>

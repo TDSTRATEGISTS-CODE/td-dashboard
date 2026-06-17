@@ -261,9 +261,9 @@ window.DASHBOARD_DATA = {
     inventory: {
       kpis: [
         {bar:'green',lbl:'In Stock',val:'140',dCls:'du',d:'listings',s:'across DE/FR/ES/IT'},
-        {bar:'red',lbl:'Out of Stock',val:'59',dCls:'dd',d:'listings suppressed',s:'31 unique SKUs'},
-        {bar:'#404935',lbl:'Active SKUs',val:'199',dCls:'df',d:'EU listings',s:'~50 per market'},
-        {bar:'amber',lbl:'SKUs to Restock',val:'11',dCls:'df',dColor:'amber',d:'OOS in 2+ markets',s:'see priority list'}
+        {bar:'red',lbl:'Out of Stock',val:'54',dCls:'dd',d:'listings suppressed',s:'29 unique SKUs'},
+        {bar:'#404935',lbl:'Active SKUs',val:'194',dCls:'df',d:'EU listings',s:'~48 per market'},
+        {bar:'amber',lbl:'SKUs to Restock',val:'9',dCls:'df',dColor:'amber',d:'OOS in 2+ markets',s:'see priority list'}
       ],
       stock: [
         {dot:'dr',name:'Fast Bar Lemon',note:'B086XB1N46 · DE ES FR IT (14 May)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
@@ -271,7 +271,6 @@ window.DASHBOARD_DATA = {
         {dot:'dr',name:'Energy Ice Gel Lemon-Lime',note:'B0F332LV9B · DE ES FR IT (18 Feb)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Energy Drink Forest Fruit 320g',note:'B0GZ469Z98 · DE ES FR IT (10 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Hydro Tabs Orange',note:'B0CCJW62HZ · DE ES FR (3 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Cherry Juice Booster 6x500ml',note:'B0F32S8KRN · ES FR IT (22 Apr)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Turbo Drink Lemon',note:'B0GM195X6S · DE ES FR IT (16 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Fast Bar Vanilla',note:'B0868T4MCP · DE ES FR IT (15 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Energy Drink Forest Fruit 1kg',note:'B0GSWK3DNX · DE ES FR IT (17 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
@@ -284,7 +283,6 @@ window.DASHBOARD_DATA = {
         {level:'red',title:'Fast Bar Lemon — all 4 markets',sub:'B086XB1N46 · OOS since 14 May · top restock priority'},
         {level:'red',title:'Energy Drink Lemon 1kg — all 4 markets',sub:'B0GS21WT66 · OOS since 15 Apr'},
         {level:'red',title:'Energy Ice Gel Lemon-Lime — all 4 markets',sub:'B0F332LV9B · OOS since 18 Feb · longest outage'},
-        {level:'amber',title:'Cherry Juice Booster — ES/FR/IT',sub:'B0F32S8KRN · OOS since 22 Apr'},
         {level:'amber',title:'Hydro Tabs Orange — DE/ES/FR',sub:'B0CCJW62HZ · OOS since 3 Jun'}
       ]
     },

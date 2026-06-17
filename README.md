@@ -155,6 +155,60 @@ Shared building blocks (same helpers the Amazon pages use):
 
 `clients/harvaza/data.js` is the worked reference for every one of these.
 
+### Shopify (D2C) page â€” `sections.shopify` (NKV-only for now)
+
+NKV gets an extra **Shopify** page (D2C performance) that the other Amazon clients don't. It's wired
+**NKV-only** by declaring `config.pages` (the `amazon` template order + `'shopify'` inserted before
+`amazonpnl`) rather than adding `shopify` to the shared template â€” so it stays hidden for every other
+client until they opt in the same way. The `page-shopify` block + renderers live in the shared shell
+(`index.html` / `app.js`), so they're a **no-op** for any client without `sections.shopify`.
+
+The page has a **brand filter** at the top â€” `All Â· Newnique Â· Contours Rx` â€” that are **two separate
+Shopify stores** (`ALL` = the sum). The chips are DATA-driven from `sections.shopify.brands` (never
+hardcoded in `index.html`), and the filter re-scopes only this page via `currentBrand` â†’
+`switchBrand()` â†’ `renderShopify()`. It's independent of the sidebar market chips (those are the Amazon
+marketplaces) but **does** follow the shared date-range selector.
+
+```js
+sections.shopify = {
+  brands: [ { key:'all',label:'All' }, { key:'newnique',label:'Newnique' }, { key:'contoursrx',label:'Contours Rx' } ],
+  data: {
+    contoursrx: {
+      label, store,                                  // header sub-label
+      chart:  CHART,                                 // 6-mo net-sales trend (or null â†’ cleared)
+      stock:  [ { name, note, level:'g|a|r', units, cover } ],   // Stock Health list
+      traffic:[ BAR ],                               // Traffic Sources (referrer)
+      byPeriod: { may|3m|6m|12m: {
+        kpis1:[ KPI x4 ], kpis2:[ KPI x4 ],          // Net Sales/Orders/AOV/ASP Â· CVR/Sessions/Units/Returning
+        funnel:[ { lbl, val, pct, w, sub } ],        // Sessionsâ†’Cartâ†’Checkoutâ†’Purchased
+        products:[ { name, net, units, asp, orders, share, shareCls } ]
+      } }
+    },
+    newnique: { â€¦stub until the store is connectedâ€¦ },
+    all:      { â€¦derived = Contours Rx until Newnique is bakedâ€¦ }
+  }
+}
+```
+
+**Data source.** Baked from the **Shopify MCP** (Admin API + ShopifyQL) pulled in-session â€” the browser
+can't call the MCP, same constraint as MerchantSpring. Contours Rx values are exact MCP actuals;
+per-unit ASP / unit counts / funnel sub-steps / returning-rate for the longer periods are estimates
+(marked `est` in the cards) pending a full re-bake. A live proxy can overlay `sections.shopify` later,
+exactly like AMACX's sheet overlay.
+
+**Shopify P&L page (`shopifypnl` Â· `sections.shopifypnl`).** A second NKV-only page, sharing the same
+brand filter + date range (`switchBrand` repaints both; chips render into `#shop-brands` **and**
+`#shop-brands-pnl`). It's a **brand â†’ period â†’ { kpis, info, rows }** model built by a small per-period
+builder in `data.js`: the **Revenue** lines are live Shopify actuals, **COGS (30%)** and **fees (2.4%)**
+are flagged estimates, and the operating-expense lines â€” incl. the **NKV Google Ads** spend â€” are
+client inputs that read *"Pending inputs"* until provided (so Net Profit stays pending). The right card
+(`brand.statusList`) shows each input's status (live / est / pending / input). `renderShopifyPnl()` is
+a no-op for any client without `sections.shopifypnl`.
+
+**TODO (next):** Newnique store bake (needs a Shopify re-auth) â†’ fills the Shopify + P&L stubs and makes
+`All` a true sum; wire the **NKV Google Ads** script spend into `shopifypnl`; collect the client's
+COGS + opex inputs to finalise Net Profit.
+
 ---
 
 ## Re-baking AMACX (`tools/build-amacx-data.ps1`)
@@ -233,6 +287,8 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
    (SP/SB/SD); EU `all` = sum of the 4 markets; ACOS = cost÷sales (`n/a` if sales < €100). Re-bake the literal in `$advJs`
    (write `€` as `${EUR}`). ✅ Confirm: pie pcts per market sum to ~100%, no 1000%+ ACOS.
 6. **Inventory.** Refresh `$invJs` from `getSalesByProduct` (stock/days-cover/OOS) — in-stock / OOS / SKUs-to-restock.
+   **Exclude `$DISCONTINUED` ASINs** (the sheet SKU list's "Discontinued" status) from BOTH the lists and the KPI counts —
+   never surface a discontinued SKU in any stock section or recommend restocking it. ✅ Confirm: no `$DISCONTINUED` ASIN in `$invJs`.
 7. **Generate + validate.** Run `& "dashboard/tools/build-amacx-data.ps1"`, then check the output:
    ```powershell
    $t=[IO.File]::ReadAllText("dashboard/clients/amacx/data.js")

@@ -27,6 +27,8 @@ var PAGE_REGISTRY = {
   'products':         { label: 'Products',              icon: '&#9737;' },
   'keywords':         { label: 'Keywords',              icon: '&#9650;' },
   'amazonpnl':        { label: 'Amazon P&amp;L',        icon: '&#128274;' },
+  'shopify':          { label: 'Shopify',               icon: '&#128722;' },
+  'shopifypnl':       { label: 'Shopify P&amp;L',       icon: '&#163;' },
   'founder-overview': { label: 'Overview',              icon: '&#9635;' },
   'founder-pnl':      { label: 'P&amp;L Detail',        icon: '&#8364;', currency: true },
   'founder-stock':    { label: 'Stock &amp; COGS',      icon: '&#128230;' },
@@ -1296,6 +1298,7 @@ function renderSections() {
   if (o.revChart) renderChart('chart-rev', 'chart-rev-leg', o.revChart);
   if (ad.adChart) renderChart('chart-adtrend', 'chart-adtrend-leg', ad.adChart);
 
+  renderShopBrands();        // Shopify brand-filter chips (no-op unless sections.shopify exists)
   renderFounderSections();   // Founder-template pages (no-op unless sections.founder exists)
 }
 
@@ -1379,6 +1382,137 @@ function renderPeriodSections(d) {
 
   var am = pick(sad.metrics, ad.metrics); if (am) renderMetrics(am);
   var ac = pick(sad.campaigns, ad.campaigns); if (ac) renderCampaigns(ac);
+
+  renderShopify();     // Shopify performance page — repaints for the selected brand at the current period
+  renderShopifyPnl();  // Shopify P&L page (no-op without sections.shopifypnl)
+}
+
+// ---------- Shopify page (brand filter: ALL / Newnique / Contours Rx) ----------
+// Independent of the sidebar market chips (those are the Amazon marketplaces). The brand filter
+// re-scopes ONLY this page, reading DATA.sections.shopify.data[currentBrand][...]. It follows the
+// shared date-range selector (currentPeriod) too. All values are baked in data.js (Shopify Admin/
+// ShopifyQL pulled in-session); a live proxy can overlay sections.shopify later, like AMACX.
+var currentBrand = 'all';
+
+// Brand chips are client-specific values (Newnique / Contours Rx), so they're DATA-driven — never
+// hardcoded in index.html. Rendered once from sections.shopify.brands.
+function renderShopBrands() {
+  var S = DATA.sections && DATA.sections.shopify;
+  if (!S || !S.brands) return;
+  var html = S.brands.map(function (b) {
+    return '<div class="shop-brand' + (b.key === currentBrand ? ' active' : '') + '" data-brand="' + b.key +
+      '" onclick="switchBrand(\'' + b.key + '\')">' + b.label + '</div>';
+  }).join('');
+  // Same chips live on both Shopify pages (performance + P&L), kept in sync from one brand state.
+  ['shop-brands', 'shop-brands-pnl'].forEach(function (id) { var w = el(id); if (w) w.innerHTML = html; });
+}
+
+window.switchBrand = function (b) {
+  currentBrand = b;
+  renderShopify();
+  renderShopifyPnl();
+};
+
+// Conversion funnel: stacked bars whose width = share of sessions (shows the real drop-off), with a
+// step-conversion sub-line. f = [{ lbl, val, pct, w, sub }].
+function shopFunnel(f) {
+  if (!f || !f.length) return '<div style="font-size:12px;color:var(--muted);padding:8px;">No data in this view.</div>';
+  var cols = ['var(--brand)', 'var(--blue)', 'var(--amber)', 'var(--green)'];
+  return f.map(function (s, i) {
+    return '<div style="margin-bottom:13px;">' +
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">' +
+        '<span style="font-weight:500;">' + s.lbl + '</span>' +
+        '<span style="font-weight:600;">' + s.val + ' <span style="color:var(--muted);font-weight:400;">&middot; ' + s.pct + '</span></span>' +
+      '</div>' +
+      '<div class="prog-wrap"><div class="prog-fill" style="width:' + Math.max(s.w, 2) + '%;background:' + (cols[i] || 'var(--brand)') + '"></div></div>' +
+      (s.sub ? '<div style="font-size:10px;color:var(--muted);margin-top:3px;">' + s.sub + '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function renderShopify() {
+  var S = DATA.sections && DATA.sections.shopify; if (!S) return;
+  var brand = (S.data && S.data[currentBrand]) || {};
+  var per = (brand.byPeriod && (brand.byPeriod[currentPeriod] || brand.byPeriod.may)) || {};
+
+  // keep chip active state in sync on BOTH Shopify pages (period changes also call this)
+  document.querySelectorAll('.shop-brand').forEach(function (n) {
+    n.classList.toggle('active', n.getAttribute('data-brand') === currentBrand);
+  });
+
+  set('sec-shop-store', brand.label ? (brand.label + (brand.store ? ' · ' + brand.store : '')) : '');
+
+  renderKpis('sec-shop-kpis1', per.kpis1);
+  renderKpis('sec-shop-kpis2', per.kpis2);
+
+  if (brand.chart) renderChart('chart-shop-rev', 'chart-shop-rev-leg', brand.chart);
+  else { var cv = el('chart-shop-rev'), cl = el('chart-shop-rev-leg');   // no trend (e.g. Newnique stub) → clear, don't leave the prior brand's chart
+         if (cv) cv.innerHTML = ''; if (cl) cl.innerHTML = ''; }
+
+  var fw = el('sec-shop-funnel'); if (fw) fw.innerHTML = shopFunnel(per.funnel);
+
+  var pw = el('sec-shop-products');
+  if (pw) pw.innerHTML = (per.products && per.products.length) ? per.products.map(function (r) {
+    return '<tr><td style="font-weight:500;">' + r.name + '</td><td>' + r.net + '</td><td>' + r.units +
+      '</td><td>' + r.asp + '</td><td>' + r.orders + '</td><td><span class="badge ' + (r.shareCls || 'bb') + '">' + r.share + '</span></td></tr>';
+  }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:22px;">' +
+      (brand.placeholder || 'No product data in this view.') + '</td></tr>';
+
+  var sw = el('sec-shop-stock');
+  if (sw) sw.innerHTML = (brand.stock && brand.stock.length) ? brand.stock.map(function (s) {
+    var dot = s.level === 'r' ? 'dr' : (s.level === 'a' ? 'da' : 'dg');
+    var uc = s.level === 'r' ? 'color:var(--red)' : (s.level === 'a' ? 'color:var(--amber)' : '');
+    return '<div class="inv-row"><div class="sdot ' + dot + '"></div><div class="inv-info">' +
+      '<div class="inv-name">' + s.name + '</div><div class="inv-note">' + s.note + '</div></div>' +
+      '<div class="inv-r"><div class="inv-u" style="' + uc + '">' + s.units + '</div><div class="inv-d" style="' + uc + '">' + s.cover + '</div></div></div>';
+  }).join('') : '<div style="font-size:12px;color:var(--muted);padding:16px;">' +
+      (brand.placeholder || 'No stock data in this view.') + '</div>';
+
+  var tw = el('sec-shop-traffic');
+  if (tw) { if (brand.traffic && brand.traffic.length) renderBars('sec-shop-traffic', brand.traffic);
+            else tw.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px;">' + (brand.placeholder || 'No traffic data in this view.') + '</div>'; }
+}
+
+// ---------- Shopify P&L page (same brand filter + date range) ----------
+// Revenue lines are live from Shopify (baked); COGS + fees are flagged estimates; the rest of the
+// operating expenses are client-provided inputs (and the NKV Google Ads spend) that drop in later.
+// Reads sections.shopifypnl.data[currentBrand].byPeriod[currentPeriod].
+var SPNL_DOT = { live: 'var(--green)', est: 'var(--amber)', pending: 'var(--blue)', input: 'var(--muted2)' };
+
+function renderShopifyPnl() {
+  var S = DATA.sections && DATA.sections.shopifypnl; if (!S) return;
+  var brand = (S.data && S.data[currentBrand]) || {};
+  var per = (brand.byPeriod && (brand.byPeriod[currentPeriod] || brand.byPeriod.may)) || {};
+
+  set('sec-spnl-store', brand.label ? (brand.label + (brand.store ? ' · ' + brand.store : '')) : '');
+  renderKpis('sec-spnl-kpis', per.kpis);
+
+  var info = el('sec-spnl-info');
+  if (info) { var txt = per.info || brand.info || '';
+    info.innerHTML = txt ? '<div style="background:var(--blue-bg);border:1px solid var(--blue-b);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--blue);">' + txt + '</div>' : ''; }
+
+  var tb = el('sec-spnl-rows');
+  if (tb) tb.innerHTML = (per.rows && per.rows.length) ? per.rows.map(function (r) {
+    if (r.kind === 'header') return '<tr><td colspan="3" style="font-weight:600;color:var(--brand);padding:14px 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;">' + r.label + '</td></tr>';
+    var strong = (r.kind === 'sub' || r.kind === 'total');
+    var rowStyle = strong ? 'border-top:1px solid var(--border);background:var(--surface2);' : '';
+    var w = strong ? 'font-weight:700;' : '';
+    var note = r.note ? '<div style="font-size:10px;color:var(--muted);font-weight:400;">' + r.note + '</div>' : '';
+    var valStyle = r.muted ? 'color:var(--muted);font-style:italic;font-weight:400;' : '';
+    return '<tr style="' + rowStyle + '"><td style="' + w + '">' + r.label + note + '</td>' +
+      '<td style="text-align:right;' + w + valStyle + '">' + (r.val || '') + '</td>' +
+      '<td style="text-align:right;color:var(--muted);' + w + '">' + (r.pct || '') + '</td></tr>';
+  }).join('') : '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:22px;">' +
+      (brand.placeholder || 'No P&L data in this view.') + '</td></tr>';
+
+  var sl = el('sec-spnl-status');
+  if (sl) sl.innerHTML = (brand.statusList && brand.statusList.length) ? brand.statusList.map(function (s, i) {
+    var last = i === brand.statusList.length - 1;
+    return '<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;' + (last ? '' : 'border-bottom:1px solid var(--border);') + '">' +
+      '<div style="width:8px;height:8px;border-radius:50%;background:' + (SPNL_DOT[s.status] || 'var(--muted2)') + ';flex-shrink:0;margin-top:4px;"></div>' +
+      '<div style="flex:1;"><div style="font-size:12px;font-weight:500;">' + s.label + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-top:1px;">' + (s.note || '') + '</div></div></div>';
+  }).join('') : '<div style="font-size:12px;color:var(--muted);padding:14px;">' + (brand.placeholder || 'No inputs configured.') + '</div>';
 }
 
 // ---------- boot ----------
