@@ -131,7 +131,7 @@ svg.lc{width:100%;overflow:visible;display:block;}
 .sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .sdot.dg{background:var(--green)}.sdot.da{background:var(--amber)}.sdot.dr{background:var(--red)}
 .inv-info{flex:1;min-width:0;}
-.inv-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.inv-name{font-size:12px;font-weight:500;line-height:1.3;overflow-wrap:anywhere;}
 .inv-note{font-size:11px;color:var(--muted);margin-top:1px;}
 .inv-r{text-align:right;flex-shrink:0;}
 .inv-u{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;}
@@ -156,7 +156,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 .fade{opacity:0;transform:translateY(8px);animation:fi .3s ease forwards;}
 @keyframes fi{to{opacity:1;transform:translateY(0);}}
 @keyframes pulse2{0%,100%{opacity:1;}50%{opacity:.3;}}
-.tasks-flags-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.tasks-flags-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:14px;}
 .fade:nth-child(1){animation-delay:.04s}.fade:nth-child(2){animation-delay:.08s}
 .fade:nth-child(3){animation-delay:.12s}.fade:nth-child(4){animation-delay:.16s}
 .fade:nth-child(5){animation-delay:.20s}.fade:nth-child(6){animation-delay:.24s}
@@ -228,7 +228,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   <div class="page-content active" id="page-overview">
 
     <div class="fade tasks-flags-grid" id="tasks-flags">
-      <div class="card">
+      <div class="card" style="order:3;">
         <div class="card-hdr">
           <div><div class="card-ttl">&#128203; Upcoming Tasks</div><div class="card-sub">From project scope</div></div>
           <span id="sec-tasks-badge" style="font-size:10px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);border-radius:5px;padding:2px 8px;font-weight:500;">June 2026</span>
@@ -256,7 +256,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
           </div>
         </div>
       </div>
-      <div class="card">
+      <div class="card" style="order:1;">
         <div class="card-hdr">
           <div><div class="card-ttl">&#128260; In Progress</div><div class="card-sub">Live from project board</div></div>
           <span id="sec-flags-badge" style="font-size:10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span>
@@ -284,7 +284,27 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
           </div>
         </div>
       </div>
-      <div class="card">
+      <div class="card" style="order:2;">
+        <div class="card-hdr">
+          <div><div class="card-ttl">&#9989; Completed</div><div class="card-sub">From project scope</div></div>
+          <span id="sec-completed-badge" style="font-size:10px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span>
+        </div>
+        <div id="sec-completed" style="display:flex;flex-direction:column;gap:0;">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:500;">German Brand Store</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">Graphics &middot; Completed</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:500;">DE Campaign Restructure</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">Advertising &middot; Completed</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px;"></div>
+            <div><div style="font-size:12px;font-weight:500;">Q1 Listing Refresh</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">Listings &middot; Completed</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="order:4;">
         <div class="card-hdr">
           <div><div class="card-ttl">&#128230; Stock Warnings</div><div class="card-sub">Empty &amp; low stock</div></div>
           <span id="sec-stockwarn-badge" style="font-size:10px;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b);border-radius:5px;padding:2px 8px;font-weight:500;">2 alerts</span>
@@ -735,6 +755,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
   <!-- ========== PAGE: PRODUCTS ========== -->
   <div class="page-content" id="page-products">
+    <div id="sec-prod-main">
     <div>
       <div class="sec-lbl">Product Performance &mdash; <span id="sec-period-6">May 2026</span></div>
       <div class="g4" id="sec-prod-kpis">
@@ -761,11 +782,19 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
     </div>
     <div class="fade" id="sec-prod-groups-card" style="display:none;">
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Sales by Product Group</div><div class="card-sub">Trailing 12 months &middot; <span class="cfg-scope">All EU</span></div></div></div>
+        <div class="card-hdr"><div><div class="card-ttl">Sales by Product Group</div><div class="card-sub"><span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
         <div class="tscroll"><table class="dtable">
-          <thead><tr><th>Group</th><th>Sales</th><th>Units</th><th>% Sales</th><th>OOS Rate</th></tr></thead>
+          <thead><tr><th>Group</th><th>Sales</th><th>Ad Spend</th><th>TACOS</th><th>Units</th><th>% Sales</th><th>OOS Rate</th></tr></thead>
           <tbody id="sec-prod-groups"></tbody>
         </table></div>
+      </div>
+    </div>
+    </div><!-- /sec-prod-main -->
+    <div class="fade" id="sec-prod-nld" style="display:none;">
+      <div class="card" style="padding:56px 24px;text-align:center;">
+        <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>
+        <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>
+        <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>
       </div>
     </div>
   </div>

@@ -32,7 +32,10 @@ dashboard/
 
 > **Apps Script proxies** (`amacx-data-proxy.gs`, `harvaza-sheet-proxy.gs`, `nkv-sheet-proxy.gs`) live at the
 > repo **root, OUTSIDE this `dashboard/` folder** — they're deployed in Google Apps Script and are **not**
-> served from GitHub, so they're kept out of the `dashboard/` upload.
+> served from GitHub, so they're kept out of the `dashboard/` upload. Editing a `.gs` only takes effect after you
+> **redeploy** the Apps Script web app (keep the same `/exec` URL, or update `config.dataSource.url`).
+> The AMACX proxy reads the Project-Scope board by **fixed column** — `E` = In Progress, `F` = Upcoming,
+> `G` = Completed, `I` = Flags & Warnings — and supplies the live per-market ad budgets + forecast.
 
 The page reads `?client=<name>` and loads `clients/<name>/config.js` + `data.js` before `app.js` boots.
 
@@ -93,6 +96,12 @@ partial `sections` is safe — anything an Amazon client omits falls back to the
 Per-period overrides: `dateRanges[period].sec` can override any `sections` block for that date range;
 `app.js` uses `pick(periodOverride, topLevelDefault)` so a period only overrides what it specifies.
 
+AMACX's **Products page is fully period- + market-aware** via period-keyed maps in `sections.products`:
+`kpisByPeriod`, `tableByPeriod`, and `groupsByPeriod` (each `period → market → rows`). So the KPI cards,
+the Performance-by-Market table (incl. CVR), and the Sales-by-Group card (with Ad Spend + TACOS) all follow
+**both** the date-range selector and the sidebar market chip. `app.js` reads `…[currentPeriod][market]`,
+falling back to the static `kpis`/`table` only for the non-selectable `2025` period.
+
 ### Founder `sections.founder` shape
 
 Founder clients (`template:'founder'`) drive their four pages from `data.js` → `sections.founder`. Each
@@ -150,12 +159,16 @@ Shared building blocks (same helpers the Amazon pages use):
 
 ## Re-baking AMACX (`tools/build-amacx-data.ps1`)
 
-AMACX's `data.js` is a **baked static snapshot**, not a live feed. The browser can't call the MerchantSpring
-MCP, so the data is pulled in a Claude session, hardcoded into the generator, and written out:
+AMACX's `data.js` is a **baked snapshot** of MerchantSpring data (the browser can't call the MerchantSpring
+MCP, so it's pulled in a Claude session, hardcoded into the generator, and written out). The **sheet-controlled
+parts overlay live** on top via the Apps Script proxy (`config.dataSource` is `appsScript` + `overlay:'sections'`)
+— per-market ad **budgets**, the advertising **forecast**, and the Overview Project-Scope cards (**In Progress /
+Completed / Upcoming**) — so those update on reload **without** a re-bake. The baked MerchantSpring sections are
+authoritative and are never overlaid.
 
 ```
 clean MerchantSpring MCP actuals  ─┐
-Google Sheet budgets / flags      ─┤→  build-amacx-data.ps1  →  clients/amacx/data.js
+Google Sheet budgets / flags      ─┤→  build-amacx-data.ps1  →  clients/amacx/data.js  ──(+live sheet overlay)──►  dashboard
 ```
 
 **IMPORTANT — every bake refreshes the inputs first.** The generator bakes a *static* snapshot of its
@@ -168,10 +181,19 @@ budgets into `$BUD`. Then run:
 ```
 
 Notes:
-- **Tax basis = GROSS / inc-VAT** — sales are pulled with `includeTax:true`.
+- **Sales/units/orders** (`$M`) = MerchantSpring **single-month** `getSalesByPeriod` with `includeTax:true`
+  (gross / inc-VAT, matches Seller Central). The multi-month `interval=M` series has unreliable bucket labels —
+  don't use it. `adSpend`/`adSales` = `getAdvertisingByChannels`.
 - The script prints a per-period summary (Rev / Spend / TACOS / ROAS / Units / Orders) on each run.
-- Non-ASCII must be `[char]` codes (PowerShell 5.1 reads the script as ANSI).
+- Non-ASCII must be `[char]` codes (PowerShell 5.1 reads the script as ANSI). Watch for case-insensitive
+  variable collisions (e.g. `$eU` vs the `$EU` chart hashtable) — they silently corrupt output.
 - The sheet **budgets** are a hardcoded snapshot in `$BUD` — they do not auto-pull, so sync them each bake.
+- **Products page (period-aware):** `kpisByPeriod` + `tableByPeriod` are **computed** in the generator from
+  `$M`; table **CVR** is per-period MerchantSpring `conversions` (units/page-views, from `getSalesByChannels`,
+  baked in `$CVRP`). **`groupsByPeriod`** (Sales-by-Group → the 15 MerchantSpring Groups, with Ad Spend + TACOS)
+  is a **baked literal injected by a SEPARATE PowerShell pass** from per-period `getSalesByProduct` pulls joined
+  to the sheet's SKU→Group map (column B). Re-running this script preserves it; to **refresh the group numbers**
+  you must re-run that injection pass — editing `$M` alone won't update `groupsByPeriod`.
 
 ---
 
@@ -217,25 +239,29 @@ in `config.js`/`data.js` instead.
 
 | Always driven by config/data | Driven when `data.js` has a `sections` object |
 |---|---|
-| Title, logo, client name, portal label, footer | P&L, Inventory, Products (incl. Sales by Group), Keywords |
+| Title, logo, client name, portal label, footer | P&L, Inventory, Products — KPIs · market table · Sales-by-Group (Ad Spend + TACOS), all period+market aware, Keywords |
 | Brand colours (`:root` CSS variables) | Campaign / budget / forecast tables |
 | Sidebar market chips + topbar labels | The two SVG trend charts (auto-scaled) |
-| Date-range dropdown | Overview tasks/flags, Buy Box, CVR, lower bars |
+| Date-range dropdown | Overview In Progress / Completed / Upcoming + Stock Warnings, Buy Box, CVR, lower bars |
 | Overview + Advertising KPIs, market-spend table | Scope labels ("All EU"→"All UK") + P&L nav icon |
 | `hiddenPages`, live overlay from the Apps Script proxy | Sales-by-group card (hidden if no `products.groups`) |
 
 ### Sidebar market filter (`app.js`)
 
-Picking a market chip in the sidebar re-scopes the whole dashboard to that market. Three things react,
+Picking a market chip in the sidebar re-scopes the whole dashboard to that market. Four things react,
 all from `switchMarket` → `switchDateRange`:
 
 1. **Rows** (`applyMarketFilter`) — every per-market table/list across all tabs filters to that market
-   (Buy Box, market-spend, P&L-by-market, campaigns, stock/restock, products-by-market). A card with no
-   rows shows a "No data for … in this view" placeholder.
+   (Buy Box, market-spend, P&L-by-market, campaigns, stock/restock). A card with no rows shows a
+   "No data for … in this view" placeholder.
 2. **Headline KPIs** (`applyMarketKpis`) — the Overview + Advertising KPI cards overlay that market's
    numbers from `dateRanges[period].marketKpis`.
 3. **Trend charts** (`renderMarketCharts`) — Revenue Trend + Spend vs TACOS repaint from `sections.charts`
    (trailing-6-month series, EU + per market).
+4. **Products page** — the KPI cards, Performance-by-Market table, and Sales-by-Group card pick
+   `sections.products.{kpisByPeriod,tableByPeriod,groupsByPeriod}[currentPeriod][market]`, so they follow
+   **both** the market chip and the date-range selector. Selecting **Netherlands** shows a
+   "Pending Koongo Integration with Shopify" placeholder (no MerchantSpring data yet).
 
 Row matching is **derived from `CONFIG.markets`** (each market's `flag` / `code` / `chip`), so it stays
 client-agnostic — the UK demo gets per-**channel** row filtering (Amazon/eBay/D2C) for free. `marketKpis`

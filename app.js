@@ -671,6 +671,19 @@ function renderTasks(spec) {
   }).join('');
 }
 
+// Completed tasks list (green dot) — same shape as Upcoming Tasks, sourced from Project Scope column G.
+function renderCompleted(spec) {
+  if (!spec) return;
+  if (spec.badge != null) set('sec-completed-badge', spec.badge);
+  var w = el('sec-completed'); if (!w || !spec.items) return;
+  w.innerHTML = spec.items.map(function (t, i) {
+    var last = i === spec.items.length - 1;
+    return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;' + (last ? '' : 'border-bottom:1px solid var(--border);') + '">' +
+      '<div style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px;"></div>' +
+      '<div><div style="font-size:12px;font-weight:500;">' + t.text + '</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">' + t.sub + '</div></div></div>';
+  }).join('');
+}
+
 // Shared renderer for the coloured alert lists (Flags & Warnings, Stock Warnings).
 function renderAlertList(id, badgeId, spec) {
   if (!spec) return;
@@ -840,8 +853,11 @@ function renderProdGroups(arr) {
   var card = el('sec-prod-groups-card');
   if (!arr || !arr.length) { if (card) card.style.display = 'none'; return; }
   renderRowsTable('sec-prod-groups', arr.map(function (g) {
-    return '<tr><td>' + g.name + '</td><td>' + g.sales + '</td><td>' + g.units +
-      '</td><td>' + g.pct + '</td><td><span class="badge ' + (g.oosCls || 'bg') + '">' + g.oosRate + '</span></td></tr>';
+    return '<tr><td>' + g.name + '</td><td>' + g.sales +
+      '</td><td>' + (g.adSpend != null ? g.adSpend : '—') +
+      '</td><td>' + (g.tacos != null ? '<span class="badge ' + (g.tacosCls || 'bb') + '">' + g.tacos + '</span>' : '—') +
+      '</td><td>' + g.units + '</td><td>' + g.pct +
+      '</td><td><span class="badge ' + (g.oosCls || 'bg') + '">' + g.oosRate + '</span></td></tr>';
   }));
   if (card) card.style.display = '';
 }
@@ -1206,6 +1222,7 @@ function renderSections() {
   var o = S.overview || {};
   renderTasks(o.tasksSpec);
   renderFlags(o.flagsSpec);
+  renderCompleted(o.completedSpec);   // Project Scope column G (Completed)
   renderAlertList('sec-stockwarn', 'sec-stockwarn-badge', o.stockWarn);   // inventory state → MCP live later
   renderAlertList('sec-health', 'sec-health-badge', o.healthSpec);        // Account Health (strategy alerts)
   var healthWrap = el('sec-health-wrap'); if (healthWrap) healthWrap.style.display = o.healthSpec ? '' : 'none';
@@ -1283,9 +1300,31 @@ function renderPeriodSections(d) {
     }
   }
 
-  var prk = pick(spr.kpis, pr.kpis); if (prk) renderKpis('sec-prod-kpis', prk);
-  var prt = pick(spr.table, pr.table); if (prt) renderProdTable(prt);
-  renderProdGroups(pick(spr.groups, pr.groups));
+  // Products page is market-aware: KPIs, the per-market table, and product groups all follow the
+  // sidebar market selector. NLD has no MerchantSpring data yet → show the integration placeholder.
+  var pmKey = (currentMarket && currentMarket !== 'all') ? currentMarket : null;
+  var prodMain = el('sec-prod-main'), prodNld = el('sec-prod-nld');
+  if (pmKey === 'nld') {
+    if (prodMain) prodMain.style.display = 'none';
+    if (prodNld) prodNld.style.display = '';
+  } else {
+    if (prodMain) prodMain.style.display = '';
+    if (prodNld) prodNld.style.display = 'none';
+    // KPIs + Performance-by-Market table follow the date-range selector too (period → market).
+    var kp = pr.kpisByPeriod && pr.kpisByPeriod[currentPeriod];
+    var prk = (kp && (pmKey ? kp[pmKey] : kp.all)) || pick(spr.kpis, pr.kpis);
+    if (prk) renderKpis('sec-prod-kpis', prk);
+    var tp = pr.tableByPeriod && pr.tableByPeriod[currentPeriod];
+    var prtAll = tp || pick(spr.table, pr.table);
+    if (prtAll) renderProdTable(pmKey ? prtAll.filter(function (r) { return r.flag === pmKey; }) : prtAll);
+    // Product groups follow BOTH the market and the date-range selector (groupsByPeriod[period][market]).
+    var gp = pr.groupsByPeriod && pr.groupsByPeriod[currentPeriod];
+    renderProdGroups(gp && (pmKey ? gp[pmKey] : gp.all));
+    var gscope = document.querySelector('#sec-prod-groups-card .cfg-scope');
+    if (gscope) gscope.textContent = pmKey ? ((MKT[pmKey] && MKT[pmKey].t) || pmKey) : 'All EU';
+    var gper = document.querySelector('#sec-prod-groups-card .dr-period');
+    if (gper) gper.textContent = d.shortLabel || d.label || '';
+  }
 
   var kwk = pick(skw.kpis, kw.kpis); if (kwk) renderKpis('sec-kw-kpis', kwk);
   var kwt = pick(skw.table, kw.table); if (kwt) renderKwTable(kwt);
