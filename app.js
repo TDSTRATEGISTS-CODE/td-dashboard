@@ -902,7 +902,7 @@ function renderKwTable(arr) {
 function renderChart(id, legId, spec) {
   var svg = el(id); if (!svg || !spec) return;
   var hasRight = spec.maxRight != null;
-  var W = 440, H = 160, PADL = 46, PADR = hasRight ? 42 : 14, PADT = 18, PADB = 22;
+  var W = 440, H = 160, PADL = 54, PADR = hasRight ? 42 : 14, PADT = 18, PADB = 22;
   var plotW = W - PADL - PADR, plotH = H - PADT - PADB, baseY = PADT + plotH;
   var n = spec.xLabels.length;
   function X(i) { return PADL + (n <= 1 ? 0 : plotW * i / (n - 1)); }
@@ -985,8 +985,8 @@ function renderMarketCharts() {
     adSeries.push({ values: sl, color: '#1e4fa0', main: true });
     adLegend.push({ name: 'Ad Sales', color: '#1e4fa0' });
   }
-  adSeries.push({ values: ta, color: '#2d6a4f', axis: 'right' });
-  adLegend.push({ name: 'TACOS', color: '#2d6a4f' });
+  adSeries.push({ values: ta, color: '#b5373a', axis: 'right' });   // red — matches the TACOS KPI card
+  adLegend.push({ name: 'TACOS', color: '#b5373a' });
   adSeries.push({ values: months.map(function () { return TACOS_TARGET; }), color: '#b08900', dash: '2 3', dots: false, axis: 'right' });
   adLegend.push({ name: 'Target <20%', color: '#b08900' });
   renderChart('chart-adtrend', 'chart-adtrend-leg', {
