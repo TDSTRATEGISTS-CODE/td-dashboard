@@ -160,6 +160,10 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 @keyframes fi{to{opacity:1;transform:translateY(0);}}
 @keyframes pulse2{0%,100%{opacity:1;}50%{opacity:.3;}}
 .tasks-flags-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:14px;}
+/* Netherlands pre-launch: a page with .nld-active (NLD market selected) hides its normal content and
+   shows only the pending-launch banner (.nld-ph); sections flagged .nld-keep stay (Overview scope cards). */
+.page-content.nld-active > *:not(.nld-ph):not(.nld-keep){display:none!important;}
+.page-content.nld-active > .nld-ph{display:block!important;}
 .fade:nth-child(1){animation-delay:.04s}.fade:nth-child(2){animation-delay:.08s}
 .fade:nth-child(3){animation-delay:.12s}.fade:nth-child(4){animation-delay:.16s}
 .fade:nth-child(5){animation-delay:.20s}.fade:nth-child(6){animation-delay:.24s}
@@ -230,7 +234,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   <!-- ========== PAGE: OVERVIEW ========== -->
   <div class="page-content active" id="page-overview">
 
-    <div class="fade tasks-flags-grid" id="tasks-flags">
+    <div class="fade tasks-flags-grid nld-keep" id="tasks-flags">
       <div class="card" style="order:3;">
         <div class="card-hdr">
           <div><div class="card-ttl">&#128203; Upcoming Tasks</div><div class="card-sub">From project scope</div></div>
@@ -326,6 +330,14 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
             <div><div style="font-size:12px;font-weight:600;color:var(--amber);">Hydration Tabs 40s &mdash; Low IT</div><div style="font-size:11px;color:var(--muted);margin-top:1px;">98 units &middot; ~10 days cover</div></div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="fade nld-ph" id="sec-ov-nld" style="display:none;">
+      <div class="card" style="padding:56px 24px;text-align:center;">
+        <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>
+        <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>
+        <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>
       </div>
     </div>
 
@@ -549,6 +561,13 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
   <!-- ========== PAGE: ADVERTISING ========== -->
   <div class="page-content" id="page-advertising">
+    <div class="fade nld-ph" id="sec-adv-nld" style="display:none;">
+      <div class="card" style="padding:56px 24px;text-align:center;">
+        <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>
+        <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>
+        <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>
+      </div>
+    </div>
     <div>
       <div class="sec-lbl" id="sec-adperf">Ad Performance &mdash; <span id="sec-period-3">May 2026</span></div>
       <div class="g4">
@@ -700,6 +719,13 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
   <!-- ========== PAGE: INVENTORY ========== -->
   <div class="page-content" id="page-inventory">
+    <div class="fade nld-ph" id="sec-inv-nld" style="display:none;">
+      <div class="card" style="padding:56px 24px;text-align:center;">
+        <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>
+        <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>
+        <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>
+      </div>
+    </div>
     <div>
       <div class="sec-lbl">Stock Status &mdash; Last Update</div>
       <div class="g4" id="sec-inv-kpis">

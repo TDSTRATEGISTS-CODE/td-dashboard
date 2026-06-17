@@ -337,7 +337,19 @@ window.switchDateRange = function (val) {
   renderMarketCharts();  // repaint the two trend charts for the selected market (EU for All EU)
   updateMarketChips(d);
   applyMarketFilter();   // re-filter the freshly-rendered per-market rows to the current market
+  applyNldPages();       // NLD pre-launch: swap Overview/Advertising/Inventory content for the banner
 };
+
+// Netherlands pre-launch: mark Overview/Advertising/Inventory .nld-active when NLD is the selected
+// market, so CSS hides their normal content and shows only the pending-launch banner (.nld-ph), while
+// the Overview's .nld-keep scope cards stay. P&L is untouched; Products keeps its own #sec-prod-main /
+// #sec-prod-nld toggle. Client-agnostic: a no-op for clients with no 'nld' market.
+function applyNldPages() {
+  var isNld = currentMarket === 'nld';
+  ['page-overview', 'page-advertising', 'page-inventory'].forEach(function (id) {
+    var p = el(id); if (p) p.classList.toggle('nld-active', isNld);
+  });
+}
 
 // ---------- config-driven identity / brand / chips ----------
 function applyConfig() {
