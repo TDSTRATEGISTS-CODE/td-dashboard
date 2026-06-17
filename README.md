@@ -194,6 +194,61 @@ Notes:
   is a **baked literal injected by a SEPARATE PowerShell pass** from per-period `getSalesByProduct` pulls joined
   to the sheet's SKU→Group map (column B). Re-running this script preserves it; to **refresh the group numbers**
   you must re-run that injection pass — editing `$M` alone won't update `groupsByPeriod`.
+- **Advertising / Overview charts:** `sections.charts.adSales` (Ad Spend vs Ad Sales vs TACOS trend) is computed
+  from `$M`; `sections.charts.revTarget` (dotted EU goal line, All-EU only) is hardcoded from **Performance Tracker
+  row 8 "Revenue Target (past vs future)"** in `$REVTGT` (re-sync each bake). **`sections.advertising.campaignMixByPeriod`**
+  (the Performance-by-Campaign-Type pie, `period → market`) is a **baked literal** aggregated from
+  `generateCampaignsReport` per period × channel (SP/SB/SD by `ad_type`) — like `groupsByPeriod`, editing `$M` won't
+  refresh it; you must re-run the campaign pulls.
+
+### Monthly re-bake routine (agent runbook)
+
+A monthly AMACX refresh is a **Claude-session task** (the browser can't reach the MerchantSpring MCP). Follow these
+steps in order; each ends with a confirmation. "This month" = the latest closed month.
+
+**Channels** (AMACX seller `A1O4H4W8GP4BN2`; pass `channelId` + `merchantId`):
+
+| Market | channelId | merchantId | Ads |
+|---|---|---|---|
+| DE | `75877234` | `A1O4H4W8GP4BN2 @ A1PA6795UKMFR9` | yes |
+| FR | `75877496` | `A1O4H4W8GP4BN2 @ A13V1IB3VIYZZH` | yes |
+| ES | `75880638` | `A1O4H4W8GP4BN2 @ A1RKKUPIHCS9HS` | yes |
+| IT | `75880666` | `A1O4H4W8GP4BN2 @ APJ6JRA9NG5V4` | yes |
+| NLD | `75880695` | `A1O4H4W8GP4BN2 @ A1805IZSGTT6HS` | **no — skip ads** (pre-launch) |
+
+**Periods** (recompute epochs each month with `calculateDateEpoch`, `dateRange`, tz `Europe/Berlin`):
+`may` = this month · `3m` = trailing 3 · `6m` = trailing 6 · `12m` = trailing 12 · `2025` = FY2025 **(FROZEN — pull once ever; SKIP on monthly refreshes)**. So recurring monthly = **4 windows × 4 ad channels**, not 5×4.
+
+**Steps:**
+1. **Headline actuals → `$M`.** Per market, pull `getSalesByPeriod` (**single-month**, `includeTax:true`) for each new
+   month and `getAdvertisingByChannels` for spend/sales; update the monthly arrays in `build-amacx-data.ps1` (idx 0=Jan2025…,
+   append the new month). ✅ Confirm: the script's printed per-period summary matches Seller Central for `may`.
+2. **Budgets → `$BUD`** and **revenue target → `$REVTGT`.** Re-read the Google Sheet (`read_file_content`): per-market ad
+   budgets and **row 8 "Revenue Target (past vs future)"**. ✅ Confirm: `$REVTGT` last value = the sheet's current month.
+3. **CVR → `$CVRP`.** Pull `getSalesByChannels` `conversions` (units/page-views) per market per rolling window. ✅ Confirm: 4 markets × 4 windows present.
+4. **Product groups → `groupsByPeriod`.** Re-run the groups injection pass: `getSalesByProduct` per rolling window × channel,
+   join to the sheet SKU→Group map (col B), 15 groups with sales/units/pct/adSpend/TACOS/OOS. ✅ Confirm: 4 periods × {all,de,fr,es,it} × 15 groups.
+5. **Campaign-type pie → `campaignMixByPeriod`.** For each rolling window × ad channel (16 reports) run
+   `generateCampaignsReport` → `getReportStatus` → download CSV → aggregate `cost`/`attributed_sales` by `ad_type`
+   (SP/SB/SD); EU `all` = sum of the 4 markets; ACOS = cost÷sales (`n/a` if sales < €100). Re-bake the literal in `$advJs`
+   (write `€` as `${EUR}`). ✅ Confirm: pie pcts per market sum to ~100%, no 1000%+ ACOS.
+6. **Inventory.** Refresh `$invJs` from `getSalesByProduct` (stock/days-cover/OOS) — in-stock / OOS / SKUs-to-restock.
+7. **Generate + validate.** Run `& "dashboard/tools/build-amacx-data.ps1"`, then check the output:
+   ```powershell
+   $t=[IO.File]::ReadAllText("dashboard/clients/amacx/data.js")
+   "{0}/{1} braces  {2}/{3} brackets" -f ([regex]::Matches($t,'{')).Count,([regex]::Matches($t,'}')).Count,([regex]::Matches($t,'\[')).Count,([regex]::Matches($t,'\]')).Count
+   'revTarget','adSales:','groupsByPeriod','campaignMixByPeriod' | %{ "$_  -> $($t.Contains($_))" }
+   ```
+   ✅ Confirm: braces balanced, brackets balanced, all four keys present.
+8. **Verify in preview** (`tools/static-server.ps1` + Preview MCP, `?client=amacx`): switch a couple of date ranges ×
+   markets and confirm the Revenue Trend (target line on All-EU), Ad Spend/Sales/TACOS chart, Products KPIs/table/groups,
+   and the Campaign-Type pie all move. (Screenshots time out — use `preview_eval` DOM checks.)
+9. **Confirm + hand off.** Report the headline `may` figures back, then list the changed files to upload to GitHub:
+   normally just **`clients/amacx/data.js`** (+ `tools/build-amacx-data.ps1` if the generator itself changed). A pure data
+   refresh needs **no proxy redeploy** (the proxy only serves sheet sections, which stay live).
+
+> **What does NOT need re-pulling monthly:** FY 2025 columns (frozen history), the live sheet sections (budgets/forecast/
+> Project-Scope — served by the proxy), and `index.html`/`app.js` (only when behaviour changes).
 
 ---
 
