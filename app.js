@@ -672,10 +672,21 @@ function renderTasks(spec) {
 }
 
 // Completed tasks list (green dot) — same shape as Upcoming Tasks, sourced from Project Scope column G.
+// Data-driven: clients that don't supply a completedSpec (no Completed column) hide the card and the
+// Overview grid reflows from 4 → 3 columns, so the AMACX placeholder rows never leak to other clients.
 function renderCompleted(spec) {
-  if (!spec) return;
+  var w = el('sec-completed');
+  var card = w && w.closest ? w.closest('.card') : null;
+  var grid = el('tasks-flags');
+  if (!spec) {
+    if (card) card.style.display = 'none';
+    if (grid) grid.style.gridTemplateColumns = '1.3fr 1fr 1fr';
+    return;
+  }
+  if (card) card.style.display = '';
+  if (grid) grid.style.gridTemplateColumns = '';   // restore the CSS 4-column default
   if (spec.badge != null) set('sec-completed-badge', spec.badge);
-  var w = el('sec-completed'); if (!w || !spec.items) return;
+  if (!w || !spec.items) return;
   w.innerHTML = spec.items.map(function (t, i) {
     var last = i === spec.items.length - 1;
     return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 16px;' + (last ? '' : 'border-bottom:1px solid var(--border);') + '">' +
@@ -1317,9 +1328,10 @@ function renderPeriodSections(d) {
     var tp = pr.tableByPeriod && pr.tableByPeriod[currentPeriod];
     var prtAll = tp || pick(spr.table, pr.table);
     if (prtAll) renderProdTable(pmKey ? prtAll.filter(function (r) { return r.flag === pmKey; }) : prtAll);
-    // Product groups follow BOTH the market and the date-range selector (groupsByPeriod[period][market]).
+    // Product groups: AMACX uses groupsByPeriod[period][market]; clients with only a static `groups`
+    // array (demo/nkv) fall back to it (renderProdGroups tolerates the missing adSpend/tacos fields).
     var gp = pr.groupsByPeriod && pr.groupsByPeriod[currentPeriod];
-    renderProdGroups(gp && (pmKey ? gp[pmKey] : gp.all));
+    renderProdGroups((gp && (pmKey ? gp[pmKey] : gp.all)) || pick(spr.groups, pr.groups));
     var gscope = document.querySelector('#sec-prod-groups-card .cfg-scope');
     if (gscope) gscope.textContent = pmKey ? ((MKT[pmKey] && MKT[pmKey].t) || pmKey) : 'All EU';
     var gper = document.querySelector('#sec-prod-groups-card .dr-period');

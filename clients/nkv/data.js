@@ -116,6 +116,13 @@ window.DASHBOARD_DATA = {
         {level:'amber', title:'Google Ads verification', sub:'Account queries · in progress'},
         {level:'amber', title:'Newnique listing optimisations', sub:'Graphics / A+ · in progress'}
       ] },
+      // 'Completed' card ← sheet "Completed" column (Projects tab). Live via the proxy; this is the fallback.
+      completedSpec: { badge: '4 completed', items: [
+        {text:'All Brand Stores & A+ Content LIVE', sub:'Completed'},
+        {text:'New prices implemented', sub:'Completed'},
+        {text:'Tiered catalogue promo active', sub:'Completed'},
+        {text:'Problem-solving code active', sub:'Completed'}
+      ] },
       buyBox: [
         {flag:'gb',label:'United Kingdom',pct:99,valText:'99.3%',color:'green'},
         {flag:'ie',label:'Ireland',pct:0,valText:'n/a',color:'amber'}
