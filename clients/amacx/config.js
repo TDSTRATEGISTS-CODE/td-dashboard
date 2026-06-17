@@ -74,6 +74,6 @@ window.DASHBOARD_CONFIG = {
   dataSource: {
     type: 'appsScript',
     overlay: 'sections',
-    url: 'https://script.google.com/macros/s/AKfycby2TWWWDLSY_r1_S9ZHSASB-XFRnkYUx5yMxMBIYRlBLjjbRlG2m0wEn7zvPoMIWg9jfw/exec'
+    url: 'https://script.google.com/macros/s/AKfycbzKVf_ujq00IHmfVbbqGKfE-Gl4niA6w7yG8QyGou6xkNAl2nSdKMDcxlJBAa_ZTYLeWQ/exec'
   }
 };

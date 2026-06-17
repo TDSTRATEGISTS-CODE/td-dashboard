@@ -19,35 +19,37 @@ $OutFile = Join-Path $PSScriptRoot '..\clients\amacx\data.js'
 $EUR=[char]0x20AC; $DOT=[char]0x00B7; $ND=[char]0x2013; $EMD=[char]0x2014; $UP=[char]0x25B2; $DN=[char]0x25BC; $MUL=[char]0x00D7
 
 # ---------------- MerchantSpring actuals (clean monthly series) ----------------
-# sales = GROSS / inc-VAT (includeTax:true) — re-pulled 2026-06-11 to match Seller Central. units/orders/adSpend
-# unchanged; adSales refreshed (Apr-26 attribution settled higher). Clean interval=M series, NOT single-month.
+# sales = GROSS / inc-VAT (includeTax:true) — single-month getSalesByPeriod, to match Seller Central.
+# Re-verified 2026-06-17: sales/units/orders unchanged from 06-11 (May-26 confirmed exact across DE/FR/ES/IT).
+# adSpend/adSales REFRESHED 2026-06-17 for idx5-16 (Jun-25..May-26) from getAdvertisingByChannels (attribution
+# restated since 06-11); idx0-4 (Jan-May 2025) kept (settled). May-26 EU TACOS 26.2% / ROAS 3.82x.
 $M = @{
   DE = @{
     sales   = @(399.86,717.81,1180.18,1467.06,2919.53,3237.85,4835.34,5180.57,3597.35,1563.41,1170.27,946.24,2154.35,1150.25,1913.67,2240.07,2094.59)
     units   = @(15,26,39,50,91,106,154,169,115,50,39,35,72,38,59,70,66)
     orders  = @(15,24,39,48,83,97,143,155,108,47,37,27,61,36,53,62,62)
-    adSpend = @(0,0,175.99,370.74,296.90,755.81,1495.07,1588.14,776.39,625.25,300.69,54.99,143.76,82.10,402.12,642.66,531.75)
-    adSales = @(0,0,320.06,762.16,1203.74,1578.14,2917.88,2808.71,1968.47,946.73,490.89,663.49,919.27,377.35,1149.65,1963.87,1223.68)
+    adSpend = @(0,0,175.99,370.74,296.90,763.44,1505.00,1562.40,800.82,626.95,311.53,58.67,142.15,76.55,364.40,676.99,529.17)
+    adSales = @(0,0,320.06,762.16,1203.74,1503.46,2964.57,2808.71,1996.46,813.31,553.31,706.50,947.26,349.36,1149.65,1903.13,1286.29)
   }
   FR = @{
     sales   = @(0,0,29.95,0,388.55,115.68,955.12,1103.77,750.26,561.77,347.13,511.77,569.04,503.23,868.14,1577.44,2201.05)
     units   = @(0,0,1,0,13,4,33,37,24,17,11,16,20,18,28,47,68)
     orders  = @(0,0,1,0,13,4,33,33,19,15,10,15,18,18,26,46,63)
-    adSpend = @(0,0,0,10.09,278.04,129.58,387.33,314.50,255.50,181.95,95.90,19.28,58.35,30.67,172.97,477.07,586.36)
-    adSales = @(0,0,0,28.39,155.97,47.20,460.73,648.92,189.20,227.12,91.80,160.81,243.09,214.23,225.22,1034.22,1154.60)
+    adSpend = @(0,0,0,10.09,278.04,129.58,375.21,324.03,252.52,181.67,101.75,19.28,58.35,27.64,167.83,463.84,575.45)
+    adSales = @(0,0,0,28.39,155.97,47.20,460.73,648.92,189.20,227.12,91.80,160.81,243.09,157.45,282.00,903.61,1285.21)
   }
   ES = @{
     sales   = @(0,36.05,0,102.25,79.07,548.20,648.62,731.29,1021.48,583.23,588.84,693.44,351.85,616.90,1034.02,1630.37,2166.81)
     units   = @(0,1,0,3,3,16,21,26,37,19,19,24,13,20,33,52,68)
     orders  = @(0,1,0,3,3,15,18,24,36,18,18,23,12,19,30,50,63)
-    adSpend = @(0,0,0,0,0,160.99,150.39,193.43,290.79,306.03,104.82,27.11,21.48,46.29,229.31,404.01,601.87)
-    adSales = @(0,0,0,0,0,55.37,157.02,429.09,422.28,333.12,249.61,247.79,77.10,222.38,456.61,904.24,1077.32)
+    adSpend = @(0,0,0,0,0,157.24,150.80,193.86,283.16,311.21,109.16,26.80,22.54,45.96,221.47,402.39,608.46)
+    adSales = @(0,0,0,0,0,55.37,157.02,429.09,388.69,366.71,249.61,247.79,77.10,222.38,456.61,877.01,1104.55)
   }
   IT = @{
     sales   = @(0,57.85,89.75,200.65,336.71,620.03,995.44,1290.47,1202.05,791.09,1053.21,865.74,853.25,1328.87,1144.99,1574.68,2392.84)
     units   = @(0,2,3,6,11,21,33,43,38,24,33,28,28,40,35,46,67)
     orders  = @(0,2,3,6,11,19,33,41,38,24,32,27,23,37,33,41,58)
-    adSpend = @(0,0,0,0,333.76,187.44,324.77,427.44,303.09,216.26,139.28,58.99,52.71,65.04,201.99,484.38,586.79)
+    adSpend = @(0,0,0,0,333.76,188.46,330.08,427.73,297.66,220.57,140.79,58.52,52.29,69.49,196.46,465.71,603.90)
     adSales = @(0,0,0,0,135.23,345.75,611.85,881.57,543.61,255.06,541.71,413.01,320.37,480.10,487.50,706.22,1290.91)
   }
 }
@@ -307,32 +309,34 @@ $advJs = @"
 "@
 # ---- sections.inventory: FBM stock from getSalesByProduct (quantity/daysCover/OOS). ----
 # Reshaped for FBM: KPIs = active/in-stock/OOS/SKUs-to-restock; stock list = OOS + healthy; restock = OOS priorities.
-# Dispatch card hidden (no FBM late-dispatch source). EU: 140 listings, 124 in stock, 16 OOS (6 unique SKUs).
+# Dispatch card hidden (no FBM late-dispatch source). REFRESHED 2026-06-17 from getSalesByProduct (4 channels,
+# sortKey:quantity asc): EU 199 listings, 140 in stock, 59 OOS (31 unique SKUs); 7 SKUs OOS across all 4 markets.
 $invJs = @"
 {
       kpis: [
-        {bar:'green',lbl:'In Stock',val:'124',dCls:'du',d:'listings',s:'across DE/FR/ES/IT'},
-        {bar:'red',lbl:'Out of Stock',val:'16',dCls:'dd',d:'listings suppressed',s:'6 unique SKUs'},
-        {bar:'#404935',lbl:'Active SKUs',val:'140',dCls:'df',d:'EU listings',s:'~35 per market'},
-        {bar:'amber',lbl:'SKUs to Restock',val:'6',dCls:'df',dColor:'amber',d:'OOS in 1+ market',s:'see priority list'}
+        {bar:'green',lbl:'In Stock',val:'140',dCls:'du',d:'listings',s:'across DE/FR/ES/IT'},
+        {bar:'red',lbl:'Out of Stock',val:'59',dCls:'dd',d:'listings suppressed',s:'31 unique SKUs'},
+        {bar:'#404935',lbl:'Active SKUs',val:'199',dCls:'df',d:'EU listings',s:'~50 per market'},
+        {bar:'amber',lbl:'SKUs to Restock',val:'11',dCls:'df',dColor:'amber',d:'OOS in 2+ markets',s:'see priority list'}
       ],
       stock: [
-        {dot:'dr',name:'Fast Bar Lemon',note:'B086XB1N46 ${DOT} DE FR ES IT (14 May)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Hydro Tabs Orange',note:'B0CCJW62HZ ${DOT} DE FR ES (3 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Energy Drink Lemon 1kg',note:'B0GS21WT66 ${DOT} FR ES IT (15 Apr)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Turbo Drink Watermelon',note:'B0GSWHPXQV ${DOT} FR ES IT (5 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Energy Drink Forest Fruit 320g',note:'B0GZ469Z98 ${DOT} DE FR (10 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Turbo Drink Lemon 850g',note:'B0C9MXWW77 ${DOT} IT (17 Mar)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dg',name:'Energy Drink Forest Fruit 1kg',note:'B0GSWK3DNX ${DOT} DE ${DOT} Healthy',units:'560 units',days:'>12 mo'},
-        {dot:'dg',name:'Turbo Drink Lemon 850g',note:'B0GSWW3HW2 ${DOT} DE ${DOT} Healthy',units:'305 units',days:'>12 mo'},
-        {dot:'dg',name:'Energy Gel Citrus',note:'B0CRFD8L2X ${DOT} DE ${DOT} Healthy',units:'297 units',days:'>12 mo'},
-        {dot:'dg',name:'Energy Gel Cola/Caffeine',note:'B0CRFB42XS ${DOT} DE ${DOT} Healthy',units:'277 units',days:'>12 mo'}
+        {dot:'dr',name:'Fast Bar Lemon',note:'B086XB1N46 ${DOT} DE ES FR IT (14 May)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Energy Drink Lemon 1kg',note:'B0GS21WT66 ${DOT} DE ES FR IT (15 Apr)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Energy Ice Gel Lemon-Lime',note:'B0F332LV9B ${DOT} DE ES FR IT (18 Feb)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Energy Drink Forest Fruit 320g',note:'B0GZ469Z98 ${DOT} DE ES FR IT (10 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Hydro Tabs Orange',note:'B0CCJW62HZ ${DOT} DE ES FR (3 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Cherry Juice Booster 6x500ml',note:'B0F32S8KRN ${DOT} ES FR IT (22 Apr)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dg',name:'Cherry Juice+ 12x500ml',note:'B0GZW1BJ1C ${DOT} EU ${DOT} Healthy',units:'714 units',days:'>12 mo'},
+        {dot:'dg',name:'Fruit Chew Blackcurrant',note:'B0C9MWY4G3 ${DOT} EU ${DOT} Healthy',units:'655 units',days:'>12 mo'},
+        {dot:'dg',name:'Energy Gel Citrus',note:'B0CRFD8L2X ${DOT} EU ${DOT} Healthy',units:'447 units',days:'>12 mo'},
+        {dot:'dg',name:'Turbo Drink Watermelon 850g',note:'B0GSWHPXQV ${DOT} EU ${DOT} Healthy',units:'332 units',days:'>12 mo'}
       ],
       restock: [
         {level:'red',title:'Fast Bar Lemon ${EMD} all 4 markets',sub:'B086XB1N46 ${DOT} OOS since 14 May ${DOT} top restock priority'},
-        {level:'red',title:'Energy Drink Lemon 1kg ${EMD} FR/ES/IT',sub:'B0GS21WT66 ${DOT} OOS since 15 Apr'},
-        {level:'red',title:'Turbo Drink Watermelon ${EMD} FR/ES/IT',sub:'B0GSWHPXQV ${DOT} OOS since 5 Jun'},
-        {level:'amber',title:'Hydro Tabs Orange ${EMD} DE/FR/ES',sub:'B0CCJW62HZ ${DOT} OOS since 3 Jun'}
+        {level:'red',title:'Energy Drink Lemon 1kg ${EMD} all 4 markets',sub:'B0GS21WT66 ${DOT} OOS since 15 Apr'},
+        {level:'red',title:'Energy Ice Gel Lemon-Lime ${EMD} all 4 markets',sub:'B0F332LV9B ${DOT} OOS since 18 Feb ${DOT} longest outage'},
+        {level:'amber',title:'Cherry Juice Booster ${EMD} ES/FR/IT',sub:'B0F32S8KRN ${DOT} OOS since 22 Apr'},
+        {level:'amber',title:'Hydro Tabs Orange ${EMD} DE/ES/FR',sub:'B0CCJW62HZ ${DOT} OOS since 3 Jun'}
       ]
     }
 "@
@@ -372,11 +376,11 @@ $ovJs = @"
         {flag:'it',label:'Italy',pct:94,valText:'94.3%',color:'green'}
       ],
       cvr: { val:'4.4%', note:'recent month ${DOT} 5,543 sessions', sub:'All EU ${DOT} session conversion' },
-      stockWarn: { badge:'6 OOS SKUs', items:[
+      stockWarn: { badge:'31 OOS SKUs', items:[
         {level:'red',title:'Fast Bar Lemon ${EMD} OOS all markets',sub:'B086XB1N46 ${DOT} since 14 May'},
-        {level:'red',title:'Hydro Tabs Orange ${EMD} DE/FR/ES',sub:'B0CCJW62HZ ${DOT} since 3 Jun'},
-        {level:'amber',title:'Energy Drink Lemon 1kg ${EMD} FR/ES/IT',sub:'B0GS21WT66 ${DOT} since 15 Apr'},
-        {level:'amber',title:'Turbo Drink Watermelon ${EMD} FR/ES/IT',sub:'B0GSWHPXQV ${DOT} since 5 Jun'}
+        {level:'red',title:'Energy Drink Lemon 1kg ${EMD} all markets',sub:'B0GS21WT66 ${DOT} since 15 Apr'},
+        {level:'red',title:'Energy Ice Gel Lemon-Lime ${EMD} all markets',sub:'B0F332LV9B ${DOT} since 18 Feb'},
+        {level:'amber',title:'Hydro Tabs Orange ${EMD} DE/ES/FR',sub:'B0CCJW62HZ ${DOT} since 3 Jun'}
       ] }
     }
 "@

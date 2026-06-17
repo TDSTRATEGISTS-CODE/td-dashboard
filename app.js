@@ -432,20 +432,56 @@ function updateMarketChips(d) {
   });
 }
 
+// ---------- live-fetch loading overlay ----------
+// For appsScript clients ONLY: cover the page with a subtle cream screen + spinner while the proxy
+// fetch is in flight, so the static fallback never flashes. Hidden once live data has rendered, or
+// on fetch error / timeout (which reveals the static fallback). Self-contained — injects its own
+// markup + CSS, so no index.html changes and no per-client wiring. Uses the client's brand vars.
+function showLoadingOverlay() {
+  if (document.getElementById('live-loading')) return;   // idempotent
+  if (!document.getElementById('live-loading-style')) {
+    var st = document.createElement('style');
+    st.id = 'live-loading-style';
+    st.textContent =
+      '#live-loading{position:fixed;inset:0;background:var(--bg,#f1ece6);display:flex;align-items:center;' +
+      'justify-content:center;z-index:99999;transition:opacity .35s ease;}' +
+      '#live-loading.is-hiding{opacity:0;pointer-events:none;}' +
+      '#live-loading .ll-spin{width:32px;height:32px;border-radius:50%;border:3px solid rgba(0,0,0,.10);' +
+      'border-top-color:var(--brand,#404935);animation:llSpin .8s linear infinite;}' +
+      '@keyframes llSpin{to{transform:rotate(360deg);}}';
+    document.head.appendChild(st);
+  }
+  var ov = document.createElement('div');
+  ov.id = 'live-loading';
+  ov.innerHTML = '<div class="ll-spin" role="status" aria-label="Loading live data"></div>';
+  (document.body || document.documentElement).appendChild(ov);
+  document.documentElement.style.overflow = 'hidden';   // no scrollbar gutter behind the overlay
+}
+
+function hideLoadingOverlay() {
+  var ov = document.getElementById('live-loading');
+  document.documentElement.style.overflow = '';         // restore scrolling
+  if (!ov) return;
+  ov.classList.add('is-hiding');
+  setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 400);
+}
+
 // ---------- live data (Apps Script proxy → MerchantSpring in Phase 2) ----------
 // Uses JSONP (script-tag), not fetch: works cross-origin in the Wix iframe AND from a
 // double-clicked file:// page, with no CORS dependency. The proxy returns cb({...}) when
 // called with ?callback=cb.
 function loadLiveData() {
   var ds = CONFIG.dataSource || {};
-  if (ds.type !== 'appsScript' || !ds.url) return;   // 'static' = data.js only
-  var cb = '__dashCb' + Date.now();
-  var s = document.createElement('script');
+  if (ds.type !== 'appsScript' || !ds.url) return;   // 'static' = data.js only, no overlay
+  showLoadingOverlay();                              // hide the static fallback until live renders
+  var cb = '__dashCb' + Date.now(), s = document.createElement('script'), done = false, t;
+  function finish() { if (done) return; done = true; clearTimeout(t); hideLoadingOverlay(); }
   window[cb] = function (j) {
     try { applyLive(j); }
-    finally { delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); }
+    finally { delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); finish(); }
   };
-  s.onerror = function () { delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); };
+  s.onerror = function () { delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); finish(); };  // reveal static fallback
+  t = setTimeout(finish, 15000);                     // safety net: never spin forever (slow/dead proxy)
   s.src = ds.url + (ds.url.indexOf('?') === -1 ? '?' : '&') + 'callback=' + cb + '&cachebust=' + Date.now();
   document.head.appendChild(s);
 }
@@ -1261,6 +1297,10 @@ function renderPeriodSections(d) {
 // ---------- boot ----------
 function boot() {
   applyConfig();
+  // For live (appsScript) clients, raise the loading overlay BEFORE any static content paints,
+  // so the static fallback never flashes before the live fetch resolves. loadLiveData() hides it.
+  var _ds = CONFIG.dataSource || {};
+  if (_ds.type === 'appsScript' && _ds.url) showLoadingOverlay();
   renderSections();                               // deep-page content (clients with data.sections only)
   switchDateRange(currentPeriod);                 // paints KPIs, market table, sidebar chips, topbar subtitle
   if (MKT[currentMarket]) set('tb-title', MKT[currentMarket].t);
