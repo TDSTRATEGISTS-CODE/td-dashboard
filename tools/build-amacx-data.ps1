@@ -37,6 +37,8 @@ $M = @{
     orders  = @(15,24,39,48,83,97,143,155,108,47,37,27,61,36,53,62,62)
     adSpend = @(0,0,175.99,370.74,296.90,763.44,1505.00,1562.40,800.82,626.95,311.53,58.67,142.15,76.55,364.40,676.99,529.17)
     adSales = @(0,0,320.06,762.16,1203.74,1503.46,2964.57,2808.71,1996.46,813.31,553.31,706.50,947.26,349.36,1149.65,1903.13,1286.29)
+    impr    = @(0,0,0,0,0,414842,565107,1195595,409399,374617,273183,33710,174547,57985,122030,302866,239085)
+    clicks  = @(0,0,0,0,0,567,1514,3302,747,507,308,99,172,102,336,558,507)
   }
   FR = @{
     sales   = @(0,0,29.95,0,388.55,115.68,955.12,1103.77,750.26,561.77,347.13,511.77,569.04,503.23,868.14,1577.44,2201.05)
@@ -44,6 +46,8 @@ $M = @{
     orders  = @(0,0,1,0,13,4,33,33,19,15,10,15,18,18,26,46,63)
     adSpend = @(0,0,0,10.09,278.04,129.58,375.21,324.03,252.52,181.67,101.75,19.28,58.35,27.64,167.83,463.84,575.45)
     adSales = @(0,0,0,28.39,155.97,47.20,460.73,648.92,189.20,227.12,91.80,160.81,243.09,157.45,282.00,903.61,1285.21)
+    impr    = @(0,0,0,0,0,74599,324497,518208,213619,327620,108929,16993,3612,4761,28622,315778,152994)
+    clicks  = @(0,0,0,0,0,141,360,1042,214,184,100,20,45,43,139,1123,449)
   }
   ES = @{
     sales   = @(0,36.05,0,102.25,79.07,548.20,648.62,731.29,1021.48,583.23,588.84,693.44,351.85,616.90,1034.02,1630.37,2166.81)
@@ -51,6 +55,8 @@ $M = @{
     orders  = @(0,1,0,3,3,15,18,24,36,18,18,23,12,19,30,50,63)
     adSpend = @(0,0,0,0,0,157.24,150.80,193.86,283.16,311.21,109.16,26.80,22.54,45.96,221.47,402.39,608.46)
     adSales = @(0,0,0,0,0,55.37,157.02,429.09,388.69,366.71,249.61,247.79,77.10,222.38,456.61,877.01,1104.55)
+    impr    = @(0,0,0,0,0,72407,88646,126227,183185,333713,68941,8446,4159,8926,52936,289124,545727)
+    clicks  = @(0,0,0,0,0,170,219,285,332,354,197,40,40,93,244,525,796)
   }
   IT = @{
     sales   = @(0,57.85,89.75,200.65,336.71,620.03,995.44,1290.47,1202.05,791.09,1053.21,865.74,853.25,1328.87,1144.99,1574.68,2392.84)
@@ -58,6 +64,8 @@ $M = @{
     orders  = @(0,2,3,6,11,19,33,41,38,24,32,27,23,37,33,41,58)
     adSpend = @(0,0,0,0,333.76,188.46,330.08,427.73,297.66,220.57,140.79,58.52,52.29,69.49,196.46,465.71,603.90)
     adSales = @(0,0,0,0,135.23,345.75,611.85,881.57,543.61,255.06,541.71,413.01,320.37,480.10,487.50,706.22,1290.91)
+    impr    = @(0,0,0,0,0,114226,215962,231759,271878,174684,106516,39603,5766,6548,62294,394222,704367)
+    clicks  = @(0,0,0,0,0,258,418,521,416,302,235,91,52,82,250,1128,1524)
   }
 }
 $MARKETS = 'DE','FR','ES','IT'         # NLD pending launch — excluded
@@ -97,14 +105,18 @@ function NumArr($arr,$idx){ ($idx | ForEach-Object { [string][math]::Round([doub
 function TacosArr($salesArr,$spendArr,$idx){ ($idx | ForEach-Object { $s=[double]$salesArr[$_]; $sp=[double]$spendArr[$_]; $t= if($s){[math]::Round(($sp/$s)*100,1)}else{0}; [string]$t }) -join ',' }
 
 # EU monthly totals (sum of 4 markets)
-$EU = @{ sales=@(); units=@(); orders=@(); adSpend=@(); adSales=@() }
+$EU = @{ sales=@(); units=@(); orders=@(); adSpend=@(); adSales=@(); impr=@(); clicks=@() }
 for($i=0;$i -lt 17;$i++){
   $EU.sales   += ($MARKETS | ForEach-Object { [double]$M[$_].sales[$i] }   | Measure-Object -Sum).Sum
   $EU.units   += ($MARKETS | ForEach-Object { [double]$M[$_].units[$i] }   | Measure-Object -Sum).Sum
   $EU.orders  += ($MARKETS | ForEach-Object { [double]$M[$_].orders[$i] }  | Measure-Object -Sum).Sum
   $EU.adSpend += ($MARKETS | ForEach-Object { [double]$M[$_].adSpend[$i] } | Measure-Object -Sum).Sum
   $EU.adSales += ($MARKETS | ForEach-Object { [double]$M[$_].adSales[$i] } | Measure-Object -Sum).Sum
+  $EU.impr    += ($MARKETS | ForEach-Object { [double]$M[$_].impr[$i] }    | Measure-Object -Sum).Sum
+  $EU.clicks  += ($MARKETS | ForEach-Object { [double]$M[$_].clicks[$i] }  | Measure-Object -Sum).Sum
 }
+# Impressions formatter: 1.64M / 565k / 240.
+function ImprF($n){ $n=[double]$n; if($n -ge 1000000){('{0:N2}' -f ($n/1000000))+'M'} elseif($n -ge 1000){('{0:N0}' -f ($n/1000))+'k'} else {'{0:N0}' -f $n} }
 
 # Campaign-mix pie (fixed trailing-12, by spend share; SD spends but barely converts).
 $mixJs = "{ slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'${EUR}28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'${EUR}4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'${EUR}0.0k',acos:'n/a'} ] }"
@@ -112,7 +124,7 @@ $mixJs = "{ slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'
 # Per-market KPI fields — same maths/format as the EU cards above, computed for ONE market so the
 # sidebar market filter can overlay the headline KPIs (Overview + Advertising) with that market's
 # numbers instead of the EU total. Returns an ordered hashtable keyed by the data.js KPI field names.
-function MarketKpi($sales,$adSpend,$adSales,$units,$orders,$idx,$prior,$pk){
+function MarketKpi($sales,$adSpend,$adSales,$units,$orders,$idx,$prior,$pk,$cvr,$impr,$clicks,$bud){
   $rev=Sum $sales $idx; $spend=Sum $adSpend $idx; $u=Sum $units $idx; $o=Sum $orders $idx; $as=Sum $adSales $idx
   $tacos= if($rev){($spend/$rev)*100}else{0}
   $roas = if($spend){$rev/$spend}else{0}
@@ -120,6 +132,11 @@ function MarketKpi($sales,$adSpend,$adSales,$units,$orders,$idx,$prior,$pk){
   $h=[ordered]@{}
   $h.rev=Money $rev; $h.adSales=Money $as; $h.tacos=Pct1 $tacos; $h.roas=RoasF $roas; $h.spend=Money $spend; $h.aov=AovF $aov
   $h.tacosAd=Pct1 $tacos; $h.roasAd=RoasF $roas
+  $h.cvr= if($cvr){[string]$cvr+'%'}else{'n/a'}; $h.cvrS=''; $h.orders='{0:N0}' -f $o; $h.ordersS=('{0:N0}' -f $u)+' units'
+  $h.impr= if($pk -eq '2025'){'n/a'}else{ ImprF (Sum $impr $idx) }; $h.imprS='ad impressions'
+  $cl=Sum $clicks $idx; $im=Sum $impr $idx
+  if($pk -eq '2025'){ $h.cpc='n/a'; $h.ctr='n/a' } else { $h.cpc= if($cl){AovF ($spend/$cl)}else{'n/a'}; $h.ctr= if($im){('{0:N2}' -f (($cl/$im)*100))+'%'}else{'0%'} }
+  $h.adBudget= Money $bud; $h.util= if($bud){[string]([math]::Round(($spend/$bud)*100))+'%'}else{'-'}
   $h.revC='du'; $h.adSalesC='df'; $h.tacosC='df'; $h.roasC='df'; $h.spendC='df'; $h.aovC='df'; $h.tacosAdC='df'; $h.roasAdC='df'
   $h.tacosS='Target <20%'; $h.roasS=''; $h.roasAdS=(Money $rev)+' revenue'; $h.aovD=''; $h.aovS=''
   $h.adSalesS= if($rev){(Pct1 (($as/$rev)*100))+' of revenue'}else{''}
@@ -144,6 +161,17 @@ function MarketKpi($sales,$adSpend,$adSales,$units,$orders,$idx,$prior,$pk){
     $h.roasD=''; $h.roasAdD=''; $h.adSalesD=$desc
   }
   return $h
+}
+
+# Per-period per-market session CVR (MerchantSpring conversions = units/pageViews via getSalesByChannels).
+# EU 'all' = units-weighted blend (pageViews_m = units_m / cvr_m). 2025 has no CVR pull -> 'n/a'.
+$CVRP=@{ may=@{de=3.4;fr=6.7;es=4.1;it=3.1}; '3m'=@{de=3.8;fr=5.5;es=4.1;it=3.2}; '6m'=@{de=4.6;fr=5.9;es=3.9;it=3.9}; '12m'=@{de=4.7;fr=4.7;es=3.5;it=3.7} }
+function EuCvr($idx,$pk){
+  if(-not $CVRP[$pk]){ return $null }
+  $tu=0.0; $tpv=0.0
+  foreach($mk in $MARKETS){ $u=Sum $M[$mk].units $idx; $c=[double]$CVRP[$pk][$FLAG[$mk]]; if($c -gt 0){ $tu+=$u; $tpv+=($u/($c/100)) } }
+  if($tpv -le 0){ return $null }
+  [math]::Round(($tu/$tpv)*100,1)
 }
 
 $jsPeriods = @()
@@ -201,11 +229,21 @@ foreach($pk in $PERIODS.Keys){
   # Per-market KPI overlay (de/fr/es/it) — read by app.js applyMarketKpis when a market is selected.
   $mkpis=@()
   foreach($mk in $MARKETS){
-    $k = MarketKpi $M[$mk].sales $M[$mk].adSpend $M[$mk].adSales $M[$mk].units $M[$mk].orders $idx $def.prior $pk
+    $cvrMk = if($CVRP[$pk]){ $CVRP[$pk][$FLAG[$mk]] } else { '' }
+    $k = MarketKpi $M[$mk].sales $M[$mk].adSpend $M[$mk].adSales $M[$mk].units $M[$mk].orders $idx $def.prior $pk $cvrMk $M[$mk].impr $M[$mk].clicks ([double]$budPer[$mk])
     $fields = ($k.GetEnumerator() | ForEach-Object { "$($_.Key):'" + (([string]$_.Value).Replace('\','\\').Replace("'","\'")) + "'" }) -join ', '
     $mkpis += "      $($FLAG[$mk]): { $fields }"
   }
   $marketKpisJs = "{`n" + ($mkpis -join ",`n") + "`n    }"
+
+  $cvrEU = EuCvr $idx $pk; $cvrEUtxt = if($cvrEU){('{0:N1}' -f $cvrEU)+'%'}else{'n/a'}
+  $ordersTxt = '{0:N0}' -f $orders; $ordersSub = ('{0:N0}' -f $units)+' units'
+  $imprEU = Sum $EU.impr $idx; $clicksEU = Sum $EU.clicks $idx; $adIncomplete = ($pk -eq '2025')
+  $imprEUtxt = if($adIncomplete){'n/a'}else{ ImprF $imprEU }
+  $ctrEUtxt  = if($adIncomplete -or -not $imprEU){'n/a'}else{ ('{0:N2}' -f (($clicksEU/$imprEU)*100))+'%' }
+  $cpcEUtxt  = if($adIncomplete -or -not $clicksEU){'n/a'}else{ AovF ($spend/$clicksEU) }
+  $budEU = ($MARKETS | ForEach-Object { [double]$budPer[$_] } | Measure-Object -Sum).Sum
+  $utilEUtxt = if($budEU){ [string]([math]::Round(($spend/$budEU)*100))+'%' }else{'-'}
 
   $obj=@"
   '$pk': {
@@ -218,6 +256,10 @@ foreach($pk in $PERIODS.Keys){
     tacosAd: '$(Pct1 $tacos)', tacosAdD: '$tacosD', tacosAdC: '$tacosC', tacosAdS: 'Target <20%',
     roasAd: '$(RoasF $roas)', roasAdD: '$roasD', roasAdC: '$roasC', roasAdS: '$(Money $rev) revenue',
     aov: '$(AovF $aov)', aovD: '', aovC: 'df', aovS: '$aovS',
+    cvr: '$cvrEUtxt', cvrD: '', cvrC: 'df', cvrS: 'page-view conversion',
+    orders: '$ordersTxt', ordersD: '', ordersC: 'df', ordersS: '$ordersSub',
+    impr: '$imprEUtxt', imprD: '', imprC: 'df', imprS: 'ad impressions',
+    ctr: '$ctrEUtxt', cpc: '$cpcEUtxt', adBudget: '$(Money $budEU)', util: '$utilEUtxt',
     mktRows: [
       $rowsJs
     ],
@@ -364,11 +406,19 @@ $DISCONTINUED = @('B0F32S8KRN','B0CZ9QMR9F','B0F331NKWY')   # never report these
 $invJs = @"
 {
       kpis: [
-        {bar:'green',lbl:'In Stock',val:'140',dCls:'du',d:'listings',s:'across DE/FR/ES/IT'},
-        {bar:'red',lbl:'Out of Stock',val:'54',dCls:'dd',d:'listings suppressed',s:'29 unique SKUs'},
-        {bar:'#404935',lbl:'Active SKUs',val:'194',dCls:'df',d:'EU listings',s:'~48 per market'},
-        {bar:'amber',lbl:'SKUs to Restock',val:'9',dCls:'df',dColor:'amber',d:'OOS in 2+ markets',s:'see priority list'}
+        {bar:'green',lbl:'In Stock',val:'38',dCls:'du',d:'SKUs',s:'of 69 products'},
+        {bar:'red',lbl:'Out of Stock',val:'31',dCls:'dd',d:'SKUs suppressed',s:'59 listings ${DOT} unique count'},
+        {bar:'#404935',lbl:'Active SKUs',val:'69',dCls:'df',d:'unique products',s:'199 EU listings'},
+        {bar:'amber',lbl:'Restock 30d+',val:'25',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'see priority list'}
       ],
+      // Per-market KPI cards — counts are that marketplace's own listings (unique-SKU basis, getSalesByProduct
+      // quantity==0 = OOS). app.js swaps these in when a market chip is selected; EU 'kpis' above = unique products.
+      kpisByMarket: {
+        de: [ {bar:'green',lbl:'In Stock',val:'34',dCls:'du',d:'SKUs',s:'Germany'}, {bar:'red',lbl:'Out of Stock',val:'16',dCls:'dd',d:'SKUs suppressed',s:'Germany'}, {bar:'#404935',lbl:'Active SKUs',val:'50',dCls:'df',d:'DE listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'11',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Germany'} ],
+        fr: [ {bar:'green',lbl:'In Stock',val:'38',dCls:'du',d:'SKUs',s:'France'}, {bar:'red',lbl:'Out of Stock',val:'11',dCls:'dd',d:'SKUs suppressed',s:'France'}, {bar:'#404935',lbl:'Active SKUs',val:'49',dCls:'df',d:'FR listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'5',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'France'} ],
+        es: [ {bar:'green',lbl:'In Stock',val:'34',dCls:'du',d:'SKUs',s:'Spain'}, {bar:'red',lbl:'Out of Stock',val:'16',dCls:'dd',d:'SKUs suppressed',s:'Spain'}, {bar:'#404935',lbl:'Active SKUs',val:'50',dCls:'df',d:'ES listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'10',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Spain'} ],
+        it: [ {bar:'green',lbl:'In Stock',val:'34',dCls:'du',d:'SKUs',s:'Italy'}, {bar:'red',lbl:'Out of Stock',val:'16',dCls:'dd',d:'SKUs suppressed',s:'Italy'}, {bar:'#404935',lbl:'Active SKUs',val:'50',dCls:'df',d:'IT listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'11',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Italy'} ]
+      },
       stock: [
         {dot:'dr',name:'Fast Bar Lemon',note:'B086XB1N46 ${DOT} DE ES FR IT (14 May)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Energy Drink Lemon 1kg',note:'B0GS21WT66 ${DOT} DE ES FR IT (15 Apr)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
@@ -455,6 +505,37 @@ $ovJs = @"
         {flag:'fr',label:'France',pct:99,valText:'98.9%',color:'green'},
         {flag:'es',label:'Spain',pct:93,valText:'93.1%',color:'green'},
         {flag:'it',label:'Italy',pct:94,valText:'94.3%',color:'green'}
+      ],
+      buyBoxByPeriod: {
+        'may': { all: {pct:82,pctTxt:'82%',delta:'▼ 1.5pp',deltaCls:'dd'}, de: {pct:49.7,pctTxt:'49.7%',delta:'▼ 7.3pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'▼ 0.2pp',deltaCls:'dd'}, es: {pct:93.4,pctTxt:'93.4%',delta:'▲ 0.5pp',deltaCls:'du'}, it: {pct:94.4,pctTxt:'94.4%',delta:'▼ 0.9pp',deltaCls:'dd'} },
+        '3m': { all: {pct:82.9,pctTxt:'82.9%',delta:'▲ 1.4pp',deltaCls:'du'}, de: {pct:55.7,pctTxt:'55.7%',delta:'▼ 7.3pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'▲ 0.1pp',deltaCls:'du'}, es: {pct:93.2,pctTxt:'93.2%',delta:'▲ 10.5pp',deltaCls:'du'}, it: {pct:95.2,pctTxt:'95.2%',delta:'▼ 2.5pp',deltaCls:'dd'} },
+        '6m': { all: {pct:83.2,pctTxt:'83.2%',delta:'▼ 8.3pp',deltaCls:'dd'}, de: {pct:59.2,pctTxt:'59.2%',delta:'▼ 22.7pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'▲ 0.4pp',deltaCls:'du'}, es: {pct:91.3,pctTxt:'91.3%',delta:'▼ 0.7pp',deltaCls:'dd'}, it: {pct:96.1,pctTxt:'96.1%',delta:'▼ 2.7pp',deltaCls:'dd'} },
+        '2025': { all: {pct:94.1,pctTxt:'94.1%',delta:'▲ 7.4pp',deltaCls:'du'}, de: {pct:90.9,pctTxt:'90.9%',delta:'▲ 8.8pp',deltaCls:'du'}, fr: {pct:97.2,pctTxt:'97.2%',delta:'▼ 0.7pp',deltaCls:'dd'}, es: {pct:95,pctTxt:'95%',delta:'▼ 5pp',deltaCls:'dd'}, it: {pct:98.5,pctTxt:'98.5%',delta:'▲ 0.6pp',deltaCls:'du'} },
+        '12m': { all: {pct:89.6,pctTxt:'89.6%',delta:'▼ 7.3pp',deltaCls:'dd'}, de: {pct:80.8,pctTxt:'80.8%',delta:'▼ 13.9pp',deltaCls:'dd'}, fr: {pct:97.7,pctTxt:'97.7%',delta:'▼ 1.6pp',deltaCls:'dd'}, es: {pct:93.3,pctTxt:'93.3%',delta:'▲ 3.7pp',deltaCls:'du'}, it: {pct:97.4,pctTxt:'97.4%',delta:'▼ 0.6pp',deltaCls:'dd'} }
+      },
+      buyBoxLosses: [
+        {name:'Turbo Gel Blackcurrant',asin:'B0C9R21RSR',ean:'8714411000529',market:'de',reason:'Losing to Others',rc:'ba',your:'${EUR}42.95',winner:'${EUR}46.49',gap:'-${EUR}3.54'},
+        {name:'Energy Gel Citrus',asin:'B0CRFD8L2X',ean:'8714411000208',market:'de',reason:'Losing to Others',rc:'ba',your:'${EUR}29.95',winner:'${EUR}33.49',gap:'-${EUR}3.54'},
+        {name:'Energy Gel Cranberry',asin:'B0CRC9DYT1',ean:'8714411001120',market:'de',reason:'Losing to Others',rc:'ba',your:'${EUR}32.95',winner:'${EUR}29.95',gap:'+${EUR}3.00'},
+        {name:'Turbo Gel Citrus',asin:'B0C9MZVSZW',ean:'8714411000536',market:'de',reason:'Losing to Others',rc:'ba',your:'${EUR}42.95',winner:'${EUR}39.99',gap:'+${EUR}2.96'},
+        {name:'Nougat Bar Papaya',asin:'B0CRFBRJ5R',ean:'8714411001137',market:'it',reason:'No Winner',rc:'ba',your:'${EUR}32.95',winner:'n/a',gap:''},
+        {name:'Energy Gel Agrumi',asin:'B0CRFD8L2X',ean:'8714411000208',market:'it',reason:'No Winner',rc:'ba',your:'${EUR}29.95',winner:'n/a',gap:''},
+        {name:'Fruit Chew Blackcurrant',asin:'B0C9MWY4G3',ean:'8714411000437',market:'it',reason:'No Winner',rc:'ba',your:'${EUR}31.95',winner:'n/a',gap:''},
+        {name:'Nougat Bar Mirtillo Rosso',asin:'B0CRC9DYT1',ean:'8714411001120',market:'it',reason:'No Winner',rc:'ba',your:'${EUR}32.95',winner:'n/a',gap:''},
+        {name:'Energy Gel Arancia',asin:'B0CRFCLQJ1',ean:'8714411000222',market:'it',reason:'No Winner',rc:'ba',your:'${EUR}29.95',winner:'n/a',gap:''},
+        {name:'Recovery/Protein Vaniglia',asin:'B0F38FWCSV',ean:'8714411000178',market:'it',reason:'No Winner',rc:'ba',your:'${EUR}49.95',winner:'n/a',gap:''},
+        {name:'Energy Ice Gel Cola Lime',asin:'B0F331SKR5',ean:'8714411002929',market:'it',reason:'No Winner',rc:'ba',your:'${EUR}79.95',winner:'n/a',gap:''},
+        {name:'Energy Gel Lampone',asin:'B0CRFW8KR7',ean:'8714411000239',market:'it',reason:'No Winner',rc:'ba',your:'${EUR}29.95',winner:'n/a',gap:''},
+        {name:'Recovery/Protein Cioccolato',asin:'B0F38H49R3',ean:'8714411000185',market:'it',reason:'No Winner',rc:'ba',your:'${EUR}49.95',winner:'n/a',gap:''},
+        {name:'Hydro Tabs Fruits des bois',asin:'B0CCJWLKTM',ean:'8714411000383',market:'fr',reason:'No Winner',rc:'ba',your:'${EUR}24.95',winner:'n/a',gap:''},
+        {name:'Recovery/Protein Chocolat',asin:'B0F38H49R3',ean:'8714411000185',market:'fr',reason:'No Winner',rc:'ba',your:'${EUR}49.95',winner:'n/a',gap:''},
+        {name:'Energy Ice Gel Cola Limette',asin:'B0F331SKR5',ean:'8714411002929',market:'de',reason:'No Winner',rc:'ba',your:'${EUR}79.95',winner:'n/a',gap:''},
+        {name:'Hydro Tabs Citron Vert',asin:'B0CCJWBX6W',ean:'8714411000338',market:'fr',reason:'No Winner',rc:'ba',your:'${EUR}24.95',winner:'n/a',gap:''},
+        {name:'Recovery/Protein Vanilla',asin:'B0F38FWCSV',ean:'8714411000178',market:'fr',reason:'No Winner',rc:'ba',your:'${EUR}49.95',winner:'n/a',gap:''},
+        {name:'Recovery/Protein Vainilla',asin:'B0F38FWCSV',ean:'8714411000178',market:'es',reason:'No Winner',rc:'ba',your:'${EUR}49.95',winner:'n/a',gap:''},
+        {name:'Turbo Gel Cítricos',asin:'B0C9MZVSZW',ean:'8714411000536',market:'es',reason:'No Winner',rc:'ba',your:'${EUR}42.95',winner:'n/a',gap:''},
+        {name:'Energy Ice Gel Cola Citron Vert',asin:'B0F331SKR5',ean:'8714411002929',market:'fr',reason:'No Winner',rc:'ba',your:'${EUR}79.95',winner:'n/a',gap:''},
+        {name:'Recovery/Protein Chocolate',asin:'B0F38H49R3',ean:'8714411000185',market:'es',reason:'No Winner',rc:'ba',your:'${EUR}49.95',winner:'n/a',gap:''}
       ],
       cvr: { val:'4.4%', note:'recent month ${DOT} 5,543 sessions', sub:'All EU ${DOT} session conversion' },
       stockWarn: { badge:'31 OOS SKUs', items:[

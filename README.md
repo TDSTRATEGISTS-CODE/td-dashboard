@@ -184,30 +184,41 @@ sections.shopify = {
         products:[ { name, net, units, asp, orders, share, shareCls } ]
       } }
     },
-    newnique: { â€¦stub until the store is connectedâ€¦ },
-    all:      { â€¦derived = Contours Rx until Newnique is bakedâ€¦ }
+    newnique: { â€¦live (Porter/Shopify) â€” hair-care D2C; no GA4 so no sessions/funnelâ€¦ },
+    all:      { â€¦true sum = Contours Rx + Newniqueâ€¦ }
   }
 }
 ```
 
-**Data source.** Baked from the **Shopify MCP** (Admin API + ShopifyQL) pulled in-session â€” the browser
-can't call the MCP, same constraint as MerchantSpring. Contours Rx values are exact MCP actuals;
-per-unit ASP / unit counts / funnel sub-steps / returning-rate for the longer periods are estimates
-(marked `est` in the cards) pending a full re-bake. A live proxy can overlay `sections.shopify` later,
+**Data source.** Pulled via **Porter** (17 Jun 2026): order-side (net sales, orders, AOV, units,
+products) from the **Shopify** connector; session-side (sessions, CVR, funnel, traffic-by-channel)
+from **GA4** â€” GA4 is connected for **Contours Rx only**, so Newnique shows no sessions/funnel. Porter's
+Shopify window reaches ~Feb 2026, so Contours Rx **May + 3-mo** are exact Porter actuals while **6-mo /
+12-mo** net/orders are kept from the earlier in-session Admin pull; Newnique's full history is sparse
+and captured exactly. **Stock** was still ingesting at bake time (separate Porter data type). Note GA4
+purchases (46 May) run below Shopify orders (90) â€” a normal GA4 tracking gap; the funnel uses GA4, the
+Orders KPI uses Shopify. A live proxy can overlay `sections.shopify` later,
 exactly like AMACX's sheet overlay.
 
 **Shopify P&L page (`shopifypnl` Â· `sections.shopifypnl`).** A second NKV-only page, sharing the same
 brand filter + date range (`switchBrand` repaints both; chips render into `#shop-brands` **and**
 `#shop-brands-pnl`). It's a **brand â†’ period â†’ { kpis, info, rows }** model built by a small per-period
-builder in `data.js`: the **Revenue** lines are live Shopify actuals, **COGS (30%)** and **fees (2.4%)**
-are flagged estimates, and the operating-expense lines â€” incl. the **NKV Google Ads** spend â€” are
-client inputs that read *"Pending inputs"* until provided (so Net Profit stays pending). The right card
-(`brand.statusList`) shows each input's status (live / est / pending / input). `renderShopifyPnl()` is
-a no-op for any client without `sections.shopifypnl`.
+builder in `data.js`: every line â€” **Net Revenue, COGS, Google/social ad spend, Beckdale fulfilment,
+Shopify + transaction fees, subscription, brand manager, the 5.5% TD fee, and Net Profit** â€” is sourced
+from the **NKV Beauty Account Tracker** ("Shopify" block, monthly). Contours Rx carries the shared opex
+(itâ€™s ~99% of D2C); **Newnique is tracked _light_** (own revenue / COGS / Google Ads only); **`All` =
+Contours Rx + Newnique**, and Net Profit ties to the sheetâ€™s "Profit after COGS". An `other` residual
+foots each month to the sheetâ€™s "Shopify Expenses" total. The right card (`brand.statusList`) shows each
+line's status. `renderShopifyPnl()` is a no-op for any client without `sections.shopifypnl`.
 
-**TODO (next):** Newnique store bake (needs a Shopify re-auth) â†’ fills the Shopify + P&L stubs and makes
-`All` a true sum; wire the **NKV Google Ads** script spend into `shopifypnl`; collect the client's
-COGS + opex inputs to finalise Net Profit.
+**Live updates.** `data.js` holds the baked snapshot (offline fallback); **`nkv-sheet-proxy.gs`
+(`scanShopifyPnl_`) serves `sections.shopifypnl` live** from the Tracker, merged via `overlay:'sections'`
+â€” so editing the sheet updates the P&L. The block is found by the `Total Shopify Revenue` anchor; CRX
+sales are read below it (skipping the annual-total decoy) and `All` is summed from CRX + Newnique.
+
+**TODO (next):** add earlier-month expenses to the Tracker so the 12-mo view is a true trailing year
+(itâ€™s YTD for now); confirm Newnique's store domain (placeholder `D2C Â· Shopify`); optionally split
+the shared opex across brands once the Tracker itemises it per store.
 
 ---
 
@@ -254,6 +265,11 @@ Notes:
   (the Performance-by-Campaign-Type pie, `period → market`) is a **baked literal** aggregated from
   `generateCampaignsReport` per period × channel (SP/SB/SD by `ad_type`) — like `groupsByPeriod`, editing `$M` won't
   refresh it; you must re-run the campaign pulls.
+- **Buy Box (Overview):** `sections.overview.buyBoxByPeriod` (official featured-offer %, `period → market`, with MoM delta)
+  is a baked literal from `generateTrafficAndConversionReport` per period × channel (page-view-weighted `buyboxWinPercentage`);
+  `sections.overview.buyBoxLosses` (loss list) is from `generateBuyBoxReport` `filter:'losing'` per channel (current snapshot).
+  Both live in `$ovJs` and need their own pulls — `$M` won't refresh them. The static `buyBox` bars remain only as the
+  non-AMACX fallback.
 
 ### Monthly re-bake routine (agent runbook)
 
@@ -271,12 +287,20 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
 | NLD | `75880695` | `A1O4H4W8GP4BN2 @ A1805IZSGTT6HS` | **no — skip ads** (pre-launch) |
 
 **Periods** (recompute epochs each month with `calculateDateEpoch`, `dateRange`, tz `Europe/Berlin`):
-`may` = this month · `3m` = trailing 3 · `6m` = trailing 6 · `12m` = trailing 12 · `2025` = FY2025 **(FROZEN — pull once ever; SKIP on monthly refreshes)**. So recurring monthly = **4 windows × 4 ad channels**, not 5×4.
+`may` = this month · `3m` = trailing 3 · `6m` = trailing 6 · `12m` = trailing 12 · `2025` = FY2025 **(FROZEN — pull once ever; SKIP on monthly refreshes)**. So recurring monthly = **4 windows × 4 ad channels** per per-period feature, not 5×4.
+
+> **Per-period features that each need their own 4×4 = 16 windowed pulls:** product groups (`getSalesByProduct`),
+> campaign-type pie (`generateCampaignsReport`), and Buy Box % (`generateTrafficAndConversionReport`). Plus per-channel
+> snapshots (no windows): inventory + Buy Box losses (`getSalesByProduct` / `generateBuyBoxReport`, 4 each). Budgets and
+> the revenue target come from the sheet. It's a lot of pulls — fire each report type in batches, then aggregate.
 
 **Steps:**
 1. **Headline actuals → `$M`.** Per market, pull `getSalesByPeriod` (**single-month**, `includeTax:true`) for each new
    month and `getAdvertisingByChannels` for spend/sales; update the monthly arrays in `build-amacx-data.ps1` (idx 0=Jan2025…,
-   append the new month). ✅ Confirm: the script's printed per-period summary matches Seller Central for `may`.
+   append the new month). The SAME `getAdvertisingByChannels` call also returns **impressions + clicks** — bake those into
+   `$M[mkt].impr` + `$M[mkt].clicks` (monthly; the ad report caps windows at **30 days**, so pull **month-by-month** with
+   `searchText:'AMACX'` to filter to seller `A1O4H4W8GP4BN2`). These feed the Ad Metrics card's Impressions / CTR / Avg-CPC
+   and the Overview Conversion-Rate KPI. ✅ Confirm: the script's printed per-period summary matches Seller Central for `may`.
 2. **Budgets → `$BUD`** and **revenue target → `$REVTGT`.** Re-read the Google Sheet (`read_file_content`): per-market ad
    budgets and **row 8 "Revenue Target (past vs future)"**. ✅ Confirm: `$REVTGT` last value = the sheet's current month.
 3. **CVR → `$CVRP`.** Pull `getSalesByChannels` `conversions` (units/page-views) per market per rolling window. ✅ Confirm: 4 markets × 4 windows present.
@@ -286,20 +310,35 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
    `generateCampaignsReport` → `getReportStatus` → download CSV → aggregate `cost`/`attributed_sales` by `ad_type`
    (SP/SB/SD); EU `all` = sum of the 4 markets; ACOS = cost÷sales (`n/a` if sales < €100). Re-bake the literal in `$advJs`
    (write `€` as `${EUR}`). ✅ Confirm: pie pcts per market sum to ~100%, no 1000%+ ACOS.
-6. **Inventory.** Refresh `$invJs` from `getSalesByProduct` (stock/days-cover/OOS) — in-stock / OOS / SKUs-to-restock.
+6. **Buy Box → `buyBoxByPeriod` + `buyBoxLosses`** (Overview Buy Box card + loss list). Two sources:
+   - **% tracker (official featured-offer %):** `generateTrafficAndConversionReport` (view `parents`) per rolling window ×
+     channel (16 reports) → `getReportStatus` → download CSV → market % = Σ(`buyboxWinPercentage`×`pageViews`)/Σ`pageViews`,
+     MoM delta from `priorBuyboxWinPercentage`; **EU `all` = page-view-weighted across the 4 channels** →
+     `sections.overview.buyBoxByPeriod[period][all/de/fr/es/it]` = `{pct,pctTxt,delta,deltaCls}`.
+   - **Loss list:** `generateBuyBoxReport` `filter:'losing'` per channel (4 reports — **current snapshot, NOT per-period**) →
+     one row per losing ASIN: short name + ASIN/EAN, **market flag** (so `applyMarketFilter` scopes it), reason (`yourStatus`:
+     Losing to Others/Amazon/Self/No Winner), your `yourPriceAmount` vs the `offerIsBuyBoxWinner=1` offer's listing+shipping,
+     and the gap; sort by gap. Re-bake both literals into `$ovJs` (write `€` as `${EUR}`).
+     ✅ Confirm: EU % plausible (~80s; DE the drag), every loss row carries a market flag.
+7. **Inventory.** Refresh `$invJs` from `getSalesByProduct` (stock/days-cover/OOS) — in-stock / OOS / SKUs-to-restock,
+   plus `kpisByMarket` (per-market unique-SKU counts; OOS counts UNIQUE SKUs, not listings).
    **Exclude `$DISCONTINUED` ASINs** (the sheet SKU list's "Discontinued" status) from BOTH the lists and the KPI counts —
    never surface a discontinued SKU in any stock section or recommend restocking it. ✅ Confirm: no `$DISCONTINUED` ASIN in `$invJs`.
-7. **Generate + validate.** Run `& "dashboard/tools/build-amacx-data.ps1"`, then check the output:
+8. **Generate + validate.** Run `& "dashboard/tools/build-amacx-data.ps1"`, then check the output:
    ```powershell
    $t=[IO.File]::ReadAllText("dashboard/clients/amacx/data.js")
    "{0}/{1} braces  {2}/{3} brackets" -f ([regex]::Matches($t,'{')).Count,([regex]::Matches($t,'}')).Count,([regex]::Matches($t,'\[')).Count,([regex]::Matches($t,'\]')).Count
-   'revTarget','adSales:','groupsByPeriod','campaignMixByPeriod' | %{ "$_  -> $($t.Contains($_))" }
+   'revTarget','adSales:','groupsByPeriod','campaignMixByPeriod','buyBoxByPeriod','buyBoxLosses','kpisByMarket','impr:','ctr:','adBudget:','cvr:' | %{ "$_  -> $($t.Contains($_))" }
    ```
-   ✅ Confirm: braces balanced, brackets balanced, all four keys present.
-8. **Verify in preview** (`tools/static-server.ps1` + Preview MCP, `?client=amacx`): switch a couple of date ranges ×
+   ✅ Confirm: braces balanced, brackets balanced, all keys present.
+9. **Verify in preview** (`tools/static-server.ps1` + Preview MCP, `?client=amacx`): switch a couple of date ranges ×
    markets and confirm the Revenue Trend (target line on All-EU), Ad Spend/Sales/TACOS chart, Products KPIs/table/groups,
-   and the Campaign-Type pie all move. (Screenshots time out — use `preview_eval` DOM checks.)
-9. **Confirm + hand off.** Report the headline `may` figures back, then list the changed files to upload to GitHub:
+   the Campaign-Type pie, the **Buy Box % + per-market bars + loss list**, the Inventory KPIs (per-market), the Overview
+   5-card **Conversion-Rate** KPI, and the **Ad Metrics** card (Impressions / CTR / Avg-CPC / Ad Budget / Utilisation —
+   budget & util come LIVE from the sheet via `overlayBudgets`) all move with date+market.
+   (Screenshots time out — use `preview_eval` DOM checks. The browser caches `app.js`/`index.html` — force-load a fresh
+   `app.js?bust=…` in preview, and hard-refresh in a real browser.)
+10. **Confirm + hand off.** Report the headline `may` figures back, then list the changed files to upload to GitHub:
    normally just **`clients/amacx/data.js`** (+ `tools/build-amacx-data.ps1` if the generator itself changed). A pure data
    refresh needs **no proxy redeploy** (the proxy only serves sheet sections, which stay live).
 

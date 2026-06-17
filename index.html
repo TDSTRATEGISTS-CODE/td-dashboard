@@ -78,6 +78,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .sec-lbl{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted2);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;font-family:var(--display);}
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
 .g21{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;}
@@ -100,9 +101,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .card-sub{font-size:11px;color:var(--muted);margin-top:1px;}
 .card-body{padding:16px;}
 svg.lc{width:100%;overflow:visible;display:block;}
-.leg{display:flex;gap:18px;margin-top:10px;flex-wrap:wrap;}
-.leg-i{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);}
-.leg-dot{width:18px;height:4px;border-radius:2px;}
+.leg{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap;}
+.leg-i{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--muted);}
+.leg-dot{width:24px;height:5px;border-radius:3px;}
 .bar-row{display:flex;align-items:center;gap:10px;padding:6px 0;}
 .bar-row+.bar-row{border-top:1px solid var(--border);}
 .bar-lbl{font-size:12px;color:var(--text);width:120px;flex-shrink:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -157,7 +158,7 @@ svg.lc{width:100%;overflow:visible;display:block;}
 select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:49;}
 .overlay.open{display:block;}
-@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr);}.g3{grid-template-columns:repeat(2,1fr);}.g21,.g12{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(3,1fr);}.two-col{grid-template-columns:1fr;}.tasks-flags-grid{grid-template-columns:1fr;}}
+@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr);}.g5{grid-template-columns:repeat(2,1fr);}.g3{grid-template-columns:repeat(2,1fr);}.g21,.g12{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(3,1fr);}.two-col{grid-template-columns:1fr;}.tasks-flags-grid{grid-template-columns:1fr;}}
 @media(max-width:768px){.sidebar{transform:translateX(-100%);z-index:200;}.sidebar.open{transform:translateX(0);box-shadow:4px 0 24px rgba(0,0,0,.18);}.main{margin-left:0;}.hamburger{display:flex;align-items:center;}.page-content{padding:14px;gap:14px;}.topbar{padding:0 14px;height:50px;}.page-tabs{padding:0 14px;gap:0;}.ptab{padding:10px 12px;font-size:12px;}.kpi-val{font-size:20px;}.kpi-s{display:none;}.tb-mkt{display:none;}.upd-badge span{display:none;}.upd-badge{padding:4px 8px;}.bar-lbl{width:90px;font-size:11px;}.g4{grid-template-columns:repeat(2,1fr);gap:10px;}.g3{grid-template-columns:repeat(2,1fr);gap:10px;}.g21,.g12,.two-col{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(5,1fr);}.pl-summary{grid-template-columns:repeat(3,1fr);}.card-hdr{flex-wrap:wrap;gap:8px;}.rpt-btn{font-size:11px;padding:5px 9px;}.tb-title{font-size:15px;}}
 @media(max-width:480px){.g4{grid-template-columns:repeat(2,1fr);gap:8px;}.g3{grid-template-columns:1fr;}.g2{grid-template-columns:1fr;}#tasks-flags{grid-template-columns:1fr;}.pl-summary{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(5,1fr);}.kpi{padding:12px;}.kpi-val{font-size:20px;}.page-content{padding:12px;gap:12px;}.topbar{padding:0 12px;}.page-tabs{padding:0 12px;}.ptab{padding:8px 10px;font-size:11px;}.dtable th,.dtable td{padding:8px 10px;font-size:11px;}.bar-lbl{width:80px;font-size:10px;}.bar-val{font-size:11px;width:55px;}select{font-size:10px;}}
 .fade{opacity:0;transform:translateY(8px);animation:fi .3s ease forwards;}
@@ -239,7 +240,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   <div class="page-content active" id="page-overview">
 
     <div class="fade tasks-flags-grid nld-keep" id="tasks-flags">
-      <div class="card" style="order:3;">
+      <div class="card" style="order:3;background:var(--blue-bg);">
         <div class="card-hdr">
           <div><div class="card-ttl">&#128203; Upcoming Tasks</div><div class="card-sub">From project scope</div></div>
           <span id="sec-tasks-badge" style="font-size:10px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);border-radius:5px;padding:2px 8px;font-weight:500;">June 2026</span>
@@ -295,7 +296,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
           </div>
         </div>
       </div>
-      <div class="card" style="order:2;">
+      <div class="card" style="order:2;background:var(--green-bg);">
         <div class="card-hdr">
           <div><div class="card-ttl">&#9989; Completed</div><div class="card-sub">From project scope</div></div>
           <span id="sec-completed-badge" style="font-size:10px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span>
@@ -341,11 +342,12 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
     <div>
       <div class="sec-lbl" id="sec-toplevel">Top-Level &mdash; <span id="sec-period-1">May 2026</span></div>
-      <div class="g4">
+      <div class="g5">
         <div class="kpi fade"><div class="kpi-bar" style="background:#404935"></div><div class="kpi-lbl">Total Revenue</div><div class="kpi-val" id="k-rev">&#8364;8,856</div><div class="kpi-d du" id="k-rev-d">&#9650; 26.0% MoM</div><div class="kpi-s" id="k-rev-s">vs &#8364;7,026 Apr</div></div>
         <div class="kpi fade"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Ad Sales</div><div class="kpi-val" id="k-ad">&#8364;3,318</div><div class="kpi-d du" id="k-ad-d">&#9650; 14.7% MoM</div><div class="kpi-s" id="k-ad-s">37.5% of revenue</div></div>
         <div class="kpi fade"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">TACOS</div><div class="kpi-val" id="k-tacos">26.2%</div><div class="kpi-d dd" id="k-tacos-d">&#9650; 2.6pp vs Apr</div><div class="kpi-s" id="k-tacos-s">Target: reduce to &lt;20%</div></div>
         <div class="kpi fade"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">AOV</div><div class="kpi-val" id="k-margin">&#8364;48</div><div class="kpi-d du" id="k-margin-d">&#9650; &#8364;1 MoM</div><div class="kpi-s" id="k-margin-s">185 orders May</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:#6b7160"></div><div class="kpi-lbl">Conversion Rate</div><div class="kpi-val" id="k-cvr">&mdash;</div><div class="kpi-d df" id="k-cvr-d"></div><div class="kpi-s" id="k-cvr-s"></div></div>
       </div>
     </div>
 
@@ -386,21 +388,27 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       </div>
       <div style="display:flex;flex-direction:column;gap:16px;">
         <div class="card">
-          <div class="card-hdr"><div><div class="card-ttl">Buy Box</div><div class="card-sub">Win rate by market &mdash; est.</div></div></div>
-          <div class="card-body" id="sec-buybox" style="display:flex;flex-direction:column;gap:10px;">
-            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/de.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="DE"> Germany</span><span style="font-weight:600;color:var(--green)">97%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:97%;background:var(--green)"></div></div></div>
-            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/es.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="ES"> Spain</span><span style="font-weight:600;color:var(--green)">94%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:94%;background:var(--green)"></div></div></div>
-            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/fr.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="FR"> France</span><span style="font-weight:600;color:var(--green)">96%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:96%;background:var(--green)"></div></div></div>
-            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span><img src="https://flagcdn.com/16x12/it.png" width="16" height="12" style="vertical-align:middle;margin-right:6px;border-radius:2px;" alt="IT"> Italy</span><span style="font-weight:600;color:var(--amber)">89%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:89%;background:var(--amber)"></div></div></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-hdr"><div><div class="card-ttl">Session CVR</div><div class="card-sub" id="cvr-sub">All EU &mdash; May</div></div></div>
+          <div class="card-hdr"><div><div class="card-ttl">Buy Box</div><div class="card-sub">Featured-offer % &middot; <span class="dr-period">May 2026</span> &middot; <span class="cfg-scope" id="bb-scope">All EU</span></div></div></div>
           <div class="card-body">
-            <div id="cvr-val" style="font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.4px;color:var(--brand)">11.8%</div>
-            <div id="cvr-note" style="font-size:11px;color:var(--muted);margin-top:4px;">&#9650; 0.9pp vs Apr &middot; 48,200 sessions</div>
+            <div style="display:flex;align-items:baseline;gap:10px;">
+              <div id="bb-pct" style="font-family:var(--display);font-size:34px;font-weight:700;letter-spacing:-.5px;color:var(--brand);line-height:1;">82%</div>
+              <div id="bb-delta" class="dd" style="font-size:12px;font-weight:600;">&#9660; 1.5pp</div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin:5px 0 14px;">Featured-offer win rate &middot; page-view weighted</div>
+            <div id="sec-buybox" style="display:flex;flex-direction:column;gap:10px;"></div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="fade" id="sec-bb-losses-card">
+      <div class="sec-lbl">Buy Box Losses</div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Where you're losing the Buy Box</div><div class="card-sub">By product, ranked by price gap &middot; <span class="cfg-scope" id="bbl-scope">All EU</span></div></div></div>
+        <div class="tscroll"><table class="dtable">
+          <thead><tr><th>Product</th><th>Market</th><th>Reason</th><th>Your Price</th><th>Buy Box</th><th>Gap</th></tr></thead>
+          <tbody id="sec-bb-losses"></tbody>
+        </table></div>
       </div>
     </div>
 
@@ -606,16 +614,20 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         <div class="card-hdr"><div><div class="card-ttl">Ad Metrics</div><div class="card-sub"><span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
         <div class="card-body" id="sec-ad-metrics" style="display:flex;flex-direction:column;gap:0;">
           <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:11px;color:var(--muted);font-weight:500;">Impressions</span>
+            <span id="a-impr" style="font-family:var(--display);font-size:17px;font-weight:700;">&mdash;</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="font-size:11px;color:var(--muted);font-weight:500;">Total Spend</span>
             <span id="a-spend" style="font-family:var(--display);font-size:17px;font-weight:700;">&#8364;2,320</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:11px;color:var(--muted);font-weight:500;">Monthly Budget</span>
-            <span style="font-family:var(--display);font-size:17px;font-weight:700;color:var(--brand);">&#8364;2,600</span>
+            <span style="font-size:11px;color:var(--muted);font-weight:500;">Ad Budget</span>
+            <span id="a-budget" style="font-family:var(--display);font-size:17px;font-weight:700;color:var(--brand);">&#8364;2,600</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="font-size:11px;color:var(--muted);font-weight:500;">Utilisation</span>
-            <span style="font-family:var(--display);font-size:17px;font-weight:700;color:var(--green);">89%</span>
+            <span id="a-util" style="font-family:var(--display);font-size:17px;font-weight:700;color:var(--green);">89%</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="font-size:11px;color:var(--muted);font-weight:500;">TACOS</span>
@@ -625,9 +637,13 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
             <span style="font-size:11px;color:var(--muted);font-weight:500;">ROAS</span>
             <span id="a-roas" style="font-family:var(--display);font-size:17px;font-weight:700;">3.82&#215;</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="font-size:11px;color:var(--muted);font-weight:500;">Avg. CPC</span>
-            <span style="font-family:var(--display);font-size:17px;font-weight:700;">&#8364;0.68</span>
+            <span id="a-cpc" style="font-family:var(--display);font-size:17px;font-weight:700;">&#8364;0.68</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+            <span style="font-size:11px;color:var(--muted);font-weight:500;">CTR</span>
+            <span id="a-ctr" style="font-family:var(--display);font-size:17px;font-weight:700;">&mdash;</span>
           </div>
         </div>
       </div>

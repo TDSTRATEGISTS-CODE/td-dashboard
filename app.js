@@ -121,11 +121,20 @@ window.switchMarket = function (k, el) {
 function applyMarketKpis(d) {
   if (!d || !d.marketKpis) return;
   var mk = (currentMarket && currentMarket !== 'all') ? d.marketKpis[currentMarket] : null;
+  var _adm = el('sec-ad-metrics');   // Ad Metrics detail card: scope label follows the market chip
+  if (_adm && _adm.closest) { var _asc = _adm.closest('.card').querySelector('.cfg-scope'); if (_asc) _asc.textContent = (currentMarket && currentMarket !== 'all' && MKT[currentMarket]) ? MKT[currentMarket].t : ((CONFIG.client && CONFIG.client.scopeLabel) || 'All EU'); }
   if (!mk) return;
   set('k-rev', mk.rev);    set('k-rev-d', mk.revD);    cls('k-rev-d', mk.revC);    set('k-rev-s', mk.revS);
   set('k-ad', mk.adSales); set('k-ad-d', mk.adSalesD); cls('k-ad-d', mk.adSalesC); set('k-ad-s', mk.adSalesS);
   set('k-tacos', mk.tacos); set('k-tacos-d', mk.tacosD); cls('k-tacos-d', mk.tacosC); set('k-tacos-s', mk.tacosS);
   set('k-margin', mk.aov); set('k-margin-d', mk.aovD); cls('k-margin-d', mk.aovC); set('k-margin-s', mk.aovS);
+  if (mk.cvr != null) { set('k-cvr', mk.cvr); set('k-cvr-s', mk.cvrS || ''); }
+  set('a-spend', mk.spend); set('a-tacos', mk.tacosAd); set('a-roas', mk.roasAd);
+  if (mk.adBudget != null) set('a-budget', mk.adBudget);
+  if (mk.util != null) set('a-util', mk.util);
+  if (mk.cpc != null) set('a-cpc', mk.cpc);
+  if (mk.impr != null) set('a-impr', mk.impr);
+  if (mk.ctr != null) set('a-ctr', mk.ctr);
   var adKpis = document.querySelectorAll('#page-advertising .kpi');
   if (adKpis.length >= 4) {
     var kd = [
@@ -153,7 +162,7 @@ function applyMarketKpis(d) {
 // EU total (they have no per-market breakdown in the data) — they stay labelled "All EU".
 // Re-applied after every render (switchDateRange / live overlay) so the filter survives repaints.
 var MKT_FILTER_IDS = [
-  'sec-buybox',       // Overview · Buy Box win-rate rows
+  'sec-bb-losses',    // Overview · Buy Box Losses (per-product, market-tagged by flag)
   'mkt-spend-tbody',  // Advertising · Ad Spend Actuals by Market
   'sec-pnl-mkt',      // P&L · P&L by Marketplace
   'sec-campaigns',    // Advertising · Active Campaigns (rows tagged "DE ·", "IT ·", …)
@@ -298,6 +307,15 @@ window.switchDateRange = function (val) {
   set('k-tacos', d.tacos); set('k-tacos-d', d.tacosD); cls('k-tacos-d', d.tacosC); set('k-tacos-s', d.tacosS);
   // 4th overview KPI = AOV (the headline focus); ROAS remains on the Advertising page.
   set('k-margin', d.aov); set('k-margin-d', d.aovD); cls('k-margin-d', d.aovC); set('k-margin-s', d.aovS);
+  // Conversion Rate KPI (now in the Top-Level row) — period values; applyMarketKpis overlays per market.
+  set('k-cvr', d.cvr); set('k-cvr-s', d.cvrS);
+  // CVR is the 5th Top-Level card ONLY for clients that supply it; others stay at 4 (g4) with it hidden.
+  var _cvrCard = el('k-cvr') ? el('k-cvr').closest('.kpi') : null;
+  if (_cvrCard) {
+    var _tlg = _cvrCard.parentNode;
+    if (d.cvr != null) { _cvrCard.style.display = ''; if (_tlg) { _tlg.classList.remove('g4'); _tlg.classList.add('g5'); } }
+    else { _cvrCard.style.display = 'none'; if (_tlg) { _tlg.classList.remove('g5'); _tlg.classList.add('g4'); } }
+  }
 
   var adKpis = document.querySelectorAll('#page-advertising .kpi');
   if (adKpis.length >= 4) {
@@ -319,6 +337,11 @@ window.switchDateRange = function (val) {
     });
   }
   set('a-spend', d.spend); set('a-tacos', d.tacosAd); set('a-roas', d.roasAd);
+  if (d.adBudget != null) set('a-budget', d.adBudget);
+  if (d.util != null) set('a-util', d.util);
+  if (d.cpc != null) set('a-cpc', d.cpc);
+  if (d.impr != null) set('a-impr', d.impr);
+  if (d.ctr != null) set('a-ctr', d.ctr);
 
   var tbody = document.getElementById('mkt-spend-tbody');
   if (tbody && d.mktRows) {
@@ -620,6 +643,19 @@ function overlayBudgets(pdr) {
       tot[2] = money(totBud);
       tot[5] = (totBud ? Math.round(totSpend / totBud * 100) : 0) + '% utilised';
     }
+    // Feed the Ad Metrics card (Ad Budget + Utilisation) from the SAME live sheet budgets so it
+    // matches the market-spend table. EU on dateRanges; per-market on marketKpis (key = flag = r[1]).
+    bd.adBudget = money(totBud);
+    bd.util = (totBud ? Math.round(totSpend / totBud * 100) : 0) + '%';
+    if (bd.marketKpis) {
+      bd.mktRows.forEach(function (r) {
+        if (r[0] === 'Total EU' || r[0] === 'NLD') return;
+        var mkk = bd.marketKpis[r[1]]; if (!mkk) return;
+        var b = eur(r[2]), sp = eur(r[3]);
+        mkk.adBudget = r[2];
+        mkk.util = (b ? Math.round(sp / b * 100) : 0) + '%';
+      });
+    }
   });
 }
 
@@ -670,6 +706,46 @@ function renderProgress(id, arr, note) {
   }).join('');
   var n = note ? '<div style="margin-top:4px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);">' + note + '</div>' : '';
   w.innerHTML = rows + n;
+}
+
+// Buy Box: official featured-offer % (period + market) headline + delta + per-market bars. AMACX uses
+// sections.overview.buyBoxByPeriod[period][market]; other clients fall back to the static buyBox bars.
+function renderBuyBox(o) {
+  var bbp = o.buyBoxByPeriod && o.buyBoxByPeriod[currentPeriod];
+  if (bbp) {
+    var scope = (currentMarket && currentMarket !== 'all') ? currentMarket : 'all';
+    var cell = bbp[scope] || bbp.all;
+    if (cell) {
+      set('bb-pct', cell.pctTxt || 'n/a');
+      var dl = el('bb-delta'); if (dl) { dl.textContent = cell.delta || ''; dl.className = cell.deltaCls || 'df'; }
+    }
+    var bars = ['de', 'fr', 'es', 'it'].map(function (m) {
+      var c = bbp[m]; if (!c || c.pct == null) return null;
+      return { flag: m, label: (MKT[m] && MKT[m].t) || m.toUpperCase(), pct: c.pct, valText: c.pctTxt,
+               color: c.pct >= 90 ? 'green' : (c.pct >= 70 ? 'amber' : 'red') };
+    }).filter(Boolean);
+    renderProgress('sec-buybox', bars);
+    var sc = el('bb-scope'); if (sc) sc.textContent = (scope === 'all') ? 'All EU' : ((MKT[scope] && MKT[scope].t) || scope);
+  } else if (o.buyBox) {
+    renderProgress('sec-buybox', o.buyBox);
+  }
+}
+
+// Buy Box loss list — product / market / reason / your price vs buy-box winner / gap. The Market cell
+// carries a flag so applyMarketFilter scopes it to the selected chip. Hides the card when empty.
+function renderBuyBoxLosses(arr) {
+  var card = el('sec-bb-losses-card'), w = el('sec-bb-losses');
+  if (!w) return;
+  if (!arr || !arr.length) { if (card) card.style.display = 'none'; return; }
+  if (card) card.style.display = '';
+  w.innerHTML = arr.map(function (x) {
+    return '<tr><td><div class="pname">' + x.name + '</div><div class="pasin">' + x.asin + ' &middot; ' + x.ean + '</div></td>' +
+      '<td>' + flagTag(x.market, x.market) + x.market.toUpperCase() + '</td>' +
+      '<td><span class="badge ' + (x.rc || 'ba') + '">' + x.reason + '</span></td>' +
+      '<td>' + x.your + '</td><td>' + x.winner + '</td>' +
+      '<td style="font-weight:600;">' + (x.gap || '&mdash;') + '</td></tr>';
+  }).join('');
+  var sc = el('bbl-scope'); if (sc) sc.textContent = (currentMarket && currentMarket !== 'all') ? ((MKT[currentMarket] && MKT[currentMarket].t) || currentMarket) : 'All EU';
 }
 
 function renderTasks(spec) {
@@ -1286,7 +1362,11 @@ function renderSections() {
   if (ad.forecast) renderForecast(ad.forecast);
 
   var iv = S.inventory || {};                                            // whole page → MCP live later
-  if (iv.kpis) renderKpis('sec-inv-kpis', iv.kpis);
+  // Stock-status KPIs follow the market chip: per-marketplace counts (kpisByMarket) when one is
+  // selected, else the EU unique-SKU totals. The stock + restock lists are market-filtered by row.
+  var ivMkt = (currentMarket && currentMarket !== 'all') ? currentMarket : null;
+  var ivKpis = (ivMkt && iv.kpisByMarket && iv.kpisByMarket[ivMkt]) || iv.kpis;
+  if (ivKpis) renderKpis('sec-inv-kpis', ivKpis);
   if (iv.stock) renderStock(iv.stock);
   if (iv.dispatch) renderProgress('sec-inv-dispatch', iv.dispatch.bars, iv.dispatch.note);
   // No FBM dispatch-rate source → hide the card when a client supplies inventory but no dispatch data.
@@ -1328,7 +1408,8 @@ function renderPeriodSections(d) {
     if (cscope) cscope.textContent = (cmMkt !== 'all') ? ((MKT[cmMkt] && MKT[cmMkt].t) || cmMkt) : 'All EU';
   }
 
-  var bb = pick(so.buyBox, o.buyBox); if (bb) renderProgress('sec-buybox', bb);
+  renderBuyBox(o);                          // official Buy Box % + per-market bars (period + market aware)
+  renderBuyBoxLosses(o.buyBoxLosses);       // loss list (market-filtered by applyMarketFilter)
   var cv = pick(so.cvr, o.cvr); if (cv) renderCvr(cv);
 
   var psum = pick(spl.summary, pl.summary); if (psum) renderPnlSummary(psum);   // legacy (element removed)
@@ -1382,6 +1463,13 @@ function renderPeriodSections(d) {
 
   var am = pick(sad.metrics, ad.metrics); if (am) renderMetrics(am);
   var ac = pick(sad.campaigns, ad.campaigns); if (ac) renderCampaigns(ac);
+
+  // Inventory stock-status KPIs follow the market chip (per-marketplace counts; EU unique-SKU totals
+  // for All-EU). Lists below row-filter by market separately. Runs here so it reacts to chip changes.
+  var ivp = S.inventory || {};
+  var ivpMkt = (currentMarket && currentMarket !== 'all') ? currentMarket : null;
+  var ivpKpis = (ivpMkt && ivp.kpisByMarket && ivp.kpisByMarket[ivpMkt]) || ivp.kpis;
+  if (ivpKpis) renderKpis('sec-inv-kpis', ivpKpis);
 
   renderShopify();     // Shopify performance page — repaints for the selected brand at the current period
   renderShopifyPnl();  // Shopify P&L page (no-op without sections.shopifypnl)

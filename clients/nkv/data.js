@@ -331,11 +331,12 @@ window.DASHBOARD_DATA.sections.shopify = {
         { name: 'Dermal Blade (3 pack)',             note: 'SKU CR DERMA · Restock needed',    level: 'r', units: '0 units',     cover: 'OOS' }
       ],
       // Traffic by referrer (May actual). Bar widths floored so near-zero channels stay visible.
+      // Traffic by GA4 default channel group (May 2026). Cross-network = Google Ads (Performance Max).
       traffic: [
-        { lbl: 'Search', pct: 72, val: '1,298', color: 'brand' },
-        { lbl: 'Direct', pct: 27, val: '486',   color: 'blue' },
-        { lbl: 'Social', pct: 1,  val: '7',     color: 'amber' },
-        { lbl: 'Email',  pct: 1,  val: '2',     color: 'green' }
+        { lbl: 'Paid (Cross-network)', pct: 79, val: '2,065', color: 'brand' },
+        { lbl: 'Organic Search',       pct: 9,  val: '229',   color: 'blue' },
+        { lbl: 'Direct',               pct: 8,  val: '203',   color: 'amber' },
+        { lbl: 'Email',                pct: 1,  val: '30',    color: 'green' }
       ],
       byPeriod: {
         may: {
@@ -346,16 +347,16 @@ window.DASHBOARD_DATA.sections.shopify = {
             { bar: 'var(--amber)', lbl: 'ASP',       val: '£25.43',  dCls: 'df', d: 'net ÷ units',  s: '95 units sold' }
           ],
           kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.88%',  dCls: 'dd', d: '▼ 0.70pp MoM', s: '52 of 1,804 sessions' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '1,804',  dCls: 'du', d: '▲ 5.8% MoM',   s: 'vs 1,705 Apr' },
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '1.76%',  dCls: 'df', d: 'GA4 · sessions', s: '46 of 2,618 sessions' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '2,618',  dCls: 'du', d: '▲ 16.7% MoM',  s: 'GA4 · vs 2,244 Apr' },
             { bar: 'var(--green)', lbl: 'Units Sold',      val: '95',     dCls: 'df', d: 'Lids 92 · B5 3', s: '2 active SKUs' },
             { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '7.8%',   dCls: 'df', d: '7 of 90',      s: 'May actual' }
           ],
           funnel: [
-            { lbl: 'Sessions',         val: '1,804', pct: '100%', w: 100 },
-            { lbl: 'Added to Cart',    val: '111',   pct: '6.2%', w: 6.2, sub: '6.2% of sessions' },
-            { lbl: 'Reached Checkout', val: '81',    pct: '4.5%', w: 4.5, sub: '73% of carts retained' },
-            { lbl: 'Purchased',        val: '52',    pct: '2.9%', w: 2.9, sub: '64% of checkouts retained' }
+            { lbl: 'Sessions',         val: '2,618', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '106',   pct: '4.0%', w: 4,   sub: '4.0% of sessions · GA4' },
+            { lbl: 'Reached Checkout', val: '65',    pct: '2.5%', w: 2.5, sub: '61% of carts retained' },
+            { lbl: 'Purchased',        val: '46',    pct: '1.8%', w: 1.8, sub: '71% of checkouts retained' }
           ],
           products: [
             { name: 'Lids by Design Eyelid Lift Strips', net: '£2,362', units: '92', asp: '£25.67', orders: '90', share: '97.8%', shareCls: 'bg' },
@@ -372,16 +373,16 @@ window.DASHBOARD_DATA.sections.shopify = {
             { bar: 'var(--amber)', lbl: 'ASP',       val: '£26.88', dCls: 'df', d: 'est · per unit', s: '~308 units' }
           ],
           kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '3.66%', dCls: 'df', d: '3-mo blended', s: '187 purchases' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '5,109', dCls: 'df', d: '3-mo actuals', s: 'Mar–May' },
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.36%', dCls: 'df', d: 'GA4 · 3-mo',   s: '169 of 7,146 sessions' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '7,146', dCls: 'df', d: 'GA4 · Mar–May', s: 'GA4 actuals' },
             { bar: 'var(--green)', lbl: 'Units Sold',      val: '~308',  dCls: 'df', d: 'est',          s: 'Lids-dominant' },
             { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~10%',  dCls: 'df', d: 'est',          s: '3-mo window' }
           ],
           funnel: [
-            { lbl: 'Sessions',         val: '5,109', pct: '100%', w: 100 },
-            { lbl: 'Added to Cart',    val: '~317',  pct: '6.2%', w: 6.2, sub: 'est · May ratio' },
-            { lbl: 'Reached Checkout', val: '~230',  pct: '4.5%', w: 4.5, sub: 'est · May ratio' },
-            { lbl: 'Purchased',        val: '187',   pct: '3.7%', w: 3.7, sub: '3.66% conversion' }
+            { lbl: 'Sessions',         val: '7,146', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '334',   pct: '4.7%', w: 4.7, sub: 'GA4 · 4.7% of sessions' },
+            { lbl: 'Reached Checkout', val: '166',   pct: '2.3%', w: 2.3, sub: 'GA4 begin_checkout' },
+            { lbl: 'Purchased',        val: '169',   pct: '2.4%', w: 2.4, sub: '2.36% conversion' }
           ],
           products: [
             { name: 'Lids by Design Eyelid Lift Strips', net: '£8,096', units: '~301', asp: '~£27', orders: '286', share: '97.8%', shareCls: 'bg' },
@@ -396,16 +397,16 @@ window.DASHBOARD_DATA.sections.shopify = {
             { bar: 'var(--amber)', lbl: 'ASP',       val: '£26.68',  dCls: 'df', d: 'est · per unit', s: '~499 units' }
           ],
           kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '3.67%', dCls: 'df', d: 'YTD blended', s: '315 purchases' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '8,578', dCls: 'df', d: 'YTD actuals', s: 'Jan–May' },
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.46%',  dCls: 'df', d: 'GA4 · YTD',    s: '296 of 12,012 sessions' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '12,012', dCls: 'df', d: 'GA4 · Jan–May', s: 'GA4 actuals' },
             { bar: 'var(--green)', lbl: 'Units Sold',      val: '~499',  dCls: 'df', d: 'est',         s: 'Lids-dominant' },
             { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~12%',  dCls: 'df', d: 'est',         s: 'YTD window' }
           ],
           funnel: [
-            { lbl: 'Sessions',         val: '8,578', pct: '100%', w: 100 },
-            { lbl: 'Added to Cart',    val: '~532',  pct: '6.2%', w: 6.2, sub: 'est · May ratio' },
-            { lbl: 'Reached Checkout', val: '~386',  pct: '4.5%', w: 4.5, sub: 'est · May ratio' },
-            { lbl: 'Purchased',        val: '315',   pct: '3.7%', w: 3.7, sub: '3.67% conversion' }
+            { lbl: 'Sessions',         val: '12,012', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '522',    pct: '4.3%', w: 4.3, sub: 'GA4 · 4.3% of sessions' },
+            { lbl: 'Reached Checkout', val: '284',    pct: '2.4%', w: 2.4, sub: 'GA4 begin_checkout' },
+            { lbl: 'Purchased',        val: '296',    pct: '2.5%', w: 2.5, sub: '2.46% conversion' }
           ],
           products: [
             { name: 'Lids by Design Eyelid Lift Strips', net: '£13,021', units: '~492', asp: '~£26.5', orders: '465', share: '97.8%', shareCls: 'bg' },
@@ -420,16 +421,16 @@ window.DASHBOARD_DATA.sections.shopify = {
             { bar: 'var(--amber)', lbl: 'ASP',       val: '£27.36',  dCls: 'df', d: 'est · per unit', s: '~723 units' }
           ],
           kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.92%',  dCls: 'df', d: '12-mo blended', s: '~457 purchases' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '15,663', dCls: 'df', d: '12-mo actuals', s: 'trailing year' },
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.00%',  dCls: 'df', d: 'GA4 · 12-mo',     s: '436 of 21,773 sessions' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '21,773', dCls: 'df', d: 'GA4 · trailing yr', s: 'GA4 actuals' },
             { bar: 'var(--green)', lbl: 'Units Sold',      val: '~723',   dCls: 'df', d: 'est',           s: 'Lids-dominant' },
             { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~15%',   dCls: 'df', d: 'est',           s: '12-mo window' }
           ],
           funnel: [
-            { lbl: 'Sessions',         val: '15,663', pct: '100%', w: 100 },
-            { lbl: 'Added to Cart',    val: '~971',   pct: '6.2%', w: 6.2, sub: 'est · May ratio' },
-            { lbl: 'Reached Checkout', val: '~705',   pct: '4.5%', w: 4.5, sub: 'est · May ratio' },
-            { lbl: 'Purchased',        val: '457',    pct: '2.9%', w: 2.9, sub: '2.92% conversion' }
+            { lbl: 'Sessions',         val: '21,773', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '853',    pct: '3.9%', w: 3.9, sub: 'GA4 · 3.9% of sessions' },
+            { lbl: 'Reached Checkout', val: '514',    pct: '2.4%', w: 2.4, sub: 'GA4 begin_checkout' },
+            { lbl: 'Purchased',        val: '436',    pct: '2.0%', w: 2.0, sub: '2.00% conversion' }
           ],
           products: [
             { name: 'Lids by Design Eyelid Lift Strips', net: '£19,350', units: '~707', asp: '~£27', orders: '674', share: '97.8%', shareCls: 'bg' },
@@ -438,125 +439,276 @@ window.DASHBOARD_DATA.sections.shopify = {
         }
       }
     },
-    // STUB until the Newnique store is re-authorized in Shopify and baked.
+    // Newnique — LIVE from Porter (Shopify connector), pulled 17 Jun 2026. A young hair-care D2C store;
+    // sales are sparse before May. No GA4 connected for Newnique → no sessions/CVR/funnel. Stock sync
+    // was still ingesting at bake time (populates next bake). Order-side periods are exact Porter
+    // actuals (Jun 2025–May 2026). NOTE: net here is Shopify-actual (£251 May) — the P&L uses the
+    // Account Tracker's £223 for May (its own view), so the two pages differ slightly by design.
     newnique: {
-      label: 'Newnique', store: 'awaiting Shopify connection',
-      placeholder: 'Awaiting Newnique store connection (Shopify re-auth in progress) — numbers populate at the next bake.',
-      chart: null, stock: [], traffic: [],
-      byPeriod: { may: {
-        kpis1: [
-          { bar: '#404935',      lbl: 'Net Sales', val: '—', dCls: 'df', d: 'Not connected', s: 'Awaiting Newnique' },
-          { bar: 'var(--blue)',  lbl: 'Orders',    val: '—', dCls: 'df', d: 'Not connected', s: '' },
-          { bar: 'var(--green)', lbl: 'AOV',       val: '—', dCls: 'df', d: 'Not connected', s: '' },
-          { bar: 'var(--amber)', lbl: 'ASP',       val: '—', dCls: 'df', d: 'Not connected', s: '' }
-        ],
-        kpis2: [
-          { bar: '#404935',      lbl: 'Conversion Rate', val: '—', dCls: 'df', d: 'Not connected', s: '' },
-          { bar: 'var(--blue)',  lbl: 'Sessions',        val: '—', dCls: 'df', d: 'Not connected', s: '' },
-          { bar: 'var(--green)', lbl: 'Units Sold',      val: '—', dCls: 'df', d: 'Not connected', s: '' },
-          { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '—', dCls: 'df', d: 'Not connected', s: '' }
-        ],
-        funnel: null, products: []
-      } }
+      label: 'Newnique', store: 'newniquecare.com',
+      chart: {
+        max: 300, yTicks: ['£300', '£225', '£150', '£75', '£0'],
+        xLabels: ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'], xHighlight: '#404935',
+        series: [ { values: [17, 0, 85, 0, 0, 251], color: '#404935', area: true, main: true } ],
+        legend: [ { name: 'Net Sales', color: '#404935' } ]
+      },
+      stock: [], traffic: [],
+      placeholder: 'Inventory sync still ingesting in Porter — stock + traffic populate at the next bake.',
+      byPeriod: {
+        may: {
+          kpis1: [
+            { bar: '#404935',      lbl: 'Net Sales', val: '£251',    dCls: 'du', d: '▲ vs £85 Feb',  s: '6 orders' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '6',       dCls: 'df', d: 'May actual',    s: 'AOV £41.89' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£41.89',  dCls: 'df', d: 'May blended',   s: '' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£7.18',   dCls: 'df', d: 'net ÷ units',   s: '35 units sold' }
+          ],
+          kpis2: [
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '—',     dCls: 'df', d: 'No GA4 for Newnique', s: 'add GA4 to enable' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '—',     dCls: 'df', d: 'No GA4 for Newnique', s: '' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '35',    dCls: 'df', d: 'hair-care range',     s: '3 active SKUs' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '16.7%', dCls: 'df', d: '1 of 6',             s: 'May actual' }
+          ],
+          funnel: null,
+          products: [
+            { name: 'GrowPod™ 5-in-1 Hair Care System', net: '£178', units: '3',  asp: '£59.33', orders: '—', share: '70.8%', shareCls: 'bg' },
+            { name: 'Advanced Hair Growth Serum',        net: '£42',  units: '3',  asp: '£14.02', orders: '2', share: '16.7%', shareCls: 'bb' },
+            { name: 'Advanced+ Hair Growth Serum',       net: '£31',  units: '24', asp: '£1.30',  orders: '2', share: '12.4%', shareCls: 'bb' }
+          ]
+        },
+        '3m': {
+          kpis1: [
+            { bar: '#404935',      lbl: 'Net Sales', val: '£251',   dCls: 'df', d: '3-mo actuals', s: 'Mar–May 2026' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '6',      dCls: 'df', d: '3-mo actuals', s: 'all in May' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£41.89', dCls: 'df', d: '3-mo blended', s: '' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£7.18',  dCls: 'df', d: 'net ÷ units',  s: '35 units' }
+          ],
+          kpis2: [
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '35', dCls: 'df', d: 'hair-care range',     s: 'Mar–May' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '16.7%', dCls: 'df', d: '1 of 6',          s: '3-mo' }
+          ],
+          funnel: null,
+          products: [
+            { name: 'GrowPod™ 5-in-1 Hair Care System', net: '£178', units: '3',  asp: '£59.33', orders: '—', share: '70.8%', shareCls: 'bg' },
+            { name: 'Advanced Hair Growth Serum',        net: '£42',  units: '3',  asp: '£14.02', orders: '2', share: '16.7%', shareCls: 'bb' },
+            { name: 'Advanced+ Hair Growth Serum',       net: '£31',  units: '24', asp: '£1.30',  orders: '2', share: '12.4%', shareCls: 'bb' }
+          ]
+        },
+        '6m': {
+          kpis1: [
+            { bar: '#404935',      lbl: 'Net Sales', val: '£336',   dCls: 'df', d: 'YTD actuals',  s: 'Jan–May 2026' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '7',      dCls: 'df', d: 'YTD actuals',  s: 'Feb + May' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£48.04', dCls: 'df', d: 'YTD blended',  s: '' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£8.41',  dCls: 'df', d: 'net ÷ units',  s: '40 units' }
+          ],
+          kpis2: [
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '40', dCls: 'df', d: 'hair-care range',     s: 'Jan–May' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~14%', dCls: 'df', d: 'est',              s: 'YTD window' }
+          ],
+          funnel: null,
+          products: [
+            { name: 'Hair-care range (GrowPod · Serums · Scalp)', net: '£336', units: '40', asp: '£8.41', orders: '7', share: '100%', shareCls: 'bg' }
+          ]
+        },
+        '12m': {
+          kpis1: [
+            { bar: '#404935',      lbl: 'Net Sales', val: '£385',   dCls: 'df', d: '12-mo actuals', s: 'Jun 25–May 26' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '12',     dCls: 'df', d: '12-mo actuals', s: '' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£32.12', dCls: 'df', d: '12-mo blended',  s: '' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£7.87',  dCls: 'df', d: 'net ÷ units',    s: '49 units' }
+          ],
+          kpis2: [
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '49', dCls: 'df', d: 'hair-care range',     s: 'trailing year' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~12%', dCls: 'df', d: 'est',              s: '12-mo window' }
+          ],
+          funnel: null,
+          products: [
+            { name: 'Hair-care range (GrowPod · Serums · Scalp)', net: '£385', units: '49', asp: '£7.87', orders: '12', share: '100%', shareCls: 'bg' }
+          ]
+        }
+      }
     }
   }
 };
 
-/* 'All' = Newnique + Contours Rx combined. Until Newnique is baked, Newnique = 0, so All == Contours
-   Rx (reuses its objects by reference — read-only). After the Newnique bake, replace this with the
-   actual brand-summed figures. */
-window.DASHBOARD_DATA.sections.shopify.data.all = (function (c) {
-  return {
-    label: 'All Brands', store: 'Newnique + Contours Rx (combined)',
-    chart: c.chart, stock: c.stock, traffic: c.traffic, byPeriod: c.byPeriod
+/* 'All' = Contours Rx + Newnique, a TRUE SUM. Headline cards (Net Sales, Orders, AOV, ASP) and Units
+   sum both stores; Conversion/Sessions + the funnel are Contours Rx (GA4) since Newnique has no GA4;
+   products merge both ranges; stock/traffic/chart come from Contours Rx (Newnique adds < 2%). The
+   per-period sums are listed below — update them whenever either store's period figures change. */
+window.DASHBOARD_DATA.sections.shopify.data.all = (function () {
+  var SH = window.DASHBOARD_DATA.sections.shopify, crx = SH.data.contoursrx, nkv = SH.data.newnique;
+  function gbp(n) { return '£' + Math.round(n).toLocaleString('en-GB'); }
+  // Combined net / orders / units (Contours Rx + Newnique) + combined returning-customer rate.
+  var S = {
+    may:  { net: 2667,  orders: 96,  units: 130, ret: '8.3%', retSub: '8 of 96' },
+    '3m': { net: 8531,  orders: 299, units: 343, ret: '~9%',  retSub: '3-mo' },
+    '6m': { net: 13650, orders: 482, units: 539, ret: '~12%', retSub: 'YTD' },
+    '12m':{ net: 20171, orders: 701, units: 772, ret: '~14%', retSub: '12-mo' }
   };
-})(window.DASHBOARD_DATA.sections.shopify.data.contoursrx);
+  var all = { label: 'All Brands', store: 'Contours Rx + Newnique (combined)', chart: crx.chart, stock: crx.stock, traffic: crx.traffic, byPeriod: {} };
+  Object.keys(crx.byPeriod).forEach(function (k) {
+    var c = crx.byPeriod[k], s = S[k] || {};
+    var k1 = c.kpis1.slice(), k2 = c.kpis2.slice();   // start from Contours Rx, override the summed cards
+    if (s.net != null) {
+      k1 = [
+        { bar: '#404935',      lbl: 'Net Sales', val: gbp(s.net),            dCls: 'df', d: 'CRX + Newnique', s: s.orders + ' orders' },
+        { bar: 'var(--blue)',  lbl: 'Orders',    val: String(s.orders),      dCls: 'df', d: 'combined',      s: 'AOV ' + gbp(s.net / s.orders) },
+        { bar: 'var(--green)', lbl: 'AOV',       val: gbp(s.net / s.orders), dCls: 'df', d: 'blended',       s: '' },
+        { bar: 'var(--amber)', lbl: 'ASP',       val: gbp(s.net / s.units),  dCls: 'df', d: 'net ÷ units',   s: s.units + ' units' }
+      ];
+      k2 = [
+        c.kpis2[0], c.kpis2[1],   // Conversion Rate + Sessions = Contours Rx (GA4)
+        { bar: 'var(--green)', lbl: 'Units Sold',      val: String(s.units), dCls: 'df', d: 'combined', s: 'both stores' },
+        { bar: 'var(--amber)', lbl: 'Returning Cust.', val: s.ret,           dCls: 'df', d: s.retSub,  s: 'combined' }
+      ];
+    }
+    var prods = (c.products || []).concat((nkv.byPeriod[k] && nkv.byPeriod[k].products) || []);
+    all.byPeriod[k] = { kpis1: k1, kpis2: k2, funnel: c.funnel, products: prods };
+  });
+  return all;
+})();
 
 /* ============================================================================================
    SHOPIFY P&L — sections.shopifypnl  ·  same brand filter (All / Newnique / Contours Rx) + periods
    --------------------------------------------------------------------------------------------
-   Revenue lines (Gross Sales, Discounts & Returns, Net Revenue) are LIVE Shopify actuals (baked,
-   same source as sections.shopify). COGS (30%) and platform/transaction fees (2.4%) are clearly-
-   FLAGGED ESTIMATES. The remaining operating expenses — other ad spend, shipping/fulfilment,
-   software, other opex — plus the NKV GOOGLE ADS spend are CLIENT INPUTS that drop in later, so
-   Operating Expenses + Net Profit read 'Pending inputs' until provided. Built per-period from the
-   revenue figures so the four periods stay consistent; replace the rates / input lines on bake. */
+   Sourced from the NKV Beauty Account Tracker ("Shopify" block, Jan–May 2026) — the client's own
+   P&L. Revenue + COGS are split by brand; the operating-expense lines (Google/social ad spend,
+   Beckdale fulfilment, Shopify + transaction fees, subscription, brand manager, 5.5% TD fee) are
+   tracked at Shopify-total level and sit on the Contours Rx statement (CRX ≈ 99% of D2C). 'other'
+   is the tracker's residual (~£160/mo) that makes each month foot to its "Shopify Expenses" total,
+   so Net Profit ties exactly to the sheet's "Profit after COGS". Newnique is tracked LIGHT (own
+   revenue / COGS / Google Ads only); 'All' = Contours Rx + Newnique combined. These baked monthly
+   inputs are the offline fallback — nkv-sheet-proxy serves sections.shopifypnl live on top. */
 (function () {
-  var COGS_RATE = 0.30, FEE_RATE = 0.024;
-  function gbp(n) { return '£' + Math.round(n).toLocaleString('en-GB'); }
-  function neg(n) { return '(£' + Math.round(n).toLocaleString('en-GB') + ')'; }
+  // Monthly inputs from the NKV Beauty Account Tracker ("Shopify" block, Jan–May 2026). Shared opex
+  // lines are Shopify-total (attributed to Contours Rx); 'other' is the tracker residual that foots
+  // each month to its "Shopify Expenses" total so Net Profit matches the sheet's "Profit after COGS".
+  // totRev = the sheet's "Total Shopify Revenue" row (drives the All view). It equals crxRev + nkvRev
+  // EXCEPT Feb, where an Amazon-FBM manual order keyed via Shopify (£84.95) is deliberately excluded
+  // from the Shopify total — copied exactly so All ties to the sheet's "Profit after COGS" each month.
+  var M = {
+    jan: { crxRev:2127, nkvRev:0,      totRev:2127,    crxCogs:666,    nkvCogs:0,  gAdsCrx:695.97, gAdsNkv:0,      social:0,     ship:272.83, txn:61.68, app:18.06, sub:25, bm:200, td:116.99, other:160.00 },
+    feb: { crxRev:2937, nkvRev:84.95,  totRev:2937,    crxCogs:931,    nkvCogs:20, gAdsCrx:571.33, gAdsNkv:0,      social:21.50, ship:686.40, txn:85.17, app:15.04, sub:25, bm:200, td:161.54, other:140.00 },
+    mar: { crxRev:3243, nkvRev:0,      totRev:3243,    crxCogs:978.50, nkvCogs:0,  gAdsCrx:573.70, gAdsNkv:0,      social:0,     ship:611.88, txn:94.05, app:15.11, sub:25, bm:200, td:178.37, other:159.99 },
+    apr: { crxRev:2672, nkvRev:0,      totRev:2672,    crxCogs:753,    nkvCogs:0,  gAdsCrx:575.65, gAdsNkv:0,      social:0,     ship:558.72, txn:77.49, app:15.27, sub:25, bm:200, td:146.96, other:160.00 },
+    may: { crxRev:2446, nkvRev:222.95, totRev:2668.95, crxCogs:779,    nkvCogs:16, gAdsCrx:713.84, gAdsNkv:194.50, social:0,     ship:479.61, txn:77.40, app:14.99, sub:25, bm:180, td:146.79, other:164.00 }
+  };
+  var PERIODS = {
+    may:  { months:['may'],                         label:'May 2026' },
+    '3m': { months:['mar','apr','may'],             label:'Mar–May 2026' },
+    '6m': { months:['jan','feb','mar','apr','may'], label:'Jan–May 2026 (YTD)' },
+    '12m':{ months:['jan','feb','mar','apr','may'], label:'Jun 25–May 26', partial:true }
+  };
+  var KEYS = ['crxRev','nkvRev','totRev','crxCogs','nkvCogs','gAdsCrx','gAdsNkv','social','ship','txn','app','sub','bm','td','other'];
+  function agg(months) { var a = {}; KEYS.forEach(function (k) { a[k] = 0; });
+    months.forEach(function (m) { KEYS.forEach(function (k) { a[k] += M[m][k]; }); }); return a; }
+
+  function money(n) { var r = Math.round(n); return (r < 0 ? '−£' : '£') + Math.abs(r).toLocaleString('en-GB'); }
+  function paren(n) { return '(£' + Math.round(n).toLocaleString('en-GB') + ')'; }   // expense magnitude
   function pct(x) { return (x * 100).toFixed(1) + '%'; }
 
-  // Net + gross revenue per period (exact Shopify actuals, matching sections.shopify).
-  var P = {
-    may:  { net: 2416,  gross: 2641,  label: 'May 2026' },
-    '3m': { net: 8280,  gross: 9090,  label: 'Mar–May 2026' },
-    '6m': { net: 13314, gross: 14496, label: 'Jan–May 2026 (YTD)' },
-    '12m':{ net: 19786, gross: 21516, label: 'Jun 25–May 26' }
-  };
-
-  function build(p) {
-    var net = p.net, gross = p.gross, dr = gross - net;       // discounts + returns
-    var cogs = net * COGS_RATE, gp = net - cogs, fees = gross * FEE_RATE;
+  // Contours Rx (full statement). combined=true → 'All' (adds Newnique revenue/COGS/Google Ads).
+  function fullStatement(a, combined, label) {
+    var netRev = combined ? a.totRev : a.crxRev;   // All = sheet's Total Shopify Revenue (Feb excludes the FBM order)
+    var cogs   = a.crxCogs + (combined ? a.nkvCogs : 0);
+    var gAds   = a.gAdsCrx + (combined ? a.gAdsNkv : 0);
+    var gp = netRev - cogs, platform = a.txn + a.app;
+    var pp = function (v) { return netRev ? pct(v / netRev) : ''; };
+    var opex = [
+      ['Advertising — Google Ads',    gAds,     'NKV Google Ads · Account Tracker'],
+      ['Advertising — Social Media',  a.social, 'Meta / TikTok'],
+      ['Shipping & Fulfilment',       a.ship,   'Beckdale — pick, ship & storage (inc. VAT)'],
+      ['Platform & Transaction Fees', platform, 'Shopify 2.9% + app fees'],
+      ['Software & Subscriptions',    a.sub,    'Shopify subscription'],
+      ['Brand Manager',               a.bm,     ''],
+      ['TD Consultancy Fee',          a.td,     '5.5% of Shopify revenue'],
+      ['Other Operating Costs',       a.other,  'per Account Tracker']
+    ];
+    var totalOpex = opex.reduce(function (s, l) { return s + l[1]; }, 0);
+    var netProfit = gp - totalOpex;
+    var rows = [
+      { kind: 'header', label: 'Revenue' },
+      { kind: 'sub', label: 'Net Revenue', note: 'net of discounts & returns', val: money(netRev), pct: '100%' },
+      { kind: 'header', label: 'Cost of Sales' },
+      { label: 'COGS', note: 'Account Tracker unit costs', val: paren(cogs), pct: pp(cogs) },
+      { kind: 'sub', label: 'Gross Profit', val: money(gp), pct: pp(gp) },
+      { kind: 'header', label: 'Operating Expenses' }
+    ];
+    opex.forEach(function (l) { rows.push({ label: l[0], note: l[2], val: paren(l[1]), pct: pp(l[1]) }); });
+    rows.push({ kind: 'sub', label: 'Total Operating Expenses', val: paren(totalOpex), pct: pp(totalOpex) });
+    rows.push({ kind: 'total', label: 'Net Profit', note: netProfit < 0 ? 'Loss this period' : '', val: money(netProfit), pct: pp(netProfit) });
     return {
-      info: 'Revenue is live from Shopify. COGS and platform fees are estimates; the remaining operating expenses (including the NKV Google Ads spend) are awaiting your inputs — Net Profit finalises once they are provided.',
       kpis: [
-        { bar: '#404935',      lbl: 'Net Revenue',  val: gbp(net), dCls: 'df', d: 'Shopify live',                 s: p.label },
-        { bar: 'var(--green)', lbl: 'Gross Profit', val: gbp(gp),  dCls: 'df', d: 'est · ' + pct(gp / net) + ' margin', s: 'COGS estimated' },
-        { bar: 'var(--blue)',  lbl: 'Gross Margin', val: pct(gp / net), dCls: 'df', d: 'est',          s: 'net of est. COGS' },
-        { bar: 'var(--amber)', lbl: 'Net Profit',   val: '—',      dCls: 'df', d: 'Pending inputs',    s: 'expenses + Google Ads' }
+        { bar: '#404935',      lbl: 'Net Revenue',  val: money(netRev),    dCls: 'df', d: 'Account Tracker',     s: label },
+        { bar: 'var(--green)', lbl: 'Gross Profit', val: money(gp),        dCls: 'df', d: pp(gp) + ' margin',    s: 'after COGS' },
+        { bar: 'var(--blue)',  lbl: 'Total OpEx',   val: money(totalOpex), dCls: 'df', d: pp(totalOpex),        s: 'inc. ads + fulfilment' },
+        { bar: 'var(--amber)', lbl: 'Net Profit',   val: money(netProfit), dCls: netProfit < 0 ? 'dd' : 'du', d: pp(netProfit) + ' margin', s: netProfit < 0 ? 'loss' : 'profit' }
+      ],
+      rows: rows
+    };
+  }
+
+  // Newnique — tracked LIGHT: own revenue / COGS / Google Ads only.
+  function lightStatement(a, label) {
+    var netRev = a.nkvRev, cogs = a.nkvCogs, gp = netRev - cogs, gAds = a.gAdsNkv, netProfit = gp - gAds;
+    var pp = function (v) { return netRev ? pct(v / netRev) : ''; };
+    return {
+      kpis: [
+        { bar: '#404935',      lbl: 'Net Revenue',    val: money(netRev), dCls: 'df', d: 'Account Tracker', s: label },
+        { bar: 'var(--green)', lbl: 'Gross Profit',   val: money(gp),     dCls: 'df', d: pp(gp) + ' margin', s: 'after COGS' },
+        { bar: 'var(--blue)',  lbl: 'Google Ad Spend',val: money(gAds),   dCls: 'df', d: 'Newnique',        s: '' },
+        { bar: 'var(--amber)', lbl: 'Net Profit',     val: money(netProfit), dCls: netProfit < 0 ? 'dd' : 'du', d: 'pre-allocation', s: '' }
       ],
       rows: [
         { kind: 'header', label: 'Revenue' },
-        { label: 'Gross Sales',          val: gbp(gross) },
-        { label: 'Discounts & Returns',  val: neg(dr) },
-        { kind: 'sub', label: 'Net Revenue', val: gbp(net), pct: '100%' },
+        { kind: 'sub', label: 'Net Revenue', note: 'net of discounts & returns', val: money(netRev), pct: netRev ? '100%' : '' },
         { kind: 'header', label: 'Cost of Sales' },
-        { label: 'COGS', note: 'Estimate ' + pct(COGS_RATE) + ' — provide actual unit costs', val: neg(cogs), pct: pct(cogs / net) },
-        { kind: 'sub', label: 'Gross Profit', val: gbp(gp), pct: pct(gp / net) },
+        { label: 'COGS', note: 'Account Tracker (£4/unit)', val: paren(cogs), pct: pp(cogs) },
+        { kind: 'sub', label: 'Gross Profit', val: money(gp), pct: pp(gp) },
         { kind: 'header', label: 'Operating Expenses' },
-        { label: 'Advertising — Google Ads',        note: 'Pending NKV Google Ads script integration', val: 'Pending', muted: true },
-        { label: 'Advertising — Other (Meta etc.)', note: 'Input required', val: '—', muted: true },
-        { label: 'Shipping & Fulfilment',           note: 'Input required', val: '—', muted: true },
-        { label: 'Platform & Transaction Fees',     note: 'Estimate ' + pct(FEE_RATE) + ' — Shopify + payments', val: neg(fees), pct: pct(fees / net) },
-        { label: 'Software & Subscriptions',        note: 'Input required', val: '—', muted: true },
-        { label: 'Other Operating Costs',           note: 'Input required', val: '—', muted: true },
-        { kind: 'sub', label: 'Total Operating Expenses', val: 'Pending inputs', muted: true },
-        { kind: 'total', label: 'Net Profit', note: 'Finalises once expenses + Google Ads are provided', val: 'Pending inputs', muted: true }
+        { label: 'Advertising — Google Ads', note: 'Newnique Google Ads · Account Tracker', val: paren(gAds), pct: pp(gAds) },
+        { label: 'Shared costs (fulfilment, fees, subs)', note: 'tracked combined under Contours Rx', val: 'n/a', muted: true },
+        { kind: 'total', label: 'Net Profit', note: 'before shared-cost allocation', val: money(netProfit), pct: pp(netProfit) }
       ]
     };
   }
 
+  var crxInfo = 'Live from the NKV Beauty Account Tracker (Jan–May 2026). Revenue is net of discounts/returns; COGS uses the tracker’s estimated unit costs; expense lines are sheet actuals. Net Profit ties to the sheet’s “Profit after COGS”.';
+  var nkvInfo = 'Newnique is tracked “light” — its own revenue, COGS and Google Ads. Shared D2C costs sit under Contours Rx; see the combined view under “All”.';
+  var partialNote = 'Trailing-12-month view — the Account Tracker currently itemises Jan–May 2026, so this reflects YTD. Earlier-month expenses populate as they’re entered.';
+
   var statusList = [
-    { label: 'Revenue (Shopify)',            status: 'live',    note: 'Live · Shopify Admin API' },
-    { label: 'COGS / unit costs',            status: 'est',     note: '30% estimate — provide actuals (auto-fillable from Shopify)' },
-    { label: 'Google Ads spend',             status: 'pending', note: 'Pending NKV Google Ads script integration' },
-    { label: 'Other ad spend (Meta etc.)',   status: 'input',   note: 'Input required' },
-    { label: 'Shipping & fulfilment',        status: 'input',   note: 'Input required' },
-    { label: 'Platform & transaction fees',  status: 'est',     note: '2.4% estimate' },
-    { label: 'Software & subscriptions',     status: 'input',   note: 'Input required' },
-    { label: 'Other operating costs',        status: 'input',   note: 'Input required' }
+    { label: 'Revenue (Tracker)',           status: 'live', note: 'Account Tracker · Jan–May 2026' },
+    { label: 'COGS / unit costs',           status: 'est',  note: 'Tracker estimated unit costs' },
+    { label: 'Google Ads spend',            status: 'live', note: 'Account Tracker (CRX + Newnique from May)' },
+    { label: 'Social ad spend',             status: 'live', note: 'Account Tracker' },
+    { label: 'Shipping & fulfilment',       status: 'live', note: 'Beckdale · Account Tracker' },
+    { label: 'Platform & transaction fees', status: 'live', note: 'Shopify 2.9% + app fees' },
+    { label: 'Software & subscriptions',    status: 'live', note: 'Shopify subscription' },
+    { label: 'Brand Manager / TD fee',      status: 'live', note: 'Account Tracker' },
+    { label: 'Other operating costs',       status: 'est',  note: 'Tracker residual (≈£160/mo)' }
   ];
 
-  var contours = { label: 'Contours Rx UK', store: 'contours-rx.co.uk', statusList: statusList, byPeriod: {} };
-  Object.keys(P).forEach(function (k) { contours.byPeriod[k] = build(P[k]); });
+  var contours = { label: 'Contours Rx UK', store: 'contours-rx.co.uk', statusList: statusList, info: crxInfo, byPeriod: {} };
+  var newnique = { label: 'Newnique', store: 'newniquecare.com', statusList: [
+      { label: 'Revenue (Tracker)',   status: 'live',  note: 'Account Tracker' },
+      { label: 'COGS',                status: 'est',   note: '£4/unit (Account Tracker)' },
+      { label: 'Google Ads spend',    status: 'live',  note: 'Account Tracker (from May)' },
+      { label: 'Shared opex',         status: 'input', note: 'tracked combined under Contours Rx' }
+    ], info: nkvInfo, byPeriod: {} };
+  var all = { label: 'All Brands', store: 'Contours Rx + Newnique (combined)', statusList: statusList, info: crxInfo, byPeriod: {} };
 
-  var newnique = {
-    label: 'Newnique', store: 'awaiting Shopify connection',
-    placeholder: 'Awaiting Newnique store connection (Shopify re-auth in progress) — P&L populates at the next bake.',
-    statusList: [], byPeriod: { may: {
-      info: '',
-      kpis: [
-        { bar: '#404935',      lbl: 'Net Revenue',  val: '—', dCls: 'df', d: 'Not connected', s: 'Awaiting Newnique' },
-        { bar: 'var(--green)', lbl: 'Gross Profit', val: '—', dCls: 'df', d: 'Not connected', s: '' },
-        { bar: 'var(--blue)',  lbl: 'Gross Margin', val: '—', dCls: 'df', d: 'Not connected', s: '' },
-        { bar: 'var(--amber)', lbl: 'Net Profit',   val: '—', dCls: 'df', d: 'Not connected', s: '' }
-      ], rows: []
-    } }
-  };
-
-  // 'All' = Contours Rx until Newnique is baked (shares the period objects by reference).
-  var all = { label: 'All Brands', store: 'Newnique + Contours Rx (combined)', statusList: statusList, byPeriod: contours.byPeriod };
+  Object.keys(PERIODS).forEach(function (k) {
+    var pr = PERIODS[k], a = agg(pr.months);
+    var crx = fullStatement(a, false, pr.label), comb = fullStatement(a, true, pr.label), nkv = lightStatement(a, pr.label);
+    if (pr.partial) { crx.info = comb.info = nkv.info = partialNote; }
+    contours.byPeriod[k] = crx; all.byPeriod[k] = comb; newnique.byPeriod[k] = nkv;
+  });
 
   window.DASHBOARD_DATA.sections.shopifypnl = { data: { contoursrx: contours, newnique: newnique, all: all } };
 })();
