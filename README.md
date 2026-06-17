@@ -338,9 +338,11 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
    budget & util come LIVE from the sheet via `overlayBudgets`) all move with date+market.
    (Screenshots time out — use `preview_eval` DOM checks. The browser caches `app.js`/`index.html` — force-load a fresh
    `app.js?bust=…` in preview, and hard-refresh in a real browser.)
-10. **Confirm + hand off.** Report the headline `may` figures back, then list the changed files to upload to GitHub:
-   normally just **`clients/amacx/data.js`** (+ `tools/build-amacx-data.ps1` if the generator itself changed). A pure data
-   refresh needs **no proxy redeploy** (the proxy only serves sheet sections, which stay live).
+10. **Bump the cache-buster.** Because `data.js` changed, increment **`APP_VER`** at the top of `index.html`
+   (e.g. `2026-06-18a` → the new bake date) so browsers fetch the fresh `data.js` instead of a cached copy.
+11. **Confirm + hand off.** Report the headline `may` figures back, then list the changed files to upload to GitHub:
+   **`clients/amacx/data.js`** + **`index.html`** (the `APP_VER` bump) — and `tools/build-amacx-data.ps1` if the generator
+   itself changed. A pure data refresh needs **no proxy redeploy** (the proxy only serves sheet sections, which stay live).
 
 > **What does NOT need re-pulling monthly:** FY 2025 columns (frozen history), the live sheet sections (budgets/forecast/
 > Project-Scope — served by the proxy), and `index.html`/`app.js` (only when behaviour changes).
