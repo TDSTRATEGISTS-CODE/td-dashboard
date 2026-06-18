@@ -126,6 +126,7 @@ function applyMarketKpis(d) {
   if (!mk) return;
   set('k-rev', mk.rev);    set('k-rev-d', mk.revD);    cls('k-rev-d', mk.revC);    set('k-rev-s', mk.revS);
   set('k-ad', mk.adSales); set('k-ad-d', mk.adSalesD); cls('k-ad-d', mk.adSalesC); set('k-ad-s', mk.adSalesS);
+  if (mk.spend != null) { set('k-spend', mk.spend); set('k-spend-d', mk.spendD); cls('k-spend-d', mk.spendC); set('k-spend-s', mk.spendS); }
   set('k-tacos', mk.tacos); set('k-tacos-d', mk.tacosD); cls('k-tacos-d', mk.tacosC); set('k-tacos-s', mk.tacosS);
   set('k-margin', mk.aov); set('k-margin-d', mk.aovD); cls('k-margin-d', mk.aovC); set('k-margin-s', mk.aovS);
   if (mk.cvr != null) { set('k-cvr', mk.cvr); set('k-cvr-s', mk.cvrS || ''); }
@@ -309,12 +310,18 @@ window.switchDateRange = function (val) {
   set('k-margin', d.aov); set('k-margin-d', d.aovD); cls('k-margin-d', d.aovC); set('k-margin-s', d.aovS);
   // Conversion Rate KPI (now in the Top-Level row) — period values; applyMarketKpis overlays per market.
   set('k-cvr', d.cvr); set('k-cvr-s', d.cvrS);
-  // CVR is the 5th Top-Level card ONLY for clients that supply it; others stay at 4 (g4) with it hidden.
+  set('k-spend', d.spend); set('k-spend-d', d.spendD); cls('k-spend-d', d.spendC); set('k-spend-s', d.spendS);
+  // Ad Spend (3rd) + Conversion Rate are OPTIONAL Top-Level cards — shown only when the client supplies them.
+  // Size the row to the visible count (g4 → g6) so clients without them aren't left with empty tracks.
   var _cvrCard = el('k-cvr') ? el('k-cvr').closest('.kpi') : null;
-  if (_cvrCard) {
-    var _tlg = _cvrCard.parentNode;
-    if (d.cvr != null) { _cvrCard.style.display = ''; if (_tlg) { _tlg.classList.remove('g4'); _tlg.classList.add('g5'); } }
-    else { _cvrCard.style.display = 'none'; if (_tlg) { _tlg.classList.remove('g5'); _tlg.classList.add('g4'); } }
+  if (_cvrCard) _cvrCard.style.display = (d.cvr != null) ? '' : 'none';
+  var _spendCard = el('k-spend') ? el('k-spend').closest('.kpi') : null;
+  if (_spendCard) _spendCard.style.display = (d.spend != null) ? '' : 'none';
+  var _tlRow = (_cvrCard && _cvrCard.parentNode) || (_spendCard && _spendCard.parentNode);
+  if (_tlRow) {
+    var _nVis = [].slice.call(_tlRow.children).filter(function (c) { return getComputedStyle(c).display !== 'none'; }).length;
+    _tlRow.classList.remove('g4', 'g5', 'g6');
+    _tlRow.classList.add('g' + Math.max(4, Math.min(6, _nVis)));
   }
 
   var adKpis = document.querySelectorAll('#page-advertising .kpi');
@@ -340,8 +347,9 @@ window.switchDateRange = function (val) {
   if (d.adBudget != null) set('a-budget', d.adBudget);
   if (d.util != null) set('a-util', d.util);
   // Impressions / Avg CPC / CTR — their own 3 KPI cards (vs prior period). Hidden for clients w/o the data.
-  var _akRow = el('ak-impr') ? el('ak-impr').closest('.g3') : null;
-  if (_akRow && _akRow.parentNode) _akRow.parentNode.style.display = (d.impr != null) ? '' : 'none';
+  var _akCol = el('ak-col'), _advGrid = el('adv-grid');
+  if (d.impr != null) { if (_akCol) _akCol.style.display = ''; if (_advGrid) _advGrid.classList.remove('no-mid'); }
+  else { if (_akCol) _akCol.style.display = 'none'; if (_advGrid) _advGrid.classList.add('no-mid'); }
   if (d.impr != null) { set('ak-impr', d.impr); set('ak-impr-d', d.imprD); cls('ak-impr-d', d.imprC); set('ak-impr-s', d.imprS); }
   if (d.cpc != null) { set('ak-cpc', d.cpc); set('ak-cpc-d', d.cpcD); cls('ak-cpc-d', d.cpcC); set('ak-cpc-s', d.cpcS); }
   if (d.ctr != null) { set('ak-ctr', d.ctr); set('ak-ctr-d', d.ctrD); cls('ak-ctr-d', d.ctrC); set('ak-ctr-s', d.ctrS); }
@@ -789,11 +797,11 @@ function renderCompleted(spec) {
   var grid = el('tasks-flags');
   if (!spec) {
     if (card) card.style.display = 'none';
-    if (grid) grid.style.gridTemplateColumns = '1.3fr 1fr 1fr';
+    if (grid) grid.classList.add('tf-3');   // 3-col on desktop; CSS still stacks to 1-col on mobile
     return;
   }
   if (card) card.style.display = '';
-  if (grid) grid.style.gridTemplateColumns = '';   // restore the CSS 4-column default
+  if (grid) grid.classList.remove('tf-3');   // 4-col on desktop (CSS default)
   if (spec.badge != null) set('sec-completed-badge', spec.badge);
   if (!w || !spec.items) return;
   w.innerHTML = spec.items.map(function (t, i) {

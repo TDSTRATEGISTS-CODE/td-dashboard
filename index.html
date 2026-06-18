@@ -79,6 +79,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
 .g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.g6{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
+/* Advertising chart row: chart | compact KPI column (Impr/CPC/CTR) | Ad Metrics. .no-mid drops the middle column. */
+.adv-3col{display:grid;grid-template-columns:1.6fr 0.82fr 1fr;gap:16px;align-items:start;}
+.adv-3col.no-mid{grid-template-columns:1.6fr 1fr;}
+.kpi-sm{padding:11px 14px;}
+.kpi-sm .kpi-lbl{margin-bottom:2px;}
+.kpi-sm .kpi-val{font-size:19px;margin-bottom:2px;}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
 .g21{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;}
@@ -158,13 +165,14 @@ svg.lc{width:100%;overflow:visible;display:block;}
 select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:49;}
 .overlay.open{display:block;}
-@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr);}.g5{grid-template-columns:repeat(2,1fr);}.g3{grid-template-columns:repeat(2,1fr);}.g21,.g12{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(3,1fr);}.two-col{grid-template-columns:1fr;}.tasks-flags-grid{grid-template-columns:1fr;}}
+@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr);}.g5{grid-template-columns:repeat(2,1fr);}.g6{grid-template-columns:repeat(2,1fr);}.adv-3col,.adv-3col.no-mid{grid-template-columns:1fr;}.g3{grid-template-columns:repeat(2,1fr);}.g21,.g12{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(3,1fr);}.two-col{grid-template-columns:1fr;}.tasks-flags-grid{grid-template-columns:1fr;}}
 @media(max-width:768px){.sidebar{transform:translateX(-100%);z-index:200;}.sidebar.open{transform:translateX(0);box-shadow:4px 0 24px rgba(0,0,0,.18);}.main{margin-left:0;}.hamburger{display:flex;align-items:center;}.page-content{padding:14px;gap:14px;}.topbar{padding:0 14px;height:50px;}.page-tabs{padding:0 14px;gap:0;}.ptab{padding:10px 12px;font-size:12px;}.kpi-val{font-size:20px;}.kpi-s{display:none;}.tb-mkt{display:none;}.upd-badge span{display:none;}.upd-badge{padding:4px 8px;}.bar-lbl{width:90px;font-size:11px;}.g4{grid-template-columns:repeat(2,1fr);gap:10px;}.g3{grid-template-columns:repeat(2,1fr);gap:10px;}.g21,.g12,.two-col{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(5,1fr);}.pl-summary{grid-template-columns:repeat(3,1fr);}.card-hdr{flex-wrap:wrap;gap:8px;}.rpt-btn{font-size:11px;padding:5px 9px;}.tb-title{font-size:15px;}}
 @media(max-width:480px){.g4{grid-template-columns:repeat(2,1fr);gap:8px;}.g3{grid-template-columns:1fr;}.g2{grid-template-columns:1fr;}#tasks-flags{grid-template-columns:1fr;}.pl-summary{grid-template-columns:1fr;}.ad-grid{grid-template-columns:repeat(5,1fr);}.kpi{padding:12px;}.kpi-val{font-size:20px;}.page-content{padding:12px;gap:12px;}.topbar{padding:0 12px;}.page-tabs{padding:0 12px;}.ptab{padding:8px 10px;font-size:11px;}.dtable th,.dtable td{padding:8px 10px;font-size:11px;}.bar-lbl{width:80px;font-size:10px;}.bar-val{font-size:11px;width:55px;}select{font-size:10px;}}
 .fade{opacity:0;transform:translateY(8px);animation:fi .3s ease forwards;}
 @keyframes fi{to{opacity:1;transform:translateY(0);}}
 @keyframes pulse2{0%,100%{opacity:1;}50%{opacity:.3;}}
-.tasks-flags-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:14px;}
+.tasks-flags-grid{display:grid;grid-template-columns:1fr;gap:14px;}
+@media(min-width:1025px){.tasks-flags-grid{grid-template-columns:1.3fr 1fr 1fr 1fr;}.tasks-flags-grid.tf-3{grid-template-columns:1.3fr 1fr 1fr;}}
 /* Netherlands pre-launch: a page with .nld-active (NLD market selected) hides its normal content and
    shows only the pending-launch banner (.nld-ph); sections flagged .nld-keep stay (Overview scope cards). */
 .page-content.nld-active > *:not(.nld-ph):not(.nld-keep){display:none!important;}
@@ -186,7 +194,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 <script>
   /* Cache-buster: bump APP_VER on every GitHub upload so browsers fetch the new config/data/app
      instead of a stale cached copy. Appended as ?v= to all three script loads below + app.js. */
-  var APP_VER = '2026-06-18c';
+  var APP_VER = '2026-06-18f';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -345,9 +353,10 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
     <div>
       <div class="sec-lbl" id="sec-toplevel">Top-Level &mdash; <span id="sec-period-1">May 2026</span></div>
-      <div class="g5">
+      <div class="g6">
         <div class="kpi fade"><div class="kpi-bar" style="background:#404935"></div><div class="kpi-lbl">Total Revenue</div><div class="kpi-val" id="k-rev">&#8364;8,856</div><div class="kpi-d du" id="k-rev-d">&#9650; 26.0% MoM</div><div class="kpi-s" id="k-rev-s">vs &#8364;7,026 Apr</div></div>
         <div class="kpi fade"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Ad Sales</div><div class="kpi-val" id="k-ad">&#8364;3,318</div><div class="kpi-d du" id="k-ad-d">&#9650; 14.7% MoM</div><div class="kpi-s" id="k-ad-s">37.5% of revenue</div></div>
+        <div class="kpi fade"><div class="kpi-bar" style="background:#a7ab90"></div><div class="kpi-lbl">Ad Spend</div><div class="kpi-val" id="k-spend">&#8364;2,317</div><div class="kpi-d dd" id="k-spend-d">&#9650; 14.7% MoM</div><div class="kpi-s" id="k-spend-s">vs &#8364;2,023 Apr</div></div>
         <div class="kpi fade"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">TACOS</div><div class="kpi-val" id="k-tacos">26.2%</div><div class="kpi-d dd" id="k-tacos-d">&#9650; 2.6pp vs Apr</div><div class="kpi-s" id="k-tacos-s">Target: reduce to &lt;20%</div></div>
         <div class="kpi fade"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">AOV</div><div class="kpi-val" id="k-margin">&#8364;48</div><div class="kpi-d du" id="k-margin-d">&#9650; &#8364;1 MoM</div><div class="kpi-s" id="k-margin-s">185 orders May</div></div>
         <div class="kpi fade"><div class="kpi-bar" style="background:#6b7160"></div><div class="kpi-lbl">Conversion Rate</div><div class="kpi-val" id="k-cvr">&mdash;</div><div class="kpi-d df" id="k-cvr-d"></div><div class="kpi-s" id="k-cvr-s"></div></div>
@@ -595,15 +604,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       </div>
     </div>
 
-    <div class="fade" style="margin-bottom:16px;">
-      <div class="g3">
-        <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Impressions</div><div class="kpi-val" id="ak-impr">&mdash;</div><div class="kpi-d df" id="ak-impr-d"></div><div class="kpi-s" id="ak-impr-s"></div></div>
-        <div class="kpi"><div class="kpi-bar" style="background:#6b7160"></div><div class="kpi-lbl">Avg. CPC</div><div class="kpi-val" id="ak-cpc">&mdash;</div><div class="kpi-d df" id="ak-cpc-d"></div><div class="kpi-s" id="ak-cpc-s"></div></div>
-        <div class="kpi"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">CTR</div><div class="kpi-val" id="ak-ctr">&mdash;</div><div class="kpi-d df" id="ak-ctr-d"></div><div class="kpi-s" id="ak-ctr-s"></div></div>
-      </div>
-    </div>
-
-    <div class="g21 fade">
+    <div class="fade adv-3col" id="adv-grid">
       <div class="card">
         <div class="card-hdr"><div><div class="card-ttl">Ad Spend vs Ad Sales vs TACOS</div><div class="card-sub">Monthly spend, ad sales &amp; TACOS &middot; last 6 months</div></div></div>
         <div class="card-body" style="padding:16px 16px 10px;">
@@ -634,6 +635,11 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
           </svg>
           <div class="leg" id="chart-adtrend-leg"><div class="leg-i"><div class="leg-dot" style="background:#404935"></div>Ad Spend</div><div class="leg-i"><div class="leg-dot" style="background:var(--green)"></div>ROAS</div></div>
         </div>
+      </div>
+      <div id="ak-col" style="display:flex;flex-direction:column;gap:14px;">
+        <div class="kpi kpi-sm"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Impressions</div><div class="kpi-val" id="ak-impr">&mdash;</div><div class="kpi-d df" id="ak-impr-d"></div><div class="kpi-s" id="ak-impr-s"></div></div>
+        <div class="kpi kpi-sm"><div class="kpi-bar" style="background:#6b7160"></div><div class="kpi-lbl">Avg. CPC</div><div class="kpi-val" id="ak-cpc">&mdash;</div><div class="kpi-d df" id="ak-cpc-d"></div><div class="kpi-s" id="ak-cpc-s"></div></div>
+        <div class="kpi kpi-sm"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">CTR</div><div class="kpi-val" id="ak-ctr">&mdash;</div><div class="kpi-d df" id="ak-ctr-d"></div><div class="kpi-s" id="ak-ctr-s"></div></div>
       </div>
       <div class="card">
         <div class="card-hdr"><div><div class="card-ttl">Ad Metrics</div><div class="card-sub"><span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
