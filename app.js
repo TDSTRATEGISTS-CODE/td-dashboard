@@ -132,9 +132,9 @@ function applyMarketKpis(d) {
   set('a-spend', mk.spend); set('a-tacos', mk.tacosAd); set('a-roas', mk.roasAd);
   if (mk.adBudget != null) set('a-budget', mk.adBudget);
   if (mk.util != null) set('a-util', mk.util);
-  if (mk.cpc != null) set('a-cpc', mk.cpc);
-  if (mk.impr != null) set('a-impr', mk.impr);
-  if (mk.ctr != null) set('a-ctr', mk.ctr);
+  if (mk.impr != null) { set('ak-impr', mk.impr); set('ak-impr-d', mk.imprD); cls('ak-impr-d', mk.imprC); set('ak-impr-s', mk.imprS); }
+  if (mk.cpc != null) { set('ak-cpc', mk.cpc); set('ak-cpc-d', mk.cpcD); cls('ak-cpc-d', mk.cpcC); set('ak-cpc-s', mk.cpcS); }
+  if (mk.ctr != null) { set('ak-ctr', mk.ctr); set('ak-ctr-d', mk.ctrD); cls('ak-ctr-d', mk.ctrC); set('ak-ctr-s', mk.ctrS); }
   var adKpis = document.querySelectorAll('#page-advertising .kpi');
   if (adKpis.length >= 4) {
     var kd = [
@@ -339,9 +339,12 @@ window.switchDateRange = function (val) {
   set('a-spend', d.spend); set('a-tacos', d.tacosAd); set('a-roas', d.roasAd);
   if (d.adBudget != null) set('a-budget', d.adBudget);
   if (d.util != null) set('a-util', d.util);
-  if (d.cpc != null) set('a-cpc', d.cpc);
-  if (d.impr != null) set('a-impr', d.impr);
-  if (d.ctr != null) set('a-ctr', d.ctr);
+  // Impressions / Avg CPC / CTR — their own 3 KPI cards (vs prior period). Hidden for clients w/o the data.
+  var _akRow = el('ak-impr') ? el('ak-impr').closest('.g3') : null;
+  if (_akRow && _akRow.parentNode) _akRow.parentNode.style.display = (d.impr != null) ? '' : 'none';
+  if (d.impr != null) { set('ak-impr', d.impr); set('ak-impr-d', d.imprD); cls('ak-impr-d', d.imprC); set('ak-impr-s', d.imprS); }
+  if (d.cpc != null) { set('ak-cpc', d.cpc); set('ak-cpc-d', d.cpcD); cls('ak-cpc-d', d.cpcC); set('ak-cpc-s', d.cpcS); }
+  if (d.ctr != null) { set('ak-ctr', d.ctr); set('ak-ctr-d', d.ctrD); cls('ak-ctr-d', d.ctrC); set('ak-ctr-s', d.ctrS); }
 
   var tbody = document.getElementById('mkt-spend-tbody');
   if (tbody && d.mktRows) {

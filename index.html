@@ -186,7 +186,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 <script>
   /* Cache-buster: bump APP_VER on every GitHub upload so browsers fetch the new config/data/app
      instead of a stale cached copy. Appended as ?v= to all three script loads below + app.js. */
-  var APP_VER = '2026-06-18b';
+  var APP_VER = '2026-06-18c';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -595,6 +595,14 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       </div>
     </div>
 
+    <div class="fade" style="margin-bottom:16px;">
+      <div class="g3">
+        <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Impressions</div><div class="kpi-val" id="ak-impr">&mdash;</div><div class="kpi-d df" id="ak-impr-d"></div><div class="kpi-s" id="ak-impr-s"></div></div>
+        <div class="kpi"><div class="kpi-bar" style="background:#6b7160"></div><div class="kpi-lbl">Avg. CPC</div><div class="kpi-val" id="ak-cpc">&mdash;</div><div class="kpi-d df" id="ak-cpc-d"></div><div class="kpi-s" id="ak-cpc-s"></div></div>
+        <div class="kpi"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">CTR</div><div class="kpi-val" id="ak-ctr">&mdash;</div><div class="kpi-d df" id="ak-ctr-d"></div><div class="kpi-s" id="ak-ctr-s"></div></div>
+      </div>
+    </div>
+
     <div class="g21 fade">
       <div class="card">
         <div class="card-hdr"><div><div class="card-ttl">Ad Spend vs Ad Sales vs TACOS</div><div class="card-sub">Monthly spend, ad sales &amp; TACOS &middot; last 6 months</div></div></div>
@@ -631,10 +639,6 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         <div class="card-hdr"><div><div class="card-ttl">Ad Metrics</div><div class="card-sub"><span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
         <div class="card-body" id="sec-ad-metrics" style="display:flex;flex-direction:column;gap:0;">
           <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:11px;color:var(--muted);font-weight:500;">Impressions</span>
-            <span id="a-impr" style="font-family:var(--display);font-size:17px;font-weight:700;">&mdash;</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
             <span style="font-size:11px;color:var(--muted);font-weight:500;">Total Spend</span>
             <span id="a-spend" style="font-family:var(--display);font-size:17px;font-weight:700;">&#8364;2,320</span>
           </div>
@@ -650,17 +654,9 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
             <span style="font-size:11px;color:var(--muted);font-weight:500;">TACOS</span>
             <span id="a-tacos" style="font-family:var(--display);font-size:17px;font-weight:700;color:var(--red);">26.2%</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
             <span style="font-size:11px;color:var(--muted);font-weight:500;">ROAS</span>
             <span id="a-roas" style="font-family:var(--display);font-size:17px;font-weight:700;">3.82&#215;</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:11px;color:var(--muted);font-weight:500;">Avg. CPC</span>
-            <span id="a-cpc" style="font-family:var(--display);font-size:17px;font-weight:700;">&#8364;0.68</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
-            <span style="font-size:11px;color:var(--muted);font-weight:500;">CTR</span>
-            <span id="a-ctr" style="font-family:var(--display);font-size:17px;font-weight:700;">&mdash;</span>
           </div>
         </div>
       </div>
