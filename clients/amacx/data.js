@@ -176,7 +176,7 @@ window.DASHBOARD_DATA = {
         {flag:'it',label:'Italy',pct:94,valText:'94.3%',color:'green'}
       ],
       buyBoxByPeriod: {
-        'may': { all: {pct:82,pctTxt:'82%',delta:'▼ 1.5pp',deltaCls:'dd'}, de: {pct:49.7,pctTxt:'49.7%',delta:'▼ 7.3pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'▼ 0.2pp',deltaCls:'dd'}, es: {pct:93.4,pctTxt:'93.4%',delta:'85 0.5pp',deltaCls:'du'}, it: {pct:94.4,pctTxt:'94.4%',delta:'▼ 0.9pp',deltaCls:'dd'} },
+        'may': { all: {pct:82,pctTxt:'82%',delta:'▼ 1.5pp',deltaCls:'dd'}, de: {pct:49.8,pctTxt:'49.8%',delta:'▼ 7.2pp',deltaCls:'dd'}, fr: {pct:98.9,pctTxt:'98.9%',delta:'▼ 0.3pp',deltaCls:'dd'}, es: {pct:93.1,pctTxt:'93.1%',delta:'▲ 0.2pp',deltaCls:'du'}, it: {pct:94.3,pctTxt:'94.3%',delta:'▼ 1.0pp',deltaCls:'dd'} },
         '3m': { all: {pct:82.9,pctTxt:'82.9%',delta:'85 1.4pp',deltaCls:'du'}, de: {pct:55.7,pctTxt:'55.7%',delta:'▼ 7.3pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'85 0.1pp',deltaCls:'du'}, es: {pct:93.2,pctTxt:'93.2%',delta:'85 10.5pp',deltaCls:'du'}, it: {pct:95.2,pctTxt:'95.2%',delta:'▼ 2.5pp',deltaCls:'dd'} },
         '6m': { all: {pct:83.2,pctTxt:'83.2%',delta:'▼ 8.3pp',deltaCls:'dd'}, de: {pct:59.2,pctTxt:'59.2%',delta:'▼ 22.7pp',deltaCls:'dd'}, fr: {pct:99,pctTxt:'99%',delta:'85 0.4pp',deltaCls:'du'}, es: {pct:91.3,pctTxt:'91.3%',delta:'▼ 0.7pp',deltaCls:'dd'}, it: {pct:96.1,pctTxt:'96.1%',delta:'▼ 2.7pp',deltaCls:'dd'} },
         '2025': { all: {pct:94.1,pctTxt:'94.1%',delta:'85 7.4pp',deltaCls:'du'}, de: {pct:90.9,pctTxt:'90.9%',delta:'85 8.8pp',deltaCls:'du'}, fr: {pct:97.2,pctTxt:'97.2%',delta:'▼ 0.7pp',deltaCls:'dd'}, es: {pct:95,pctTxt:'95%',delta:'▼ 5pp',deltaCls:'dd'}, it: {pct:98.5,pctTxt:'98.5%',delta:'85 0.6pp',deltaCls:'du'} },
