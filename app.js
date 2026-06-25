@@ -40,9 +40,10 @@ var TEMPLATES = {
   // Founder clients (harvaza) — founder-native pages first, then every Amazon page as a
   // maintenance stub until a founder version is built (drop a key from `maintenance` to go live).
   founder: {
-    pages: ['founder-overview', 'amazonpnl', 'founder-pnl', 'founder-stock', 'founder-loan',
+    // 'pnl' (the real P&L renderer) sits at position 2, relabelled "Amazon P&L" via CONFIG.pageLabels.
+    pages: ['founder-overview', 'pnl', 'founder-pnl', 'founder-stock', 'founder-loan',
             'advertising', 'inventory', 'products', 'keywords'],
-    maintenance: ['amazonpnl', 'advertising', 'inventory', 'products', 'keywords']
+    maintenance: []
   }
 };
 var PAGES = [];   // resolved [{key,label,icon,maintenance}] for the active client (set by buildNav)
@@ -58,7 +59,8 @@ function resolvePages() {
   return keys.filter(function (k) { return !hidden[k]; }).map(function (k) {
     var m = PAGE_REGISTRY[k] || { label: k, icon: '&#9635;' };
     var icon = m.currency ? ((CONFIG.client && CONFIG.client.currencyIcon) || '&#8364;') : m.icon;
-    return { key: k, label: m.label, icon: icon, maintenance: !!maint[k] };
+    var label = (CONFIG.pageLabels && CONFIG.pageLabels[k]) || m.label;   // per-client nav label override
+    return { key: k, label: label, icon: icon, maintenance: !!maint[k] };
   });
 }
 
@@ -543,8 +545,16 @@ function applyLive(j) {
   // sections.founder so the STATIC parts (tasks, milestones, loan, stock phases) survive, then repaint.
   if (ds.overlay === 'founder') {
     if (j.founder && DATA.sections) {
+      var jf = j.founder;
+      // Guard: if the proxy's financials read as £0 (e.g. the sheet structure changed and the read
+      // missed), don't blank the baked numbers — drop the sheet-derived financial keys, keep Notion.
+      var k0 = jf.overview && jf.overview.kpis && jf.overview.kpis[0];
+      if (k0 && /^[-−]?£?0$/.test(String(k0.val).replace(/[, ]/g, ''))) {
+        if (jf.overview) { delete jf.overview.kpis; delete jf.overview.revChart; }
+        delete jf.pnl;
+      }
       DATA.sections.founder = DATA.sections.founder || {};
-      deepMerge(DATA.sections.founder, j.founder);
+      deepMerge(DATA.sections.founder, jf);
       // Sidebar chips + topbar read dateRanges (not the founder overlay), so sync them to the live
       // total — otherwise the "All" chip shows the stale baked figure next to live KPIs.
       var ov = DATA.sections.founder.overview;

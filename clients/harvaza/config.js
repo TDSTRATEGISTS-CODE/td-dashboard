@@ -32,13 +32,21 @@ window.DASHBOARD_CONFIG = {
   template: 'founder',
 
   // ---- Defaults ----
-  defaultPeriod: 'fy',
+  // Default to actuals ('last30') so the Amazon pages label correctly; Forecast stays selectable.
+  // Founder pages render from sections.founder regardless of the selected period.
+  defaultPeriod: 'last30',
   defaultMarket: 'all',
+
+  // Keywords hidden — MerchantSpring exposes no keyword-level data. The shared 'pnl' page (real P&L
+  // renderer) is relabelled "Amazon P&L" and shows the live Amazon settlement P&L (sections.pnl).
+  hiddenPages: ['keywords'],
+  pageLabels: { pnl: 'Amazon P&L' },
 
   // ---- Date-range selector ----
   // Single Year-1 forecast window for now. Add periods here once actuals start flowing.
   dateRangeOptions: [
-    { value: 'fy', label: 'Year 1 Forecast' }
+    { value: 'last30', label: 'Last 30 Days' },
+    { value: 'fy',     label: 'Year 1 Forecast' }
   ],
 
   // ---- Markets (sidebar chips) ----
@@ -72,6 +80,6 @@ window.DASHBOARD_CONFIG = {
   dataSource: {
     type: 'appsScript',
     overlay: 'founder',
-    url: 'https://script.google.com/macros/s/AKfycbzx8Vf3vyTv2C7zec4Mw4Ykk2Ep9yUcZcXmluadNMiNgOpIVgPtFD8wu-jkRJF1LfYkkA/exec'
+    url: 'https://script.google.com/macros/s/AKfycbx7ceZT4cLJz3ACx5sBIITyTj-Slflb9cb1J99sx24UlxvrVEF6vGoD4PDMW7CpXCoF0A/exec'
   }
 };
