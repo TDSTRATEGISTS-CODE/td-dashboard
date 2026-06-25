@@ -32,9 +32,9 @@ window.DASHBOARD_CONFIG = {
   template: 'founder',
 
   // ---- Defaults ----
-  // Default to actuals ('last30') so the Amazon pages label correctly; Forecast stays selectable.
+  // Default to actuals ('may' = Last Month) so the Amazon pages label correctly; Forecast selectable.
   // Founder pages render from sections.founder regardless of the selected period.
-  defaultPeriod: 'last30',
+  defaultPeriod: 'may',
   defaultMarket: 'all',
 
   // Keywords hidden — MerchantSpring exposes no keyword-level data. The shared 'pnl' page (real P&L
@@ -45,8 +45,9 @@ window.DASHBOARD_CONFIG = {
   // ---- Date-range selector ----
   // Single Year-1 forecast window for now. Add periods here once actuals start flowing.
   dateRangeOptions: [
-    { value: 'last30', label: 'Last 30 Days' },
-    { value: 'fy',     label: 'Year 1 Forecast' }
+    { value: 'may', label: 'Last Month' },
+    { value: '3m',  label: 'Last 3 Months' },
+    { value: '6m',  label: 'Year to Date' }
   ],
 
   // ---- Markets (sidebar chips) ----
@@ -55,7 +56,7 @@ window.DASHBOARD_CONFIG = {
   markets: [
     { key: 'all', flag: 'gb', chip: 'Harvaza (All)', code: 'All', t: 'Harvaza — Overview', m: 'All Channels' },
     { key: 'uk',  flag: 'gb', chip: 'Harvaza UK',    code: 'UK',  t: 'Harvaza UK',          m: 'Amazon UK' },
-    { key: 'us',  flag: 'us', chip: 'Harvaza US',    code: 'US',  t: 'Harvaza US',          m: 'Amazon US', launchPill: 'Soon' }
+    { key: 'us',  flag: 'us', chip: 'Harvaza US',    code: 'US',  t: 'Harvaza US',          m: 'Amazon US' }
   ],
 
   // ---- Brand palette (written to :root CSS variables at runtime) ----
