@@ -11,7 +11,7 @@ window.DASHBOARD_DATA = {
     adSales: '€4,967', adSalesD: '▲ 13.1% MoM', adSalesC: 'du', adSalesS: '56.1% of revenue',
     tacos: '26.2%', tacosD: '▼ 2.4pp vs Apr', tacosC: 'du', tacosS: 'Target <20%',
     roas: '3.82×', roasD: '▲ 0.33× vs Apr', roasC: 'du', roasS: '269 units · AOV €36.00',
-    spend: '€2,317', spendD: '▲ 15.3% MoM', spendC: 'df', spendS: 'vs €2,009 Apr',
+    spend: '€2,320', spendD: '▲ 15.5% MoM', spendC: 'df', spendS: 'vs €2,009 Apr',
     tacosAd: '26.2%', tacosAdD: '▼ 2.4pp vs Apr', tacosAdC: 'du', tacosAdS: 'Target <20%',
     roasAd: '3.82×', roasAdD: '▲ 0.33× vs Apr', roasAdC: 'du', roasAdS: '€8,855 revenue',
     aov: '€36.00', aovD: '', aovC: 'df', aovS: '246 orders May',
@@ -24,16 +24,16 @@ window.DASHBOARD_DATA = {
     mktRows: [
       ['DE','de','€1,200','€529','bg','▼ €671 under','€2,095','ba','25.3%'],
       ['FR','fr','€550','€575','br','▲ €25 over','€2,201','ba','26.1%'],
-      ['ES','es','€450','€608','br','▲ €158 over','€2,167','br','28.1%'],
-      ['IT','it','€500','€604','br','▲ €104 over','€2,393','ba','25.2%'],
+      ['ES','es','€450','€609','br','▲ €159 over','€2,167','br','28.1%'],
+      ['IT','it','€500','€607','br','▲ €107 over','€2,393','ba','25.4%'],
       ['NLD','nl','€0','€0','bb','Early launch','€0','bb','—'],
-      ['Total EU',null,'€2,700','€2,317','bg','86% utilised','€8,855','ba','26.2%']
+      ['Total EU',null,'€2,700','€2,320','bg','86% utilised','€8,855','ba','26.2%']
     ],
     marketKpis: {
       de: { rev:'€2,095', adSales:'€1,286', tacos:'25.3%', roas:'3.96×', spend:'€529', aov:'€33.78', tacosAd:'25.3%', roasAd:'3.96×', cvr:'3.4%', cvrS:'', orders:'62', ordersS:'66 units', impr:'239k', imprS:'vs 303k Apr', cpc:'€1.04', ctr:'0.21%', adBudget:'€1,200', util:'44%', revC:'dd', adSalesC:'dd', tacosC:'du', roasC:'du', spendC:'df', aovC:'df', tacosAdC:'du', roasAdC:'du', tacosS:'Target <20%', roasS:'66 units · AOV €33.78', roasAdS:'€2,095 revenue', aovD:'', aovS:'62 orders May', adSalesS:'61.4% of revenue', revD:'▼ 6.5% MoM', revS:'vs €2,240 Apr', spendD:'▼ 21.8% MoM', spendS:'vs €677 Apr', tacosD:'▼ 5.0pp vs Apr', tacosAdD:'▼ 5.0pp vs Apr', roasD:'▲ 0.65× vs Apr', roasAdD:'▲ 0.65× vs Apr', adSalesD:'▼ 32.4% MoM', imprD:'▼ 21.1% MoM', imprC:'dd', cpcD:'▼ €0.17 MoM', cpcC:'du', cpcS:'vs €1.21 Apr', ctrD:'▲ 0.03pp vs Apr', ctrC:'du', ctrS:'' },
       fr: { rev:'€2,201', adSales:'€1,285', tacos:'26.1%', roas:'3.82×', spend:'€575', aov:'€34.94', tacosAd:'26.1%', roasAd:'3.82×', cvr:'6.7%', cvrS:'', orders:'63', ordersS:'68 units', impr:'153k', imprS:'vs 316k Apr', cpc:'€1.28', ctr:'0.29%', adBudget:'€550', util:'105%', revC:'du', adSalesC:'du', tacosC:'du', roasC:'du', spendC:'df', aovC:'df', tacosAdC:'du', roasAdC:'du', tacosS:'Target <20%', roasS:'68 units · AOV €34.94', roasAdS:'€2,201 revenue', aovD:'', aovS:'63 orders May', adSalesS:'58.4% of revenue', revD:'▲ 39.5% MoM', revS:'vs €1,577 Apr', spendD:'▲ 24.1% MoM', spendS:'vs €464 Apr', tacosD:'▼ 3.3pp vs Apr', tacosAdD:'▼ 3.3pp vs Apr', roasD:'▲ 0.42× vs Apr', roasAdD:'▲ 0.42× vs Apr', adSalesD:'▲ 42.2% MoM', imprD:'▼ 51.6% MoM', imprC:'dd', cpcD:'▲ €0.87 MoM', cpcC:'dd', cpcS:'vs €0.41 Apr', ctrD:'▼ 0.06pp vs Apr', ctrC:'dd', ctrS:'' },
       es: { rev:'€2,167', adSales:'€1,105', tacos:'28.1%', roas:'3.56×', spend:'€608', aov:'€34.39', tacosAd:'28.1%', roasAd:'3.56×', cvr:'4.1%', cvrS:'', orders:'63', ordersS:'68 units', impr:'546k', imprS:'vs 289k Apr', cpc:'€0.76', ctr:'0.15%', adBudget:'€450', util:'135%', revC:'du', adSalesC:'du', tacosC:'dd', roasC:'dd', spendC:'df', aovC:'df', tacosAdC:'dd', roasAdC:'dd', tacosS:'Target <20%', roasS:'68 units · AOV €34.39', roasAdS:'€2,167 revenue', aovD:'', aovS:'63 orders May', adSalesS:'51.0% of revenue', revD:'▲ 32.9% MoM', revS:'vs €1,630 Apr', spendD:'▲ 51.2% MoM', spendS:'vs €402 Apr', tacosD:'▲ 3.4pp vs Apr', tacosAdD:'▲ 3.4pp vs Apr', roasD:'▼ 0.49× vs Apr', roasAdD:'▼ 0.49× vs Apr', adSalesD:'▲ 25.9% MoM', imprD:'▲ 88.8% MoM', imprC:'du', cpcD:'▼ €0.00 MoM', cpcC:'du', cpcS:'vs €0.77 Apr', ctrD:'▼ 0.04pp vs Apr', ctrC:'dd', ctrS:'' },
-      it: { rev:'€2,393', adSales:'€1,291', tacos:'25.2%', roas:'3.96×', spend:'€604', aov:'€41.26', tacosAd:'25.2%', roasAd:'3.96×', cvr:'3.1%', cvrS:'', orders:'58', ordersS:'67 units', impr:'704k', imprS:'vs 394k Apr', cpc:'€0.40', ctr:'0.22%', adBudget:'€500', util:'121%', revC:'du', adSalesC:'du', tacosC:'du', roasC:'du', spendC:'df', aovC:'df', tacosAdC:'du', roasAdC:'du', tacosS:'Target <20%', roasS:'67 units · AOV €41.26', roasAdS:'€2,393 revenue', aovD:'', aovS:'58 orders May', adSalesS:'53.9% of revenue', revD:'▲ 52.0% MoM', revS:'vs €1,575 Apr', spendD:'▲ 29.7% MoM', spendS:'vs €466 Apr', tacosD:'▼ 4.3pp vs Apr', tacosAdD:'▼ 4.3pp vs Apr', roasD:'▲ 0.58× vs Apr', roasAdD:'▲ 0.58× vs Apr', adSalesD:'▲ 82.8% MoM', imprD:'▲ 78.7% MoM', imprC:'du', cpcD:'▼ €0.02 MoM', cpcC:'du', cpcS:'vs €0.41 Apr', ctrD:'▼ 0.07pp vs Apr', ctrC:'dd', ctrS:'' }
+      it: { rev:'€2,393', adSales:'€1,291', tacos:'25.4%', roas:'3.94×', spend:'€607', aov:'€41.26', tacosAd:'25.4%', roasAd:'3.94×', cvr:'3.1%', cvrS:'', orders:'58', ordersS:'67 units', impr:'704k', imprS:'vs 394k Apr', cpc:'€0.40', ctr:'0.22%', adBudget:'€500', util:'121%', revC:'du', adSalesC:'du', tacosC:'du', roasC:'du', spendC:'df', aovC:'df', tacosAdC:'du', roasAdC:'du', tacosS:'Target <20%', roasS:'67 units · AOV €41.26', roasAdS:'€2,393 revenue', aovD:'', aovS:'58 orders May', adSalesS:'53.9% of revenue', revD:'▲ 52.0% MoM', revS:'vs €1,575 Apr', spendD:'▲ 30.3% MoM', spendS:'vs €466 Apr', tacosD:'▼ 4.2pp vs Apr', tacosAdD:'▼ 4.2pp vs Apr', roasD:'▲ 0.56× vs Apr', roasAdD:'▲ 0.56× vs Apr', adSalesD:'▲ 82.8% MoM', imprD:'▲ 78.7% MoM', imprC:'du', cpcD:'▼ €0.02 MoM', cpcC:'du', cpcS:'vs €0.41 Apr', ctrD:'▼ 0.07pp vs Apr', ctrC:'dd', ctrS:'' }
     },
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
   },
@@ -56,16 +56,16 @@ window.DASHBOARD_DATA = {
     mktRows: [
       ['DE','de','€2,450','€1,571','bg','▼ €879 under','€6,248','ba','25.1%'],
       ['FR','fr','€1,400','€1,207','bg','▼ €193 under','€4,647','ba','26.0%'],
-      ['ES','es','€1,150','€1,232','br','▲ €82 over','€4,831','ba','25.5%'],
-      ['IT','it','€1,250','€1,266','br','▲ €16 over','€5,113','ba','24.8%'],
+      ['ES','es','€1,150','€1,233','br','▲ €83 over','€4,831','ba','25.5%'],
+      ['IT','it','€1,250','€1,269','br','▲ €19 over','€5,113','ba','24.8%'],
       ['NLD','nl','€0','€0','bb','Early launch','€0','bb','—'],
-      ['Total EU',null,'€6,250','€5,276','bg','84% utilised','€20,839','ba','25.3%']
+      ['Total EU',null,'€6,250','€5,280','bg','84% utilised','€20,839','ba','25.3%']
     ],
     marketKpis: {
       de: { rev:'€6,248', adSales:'€4,339', tacos:'25.1%', roas:'3.98×', spend:'€1,571', aov:'€35.30', tacosAd:'25.1%', roasAd:'3.98×', cvr:'3.8%', cvrS:'', orders:'177', ordersS:'195 units', impr:'664k', imprS:'', cpc:'€1.12', ctr:'0.21%', adBudget:'€2,450', util:'64%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€6,248 revenue', aovD:'', aovS:'', adSalesS:'69.4% of revenue', revD:'3-month actuals', revS:'', spendD:'3-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'3-month actuals', imprD:'3-month actuals', imprC:'df', cpcD:'3-month actuals', cpcC:'df', cpcS:'', ctrD:'3-month actuals', ctrC:'df', ctrS:'' },
       fr: { rev:'€4,647', adSales:'€2,471', tacos:'26.0%', roas:'3.85×', spend:'€1,207', aov:'€34.42', tacosAd:'26.0%', roasAd:'3.85×', cvr:'5.5%', cvrS:'', orders:'135', ordersS:'143 units', impr:'497k', imprS:'', cpc:'€0.71', ctr:'0.34%', adBudget:'€1,400', util:'86%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€4,647 revenue', aovD:'', aovS:'', adSalesS:'53.2% of revenue', revD:'3-month actuals', revS:'', spendD:'3-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'3-month actuals', imprD:'3-month actuals', imprC:'df', cpcD:'3-month actuals', cpcC:'df', cpcS:'', ctrD:'3-month actuals', ctrC:'df', ctrS:'' },
       es: { rev:'€4,831', adSales:'€2,438', tacos:'25.5%', roas:'3.92×', spend:'€1,232', aov:'€33.78', tacosAd:'25.5%', roasAd:'3.92×', cvr:'4.1%', cvrS:'', orders:'143', ordersS:'153 units', impr:'888k', imprS:'', cpc:'€0.79', ctr:'0.18%', adBudget:'€1,150', util:'107%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€4,831 revenue', aovD:'', aovS:'', adSalesS:'50.5% of revenue', revD:'3-month actuals', revS:'', spendD:'3-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'3-month actuals', imprD:'3-month actuals', imprC:'df', cpcD:'3-month actuals', cpcC:'df', cpcS:'', ctrD:'3-month actuals', ctrC:'df', ctrS:'' },
-      it: { rev:'€5,113', adSales:'€2,485', tacos:'24.8%', roas:'4.04×', spend:'€1,266', aov:'€38.73', tacosAd:'24.8%', roasAd:'4.04×', cvr:'3.2%', cvrS:'', orders:'132', ordersS:'148 units', impr:'1.16M', imprS:'', cpc:'€0.44', ctr:'0.25%', adBudget:'€1,250', util:'101%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€5,113 revenue', aovD:'', aovS:'', adSalesS:'48.6% of revenue', revD:'3-month actuals', revS:'', spendD:'3-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'3-month actuals', imprD:'3-month actuals', imprC:'df', cpcD:'3-month actuals', cpcC:'df', cpcS:'', ctrD:'3-month actuals', ctrC:'df', ctrS:'' }
+      it: { rev:'€5,113', adSales:'€2,485', tacos:'24.8%', roas:'4.03×', spend:'€1,269', aov:'€38.73', tacosAd:'24.8%', roasAd:'4.03×', cvr:'3.2%', cvrS:'', orders:'132', ordersS:'148 units', impr:'1.16M', imprS:'', cpc:'€0.44', ctr:'0.25%', adBudget:'€1,250', util:'102%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€5,113 revenue', aovD:'', aovS:'', adSalesS:'48.6% of revenue', revD:'3-month actuals', revS:'', spendD:'3-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'3-month actuals', imprD:'3-month actuals', imprC:'df', cpcD:'3-month actuals', cpcC:'df', cpcS:'', ctrD:'3-month actuals', ctrC:'df', ctrS:'' }
     },
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
   },
@@ -73,11 +73,11 @@ window.DASHBOARD_DATA = {
     label: 'Jan–May 2026 (YTD)', shortLabel: 'Jan–May 2026',
     rev: '€28,366', revD: '5-month actuals', revC: 'du', revS: '',
     adSales: '€14,530', adSalesD: '5-month actuals', adSalesC: 'df', adSalesS: '51.2% of revenue',
-    tacos: '20.3%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
-    roas: '4.92×', roasD: '', roasC: 'df', roasS: '',
-    spend: '€5,771', spendD: '5-month actuals', spendC: 'df', spendS: '',
-    tacosAd: '20.3%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
-    roasAd: '4.92×', roasAdD: '', roasAdC: 'df', roasAdS: '€28,366 revenue',
+    tacos: '20.4%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
+    roas: '4.91×', roasD: '', roasC: 'df', roasS: '',
+    spend: '€5,775', spendD: '5-month actuals', spendC: 'df', spendS: '',
+    tacosAd: '20.4%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
+    roasAd: '4.91×', roasAdD: '', roasAdC: 'df', roasAdS: '€28,366 revenue',
     aov: '€34.98', aovD: '', aovC: 'df', aovS: '',
     cvr: '4.4%', cvrD: '', cvrC: 'df', cvrS: 'page-view conversion',
     orders: '811', ordersD: '', ordersC: 'df', ordersS: '888 units',
@@ -88,16 +88,16 @@ window.DASHBOARD_DATA = {
     mktRows: [
       ['DE','de','€3,300','€1,789','bg','▼ €1,511 under','€9,553','bg','18.7%'],
       ['FR','fr','€1,900','€1,293','bg','▼ €607 under','€5,719','ba','22.6%'],
-      ['ES','es','€1,500','€1,301','bg','▼ €199 under','€5,800','ba','22.4%'],
-      ['IT','it','€1,850','€1,388','bg','▼ €462 under','€7,295','ba','19.0%'],
+      ['ES','es','€1,500','€1,302','bg','▼ €198 under','€5,800','ba','22.4%'],
+      ['IT','it','€1,850','€1,391','bg','▼ €459 under','€7,295','ba','19.1%'],
       ['NLD','nl','€0','€0','bb','Early launch','€0','bb','—'],
-      ['Total EU',null,'€8,550','€5,771','bg','67% utilised','€28,366','ba','20.3%']
+      ['Total EU',null,'€8,550','€5,775','bg','67% utilised','€28,366','ba','20.4%']
     ],
     marketKpis: {
       de: { rev:'€9,553', adSales:'€5,636', tacos:'18.7%', roas:'5.34×', spend:'€1,789', aov:'€34.86', tacosAd:'18.7%', roasAd:'5.34×', cvr:'4.6%', cvrS:'', orders:'274', ordersS:'305 units', impr:'897k', imprS:'', cpc:'€1.07', ctr:'0.19%', adBudget:'€3,300', util:'54%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€9,553 revenue', aovD:'', aovS:'', adSalesS:'59.0% of revenue', revD:'5-month actuals', revS:'', spendD:'5-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'5-month actuals', imprD:'5-month actuals', imprC:'df', cpcD:'5-month actuals', cpcC:'df', cpcS:'', ctrD:'5-month actuals', ctrC:'df', ctrS:'' },
       fr: { rev:'€5,719', adSales:'€2,871', tacos:'22.6%', roas:'4.42×', spend:'€1,293', aov:'€33.44', tacosAd:'22.6%', roasAd:'4.42×', cvr:'5.9%', cvrS:'', orders:'171', ordersS:'181 units', impr:'506k', imprS:'', cpc:'€0.72', ctr:'0.36%', adBudget:'€1,900', util:'68%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€5,719 revenue', aovD:'', aovS:'', adSalesS:'50.2% of revenue', revD:'5-month actuals', revS:'', spendD:'5-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'5-month actuals', imprD:'5-month actuals', imprC:'df', cpcD:'5-month actuals', cpcC:'df', cpcS:'', ctrD:'5-month actuals', ctrC:'df', ctrS:'' },
-      es: { rev:'€5,800', adSales:'€2,738', tacos:'22.4%', roas:'4.46×', spend:'€1,301', aov:'€33.33', tacosAd:'22.4%', roasAd:'4.46×', cvr:'3.9%', cvrS:'', orders:'174', ordersS:'186 units', impr:'901k', imprS:'', cpc:'€0.77', ctr:'0.19%', adBudget:'€1,500', util:'87%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€5,800 revenue', aovD:'', aovS:'', adSalesS:'47.2% of revenue', revD:'5-month actuals', revS:'', spendD:'5-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'5-month actuals', imprD:'5-month actuals', imprC:'df', cpcD:'5-month actuals', cpcC:'df', cpcS:'', ctrD:'5-month actuals', ctrC:'df', ctrS:'' },
-      it: { rev:'€7,295', adSales:'€3,285', tacos:'19.0%', roas:'5.26×', spend:'€1,388', aov:'€37.99', tacosAd:'19.0%', roasAd:'5.26×', cvr:'3.9%', cvrS:'', orders:'192', ordersS:'216 units', impr:'1.17M', imprS:'', cpc:'€0.46', ctr:'0.26%', adBudget:'€1,850', util:'75%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€7,295 revenue', aovD:'', aovS:'', adSalesS:'45.0% of revenue', revD:'5-month actuals', revS:'', spendD:'5-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'5-month actuals', imprD:'5-month actuals', imprC:'df', cpcD:'5-month actuals', cpcC:'df', cpcS:'', ctrD:'5-month actuals', ctrC:'df', ctrS:'' }
+      es: { rev:'€5,800', adSales:'€2,738', tacos:'22.4%', roas:'4.45×', spend:'€1,302', aov:'€33.33', tacosAd:'22.4%', roasAd:'4.45×', cvr:'3.9%', cvrS:'', orders:'174', ordersS:'186 units', impr:'901k', imprS:'', cpc:'€0.77', ctr:'0.19%', adBudget:'€1,500', util:'87%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€5,800 revenue', aovD:'', aovS:'', adSalesS:'47.2% of revenue', revD:'5-month actuals', revS:'', spendD:'5-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'5-month actuals', imprD:'5-month actuals', imprC:'df', cpcD:'5-month actuals', cpcC:'df', cpcS:'', ctrD:'5-month actuals', ctrC:'df', ctrS:'' },
+      it: { rev:'€7,295', adSales:'€3,285', tacos:'19.1%', roas:'5.24×', spend:'€1,391', aov:'€37.99', tacosAd:'19.1%', roasAd:'5.24×', cvr:'3.9%', cvrS:'', orders:'192', ordersS:'216 units', impr:'1.17M', imprS:'', cpc:'€0.46', ctr:'0.26%', adBudget:'€1,850', util:'75%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€7,295 revenue', aovD:'', aovS:'', adSalesS:'45.0% of revenue', revD:'5-month actuals', revS:'', spendD:'5-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'5-month actuals', imprD:'5-month actuals', imprC:'df', cpcD:'5-month actuals', cpcC:'df', cpcS:'', ctrD:'5-month actuals', ctrC:'df', ctrS:'' }
     },
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
   },
@@ -139,7 +139,7 @@ window.DASHBOARD_DATA = {
     adSales: '€33,189', adSalesD: 'Trailing 12 months', adSalesC: 'df', adSalesS: '51.2% of revenue',
     tacos: '24.2%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
     roas: '4.14×', roasD: '', roasC: 'df', roasS: '',
-    spend: '€15,680', spendD: 'Trailing 12 months', spendC: 'df', spendS: '',
+    spend: '€15,684', spendD: 'Trailing 12 months', spendC: 'df', spendS: '',
     tacosAd: '24.2%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
     roasAd: '4.14×', roasAdD: '', roasAdC: 'df', roasAdS: '€64,876 revenue',
     aov: '€33.79', aovD: '', aovC: 'df', aovS: '',
@@ -152,16 +152,16 @@ window.DASHBOARD_DATA = {
     mktRows: [
       ['DE','de','€14,500','€7,418','bg','▼ €7,082 under','€30,084','ba','24.7%'],
       ['FR','fr','€3,900','€2,677','bg','▼ €1,223 under','€10,064','ba','26.6%'],
-      ['ES','es','€2,800','€2,533','bg','▼ €267 under','€10,615','ba','23.9%'],
-      ['IT','it','€4,200','€3,052','bg','▼ €1,148 under','€14,113','ba','21.6%'],
+      ['ES','es','€2,800','€2,534','bg','▼ €266 under','€10,615','ba','23.9%'],
+      ['IT','it','€4,200','€3,055','bg','▼ €1,145 under','€14,113','ba','21.6%'],
       ['NLD','nl','€0','€0','bb','Early launch','€0','bb','—'],
-      ['Total EU',null,'€25,400','€15,680','bg','62% utilised','€64,876','ba','24.2%']
+      ['Total EU',null,'€25,400','€15,684','bg','62% utilised','€64,876','ba','24.2%']
     ],
     marketKpis: {
       de: { rev:'€30,084', adSales:'€16,982', tacos:'24.7%', roas:'4.06×', spend:'€7,418', aov:'€33.88', tacosAd:'24.7%', roasAd:'4.06×', cvr:'4.7%', cvrS:'', orders:'888', ordersS:'973 units', impr:'4.16M', imprS:'', cpc:'€0.85', ctr:'0.21%', adBudget:'€14,500', util:'51%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€30,084 revenue', aovD:'', aovS:'', adSalesS:'56.4% of revenue', revD:'Trailing 12 months', revS:'', spendD:'Trailing 12 months', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'Trailing 12 months', imprD:'Trailing 12 months', imprC:'df', cpcD:'Trailing 12 months', cpcC:'df', cpcS:'', ctrD:'Trailing 12 months', ctrC:'df', ctrS:'' },
       fr: { rev:'€10,064', adSales:'€4,697', tacos:'26.6%', roas:'3.76×', spend:'€2,677', aov:'€33.55', tacosAd:'26.6%', roasAd:'3.76×', cvr:'4.7%', cvrS:'', orders:'300', ordersS:'323 units', impr:'2.09M', imprS:'', cpc:'€0.69', ctr:'0.18%', adBudget:'€3,900', util:'69%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€10,064 revenue', aovD:'', aovS:'', adSalesS:'46.7% of revenue', revD:'Trailing 12 months', revS:'', spendD:'Trailing 12 months', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'Trailing 12 months', imprD:'Trailing 12 months', imprC:'df', cpcD:'Trailing 12 months', cpcC:'df', cpcS:'', ctrD:'Trailing 12 months', ctrC:'df', ctrS:'' },
-      es: { rev:'€10,615', adSales:'€4,632', tacos:'23.9%', roas:'4.19×', spend:'€2,533', aov:'€32.56', tacosAd:'23.9%', roasAd:'4.19×', cvr:'3.5%', cvrS:'', orders:'326', ordersS:'348 units', impr:'1.78M', imprS:'', cpc:'€0.77', ctr:'0.18%', adBudget:'€2,800', util:'90%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€10,615 revenue', aovD:'', aovS:'', adSalesS:'43.6% of revenue', revD:'Trailing 12 months', revS:'', spendD:'Trailing 12 months', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'Trailing 12 months', imprD:'Trailing 12 months', imprC:'df', cpcD:'Trailing 12 months', cpcC:'df', cpcS:'', ctrD:'Trailing 12 months', ctrC:'df', ctrS:'' },
-      it: { rev:'€14,113', adSales:'€6,878', tacos:'21.6%', roas:'4.62×', spend:'€3,052', aov:'€34.76', tacosAd:'21.6%', roasAd:'4.62×', cvr:'3.7%', cvrS:'', orders:'406', ordersS:'436 units', impr:'2.33M', imprS:'', cpc:'€0.58', ctr:'0.23%', adBudget:'€4,200', util:'73%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€14,113 revenue', aovD:'', aovS:'', adSalesS:'48.7% of revenue', revD:'Trailing 12 months', revS:'', spendD:'Trailing 12 months', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'Trailing 12 months', imprD:'Trailing 12 months', imprC:'df', cpcD:'Trailing 12 months', cpcC:'df', cpcS:'', ctrD:'Trailing 12 months', ctrC:'df', ctrS:'' }
+      es: { rev:'€10,615', adSales:'€4,632', tacos:'23.9%', roas:'4.19×', spend:'€2,534', aov:'€32.56', tacosAd:'23.9%', roasAd:'4.19×', cvr:'3.5%', cvrS:'', orders:'326', ordersS:'348 units', impr:'1.78M', imprS:'', cpc:'€0.77', ctr:'0.18%', adBudget:'€2,800', util:'90%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€10,615 revenue', aovD:'', aovS:'', adSalesS:'43.6% of revenue', revD:'Trailing 12 months', revS:'', spendD:'Trailing 12 months', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'Trailing 12 months', imprD:'Trailing 12 months', imprC:'df', cpcD:'Trailing 12 months', cpcC:'df', cpcS:'', ctrD:'Trailing 12 months', ctrC:'df', ctrS:'' },
+      it: { rev:'€14,113', adSales:'€6,878', tacos:'21.6%', roas:'4.62×', spend:'€3,055', aov:'€34.76', tacosAd:'21.6%', roasAd:'4.62×', cvr:'3.7%', cvrS:'', orders:'406', ordersS:'436 units', impr:'2.33M', imprS:'', cpc:'€0.58', ctr:'0.23%', adBudget:'€4,200', util:'73%', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'€14,113 revenue', aovD:'', aovS:'', adSalesS:'48.7% of revenue', revD:'Trailing 12 months', revS:'', spendD:'Trailing 12 months', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'Trailing 12 months', imprD:'Trailing 12 months', imprC:'df', cpcD:'Trailing 12 months', cpcC:'df', cpcS:'', ctrD:'Trailing 12 months', ctrC:'df', ctrS:'' }
     },
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
   }
