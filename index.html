@@ -83,9 +83,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 /* Advertising chart row: chart | compact KPI column (Impr/CPC/CTR) | Ad Metrics. .no-mid drops the middle column. */
 .adv-3col{display:grid;grid-template-columns:1.6fr 0.82fr 1fr;gap:16px;align-items:start;}
 .adv-3col.no-mid{grid-template-columns:1.6fr 1fr;}
-.kpi-sm{padding:11px 14px;}
-.kpi-sm .kpi-lbl{margin-bottom:2px;}
-.kpi-sm .kpi-val{font-size:19px;margin-bottom:2px;}
+#ak-col{display:flex;flex-direction:column;align-self:stretch;gap:16px;}
+#ak-col .kpi{flex:1;display:flex;flex-direction:column;justify-content:center;padding:11px 16px;}
+#ak-col .kpi-lbl{margin-bottom:2px;}
+#ak-col .kpi-val{font-size:19px;margin-bottom:2px;}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
 .g21{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;}
@@ -108,9 +109,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .card-sub{font-size:11px;color:var(--muted);margin-top:1px;}
 .card-body{padding:16px;}
 svg.lc{width:100%;overflow:visible;display:block;}
-.leg{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap;}
-.leg-i{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--muted);}
-.leg-dot{width:24px;height:5px;border-radius:3px;}
+.leg{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap;padding-left:26px;}
+.leg-i{display:flex;align-items:center;gap:7px;font-size:14px;color:var(--muted);}
+.leg-dot{width:14px;height:3px;border-radius:3px;}
 .bar-row{display:flex;align-items:center;gap:10px;padding:6px 0;}
 .bar-row+.bar-row{border-top:1px solid var(--border);}
 .bar-lbl{font-size:12px;color:var(--text);width:120px;flex-shrink:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -194,7 +195,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 <script>
   /* Cache-buster: bump APP_VER on every GitHub upload so browsers fetch the new config/data/app
      instead of a stale cached copy. Appended as ?v= to all three script loads below + app.js. */
-  var APP_VER = '2026-06-18f';
+  var APP_VER = '2026-06-18g';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -636,7 +637,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
           <div class="leg" id="chart-adtrend-leg"><div class="leg-i"><div class="leg-dot" style="background:#404935"></div>Ad Spend</div><div class="leg-i"><div class="leg-dot" style="background:var(--green)"></div>ROAS</div></div>
         </div>
       </div>
-      <div id="ak-col" style="display:flex;flex-direction:column;gap:14px;">
+      <div id="ak-col">
         <div class="kpi kpi-sm"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Impressions</div><div class="kpi-val" id="ak-impr">&mdash;</div><div class="kpi-d df" id="ak-impr-d"></div><div class="kpi-s" id="ak-impr-s"></div></div>
         <div class="kpi kpi-sm"><div class="kpi-bar" style="background:#6b7160"></div><div class="kpi-lbl">Avg. CPC</div><div class="kpi-val" id="ak-cpc">&mdash;</div><div class="kpi-d df" id="ak-cpc-d"></div><div class="kpi-s" id="ak-cpc-s"></div></div>
         <div class="kpi kpi-sm"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">CTR</div><div class="kpi-val" id="ak-ctr">&mdash;</div><div class="kpi-d df" id="ak-ctr-d"></div><div class="kpi-s" id="ak-ctr-s"></div></div>
