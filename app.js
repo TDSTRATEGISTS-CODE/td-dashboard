@@ -1001,7 +1001,9 @@ function renderKwTable(arr) {
 function renderChart(id, legId, spec) {
   var svg = el(id); if (!svg || !spec) return;
   var hasRight = spec.maxRight != null;
-  var W = 440, H = 160, PADL = 54, PADR = hasRight ? 42 : 14, PADT = 18, PADB = 22;
+  var endLabels = spec.endLabels !== false;       // direct line-end labels (design B); replaces the separate key
+  var W = 440, H = 160, PADL = 56, PADT = 18, PADB = 22;
+  var PADR = endLabels ? 100 : (hasRight ? 42 : 14);
   var plotW = W - PADL - PADR, plotH = H - PADT - PADB, baseY = PADT + plotH;
   var n = spec.xLabels.length;
   function X(i) { return PADL + (n <= 1 ? 0 : plotW * i / (n - 1)); }
@@ -1011,8 +1013,8 @@ function renderChart(id, legId, spec) {
   for (k = 0; k < T; k++) {
     gy = PADT + plotH * k / (T - 1);
     p.push('<line x1="' + PADL + '" y1="' + gy.toFixed(1) + '" x2="' + (W - PADR) + '" y2="' + gy.toFixed(1) + '" stroke="#e4e2dc" stroke-width="1"/>');
-    p.push('<text x="' + (PADL - 6) + '" y="' + (gy + 3).toFixed(1) + '" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="end">' + spec.yTicks[k] + '</text>');
-    if (hasRight && spec.yTicksRight && spec.yTicksRight[k] != null) {
+    p.push('<text x="' + (PADL - 13) + '" y="' + (gy + 3).toFixed(1) + '" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="end">' + spec.yTicks[k] + '</text>');
+    if (hasRight && !endLabels && spec.yTicksRight && spec.yTicksRight[k] != null) {
       p.push('<text x="' + (W - PADR + 6) + '" y="' + (gy + 3).toFixed(1) + '" font-size="9" fill="#9ca3af" font-family="Poppins" text-anchor="start">' + spec.yTicksRight[k] + '</text>');
     }
   }
@@ -1031,11 +1033,35 @@ function renderChart(id, legId, spec) {
     var lastM = i === n - 1;
     p.push('<text x="' + X(i).toFixed(1) + '" y="' + (H - 6) + '" font-size="9" fill="' + (lastM ? (spec.xHighlight || '#1e293b') : '#9ca3af') + '" font-family="Poppins" text-anchor="middle"' + (lastM ? ' font-weight="600"' : '') + '>' + lb + '</text>');
   });
+  // Direct end-of-line labels (design B): each series names itself (+ latest value) at its line end,
+  // colour-matched — replaces the separate legend key. De-collided vertically, clamped to the plot.
+  if (endLabels) {
+    var lab = [];
+    spec.series.forEach(function (s, si) {
+      if (s.endLabel === false) return;
+      var nm = s.name || (spec.legend && spec.legend[si] && spec.legend[si].name);
+      if (!nm) return;
+      var yf = (s.axis === 'right') ? Yr : Y;
+      lab.push({ y: yf(s.values[s.values.length - 1]), color: s.color, text: nm + (s.endVal != null ? ' ' + s.endVal : '') });
+    });
+    lab.sort(function (a, b) { return a.y - b.y; });
+    var MG = 12, prev = -1e9;
+    lab.forEach(function (L) { if (L.y < prev + MG) { L.y = prev + MG; } prev = L.y; });
+    var over = prev - baseY; if (over > 0) lab.forEach(function (L) { L.y -= over; });
+    var lx = X(n - 1) + 7;
+    lab.forEach(function (L) {
+      var yy = Math.max(PADT + 4, L.y);
+      p.push('<text x="' + lx.toFixed(1) + '" y="' + (yy + 3).toFixed(1) + '" font-size="10.5" font-weight="500" fill="' + L.color + '" font-family="Poppins">' + L.text + '</text>');
+    });
+  }
   svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
   svg.innerHTML = p.join('');
-  if (legId && spec.legend) {
+  if (legId) {
     var lg = el(legId);
-    if (lg) lg.innerHTML = spec.legend.map(function (L) { return '<div class="leg-i"><div class="leg-dot" style="background:' + L.color + '"></div>' + L.name + '</div>'; }).join('');
+    if (lg) {
+      if (endLabels) { lg.innerHTML = ''; lg.style.display = 'none'; }
+      else if (spec.legend) { lg.style.display = ''; lg.innerHTML = spec.legend.map(function (L) { return '<div class="leg-i"><div class="leg-dot" style="background:' + L.color + '"></div>' + L.name + '</div>'; }).join(''); }
+    }
   }
 }
 
@@ -1062,10 +1088,10 @@ function renderMarketCharts() {
   // Revenue target = dotted reference line, EU only (no per-market target) → shown only for 'All EU'.
   var tgt = (m === 'all' && C.revTarget && C.revTarget.length) ? C.revTarget : null;
   var rMax = niceMax(Math.max(arrMax(rev), tgt ? arrMax(tgt) : 0));
-  var revSeries = [{ values: rev, color: '#404935', area: true, main: true }];
+  var revSeries = [{ values: rev, color: '#404935', area: true, main: true, name: 'Revenue', endVal: moneyK(rev[rev.length - 1] || 0) }];
   var revLegend = [{ name: 'Revenue', color: '#404935' }];
   if (tgt) {
-    revSeries.push({ values: tgt, color: '#b08900', dash: '2 3', dots: false });
+    revSeries.push({ values: tgt, color: '#b08900', dash: '2 3', dots: false, name: 'Target', endVal: moneyK(tgt[tgt.length - 1] || 0) });
     revLegend.push({ name: 'Target', color: '#b08900' });
   }
   renderChart('chart-rev', 'chart-rev-leg', {
@@ -1078,15 +1104,15 @@ function renderMarketCharts() {
   var taMax = Math.max(40, Math.ceil(arrMax(ta) / 20) * 20);
   var TACOS_TARGET = 20;                                   // ad-efficiency goal: keep TACOS under 20%
   // Draw order (last on top): Ad Spend area, Ad Sales line, TACOS line, dotted TACOS target.
-  var adSeries = [{ values: sp, color: '#404935', area: true, main: true }];
+  var adSeries = [{ values: sp, color: '#404935', area: true, main: true, name: 'Ad Spend', endVal: moneyK(sp[sp.length - 1] || 0) }];
   var adLegend = [{ name: 'Ad Spend', color: '#404935' }];
   if (sl.length) {
-    adSeries.push({ values: sl, color: '#1e4fa0', main: true });
+    adSeries.push({ values: sl, color: '#1e4fa0', main: true, name: 'Ad Sales', endVal: moneyK(sl[sl.length - 1] || 0) });
     adLegend.push({ name: 'Ad Sales', color: '#1e4fa0' });
   }
-  adSeries.push({ values: ta, color: '#b5373a', axis: 'right' });   // red — matches the TACOS KPI card
+  adSeries.push({ values: ta, color: '#b5373a', axis: 'right', name: 'TACOS', endVal: Math.round(ta[ta.length - 1] || 0) + '%' });   // red — matches the TACOS KPI card
   adLegend.push({ name: 'TACOS', color: '#b5373a' });
-  adSeries.push({ values: months.map(function () { return TACOS_TARGET; }), color: '#b08900', dash: '2 3', dots: false, axis: 'right' });
+  adSeries.push({ values: months.map(function () { return TACOS_TARGET; }), color: '#b08900', dash: '2 3', dots: false, axis: 'right', name: 'Target', endVal: '<20%' });
   adLegend.push({ name: 'Target <20%', color: '#b08900' });
   renderChart('chart-adtrend', 'chart-adtrend-leg', {
     max: mnMax, yTicks: axisTicks(mnMax, moneyK), xHighlight: '#404935',
@@ -1407,6 +1433,16 @@ function renderSections() {
 
 // Period-dependent sections. Reads the current period's d.sec.* overrides, falling back to the
 // top-level sections (the May/default values) when a period doesn't override a given piece.
+// Founder Overview "Amazon actuals" widgets (KPIs + revenue trend + buy-box + CVR). Period-aware via
+// sec.overviewActuals (kpis/cvr); the trend + buy-box come from the top-level (they don't vary by period).
+function renderFounderOvActuals(spec) {
+  if (!spec) return;
+  if (spec.kpis) renderKpis('f-ov-akpis', spec.kpis);
+  if (spec.revTrend) renderChart('f-ov-revtrend', 'f-ov-revtrend-leg', spec.revTrend);
+  if (spec.buyBox) renderProgress('f-ov-buybox', spec.buyBox);
+  if (spec.cvr) renderProgress('f-ov-cvr', spec.cvr);
+}
+
 function renderPeriodSections(d) {
   var S = DATA.sections; if (!S) return;
   function pick(a, b) { return a != null ? a : b; }
@@ -1494,6 +1530,14 @@ function renderPeriodSections(d) {
   var ivpMkt = (currentMarket && currentMarket !== 'all') ? currentMarket : null;
   var ivpKpis = (ivpMkt && ivp.kpisByMarket && ivp.kpisByMarket[ivpMkt]) || ivp.kpis;
   if (ivpKpis) renderKpis('sec-inv-kpis', ivpKpis);
+
+  // Founder Overview actuals (no-op unless sections.overviewActuals exists). kpis/cvr are period-aware
+  // (sec override); revTrend + buyBox come from the top-level (don't vary by period).
+  var oaT = S.overviewActuals;
+  if (oaT) {
+    var oaP = pick(sec.overviewActuals, oaT);
+    renderFounderOvActuals({ kpis: oaP.kpis, cvr: oaP.cvr, buyBox: oaT.buyBox, revTrend: oaT.revTrend });
+  }
 
   renderShopify();     // Shopify performance page — repaints for the selected brand at the current period
   renderShopifyPnl();  // Shopify P&L page (no-op without sections.shopifypnl)

@@ -195,7 +195,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 <script>
   /* Cache-buster: bump APP_VER on every GitHub upload so browsers fetch the new config/data/app
      instead of a stale cached copy. Appended as ?v= to all three script loads below + app.js. */
-  var APP_VER = '2026-06-18h';
+  var APP_VER = '2026-06-18i';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -985,6 +985,29 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       <div class="card">
         <div class="card-hdr"><div><div class="card-ttl">&#127919; Key Milestones</div><div class="card-sub">Year 1 calendar</div></div><span id="f-ov-milestones-badge" style="font-size:10px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span></div>
         <div id="f-ov-milestones"></div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-lbl">Amazon Performance &mdash; <span class="dr-period">May 2026</span></div>
+      <div class="g4" id="f-ov-akpis"></div>
+    </div>
+    <div class="g21 fade">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">Revenue Trend</div><div class="card-sub">Amazon UK &middot; monthly ordered revenue</div></div></div>
+        <div class="card-body" style="padding:16px 16px 10px;">
+          <svg class="lc" id="f-ov-revtrend" viewBox="0 0 440 160"></svg>
+          <div class="leg" id="f-ov-revtrend-leg"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-ttl">Buy Box Win Rate</div><div class="card-sub">By marketplace</div></div></div>
+          <div class="card-body" id="f-ov-buybox" style="display:flex;flex-direction:column;gap:12px;"></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-ttl">Conversion Rate</div><div class="card-sub"><span class="dr-period">May 2026</span></div></div></div>
+          <div class="card-body" id="f-ov-cvr" style="display:flex;flex-direction:column;gap:12px;"></div>
+        </div>
       </div>
     </div>
   </div>
