@@ -472,6 +472,21 @@ window.DASHBOARD_DATA = {
     // Amazon settlement P&L (MerchantSpring snapshot, last 30 days). Renders on the 'pnl' page
     // (relabelled "Amazon P&L"). UK = £ base; US shown $ in the per-market table. Ad spend £0.
     pnl: {
+      // Product portfolio — REAL per-product P&L from MerchantSpring (May 2026, UK + US channels).
+      // Ranked by margin % (currency-neutral); profit shown in native currency (UK £, US $). All 5
+      // active SKUs were profitable in May. Refresh via MS getProductProfitAndLoss for both channels.
+      portfolio: {
+        total: 5, profitable: 5, breakeven: 0, unprofitable: 0,
+        most: [
+          { name: 'Hydrte 18oz — Nero (US)',   profit: '$131', margin: '28%', marginCls: 'bg' },
+          { name: 'Bervera 6×200ml (UK)',      profit: '£174', margin: '27%', marginCls: 'bg' },
+          { name: 'Hydrte 18oz — Slate (US)',  profit: '$39',  margin: '26%', marginCls: 'bg' }
+        ],
+        least: [
+          { name: 'Hydrte 11.8oz — Nero (US)', profit: '$75',  margin: '25%', marginCls: 'ba', color: 'var(--amber)' },
+          { name: 'Bervera 24×200ml (UK)',     profit: '£326', margin: '20%', marginCls: 'ba', color: 'var(--amber)' }
+        ]
+      },
       revBreak: [
         { lbl: 'Organic Sales', pct: 89, val: '£1,690', color: '#2C3420' },
         { lbl: 'Ad-Attributed', pct: 11, val: '£205',   color: 'muted' }

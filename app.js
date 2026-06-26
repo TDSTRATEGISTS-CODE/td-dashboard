@@ -1003,7 +1003,22 @@ function renderChart(id, legId, spec) {
   var hasRight = spec.maxRight != null;
   var endLabels = spec.endLabels !== false;       // direct line-end labels (design B); replaces the separate key
   var W = 440, H = 160, PADL = 56, PADT = 18, PADB = 22;
-  var PADR = endLabels ? 100 : (hasRight ? 42 : 14);
+  var ELF = 9.5, ELCW = 0.6, ELOFF = 7, ELRM = 8;  // end-label: font, ~char-width factor, x-offset, right margin
+  var elList = [];                                  // {si, text} per labelled series, built before sizing PADR
+  if (endLabels) {
+    spec.series.forEach(function (s, si) {
+      if (s.endLabel === false) return;
+      var nm = s.name || (spec.legend && spec.legend[si] && spec.legend[si].name);
+      if (!nm) return;
+      elList.push({ si: si, text: nm + (s.endVal != null ? ' ' + s.endVal : '') });
+    });
+  }
+  // Size the right margin to the longest end-label so it can't spill past the card (capped); else default.
+  var PADR;
+  if (endLabels && elList.length) {
+    var maxW = 0; elList.forEach(function (L) { maxW = Math.max(maxW, L.text.length * ELF * ELCW); });
+    PADR = Math.max(60, Math.min(190, Math.ceil(ELOFF + maxW + ELRM)));
+  } else { PADR = hasRight ? 42 : 14; }
   var plotW = W - PADL - PADR, plotH = H - PADT - PADB, baseY = PADT + plotH;
   var n = spec.xLabels.length;
   function X(i) { return PADL + (n <= 1 ? 0 : plotW * i / (n - 1)); }
@@ -1035,23 +1050,21 @@ function renderChart(id, legId, spec) {
   });
   // Direct end-of-line labels (design B): each series names itself (+ latest value) at its line end,
   // colour-matched — replaces the separate legend key. De-collided vertically, clamped to the plot.
-  if (endLabels) {
-    var lab = [];
-    spec.series.forEach(function (s, si) {
-      if (s.endLabel === false) return;
-      var nm = s.name || (spec.legend && spec.legend[si] && spec.legend[si].name);
-      if (!nm) return;
-      var yf = (s.axis === 'right') ? Yr : Y;
-      lab.push({ y: yf(s.values[s.values.length - 1]), color: s.color, text: nm + (s.endVal != null ? ' ' + s.endVal : '') });
+  if (endLabels && elList.length) {
+    var maxChars = Math.max(4, Math.floor((PADR - ELOFF - ELRM) / (ELF * ELCW)));   // chars that fit the sized margin
+    var lab = elList.map(function (L) {
+      var s = spec.series[L.si], yf = (s.axis === 'right') ? Yr : Y;
+      var txt = L.text.length > maxChars ? L.text.slice(0, maxChars - 1) + '…' : L.text;
+      return { y: yf(s.values[s.values.length - 1]), color: s.color, text: txt };
     });
     lab.sort(function (a, b) { return a.y - b.y; });
     var MG = 12, prev = -1e9;
     lab.forEach(function (L) { if (L.y < prev + MG) { L.y = prev + MG; } prev = L.y; });
     var over = prev - baseY; if (over > 0) lab.forEach(function (L) { L.y -= over; });
-    var lx = X(n - 1) + 7;
+    var lx = X(n - 1) + ELOFF;
     lab.forEach(function (L) {
       var yy = Math.max(PADT + 4, L.y);
-      p.push('<text x="' + lx.toFixed(1) + '" y="' + (yy + 3).toFixed(1) + '" font-size="10.5" font-weight="500" fill="' + L.color + '" font-family="Poppins">' + L.text + '</text>');
+      p.push('<text x="' + lx.toFixed(1) + '" y="' + (yy + 3).toFixed(1) + '" font-size="' + ELF + '" font-weight="500" fill="' + L.color + '" font-family="Poppins">' + L.text + '</text>');
     });
   }
   svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
