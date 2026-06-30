@@ -42,6 +42,13 @@ dashboard/
 > **redeploy** the Apps Script web app (keep the same `/exec` URL, or update `config.dataSource.url`).
 > The AMACX proxy reads the Project-Scope board by **fixed column** — `E` = In Progress, `F` = Upcoming,
 > `G` = Completed, `I` = Flags & Warnings — and supplies the live per-market ad budgets + forecast.
+> The **NKV proxy** (`nkv-sheet-proxy.gs`) instead locates the board columns by **header text**
+> (`In Progress` / `Upcoming` / `Completed` / `Flags & Warnings` — case-sensitive for the first two) and
+> returns `sections.overview` (the project board) **plus** live `sections.shopifypnl` and
+> `sections.inventory.supplierPOs`. The board on the sheet MUST carry those exact header cells, or the
+> proxy returns no overview and the Overview cards show the **"Currently updating"** fallback. After
+> editing any `.gs`, **redeploy a new version** (Deploy ▸ Manage deployments ▸ edit ▸ New version) to keep
+> the same `/exec` URL, and ensure access is **Execute as: Me · Anyone**.
 
 The page reads `?client=<name>` and loads `clients/<name>/config.js` + `data.js` before `app.js` boots.
 
@@ -161,18 +168,18 @@ Shared building blocks (same helpers the Amazon pages use):
 
 `clients/harvaza/data.js` is the worked reference for every one of these.
 
-### Shopify (D2C) page â€” `sections.shopify` (NKV-only for now)
+### Shopify (D2C) page — `sections.shopify` (NKV-only for now)
 
 NKV gets an extra **Shopify** page (D2C performance) that the other Amazon clients don't. It's wired
 **NKV-only** by declaring `config.pages` (the `amazon` template order + `'shopify'` inserted before
-`amazonpnl`) rather than adding `shopify` to the shared template â€” so it stays hidden for every other
+`amazonpnl`) rather than adding `shopify` to the shared template — so it stays hidden for every other
 client until they opt in the same way. The `page-shopify` block + renderers live in the shared shell
 (`index.html` / `app.js`), so they're a **no-op** for any client without `sections.shopify`.
 
-The page has a **brand filter** at the top â€” `All Â· Newnique Â· Contours Rx` â€” that are **two separate
+The page has a **brand filter** at the top — `All · Newnique · Contours Rx` — that are **two separate
 Shopify stores** (`ALL` = the sum). The chips are DATA-driven from `sections.shopify.brands` (never
-hardcoded in `index.html`), and the filter re-scopes only this page via `currentBrand` â†’
-`switchBrand()` â†’ `renderShopify()`. It's independent of the sidebar market chips (those are the Amazon
+hardcoded in `index.html`), and the filter re-scopes only this page via `currentBrand` →
+`switchBrand()` → `renderShopify()`. It's independent of the sidebar market chips (those are the Amazon
 marketplaces) but **does** follow the shared date-range selector.
 
 ```js
@@ -181,17 +188,17 @@ sections.shopify = {
   data: {
     contoursrx: {
       label, store,                                  // header sub-label
-      chart:  CHART,                                 // 6-mo net-sales trend (or null â†’ cleared)
+      chart:  CHART,                                 // 6-mo net-sales trend (or null → cleared)
       stock:  [ { name, note, level:'g|a|r', units, cover } ],   // Stock Health list
       traffic:[ BAR ],                               // Traffic Sources (referrer)
       byPeriod: { may|3m|6m|12m: {
-        kpis1:[ KPI x4 ], kpis2:[ KPI x4 ],          // Net Sales/Orders/AOV/ASP Â· CVR/Sessions/Units/Returning
-        funnel:[ { lbl, val, pct, w, sub } ],        // Sessionsâ†’Cartâ†’Checkoutâ†’Purchased
+        kpis1:[ KPI x4 ], kpis2:[ KPI x4 ],          // Net Sales/Orders/AOV/ASP · CVR/Sessions/Units/Returning
+        funnel:[ { lbl, val, pct, w, sub } ],        // Sessions→Cart→Checkout→Purchased
         products:[ { name, net, units, asp, orders, share, shareCls } ]
       } }
     },
-    newnique: { â€¦order-side pending Executive integration; GA4 session-side LIVE (sessions/funnel/traffic)â€¦ },
-    all:      { â€¦currently = Contours Rx (Newnique orders pending)â€¦ }
+    newnique: { …order-side pending Executive integration; GA4 session-side LIVE (sessions/funnel/traffic)… },
+    all:      { …currently = Contours Rx (Newnique orders pending)… }
   }
 }
 ```
@@ -212,24 +219,24 @@ the funnel + CVR are session-based while Orders is order-based (both valid, kept
 equals **Contours Rx** until Newnique's orders backfill (then restore the CRX + Newnique sum). A live
 proxy can overlay `sections.shopify` later, exactly like AMACX's sheet overlay.
 
-**Shopify P&L page (`shopifypnl` Â· `sections.shopifypnl`).** A second NKV-only page, sharing the same
+**Shopify P&L page (`shopifypnl` · `sections.shopifypnl`).** A second NKV-only page, sharing the same
 brand filter + date range (`switchBrand` repaints both; chips render into `#shop-brands` **and**
-`#shop-brands-pnl`). It's a **brand â†’ period â†’ { kpis, info, rows }** model built by a small per-period
-builder in `data.js`: every line â€” **Net Revenue, COGS, Google/social ad spend, Beckdale fulfilment,
-Shopify + transaction fees, subscription, brand manager, the 5.5% TD fee, and Net Profit** â€” is sourced
+`#shop-brands-pnl`). It's a **brand → period → { kpis, info, rows }** model built by a small per-period
+builder in `data.js`: every line — **Net Revenue, COGS, Google/social ad spend, Beckdale fulfilment,
+Shopify + transaction fees, subscription, brand manager, the 5.5% TD fee, and Net Profit** — is sourced
 from the **NKV Beauty Account Tracker** ("Shopify" block, monthly). Contours Rx carries the shared opex
-(itâ€™s ~99% of D2C); **Newnique is tracked _light_** (own revenue / COGS / Google Ads only); **`All` =
-Contours Rx + Newnique**, and Net Profit ties to the sheetâ€™s "Profit after COGS". An `other` residual
-foots each month to the sheetâ€™s "Shopify Expenses" total. The right card (`brand.statusList`) shows each
+(it’s ~99% of D2C); **Newnique is tracked _light_** (own revenue / COGS / Google Ads only); **`All` =
+Contours Rx + Newnique**, and Net Profit ties to the sheet’s "Profit after COGS". An `other` residual
+foots each month to the sheet’s "Shopify Expenses" total. The right card (`brand.statusList`) shows each
 line's status. `renderShopifyPnl()` is a no-op for any client without `sections.shopifypnl`.
 
 **Live updates.** `data.js` holds the baked snapshot (offline fallback); **`nkv-sheet-proxy.gs`
 (`scanShopifyPnl_`) serves `sections.shopifypnl` live** from the Tracker, merged via `overlay:'sections'`
-â€” so editing the sheet updates the P&L. The block is found by the `Total Shopify Revenue` anchor; CRX
+— so editing the sheet updates the P&L. The block is found by the `Total Shopify Revenue` anchor; CRX
 sales are read below it (skipping the annual-total decoy) and `All` is summed from CRX + Newnique.
 
 **TODO (next):** add earlier-month expenses to the Tracker so the 12-mo view is a true trailing year
-(itâ€™s YTD for now); confirm Newnique's store domain (placeholder `D2C Â· Shopify`); optionally split
+(it’s YTD for now); confirm Newnique's store domain (placeholder `D2C · Shopify`); optionally split
 the shared opex across brands once the Tracker itemises it per store.
 
 ---
@@ -513,9 +520,51 @@ Then open: **http://localhost:8137/index.html?client=harvaza**
 ```
 config.js + data.js  ──►  app.js boot:
    applyConfig()  → identity, brand, chips, dropdown, hiddenPages, footer, buildNav (nav + tabs from template)
+   showLoadingOverlay() → (appsScript clients) animated loader covers the static fallback until live paints
    renderSections() → static deep-page content, incl. renderFounderSections() for founder clients
    switchDateRange(defaultPeriod) → KPIs, market table, chip revenue, per-period sections
    switchPage(firstPage) → activate the first page in the resolved page list
    loadLiveData() → if dataSource is a proxy, fetch it, overlay live values, repaint
                     (skip-empty overlay: live wins; blank live fields keep data.js values; any error keeps data.js)
+   watchForUpdates() → self-heal a stale cached page on load + "update in progress" overlay on a mid-session deploy
 ```
+
+---
+
+## Caching, deploy & front-end resilience
+
+The static files are served from **GitHub Pages** (`https://tdstrategists-code.github.io/td-dashboard/…`)
+and embedded into the client site via a **Wix iframe**. GitHub Pages sends its own
+`Cache-Control: max-age=600` on `index.html` and ignores repo-level cache headers, so the entry HTML can
+be briefly (≤10 min) stale on a fresh load. Three mechanisms keep clients on the current build:
+
+### `APP_VER` cache-buster (`index.html`)
+One constant, bumped on **every** upload (bake date + letter, e.g. `2026-06-30t`). It is appended as `?v=`
+to all three script loads (`config.js`, `data.js`, `app.js`), so a bump force-fetches fresh code/data while
+those files still cache between deploys. `index.html` itself can't be versioned (it's the entry URL), so it
+also carries `no-cache, no-store` meta tags. **Always bump `APP_VER` when you change any of the four files.**
+
+### Loading screen (`showLoadingOverlay`)
+appsScript clients raise an animated loader the moment boot starts — a 6-digit OTP-style code that
+re-scrambles matrix-style (1–2 digits per tick) above a cycling status line — so the static fallback never
+flashes before live data paints. `loadLiveData()` hides it on success, error, or a 15s safety timeout.
+Respects `prefers-reduced-motion` (digits still change; only the slide-in is suppressed).
+
+### Update overlay + self-heal (`watchForUpdates`)
+On boot, app.js fetches the deployed `index.html` (cache-bypassing) and reads its `APP_VER`:
+- **Stale load** (booted version ≠ server version) → reloads **once** with a `?_cb=<ver>` cache-bust param
+  (the `client=` param is preserved), guarded by `sessionStorage` so it can't loop. The 10-min stale window
+  self-corrects before the user notices.
+- **Mid-session deploy** (version changes while the tab is open) → a full-screen *"You caught us during an
+  update — please refresh"* overlay, polled every 90s + on tab refocus.
+
+> **Device-stuck cache:** if one device still shows old after a deploy but **incognito / another device is
+> fine**, it's a local **service-worker / site-data** cache (Wix registers a service worker). "Clear cached
+> images" won't fix it — clear **Cookies and site data**, or Chrome ▸ Site settings ▸ the site ▸ **Clear &
+> reset**. It also self-corrects on its own within ~24h as the worker re-checks.
+
+### "Currently updating" fallback (overview project board)
+For appsScript / `overlay:'sections'` clients, the Overview's Upcoming / In Progress / Completed cards are
+fed live from the sheet. Any card the live payload doesn't supply (proxy down, or board not yet read) shows
+a muted **"Currently updating"** placeholder instead of a stale baked snapshot. Static clients are
+unaffected — their baked content *is* the real content. (`liveCardPending` / `renderUpdatingCard` in app.js.)
