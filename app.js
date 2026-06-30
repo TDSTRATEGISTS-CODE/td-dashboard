@@ -376,6 +376,7 @@ window.switchDateRange = function (val) {
   updateMarketChips(d);
   applyMarketFilter();   // re-filter the freshly-rendered per-market rows to the current market
   applyNldPages();       // NLD pre-launch: swap Overview/Advertising/Inventory content for the banner
+  applyMarketMaintenance(); // per-market page maintenance banner (e.g. NKV Ireland/USA Advertising)
 };
 
 // Netherlands pre-launch: mark Overview/Advertising/Inventory .nld-active when NLD is the selected
@@ -387,6 +388,24 @@ function applyNldPages() {
   ['page-overview', 'page-advertising', 'page-inventory'].forEach(function (id) {
     var p = el(id); if (p) p.classList.toggle('nld-active', isNld);
   });
+}
+
+// Per-market maintenance: CONFIG.marketMaintenance maps a market key to the page keys that aren't live
+// for that market yet (e.g. NKV { irl:['advertising'], usa:['advertising'] }). When that market is
+// selected those pages show a maintenance banner (.maint-ph) instead of their content; all other gated
+// pages are cleared. Client-agnostic: a no-op when the client supplies no marketMaintenance.
+function applyMarketMaintenance() {
+  var map = CONFIG.marketMaintenance || {};
+  var active = map[currentMarket] || [];
+  var gated = {};
+  Object.keys(map).forEach(function (mk) { (map[mk] || []).forEach(function (k) { gated[k] = 1; }); });
+  Object.keys(gated).forEach(function (k) {
+    var p = el('page-' + k); if (p) p.classList.toggle('maint-active', active.indexOf(k) >= 0);
+  });
+  if (active.length) {
+    var label = (MKT[currentMarket] && (MKT[currentMarket].t || MKT[currentMarket].chip)) || currentMarket;
+    document.querySelectorAll('.maint-mkt').forEach(function (e) { e.textContent = label; });
+  }
 }
 
 // ---------- config-driven identity / brand / chips ----------

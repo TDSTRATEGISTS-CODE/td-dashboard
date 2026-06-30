@@ -185,6 +185,11 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
    shows only the pending-launch banner (.nld-ph); sections flagged .nld-keep stay (Overview scope cards). */
 .page-content.nld-active > *:not(.nld-ph):not(.nld-keep){display:none!important;}
 .page-content.nld-active > .nld-ph{display:block!important;}
+/* Per-market maintenance: a page with .maint-active (its market is listed in CONFIG.maintenancePages)
+   hides its normal content and shows only the maintenance banner (.maint-ph). Config-driven mirror of
+   the NLD pre-launch pattern; a no-op for clients that opt none of their markets in. */
+.page-content.maint-active > *:not(.maint-ph):not(.maint-keep){display:none!important;}
+.page-content.maint-active > .maint-ph{display:block!important;}
 .fade:nth-child(1){animation-delay:.04s}.fade:nth-child(2){animation-delay:.08s}
 .fade:nth-child(3){animation-delay:.12s}.fade:nth-child(4){animation-delay:.16s}
 .fade:nth-child(5){animation-delay:.20s}.fade:nth-child(6){animation-delay:.24s}
@@ -606,6 +611,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   <!-- ========== PAGE: ADVERTISING ========== -->
   <div class="page-content" id="page-advertising">
     <div class="fade nld-ph" id="sec-adv-nld" style="display:none;">       <div class="card" style="padding:56px 24px;text-align:center;">         <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>         <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>         <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>       </div>     </div>
+    <div class="fade maint-ph" id="sec-adv-maint" style="display:none;">       <div class="card" style="padding:56px 24px;text-align:center;">         <div style="font-size:30px;margin-bottom:12px;">&#128736;&#65039;</div>         <div class="card-ttl" style="font-size:16px;margin-bottom:6px;"><span class="maint-mkt">This market</span></div>         <div style="font-size:13px;color:var(--muted);">Advertising reporting for this market is under maintenance</div>       </div>     </div>
     <div>
       <div class="sec-lbl" id="sec-adperf">Ad Performance &mdash; <span id="sec-period-3">May 2026</span></div>
       <div class="g4">

@@ -69,6 +69,11 @@ window.DASHBOARD_CONFIG = {
     { key: 'usa', flag: 'us', chip: 'United States',   code: 'USA', t: 'United States',   m: 'USA · Not Launched', launchPill: 'Soon' }
   ],
 
+  // Per-market page maintenance: selecting these markets shows a maintenance banner on the listed
+  // pages instead of their content. Ireland (early stage) and USA (not launched) have no live ad
+  // account yet, so their Advertising page is gated. See applyMarketMaintenance() in app.js.
+  marketMaintenance: { irl: ['advertising'], usa: ['advertising'] },
+
   // ---- Brand palette (written to :root CSS variables at runtime) ----
   // Default TD Strategists palette (no client override supplied yet for NKV).
   brand: {
