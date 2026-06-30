@@ -445,6 +445,22 @@ function applyClientLayout() {
     }
   }
 
+  // Move the campaign-type pie up into the Advertising chart row's right column, stacked under the Ad
+  // Metrics card to fill the gap. Pairs with hiding the now-empty Campaign-Mix section via the hide list.
+  if (L.pieIntoAdGrid) {
+    var ag = el('adv-grid');
+    var metricsCard = el('sec-ad-metrics') && el('sec-ad-metrics').closest('.card');
+    var pieCard = el('sec-campaign-pie-wrap');
+    if (ag && metricsCard && pieCard) {
+      var rcol = document.createElement('div');
+      rcol.style.cssText = 'display:flex;flex-direction:column;gap:16px;min-width:0;';
+      ag.insertBefore(rcol, metricsCard);
+      rcol.appendChild(metricsCard);
+      rcol.appendChild(pieCard);
+      pieCard.style.flex = 'none';   // was flex:1 1 340px for the old side-by-side row
+    }
+  }
+
   // Hide cards/sections this client doesn't use (reversible; the underlying data is left in place).
   (L.hide || []).forEach(function (id) { var e = el(id); if (e) e.style.display = 'none'; });
 }

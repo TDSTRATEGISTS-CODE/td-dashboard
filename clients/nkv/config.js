@@ -66,7 +66,7 @@ window.DASHBOARD_CONFIG = {
     { key: 'all', flag: 'gb', chip: 'All Markets',    code: 'All Marketplaces', t: 'NKV Beauty',     m: 'All Marketplaces' },
     { key: 'uk',  flag: 'gb', chip: 'United Kingdom',  code: 'UK',  t: 'United Kingdom', m: 'UK' },
     { key: 'irl', flag: 'ie', chip: 'Ireland',         code: 'IRL', t: 'Ireland',        m: 'IRL · Early Stage', launchPill: 'New' },
-    { key: 'usa', flag: 'us', chip: 'United States',   code: 'USA', t: 'United States',   m: 'USA · Not Launched', launchPill: 'Soon' }
+    { key: 'usa', flag: 'us', chip: 'United States',   code: 'USA', t: 'United States',   m: 'USA · Recently Launched', launchPill: 'New' }
   ],
 
   // Per-market page maintenance: selecting these markets shows a maintenance banner on the listed
@@ -84,7 +84,8 @@ window.DASHBOARD_CONFIG = {
     ],
     stockToBuyBoxSlot: true,
     actualsUnderChart: true,
-    hide: ['sec-buybox-card', 'sec-adbudget-forecast']
+    pieIntoAdGrid: true,
+    hide: ['sec-buybox-card', 'sec-campaign-mix-row']
   },
 
   // ---- Brand palette (written to :root CSS variables at runtime) ----
