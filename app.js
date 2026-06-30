@@ -1469,18 +1469,27 @@ function renderPeriodSections(d) {
   if (d.revChart) renderChart('chart-rev', 'chart-rev-leg', d.revChart);
   if (d.adChart) renderChart('chart-adtrend', 'chart-adtrend-leg', d.adChart);
   if (d.revBreakChart) renderRevBreak(d.revBreakChart);
-  // Performance by Campaign Type pie — follows BOTH the date range and the market chip:
-  // campaignMixByPeriod[period][market] (EU 'all' for All-EU / NLD). Falls back to d.campaignMix (static).
+  // Ad widgets (campaign-type pie + Ad Metrics) are region-aware: a market with no ad spend in the
+  // selected period (e.g. NKV's Ireland / USA, AMACX's pre-launch NLD) blanks them rather than showing
+  // the account total under that market's label. Driven by the market's own spend KPI (no extra data).
+  var adMkt = (currentMarket && currentMarket !== 'all') ? currentMarket : null;
+  var adMktKpi = adMkt && d.marketKpis && d.marketKpis[adMkt];
+  var adSpendNum = parseFloat(String((adMktKpi && adMktKpi.spend) || '').replace(/[^0-9.]/g, ''));
+  var adHasSpend = !adMktKpi || isNaN(adSpendNum) || adSpendNum > 0;   // blank only on a real £0/$0/€0
+
+  // Performance by Campaign Type pie — follows the date range AND the market chip:
+  // campaignMixByPeriod[period][market] (EU 'all' for All-EU / NLD). Falls back to d.campaignMix.
   var cmByP = ad.campaignMixByPeriod;
   var cmix = cmByP && cmByP[currentPeriod];
-  var cmMkt = (currentMarket && currentMarket !== 'all') ? currentMarket : 'all';
+  var cmMkt = adMkt || 'all';
   var cmSel = cmix ? (cmix[cmMkt] || cmix.all) : d.campaignMix;
-  if (cmSel) {
+  var pw = el('sec-campaign-pie-wrap');
+  if (cmSel && adHasSpend) {
     renderPie('chart-campaign-pie', 'chart-campaign-pie-leg', cmSel);
-    var pw = el('sec-campaign-pie-wrap'); if (pw) pw.style.display = '';
+    if (pw) pw.style.display = '';
     var cscope = document.querySelector('#sec-campaign-pie-wrap .cfg-scope');
     if (cscope) cscope.textContent = (cmMkt !== 'all') ? ((MKT[cmMkt] && MKT[cmMkt].t) || cmMkt) : ((CONFIG.client && CONFIG.client.scopeLabel) || 'All EU');
-  }
+  } else if (pw) { pw.style.display = 'none'; }
 
   renderTargetAttainment(o);                // Revenue + Units actual vs target (EU-only, period aware)
   renderBuyBox(o);                          // official Buy Box % + per-market bars (period + market aware)
@@ -1536,7 +1545,9 @@ function renderPeriodSections(d) {
   var kwk = pick(skw.kpis, kw.kpis); if (kwk) renderKpis('sec-kw-kpis', kwk);
   var kwt = pick(skw.table, kw.table); if (kwt) renderKwTable(kwt);
 
-  var am = pick(sad.metrics, ad.metrics); if (am) renderMetrics(am);
+  var am = pick(sad.metrics, ad.metrics);
+  if (am && adHasSpend) renderMetrics(am);
+  else if (am) { var amw = el('sec-ad-metrics'); if (amw) amw.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:16px;text-align:center;">No ad activity in ' + ((MKT[adMkt] && MKT[adMkt].t) || adMkt || 'this market') + ' this period.</div>'; }
   var ac = pick(sad.campaigns, ad.campaigns); if (ac) renderCampaigns(ac);
 
   // Inventory stock-status KPIs follow the market chip (per-marketplace counts; EU unique-SKU totals
