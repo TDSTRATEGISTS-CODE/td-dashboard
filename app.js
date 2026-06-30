@@ -595,6 +595,14 @@ function reportEmbedHeight() {
   var h = 0, ap = document.querySelector('.page-content.active');
   if (ap) h = Math.ceil(ap.getBoundingClientRect().bottom + (window.scrollY || window.pageYOffset || 0));
   if (!h) h = document.body.scrollHeight || 0;   // fallback before the first page is activated
+  // The sidebar is fixed top→bottom, so a page shorter than the menu would clip it. On desktop, floor
+  // the height to the menu's INTRINSIC content height. The footer has margin-top:auto, so measure the
+  // row above it + the footer's own height (that's stretch-independent → no grow/shrink feedback loop).
+  var sb = document.querySelector('.sidebar');
+  if (sb && (!window.matchMedia || window.matchMedia('(min-width: 769px)').matches)) {
+    var foot = sb.querySelector('.sb-footer'), prev = foot && foot.previousElementSibling;
+    if (prev) h = Math.max(h, Math.ceil(prev.offsetTop + prev.offsetHeight + foot.offsetHeight + 4));
+  }
   if (!h || Math.abs(h - _embedH) <= 1) return;
   _embedH = h;
   try { window.parent.postMessage({ type: 'td-embed-height', height: h }, '*'); } catch (e) {}
