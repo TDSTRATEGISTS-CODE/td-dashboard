@@ -1479,7 +1479,7 @@ function renderPeriodSections(d) {
     renderPie('chart-campaign-pie', 'chart-campaign-pie-leg', cmSel);
     var pw = el('sec-campaign-pie-wrap'); if (pw) pw.style.display = '';
     var cscope = document.querySelector('#sec-campaign-pie-wrap .cfg-scope');
-    if (cscope) cscope.textContent = (cmMkt !== 'all') ? ((MKT[cmMkt] && MKT[cmMkt].t) || cmMkt) : 'All EU';
+    if (cscope) cscope.textContent = (cmMkt !== 'all') ? ((MKT[cmMkt] && MKT[cmMkt].t) || cmMkt) : ((CONFIG.client && CONFIG.client.scopeLabel) || 'All EU');
   }
 
   renderTargetAttainment(o);                // Revenue + Units actual vs target (EU-only, period aware)
@@ -1528,7 +1528,7 @@ function renderPeriodSections(d) {
     var gp = pr.groupsByPeriod && pr.groupsByPeriod[currentPeriod];
     renderProdGroups((gp && (pmKey ? gp[pmKey] : gp.all)) || pick(spr.groups, pr.groups));
     var gscope = document.querySelector('#sec-prod-groups-card .cfg-scope');
-    if (gscope) gscope.textContent = pmKey ? ((MKT[pmKey] && MKT[pmKey].t) || pmKey) : 'All EU';
+    if (gscope) gscope.textContent = pmKey ? ((MKT[pmKey] && MKT[pmKey].t) || pmKey) : ((CONFIG.client && CONFIG.client.scopeLabel) || 'All EU');
     var gper = document.querySelector('#sec-prod-groups-card .dr-period');
     if (gper) gper.textContent = d.shortLabel || d.label || '';
   }

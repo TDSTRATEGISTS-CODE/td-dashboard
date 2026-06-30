@@ -28,7 +28,10 @@ window.DASHBOARD_DATA = {
       irl: { rev:'£480', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£32.00', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'15 orders', roasAdS:'£480 revenue', aovD:'', aovS:'15 orders May', adSalesS:'No ad spend', revD:'Early stage', revS:'vs £352 Apr', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
       usa: { rev:'£0', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£0', tacosAd:'—', roasAd:'—', revC:'df', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Not launched', roasS:'—', roasAdS:'Not launched', aovD:'', aovS:'—', adSalesS:'Not launched', revD:'Not launched', revS:'channel pending', spendD:'', spendS:'—', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
     },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.4,sales:'£6.6k',acos:'42.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.6,sales:'£1.0k',acos:'24.7%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
+    // Campaign-type mix from the MerchantSpring campaigns report (May 2026, real). Sales share + ACOS
+    // by ad type. SP/SB split is structural (~86.5/13.5); longer periods scale sales to that period's
+    // actual ad-sales total with per-type ACOS tracked to the period's blended efficiency.
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.5,sales:'£6.7k',acos:'44.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.5,sales:'£1.0k',acos:'28.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
   },
   '3m': {
     label: 'Mar–May 2026', shortLabel: 'Mar–May 2026',
@@ -51,7 +54,19 @@ window.DASHBOARD_DATA = {
       irl: { rev:'£1,232', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£30.00', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£1,232 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage (approx)', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
       usa: { rev:'£0', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£0', tacosAd:'—', roasAd:'—', revC:'df', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Not launched', roasS:'', roasAdS:'Not launched', aovD:'', aovS:'', adSalesS:'Not launched', revD:'Not launched', revS:'', spendD:'', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
     },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.4,sales:'£6.6k',acos:'42.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.6,sales:'£1.0k',acos:'24.7%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.5,sales:'£21.2k',acos:'38.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.5,sales:'£3.3k',acos:'24.2%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
+    // Period-aware Ad Metrics (3-mo). Spend/AdSales/ACOS/TACOS/ROAS/Impressions = real MerchantSpring
+    // sums; CPC + New-to-Brand held at the structural level (per-period detail not pulled).
+    sec: { advertising: { metrics: [
+      {lbl:'Total Spend',  val:'£8,885',  id:'a-spend'},
+      {lbl:'Ad Sales',     val:'£24,525', color:'brand'},
+      {lbl:'ACOS',         val:'36.2%',  color:'amber'},
+      {lbl:'TACOS',        val:'19.0%',  color:'amber', id:'a-tacos'},
+      {lbl:'ROAS',         val:'2.76×',  id:'a-roas'},
+      {lbl:'Avg. CPC',     val:'£0.90'},
+      {lbl:'Impressions',  val:'3.53M'},
+      {lbl:'New-to-Brand', val:'10.5%',  color:'green'}
+    ] } },
   },
   '6m': {
     label: 'Jan–May 2026 (YTD)', shortLabel: 'Jan–May 2026',
@@ -74,7 +89,19 @@ window.DASHBOARD_DATA = {
       irl: { rev:'£2,100', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£30.00', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£2,100 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage (approx)', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
       usa: { rev:'£0', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£0', tacosAd:'—', roasAd:'—', revC:'df', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Not launched', roasS:'', roasAdS:'Not launched', aovD:'', aovS:'', adSalesS:'Not launched', revD:'Not launched', revS:'', spendD:'', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
     },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.4,sales:'£6.6k',acos:'42.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.6,sales:'£1.0k',acos:'24.7%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.5,sales:'£37.1k',acos:'37.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.5,sales:'£5.8k',acos:'23.5%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
+    // Period-aware Ad Metrics (YTD). Spend/AdSales/ACOS/TACOS/ROAS/Impressions = real MerchantSpring
+    // sums; CPC + New-to-Brand held at the structural level (per-period detail not pulled).
+    sec: { advertising: { metrics: [
+      {lbl:'Total Spend',  val:'£15,087', id:'a-spend'},
+      {lbl:'Ad Sales',     val:'£42,928', color:'brand'},
+      {lbl:'ACOS',         val:'35.1%',  color:'amber'},
+      {lbl:'TACOS',        val:'19.4%',  color:'amber', id:'a-tacos'},
+      {lbl:'ROAS',         val:'2.85×',  id:'a-roas'},
+      {lbl:'Avg. CPC',     val:'£0.90'},
+      {lbl:'Impressions',  val:'5.50M'},
+      {lbl:'New-to-Brand', val:'10.5%',  color:'green'}
+    ] } },
   },
   '12m': {
     label: 'Last 12 Months', shortLabel: 'Last 12 Months',
@@ -97,7 +124,19 @@ window.DASHBOARD_DATA = {
       irl: { rev:'£4,500', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£30.00', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£4,500 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage (approx)', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
       usa: { rev:'£0', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£0', tacosAd:'—', roasAd:'—', revC:'df', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Not launched', roasS:'', roasAdS:'Not launched', aovD:'', aovS:'', adSalesS:'Not launched', revD:'Not launched', revS:'', spendD:'', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
     },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.4,sales:'£6.6k',acos:'42.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.6,sales:'£1.0k',acos:'24.7%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.5,sales:'£81.3k',acos:'37.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.5,sales:'£12.7k',acos:'23.5%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
+    // Period-aware Ad Metrics (12-mo). Spend/AdSales/ACOS/TACOS/ROAS = real; Impressions ~trailing-year
+    // sum (incl. est. Oct); CPC + New-to-Brand held at the structural level.
+    sec: { advertising: { metrics: [
+      {lbl:'Total Spend',  val:'£33,105', id:'a-spend'},
+      {lbl:'Ad Sales',     val:'£93,973', color:'brand'},
+      {lbl:'ACOS',         val:'35.2%',  color:'amber'},
+      {lbl:'TACOS',        val:'19.1%',  color:'amber', id:'a-tacos'},
+      {lbl:'ROAS',         val:'2.84×',  id:'a-roas'},
+      {lbl:'Avg. CPC',     val:'£0.90'},
+      {lbl:'Impressions',  val:'12.8M'},
+      {lbl:'New-to-Brand', val:'10.5%',  color:'green'}
+    ] } },
   }
   },
   sections: {
@@ -212,20 +251,23 @@ window.DASHBOARD_DATA = {
       forecast: [
         {month:'—', budget:'Forecast being rebuilt — see tracker', pct:0, tacos:'—', roas:'—'}
       ],
+      // Real per-campaign actuals (MerchantSpring campaigns report, UK channel, May 2026 · 34 campaigns,
+      // top 13 by spend). "Active Campaigns" is a current-month snapshot (it doesn't follow the date
+      // selector; the period-aware ad totals live in the KPI row + Ad Metrics card + campaign-type pie).
       campaigns: [
         {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£880',sales:'£1,668',acos:'52.7%',acosCls:'br',roas:'1.90×',cpc:'£0.98',status:'Active',statusCls:'bg'},
         {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£678',sales:'£1,731',acos:'39.2%',acosCls:'ba',roas:'2.55×',cpc:'£1.05',status:'Active',statusCls:'bg'},
-        {name:'UK · Contours Rx Brand Banner',type:'Sponsored Brands',spend:'£256',sales:'£1,040',acos:'24.7%',acosCls:'bg',roas:'4.06×',cpc:'£0.56',status:'Active',statusCls:'bg'},
-        {name:'UK · NWN Grow Bundle — SP Auto',type:'Sponsored Products',spend:'£250',sales:'£323',acos:'77.6%',acosCls:'br',roas:'1.29×',cpc:'£0.87',status:'Active',statusCls:'bg'},
+        {name:'UK · Contours Rx Brand Banner',type:'Sponsored Brands',spend:'£256',sales:'£1,040',acos:'24.6%',acosCls:'bg',roas:'4.06×',cpc:'£0.56',status:'Active',statusCls:'bg'},
+        {name:'UK · NWN Grow Bundle — SP Auto',type:'Sponsored Products',spend:'£250',sales:'£323',acos:'77.6%',acosCls:'br',roas:'1.29×',cpc:'£0.87',status:'Paused',statusCls:'ba'},
         {name:'UK · Lids by Design — SP PAT',type:'Sponsored Products',spend:'£242',sales:'£653',acos:'37.0%',acosCls:'ba',roas:'2.70×',cpc:'£0.85',status:'Active',statusCls:'bg'},
+        {name:'UK · NWN Grow Bundle — SP Manual',type:'Sponsored Products',spend:'£115',sales:'£82',acos:'140.8%',acosCls:'br',roas:'0.71×',cpc:'£0.96',status:'Paused',statusCls:'ba'},
+        {name:'UK · Eye-Liners — SP Manual',type:'Sponsored Products',spend:'£110',sales:'£221',acos:'49.6%',acosCls:'ba',roas:'2.02×',cpc:'£0.96',status:'Paused',statusCls:'ba'},
         {name:'UK · Lids by Design — SP Branded Manual',type:'Sponsored Products',spend:'£92',sales:'£855',acos:'10.8%',acosCls:'bg',roas:'9.28×',cpc:'£0.75',status:'Active',statusCls:'bg'},
-        {name:'UK · Eye-Liners — SP Manual',type:'Sponsored Products',spend:'£110',sales:'£221',acos:'49.6%',acosCls:'br',roas:'2.02×',cpc:'£0.96',status:'Active',statusCls:'bg'},
         {name:'UK · Lilibeth Brow Shapers — SP PAT',type:'Sponsored Products',spend:'£87',sales:'£207',acos:'41.9%',acosCls:'ba',roas:'2.39×',cpc:'£0.62',status:'Active',statusCls:'bg'},
         {name:'UK · Newnique Brand Defense — SP Manual',type:'Sponsored Products',spend:'£71',sales:'£225',acos:'31.6%',acosCls:'ba',roas:'3.16×',cpc:'£0.94',status:'Active',statusCls:'bg'},
-        {name:'UK · Lilibeth Brow Shapers — SP Branded Manual',type:'Sponsored Products',spend:'£48',sales:'£191',acos:'24.9%',acosCls:'bg',roas:'4.01×',cpc:'£0.88',status:'Active',statusCls:'bg'},
         {name:'UK · Advanced Hair Growth — SP Auto',type:'Sponsored Products',spend:'£64',sales:'£40',acos:'159.4%',acosCls:'br',roas:'0.63×',cpc:'£0.81',status:'Active',statusCls:'bg'},
-        {name:'UK · Botanical Lash — SP Auto',type:'Sponsored Products',spend:'£41',sales:'£0',acos:'n/a',acosCls:'br',roas:'0.00×',cpc:'£1.86',status:'Active',statusCls:'bg'},
-        {name:'UK · Lilibeth Tweezers — SP Manual',type:'Sponsored Products',spend:'£33',sales:'£50',acos:'66.9%',acosCls:'br',roas:'1.50×',cpc:'£0.78',status:'Paused',statusCls:'ba'}
+        {name:'UK · Lilibeth Brow Shapers — SP Branded Manual',type:'Sponsored Products',spend:'£48',sales:'£191',acos:'24.9%',acosCls:'bg',roas:'4.01×',cpc:'£0.88',status:'Active',statusCls:'bg'},
+        {name:'UK · Botanical Lash — SP Auto',type:'Sponsored Products',spend:'£41',sales:'£0',acos:'n/a',acosCls:'br',roas:'0.00×',cpc:'£1.86',status:'Paused',statusCls:'ba'}
       ]
     },
     inventory: {
