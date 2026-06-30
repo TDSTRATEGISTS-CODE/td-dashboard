@@ -66,6 +66,23 @@ window.DASHBOARD_DATA = {
       {lbl:'Avg. CPC',     val:'£0.90'},
       {lbl:'Impressions',  val:'3.53M'},
       {lbl:'New-to-Brand', val:'10.5%',  color:'green'}
+    ],
+    // Real per-campaign actuals for the 3-mo window (MerchantSpring campaigns report, Mar–May 2026,
+    // top 13 of 41 by spend). Follows the date selector; row-filtered by the market chip.
+    campaigns: [
+      {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£2,724',sales:'£7,757',acos:'35.1%',acosCls:'ba',roas:'2.85×',cpc:'£0.96',status:'Active',statusCls:'bg'},
+      {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£1,981',sales:'£3,950',acos:'50.1%',acosCls:'br',roas:'1.99×',cpc:'£0.87',status:'Active',statusCls:'bg'},
+      {name:'UK · Contours Rx Brand Banner',type:'Sponsored Brands',spend:'£642',sales:'£2,803',acos:'22.9%',acosCls:'bg',roas:'4.37×',cpc:'£0.49',status:'Active',statusCls:'bg'},
+      {name:'UK · Lids by Design — SP PAT',type:'Sponsored Products',spend:'£505',sales:'£1,603',acos:'31.5%',acosCls:'ba',roas:'3.17×',cpc:'£0.76',status:'Active',statusCls:'bg'},
+      {name:'UK · Eye-Liners — SP Manual',type:'Sponsored Products',spend:'£496',sales:'£972',acos:'51.0%',acosCls:'br',roas:'1.96×',cpc:'£1.02',status:'Paused',statusCls:'ba'},
+      {name:'UK · NWN Grow Bundle — SP Auto',type:'Sponsored Products',spend:'£444',sales:'£557',acos:'79.8%',acosCls:'br',roas:'1.25×',cpc:'£0.80',status:'Paused',statusCls:'ba'},
+      {name:'UK · Lids by Design — SP Branded Manual',type:'Sponsored Products',spend:'£336',sales:'£3,931',acos:'8.5%',acosCls:'bg',roas:'11.70×',cpc:'£0.70',status:'Active',statusCls:'bg'},
+      {name:'UK · NWN Grow Bundle — SP Manual',type:'Sponsored Products',spend:'£276',sales:'£82',acos:'336.5%',acosCls:'br',roas:'0.30×',cpc:'£0.77',status:'Paused',statusCls:'ba'},
+      {name:'UK · Lilibeth Brow Shapers — SP Branded Manual',type:'Sponsored Products',spend:'£159',sales:'£654',acos:'24.3%',acosCls:'bg',roas:'4.11×',cpc:'£0.77',status:'Active',statusCls:'bg'},
+      {name:'UK · Lilibeth Brow Shapers — SP PAT',type:'Sponsored Products',spend:'£149',sales:'£298',acos:'49.9%',acosCls:'ba',roas:'2.00×',cpc:'£0.61',status:'Active',statusCls:'bg'},
+      {name:'UK · Teeth Whitening Strips — SP Auto',type:'Sponsored Products',spend:'£141',sales:'£250',acos:'56.4%',acosCls:'br',roas:'1.77×',cpc:'£0.78',status:'Active',statusCls:'bg'},
+      {name:'UK · NWN Grow Bundle — SP PAT',type:'Sponsored Products',spend:'£139',sales:'£0',acos:'n/a',acosCls:'br',roas:'0.00×',cpc:'£0.78',status:'Paused',statusCls:'ba'},
+      {name:'UK · Newnique Brand Defense — SP Default Manual',type:'Sponsored Products',spend:'£125',sales:'£341',acos:'36.6%',acosCls:'ba',roas:'2.73×',cpc:'£0.93',status:'Active',statusCls:'bg'}
     ] } },
   },
   '6m': {
@@ -101,6 +118,23 @@ window.DASHBOARD_DATA = {
       {lbl:'Avg. CPC',     val:'£0.90'},
       {lbl:'Impressions',  val:'5.50M'},
       {lbl:'New-to-Brand', val:'10.5%',  color:'green'}
+    ],
+    // Real per-campaign actuals for the YTD window (MerchantSpring campaigns report, Jan–May 2026,
+    // top 13 of 44 by spend). Follows the date selector; row-filtered by the market chip.
+    campaigns: [
+      {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£4,763',sales:'£13,855',acos:'34.4%',acosCls:'ba',roas:'2.91×',cpc:'£0.98',status:'Active',statusCls:'bg'},
+      {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£2,846',sales:'£6,102',acos:'46.7%',acosCls:'ba',roas:'2.14×',cpc:'£0.87',status:'Active',statusCls:'bg'},
+      {name:'UK · Contours Rx Brand Banner',type:'Sponsored Brands',spend:'£1,244',sales:'£4,961',acos:'25.1%',acosCls:'ba',roas:'3.99×',cpc:'£0.51',status:'Active',statusCls:'bg'},
+      {name:'UK · Eye-Liners — SP Manual',type:'Sponsored Products',spend:'£1,143',sales:'£2,380',acos:'48.0%',acosCls:'ba',roas:'2.08×',cpc:'£1.11',status:'Paused',statusCls:'ba'},
+      {name:'UK · Lids by Design — SP PAT',type:'Sponsored Products',spend:'£846',sales:'£2,436',acos:'34.7%',acosCls:'ba',roas:'2.88×',cpc:'£0.72',status:'Active',statusCls:'bg'},
+      {name:'UK · Lids by Design — SP Branded Manual',type:'Sponsored Products',spend:'£580',sales:'£6,958',acos:'8.3%',acosCls:'bg',roas:'11.99×',cpc:'£0.67',status:'Active',statusCls:'bg'},
+      {name:'UK · NWN Grow Bundle — SP Auto',type:'Sponsored Products',spend:'£528',sales:'£633',acos:'83.4%',acosCls:'br',roas:'1.20×',cpc:'£0.80',status:'Paused',statusCls:'ba'},
+      {name:'UK · NWN Grow Bundle — SP Manual',type:'Sponsored Products',spend:'£376',sales:'£284',acos:'132.4%',acosCls:'br',roas:'0.76×',cpc:'£0.77',status:'Paused',statusCls:'ba'},
+      {name:'UK · Girlactik Balms — SP Auto',type:'Sponsored Products',spend:'£333',sales:'£526',acos:'63.2%',acosCls:'br',roas:'1.58×',cpc:'£0.45',status:'Paused',statusCls:'ba'},
+      {name:'UK · Lilibeth Brow Shapers — SP Branded Manual',type:'Sponsored Products',spend:'£255',sales:'£991',acos:'25.7%',acosCls:'ba',roas:'3.89×',cpc:'£0.83',status:'Active',statusCls:'bg'},
+      {name:'UK · Lilibeth Brow Shapers — SP Manual',type:'Sponsored Products',spend:'£244',sales:'£507',acos:'48.1%',acosCls:'ba',roas:'2.08×',cpc:'£0.63',status:'Active',statusCls:'bg'},
+      {name:'UK · Teeth Whitening Strips — SP Auto',type:'Sponsored Products',spend:'£244',sales:'£378',acos:'64.4%',acosCls:'br',roas:'1.55×',cpc:'£0.83',status:'Active',statusCls:'bg'},
+      {name:'UK · Newnique Brand Defense — SP Default Manual',type:'Sponsored Products',spend:'£209',sales:'£539',acos:'38.8%',acosCls:'ba',roas:'2.58×',cpc:'£0.96',status:'Active',statusCls:'bg'}
     ] } },
   },
   '12m': {
@@ -136,6 +170,23 @@ window.DASHBOARD_DATA = {
       {lbl:'Avg. CPC',     val:'£0.90'},
       {lbl:'Impressions',  val:'12.8M'},
       {lbl:'New-to-Brand', val:'10.5%',  color:'green'}
+    ],
+    // Real per-campaign actuals for the trailing-year window (MerchantSpring campaigns report,
+    // Jun 2025–May 2026, top 13 of 51 by spend). Follows the date selector; row-filtered by market.
+    campaigns: [
+      {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£7,808',sales:'£21,002',acos:'37.2%',acosCls:'ba',roas:'2.69×',cpc:'£0.96',status:'Active',statusCls:'bg'},
+      {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£5,928',sales:'£12,531',acos:'47.3%',acosCls:'ba',roas:'2.11×',cpc:'£0.91',status:'Active',statusCls:'bg'},
+      {name:'UK · Lids by Design — SP PAT',type:'Sponsored Products',spend:'£3,297',sales:'£8,784',acos:'37.5%',acosCls:'ba',roas:'2.66×',cpc:'£0.91',status:'Active',statusCls:'bg'},
+      {name:'UK · Contours Rx Brand Banner',type:'Sponsored Brands',spend:'£2,630',sales:'£8,829',acos:'29.8%',acosCls:'ba',roas:'3.36×',cpc:'£0.60',status:'Active',statusCls:'bg'},
+      {name:'UK · Eye-Liners — SP Manual',type:'Sponsored Products',spend:'£2,104',sales:'£4,283',acos:'49.1%',acosCls:'ba',roas:'2.04×',cpc:'£1.02',status:'Paused',statusCls:'ba'},
+      {name:'UK · Lids by Design — SP Branded Manual',type:'Sponsored Products',spend:'£1,530',sales:'£18,484',acos:'8.3%',acosCls:'bg',roas:'12.08×',cpc:'£0.68',status:'Active',statusCls:'bg'},
+      {name:'UK · Lilibeth Brow Shapers — SP Manual',type:'Sponsored Products',spend:'£1,181',sales:'£2,718',acos:'43.5%',acosCls:'ba',roas:'2.30×',cpc:'£0.91',status:'Active',statusCls:'bg'},
+      {name:'UK · NWN Grow Bundle — SP Auto',type:'Sponsored Products',spend:'£880',sales:'£1,361',acos:'64.7%',acosCls:'br',roas:'1.55×',cpc:'£0.84',status:'Paused',statusCls:'ba'},
+      {name:'UK · NWN Grow Bundle — SP Manual',type:'Sponsored Products',spend:'£804',sales:'£777',acos:'103.5%',acosCls:'br',roas:'0.97×',cpc:'£0.80',status:'Paused',statusCls:'ba'},
+      {name:'UK · W&W Sky Video',type:'Sponsored Brands',spend:'£643',sales:'£1,190',acos:'54.0%',acosCls:'br',roas:'1.85×',cpc:'£0.75',status:'Paused',statusCls:'ba'},
+      {name:'UK · Lilibeth Brow Shapers — SP Auto',type:'Sponsored Products',spend:'£444',sales:'£700',acos:'63.5%',acosCls:'br',roas:'1.58×',cpc:'£0.45',status:'Active',statusCls:'bg'},
+      {name:'UK · Research Universal Campaign — SP Auto',type:'Sponsored Products',spend:'£443',sales:'£563',acos:'78.7%',acosCls:'br',roas:'1.27×',cpc:'£0.63',status:'Paused',statusCls:'ba'},
+      {name:'UK · Lilibeth Brow Shapers — SP PAT',type:'Sponsored Products',spend:'£435',sales:'£779',acos:'55.8%',acosCls:'br',roas:'1.79×',cpc:'£0.68',status:'Active',statusCls:'bg'}
     ] } },
   }
   },
@@ -252,8 +303,8 @@ window.DASHBOARD_DATA = {
         {month:'—', budget:'Forecast being rebuilt — see tracker', pct:0, tacos:'—', roas:'—'}
       ],
       // Real per-campaign actuals (MerchantSpring campaigns report, UK channel, May 2026 · 34 campaigns,
-      // top 13 by spend). "Active Campaigns" is a current-month snapshot (it doesn't follow the date
-      // selector; the period-aware ad totals live in the KPI row + Ad Metrics card + campaign-type pie).
+      // top 13 by spend). This is the 'may' default; 3m/6m/12m each override it via their own
+      // sec.advertising.campaigns, so Active Campaigns now follows the date selector (and market chip).
       campaigns: [
         {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£880',sales:'£1,668',acos:'52.7%',acosCls:'br',roas:'1.90×',cpc:'£0.98',status:'Active',statusCls:'bg'},
         {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£678',sales:'£1,731',acos:'39.2%',acosCls:'ba',roas:'2.55×',cpc:'£1.05',status:'Active',statusCls:'bg'},
