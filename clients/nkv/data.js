@@ -342,7 +342,57 @@ window.DASHBOARD_DATA = {
         {product:'White Luxe (Kits)', lastsUntil:'August', checkAgain:'July', orderBy:'August', level:'amber', note:'Make sure enough stock for Dec/Jan'},
         {product:'Girlactik', lastsUntil:'July', checkAgain:'May', orderBy:'June/July', level:'red', note:'?'},
         {product:'White Luxe (Strips)', lastsUntil:'Good for now', checkAgain:'January', orderBy:'—', level:'', note:''}
-      ]
+      ],
+      // Per-market FBA stock (MerchantSpring product report, 30 Jun 2026). 'all'/'uk' use the default
+      // kpis/stock/restock above. Ireland ships FBA from the UK pool (early stage, ample cover); USA is
+      // a separate Newnique-only seller account (newly launched). Selected via the market chip (app.js).
+      kpisByMarket: {
+        irl: [
+          {bar:'green',  lbl:'In Stock',      val:'23',  dCls:'du', d:'of 24 listings', s:'1 OOS · Girlactik Brown'},
+          {bar:'#404935',lbl:'Units on Hand', val:'995', dCls:'df', d:'FBA total',       s:'ships from UK pool'},
+          {bar:'green',  lbl:'Reorder Watch', val:'0',   dCls:'du', d:'healthy cover',   s:'early stage · low velocity'},
+          {bar:'amber',  lbl:'Out of Stock',  val:'1',   dCls:'df', dColor:'amber', d:'Girlactik Brown', s:'B09QRJ4Y44 · non-selling'}
+        ],
+        usa: [
+          {bar:'green',  lbl:'In Stock',      val:'4',   dCls:'du', d:'of 5 ASINs',      s:'Newnique · 1 OOS'},
+          {bar:'#404935',lbl:'Units on Hand', val:'174', dCls:'df', d:'FBA total',       s:'across 5 SKUs'},
+          {bar:'amber',  lbl:'Reorder Watch', val:'2',   dCls:'df', dColor:'amber', d:'~5 weeks cover', s:'2 active sellers'},
+          {bar:'red',    lbl:'Out of Stock',  val:'1',   dCls:'dd', d:'GrowPod kit',     s:'B0FCFVGD6Y · restock'}
+        ]
+      },
+      stockByMarket: {
+        irl: [
+          {dot:'dg',name:'Contours Rx Lids by Design — 7mm',note:'B018EDU1DA · IE · Contours Rx',units:'95 units',days:'ample'},
+          {dot:'dg',name:'White Luxe Teeth Whitening Kit',note:'B08SCS43Q1 · IE · White Luxe',units:'86 units',days:'ample'},
+          {dot:'dg',name:'Contours Rx Lids by Design — 6mm',note:'B018EHOJ2K · IE · Contours Rx',units:'85 units',days:'ample'},
+          {dot:'dg',name:'Contours Rx Lids by Design — 4mm',note:'B08MJ1PSXN · IE · Contours Rx',units:'80 units',days:'ample'},
+          {dot:'dg',name:'Contours Rx Assortment 4–7mm',note:'B0FYR8DQ2G · IE · top seller · 2 listings',units:'118 units',days:'ample'},
+          {dot:'dg',name:'Newnique Advanced Hair Growth Serum',note:'B0F8QMT775 · IE · Newnique',units:'31 units',days:'ample'},
+          {dot:'dg',name:'Girlactik Gel Eyeliner — Pure Black',note:'B099KVFGZP · IE · Girlactik',units:'24 units',days:'ample'},
+          {dot:'dr',name:'Girlactik Gel Eyeliner — Pure Brown',note:'B09QRJ4Y44 · IE · out of stock',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'}
+        ],
+        usa: [
+          {dot:'da',name:'Newnique Organic Hair Growth Oil',note:'B0F8QQ4M2G · US · top seller (~30/mo)',units:'35 units',unitsColor:'amber',days:'~35 days',daysColor:'amber'},
+          {dot:'da',name:'Newnique Advanced Hair Growth Serum',note:'B0F8QMT775 · US · ~29/mo',units:'37 units',unitsColor:'amber',days:'~38 days',daysColor:'amber'},
+          {dot:'dg',name:'Newnique Hair Loss Serum',note:'B0F8QQGM8Y · US · seeding · no sales yet',units:'50 units',days:'ample'},
+          {dot:'dg',name:'Newnique Scalp Exfoliant',note:'B0F8QLYNMQ · US · seeding · no sales yet',units:'52 units',days:'ample'},
+          {dot:'dr',name:'Newnique GrowPod Hair Growth Kit',note:'B0FCFVGD6Y · US · out of stock',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'}
+        ]
+      },
+      // NB: rows in these per-market lists must NOT mention a *different* market's code (UK/USA/DE…) —
+      // applyMarketFilter scans row text and would hide a row tagged with a market other than the chip.
+      restockByMarket: {
+        irl: [
+          {level:'amber',title:'Girlactik Gel Eyeliner — Pure Brown (IE)',sub:'B09QRJ4Y44 · out of stock · not currently selling · low priority · replenish on the next Contours Rx shipment'}
+        ],
+        usa: [
+          {level:'red',  title:'Newnique GrowPod Hair Growth Kit — US',sub:'B0FCFVGD6Y · out of stock · restock to relaunch the bundle'},
+          {level:'amber',title:'Newnique Organic Hair Growth Oil — US',sub:'B0F8QQ4M2G · ~35 days cover · 35 units · selling ~30/mo · reorder within 4 weeks'}
+        ]
+      },
+      // US is a separate Newnique-only seller account — the UK manufacturer PO forecast doesn't apply, so
+      // hide the Supplier POs card there. Ireland ships from the UK pool, so it keeps the UK PO table.
+      supplierPOsByMarket: { usa: [] }
     },
     products: {
       // KPIs + by-market table = May 2026 (page period). Groups card = trailing 12 months (its label).
@@ -404,6 +454,19 @@ window.DASHBOARD_DATA = {
     '12m':[['Contours Rx — Eyelid Strips','£102,859',3103,'70%'],['White Luxe — Teeth Whitening','£20,192',572,'14%'],['Lilibeth — Brow & Dermaplaning','£11,401',1148,'8%'],['Newnique — Hair Growth','£8,906',336,'6%'],['Girlactik — Eyeliner','£4,540',289,'3%']]
   };
   function num(x) { return x.toLocaleString('en-GB'); }
+  function gbp(s) { return Number(String(s).replace(/[^0-9.]/g, '')); }
+  // 'All Markets' = UK + Ireland combined (USA not launched), so the KPI row matches the Overview
+  // totals (e.g. May rev £15,770, AOV £27.81). Ireland is ~100% Contours Rx, so it rolls into Top Brand.
+  function allCards(u, r, lbl) {
+    var rev = gbp(u.rev) + gbp(r.rev), units = u.units + r.units, orders = u.orders + r.orders;
+    var topRev = gbp(u.topRev) + gbp(r.rev);
+    return [
+      { bar:'#404935',      lbl:'Active SKUs',    val:'46',                                dCls:'df', d:'UK + IRL',          s:u.sold + ' sold (' + lbl + ')' },
+      { bar:'var(--green)', lbl:'Top Brand Rev.', val:'£' + num(Math.round(topRev)),       dCls:'du', d:'Contours Rx',       s:Math.round(topRev / rev * 100) + '% of ' + lbl + ' sales' },
+      { bar:'var(--blue)',  lbl:'Orders',         val:num(orders),                         dCls:'df', d:lbl + ' · UK+IRL',   s:'AOV £' + (rev / orders).toFixed(2) },
+      { bar:'var(--amber)', lbl:'ASP',            val:'£' + (rev / units).toFixed(2),      dCls:'df', d:lbl + ' avg',        s:'per unit' }
+    ];
+  }
   function ukCards(u, lbl) { return [
     { bar:'#404935',      lbl:'Active SKUs',    val:'46',          dCls:'df', d:'UK listings',  s:u.sold + ' sold (' + lbl + ')' },
     { bar:'var(--green)', lbl:'Top Brand Rev.', val:u.topRev,      dCls:'du', d:'Contours Rx',  s:u.topPct + ' of ' + lbl + ' sales' },
@@ -431,7 +494,7 @@ window.DASHBOARD_DATA = {
   P.kpisByPeriod = {}; P.tableByPeriod = {}; P.groupsByPeriod = {};
   ['may', '3m', '6m', '12m'].forEach(function (p) {
     var u = UK[p], r = IRL[p], lbl = LBL[p], uc = ukCards(u, lbl), g = grp(GROUPS[p]);
-    P.kpisByPeriod[p]   = { all:uc, uk:uc, irl:irlCards(r, lbl), usa:usaCards };
+    P.kpisByPeriod[p]   = { all:allCards(u, r, lbl), uk:uc, irl:irlCards(r, lbl), usa:usaCards };
     P.tableByPeriod[p]  = rows(u, r);
     P.groupsByPeriod[p] = { all:g, uk:g, irl:g, usa:g };
   });

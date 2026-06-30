@@ -1677,11 +1677,10 @@ function renderSections() {
   if (ad.budgets) renderAdBudgets(ad.budgets);                            // forward-looking, not period-bound
   if (ad.forecast) renderForecast(ad.forecast);
 
-  var iv = S.inventory || {};                                            // whole page → MCP live later
-  // Stock-status KPIs follow the market chip: per-marketplace counts (kpisByMarket) when one is
-  // selected, else the EU unique-SKU totals. The stock + restock lists are market-filtered by row.
-  var ivMkt = (currentMarket && currentMarket !== 'all') ? currentMarket : null;
-  var ivKpis = (ivMkt && iv.kpisByMarket && iv.kpisByMarket[ivMkt]) || iv.kpis;
+  var iv = S.inventory || {};                                            // boot paint of the defaults;
+  // renderPeriodSections() re-renders the Inventory page market-aware (KPIs/stock/restock/POs/scope)
+  // immediately after and on every chip change — see the inventory block there.
+  var ivKpis = iv.kpis;
   if (ivKpis) renderKpis('sec-inv-kpis', ivKpis);
   if (iv.stock) renderStock(iv.stock);
   if (iv.dispatch) renderProgress('sec-inv-dispatch', iv.dispatch.bars, iv.dispatch.note);
@@ -1805,12 +1804,23 @@ function renderPeriodSections(d) {
   else if (am) { var amw = el('sec-ad-metrics'); if (amw) amw.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:16px;text-align:center;">No ad activity in ' + ((MKT[adMkt] && MKT[adMkt].t) || adMkt || 'this market') + ' this period.</div>'; }
   var ac = pick(sad.campaigns, ad.campaigns); if (ac) renderCampaigns(ac);
 
-  // Inventory stock-status KPIs follow the market chip (per-marketplace counts; EU unique-SKU totals
-  // for All-EU). Lists below row-filter by market separately. Runs here so it reacts to chip changes.
+  // Inventory follows the market chip — KPIs, Stock-by-ASIN, Restock Priority, Supplier POs and the
+  // scope label each take a per-market override (…ByMarket[mkt]), else the default (UK/EU pool). Ireland
+  // & USA are real per-channel FBA snapshots (MerchantSpring). supplierPOsByMarket can be [] to hide the
+  // card for a market the UK PO table doesn't cover (e.g. the US Newnique-only account).
   var ivp = S.inventory || {};
   var ivpMkt = (currentMarket && currentMarket !== 'all') ? currentMarket : null;
   var ivpKpis = (ivpMkt && ivp.kpisByMarket && ivp.kpisByMarket[ivpMkt]) || ivp.kpis;
   if (ivpKpis) renderKpis('sec-inv-kpis', ivpKpis);
+  var ivpStock = (ivpMkt && ivp.stockByMarket && ivp.stockByMarket[ivpMkt]) || ivp.stock;
+  if (ivpStock) renderStock(ivpStock);
+  var ivpRestock = (ivpMkt && ivp.restockByMarket && ivp.restockByMarket[ivpMkt]) || ivp.restock;
+  if (ivpRestock) renderRestock(ivpRestock);
+  var ivpPOs = (ivpMkt && ivp.supplierPOsByMarket && ivp.supplierPOsByMarket[ivpMkt] !== undefined)
+    ? ivp.supplierPOsByMarket[ivpMkt] : ivp.supplierPOs;
+  renderSupplierPOs(ivpPOs);
+  var ivpScope = el('inv-stock-scope');
+  if (ivpScope) ivpScope.textContent = (ivpMkt && MKT[ivpMkt]) ? MKT[ivpMkt].t : ((CONFIG.client && CONFIG.client.scopeLabel) || 'All marketplaces');
 
   // Founder Overview actuals (no-op unless sections.overviewActuals exists). kpis/cvr are period-aware
   // (sec override); revTrend + buyBox come from the top-level (don't vary by period).
