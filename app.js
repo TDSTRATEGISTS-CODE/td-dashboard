@@ -511,7 +511,9 @@ function showLoadingOverlay() {
         'color:var(--muted,#6b7160);letter-spacing:.3px;min-height:20px;text-align:center;}' +
       '#live-loading .nload-line{display:inline-block;animation:nTxt .45s ease;}' +
       '@keyframes nTxt{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}' +
-      // dots sit in a fixed-width slot so the centred phrase never shuffles sideways as they cycle
+      // dots sit in a fixed-width slot so the centred phrase never shuffles sideways as they cycle;
+      // an equal-width spacer on the left keeps the phrase truly centred (so it lines up with the OTP row)
+      '#live-loading .nload-pad{display:inline-block;width:1.4em;}' +
       '#live-loading .nload-dots{display:inline-block;width:1.4em;text-align:left;}' +
       '#live-loading .nload-dots::after{content:"";animation:nDots 1.3s steps(4,end) infinite;}' +
       '@keyframes nDots{0%{content:"";}25%{content:".";}50%{content:"..";}75%{content:"...";}}' +
@@ -528,7 +530,7 @@ function showLoadingOverlay() {
   }
   ov.innerHTML =
     '<div class="notp">' + cells + '</div>' +
-    '<div class="nload-txt"><span class="nload-line" id="nload-line">Digital Dash loading</span><span class="nload-dots"></span></div>';
+    '<div class="nload-txt"><span class="nload-pad"></span><span class="nload-line" id="nload-line">Digital Dash loading</span><span class="nload-dots"></span></div>';
   (document.body || document.documentElement).appendChild(ov);
   document.documentElement.style.overflow = 'hidden';   // no scrollbar gutter behind the overlay
 
