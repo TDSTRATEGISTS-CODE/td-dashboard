@@ -297,15 +297,20 @@ window.DASHBOARD_DATA = {
 /* ============================================================================================
    SHOPIFY (D2C) — sections.shopify  ·  brand-filtered: All / Newnique / Contours Rx (2 stores)
    --------------------------------------------------------------------------------------------
-   Source: Shopify Admin API + ShopifyQL, pulled in-session 17 Jun 2026, native GBP.
-   • Contours Rx UK (contours-rx.co.uk · 658f4a.myshopify.com): MONTH-level sales, sessions/CVR,
-     product mix, returning-customer rate, traffic, and live stock-on-hand are EXACT MCP actuals.
-   • Newnique: a STUB — the store needs a Shopify re-auth before it can be pulled; numbers populate
-     at the next bake. 'all' currently equals Contours Rx (see the derivation at the bottom).
-   ESTIMATES (clearly marked 'est' in the cards): per-unit ASP + unit counts for the 3-mo / YTD /
-   12-mo periods (units estimated at ~1.05/order), the cart/checkout funnel steps for those longer
-   periods (scaled from May's 6.2% cart / 4.5% checkout ratios), the returning-customer rate beyond
-   May, and the per-product split for longer periods (Lids ≈ 97.8% of net). Re-bake to make exact.
+   Post-Porter bake (30 Jun 2026), native GBP. The Shopify-via-Porter feed is gone; this page now
+   pairs two sources, mirroring how the Amazon side already works:
+   • ORDER-SIDE (net sales, orders, AOV, units, product mix, stock-on-hand) → MerchantSpring's
+     Shopify channels — Contours Rx ch 33616599, Newnique ch 110450469 (the same connector that
+     serves NKV's Amazon actuals).
+   • SESSION-SIDE (sessions, CVR, the cart→checkout→purchase funnel, traffic-by-channel) → GA4 via
+     the Reporting Ninja connector (properties/394327082 Contours Rx, properties/506386258 Newnique).
+   Contours Rx UK (contours-rx.co.uk · 658f4a.myshopify.com): order-side + GA4 are both EXACT actuals
+   for every period (may/3m/6m/12m). Note GA4 purchases (46 May) run below the Orders KPI (90) —
+   orders include repeat/manual/no-session orders; the funnel + CVR are session-based, Orders is
+   order-based — both valid, kept separate.
+   Newnique: MerchantSpring isn't ingesting its orders yet, so its ORDER-SIDE reads "pending Executive
+   integration"; its GA4 session-side IS live (450 sessions May). 'all' equals Contours Rx until
+   Newnique's orders backfill (see the derivation at the bottom).
    Read by app.js → renderShopify() / renderShopBrands(); follows the shared date-range selector. */
 window.DASHBOARD_DATA.sections.shopify = {
   brands: [
@@ -316,26 +321,27 @@ window.DASHBOARD_DATA.sections.shopify = {
   data: {
     contoursrx: {
       label: 'Contours Rx UK', store: 'contours-rx.co.uk',
-      // 6-month net-sales trend (Dec 2025 → May 2026), exact MCP actuals.
+      // 6-month net-sales trend (Dec 2025 → May 2026), exact MerchantSpring actuals.
       chart: {
         max: 4000, yTicks: ['£4k', '£3k', '£2k', '£1k', '£0'],
         xLabels: ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'], xHighlight: '#404935',
         series: [ { values: [1863, 2127, 2907, 3243, 2621, 2416], color: '#404935', area: true, main: true } ],
         legend: [ { name: 'Net Sales', color: '#404935' } ]
       },
-      // Current on-hand snapshot (Admin API, 17 Jun 2026). Cover = vs ~May run-rate.
+      // Current on-hand snapshot from MerchantSpring (Shopify channel, 30 Jun 2026). Cover = vs ~May run-rate.
       stock: [
-        { name: 'Lids by Design Eyelid Lift Strips', note: '7 size variants · Healthy',        level: 'g', units: '2,123 units', cover: '~690 days' },
+        { name: 'Lids by Design Eyelid Lift Strips', note: '7 size variants · Healthy',        level: 'g', units: '2,088 units', cover: '~680 days' },
         { name: 'Exfoliating B5 Prep Pads 30pk',     note: 'SKU CR B5PREP · Healthy',          level: 'g', units: '72 units',    cover: 'ample cover' },
         { name: 'Botanical Lash & Brow Serum',       note: 'SKU CR BLBS · New launch (Oct)',   level: 'g', units: '47 units',    cover: 'ample cover' },
         { name: 'Dermal Blade (3 pack)',             note: 'SKU CR DERMA · Restock needed',    level: 'r', units: '0 units',     cover: 'OOS' }
       ],
-      // Traffic by referrer (May actual). Bar widths floored so near-zero channels stay visible.
-      // Traffic by GA4 default channel group (May 2026). Cross-network = Google Ads (Performance Max).
+      // Traffic by GA4 default channel group (May 2026) via Reporting Ninja. Cross-network = Google Ads
+      // (Performance Max). Bar widths floored so near-zero channels stay visible. Sum shown = 2,530 of
+      // 2,618 sessions (smaller channels omitted).
       traffic: [
-        { lbl: 'Paid (Cross-network)', pct: 79, val: '2,065', color: 'brand' },
+        { lbl: 'Paid (Cross-network)', pct: 79, val: '2,069', color: 'brand' },
         { lbl: 'Organic Search',       pct: 9,  val: '229',   color: 'blue' },
-        { lbl: 'Direct',               pct: 8,  val: '203',   color: 'amber' },
+        { lbl: 'Direct',               pct: 8,  val: '202',   color: 'amber' },
         { lbl: 'Email',                pct: 1,  val: '30',    color: 'green' }
       ],
       byPeriod: {
@@ -348,15 +354,15 @@ window.DASHBOARD_DATA.sections.shopify = {
           ],
           kpis2: [
             { bar: '#404935',      lbl: 'Conversion Rate', val: '1.76%',  dCls: 'df', d: 'GA4 · sessions', s: '46 of 2,618 sessions' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '2,618',  dCls: 'du', d: '▲ 16.7% MoM',  s: 'GA4 · vs 2,244 Apr' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '2,618',  dCls: 'du', d: '▲ 16.7% MoM', s: 'GA4 · vs 2,244 Apr' },
             { bar: 'var(--green)', lbl: 'Units Sold',      val: '95',     dCls: 'df', d: 'Lids 92 · B5 3', s: '2 active SKUs' },
             { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '7.8%',   dCls: 'df', d: '7 of 90',      s: 'May actual' }
           ],
           funnel: [
             { lbl: 'Sessions',         val: '2,618', pct: '100%', w: 100 },
-            { lbl: 'Added to Cart',    val: '106',   pct: '4.0%', w: 4,   sub: '4.0% of sessions · GA4' },
+            { lbl: 'Added to Cart',    val: '106',   pct: '4.0%', w: 4,   sub: 'GA4 · 4.0% of sessions' },
             { lbl: 'Reached Checkout', val: '65',    pct: '2.5%', w: 2.5, sub: '61% of carts retained' },
-            { lbl: 'Purchased',        val: '46',    pct: '1.8%', w: 1.8, sub: '71% of checkouts retained' }
+            { lbl: 'Purchased',        val: '46',    pct: '1.8%', w: 1.8, sub: '71% of checkouts · 1.76% CVR' }
           ],
           products: [
             { name: 'Lids by Design Eyelid Lift Strips', net: '£2,362', units: '92', asp: '£25.67', orders: '90', share: '97.8%', shareCls: 'bg' },
@@ -370,13 +376,13 @@ window.DASHBOARD_DATA.sections.shopify = {
             { bar: '#404935',      lbl: 'Net Sales', val: '£8,280', dCls: 'df', d: '3-mo actuals',  s: 'Mar–May 2026' },
             { bar: 'var(--blue)',  lbl: 'Orders',    val: '293',    dCls: 'df', d: '3-mo actuals',  s: 'AOV £28.54' },
             { bar: 'var(--green)', lbl: 'AOV',       val: '£28.54', dCls: 'df', d: '3-mo blended',  s: '' },
-            { bar: 'var(--amber)', lbl: 'ASP',       val: '£26.88', dCls: 'df', d: 'est · per unit', s: '~308 units' }
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£25.96', dCls: 'df', d: 'net ÷ units',  s: '319 units' }
           ],
           kpis2: [
             { bar: '#404935',      lbl: 'Conversion Rate', val: '2.36%', dCls: 'df', d: 'GA4 · 3-mo',   s: '169 of 7,146 sessions' },
             { bar: 'var(--blue)',  lbl: 'Sessions',        val: '7,146', dCls: 'df', d: 'GA4 · Mar–May', s: 'GA4 actuals' },
-            { bar: 'var(--green)', lbl: 'Units Sold',      val: '~308',  dCls: 'df', d: 'est',          s: 'Lids-dominant' },
-            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~10%',  dCls: 'df', d: 'est',          s: '3-mo window' }
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '319',   dCls: 'df', d: 'Lids 310 · B5 8',  s: 'Mar–May' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '7.7%',  dCls: 'df', d: '~23 of 293',       s: '3-mo window' }
           ],
           funnel: [
             { lbl: 'Sessions',         val: '7,146', pct: '100%', w: 100 },
@@ -385,8 +391,8 @@ window.DASHBOARD_DATA.sections.shopify = {
             { lbl: 'Purchased',        val: '169',   pct: '2.4%', w: 2.4, sub: '2.36% conversion' }
           ],
           products: [
-            { name: 'Lids by Design Eyelid Lift Strips', net: '£8,096', units: '~301', asp: '~£27', orders: '286', share: '97.8%', shareCls: 'bg' },
-            { name: 'Other SKUs (B5 · Serum)',           net: '£184',   units: '~11',  asp: '—',    orders: '7',   share: '2.2%',  shareCls: 'bb' }
+            { name: 'Lids by Design Eyelid Lift Strips', net: '£8,138', units: '310', asp: '£26.25', orders: '293', share: '98.3%', shareCls: 'bg' },
+            { name: 'Other SKUs (B5 · Serum)',           net: '£142',   units: '9',   asp: '—',      orders: '9',   share: '1.7%',  shareCls: 'bb' }
           ]
         },
         '6m': {
@@ -394,13 +400,13 @@ window.DASHBOARD_DATA.sections.shopify = {
             { bar: '#404935',      lbl: 'Net Sales', val: '£13,314', dCls: 'df', d: 'YTD actuals',   s: 'Jan–May 2026' },
             { bar: 'var(--blue)',  lbl: 'Orders',    val: '475',     dCls: 'df', d: 'YTD actuals',   s: 'AOV £28.26' },
             { bar: 'var(--green)', lbl: 'AOV',       val: '£28.26',  dCls: 'df', d: 'YTD blended',   s: '' },
-            { bar: 'var(--amber)', lbl: 'ASP',       val: '£26.68',  dCls: 'df', d: 'est · per unit', s: '~499 units' }
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£26.01',  dCls: 'df', d: 'net ÷ units',  s: '512 units' }
           ],
           kpis2: [
             { bar: '#404935',      lbl: 'Conversion Rate', val: '2.46%',  dCls: 'df', d: 'GA4 · YTD',    s: '296 of 12,012 sessions' },
             { bar: 'var(--blue)',  lbl: 'Sessions',        val: '12,012', dCls: 'df', d: 'GA4 · Jan–May', s: 'GA4 actuals' },
-            { bar: 'var(--green)', lbl: 'Units Sold',      val: '~499',  dCls: 'df', d: 'est',         s: 'Lids-dominant' },
-            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~12%',  dCls: 'df', d: 'est',         s: 'YTD window' }
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '512',   dCls: 'df', d: 'Lids 500 · B5 11',  s: 'Jan–May' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '6.2%',  dCls: 'df', d: '~30 of 475',        s: 'YTD window' }
           ],
           funnel: [
             { lbl: 'Sessions',         val: '12,012', pct: '100%', w: 100 },
@@ -409,8 +415,8 @@ window.DASHBOARD_DATA.sections.shopify = {
             { lbl: 'Purchased',        val: '296',    pct: '2.5%', w: 2.5, sub: '2.46% conversion' }
           ],
           products: [
-            { name: 'Lids by Design Eyelid Lift Strips', net: '£13,021', units: '~492', asp: '~£26.5', orders: '465', share: '97.8%', shareCls: 'bg' },
-            { name: 'Other SKUs (B5 · Serum)',           net: '£293',    units: '~17',  asp: '—',      orders: '10',  share: '2.2%',  shareCls: 'bb' }
+            { name: 'Lids by Design Eyelid Lift Strips', net: '£13,119', units: '500', asp: '£26.24', orders: '475', share: '98.5%', shareCls: 'bg' },
+            { name: 'Other SKUs (B5 · Serum)',           net: '£196',    units: '12',  asp: '—',      orders: '12',  share: '1.5%',  shareCls: 'bb' }
           ]
         },
         '12m': {
@@ -418,13 +424,13 @@ window.DASHBOARD_DATA.sections.shopify = {
             { bar: '#404935',      lbl: 'Net Sales', val: '£19,786', dCls: 'df', d: '12-mo actuals',  s: 'Jun 25–May 26' },
             { bar: 'var(--blue)',  lbl: 'Orders',    val: '689',     dCls: 'df', d: '12-mo actuals',  s: 'AOV £28.88' },
             { bar: 'var(--green)', lbl: 'AOV',       val: '£28.88',  dCls: 'df', d: '12-mo blended',  s: '' },
-            { bar: 'var(--amber)', lbl: 'ASP',       val: '£27.36',  dCls: 'df', d: 'est · per unit', s: '~723 units' }
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£25.76',  dCls: 'df', d: 'net ÷ units',  s: '768 units' }
           ],
           kpis2: [
             { bar: '#404935',      lbl: 'Conversion Rate', val: '2.00%',  dCls: 'df', d: 'GA4 · 12-mo',     s: '436 of 21,773 sessions' },
             { bar: 'var(--blue)',  lbl: 'Sessions',        val: '21,773', dCls: 'df', d: 'GA4 · trailing yr', s: 'GA4 actuals' },
-            { bar: 'var(--green)', lbl: 'Units Sold',      val: '~723',   dCls: 'df', d: 'est',           s: 'Lids-dominant' },
-            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~15%',   dCls: 'df', d: 'est',           s: '12-mo window' }
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '768',   dCls: 'df', d: 'Lids 738 · others',   s: 'trailing year' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '5.8%',   dCls: 'df', d: '~40 of 689',          s: '12-mo window' }
           ],
           funnel: [
             { lbl: 'Sessions',         val: '21,773', pct: '100%', w: 100 },
@@ -433,142 +439,75 @@ window.DASHBOARD_DATA.sections.shopify = {
             { lbl: 'Purchased',        val: '436',    pct: '2.0%', w: 2.0, sub: '2.00% conversion' }
           ],
           products: [
-            { name: 'Lids by Design Eyelid Lift Strips', net: '£19,350', units: '~707', asp: '~£27', orders: '674', share: '97.8%', shareCls: 'bg' },
-            { name: 'Other SKUs (B5 · Serum · Dermal)',  net: '£436',    units: '~16',  asp: '—',    orders: '15',  share: '2.2%',  shareCls: 'bb' }
+            { name: 'Lids by Design Eyelid Lift Strips', net: '£19,426', units: '738', asp: '£26.32', orders: '689', share: '98.2%', shareCls: 'bg' },
+            { name: 'Other SKUs (B5 · Dermal · Tweezers)', net: '£360',  units: '30',  asp: '—',      orders: '30',  share: '1.8%',  shareCls: 'bb' }
           ]
         }
       }
     },
-    // Newnique — LIVE from Porter (Shopify connector), pulled 17 Jun 2026. A young hair-care D2C store;
-    // sales are sparse before May. No GA4 connected for Newnique → no sessions/CVR/funnel. Stock sync
-    // was still ingesting at bake time (populates next bake). Order-side periods are exact Porter
-    // actuals (Jun 2025–May 2026). NOTE: net here is Shopify-actual (£251 May) — the P&L uses the
-    // Account Tracker's £223 for May (its own view), so the two pages differ slightly by design.
+    // Newnique — order-side is PENDING. MerchantSpring (Shopify ch 110450469) is connected but not yet
+    // ingesting Newnique's orders, so Net Sales / Orders / AOV / ASP / Units / products / stock read
+    // "pending Executive integration". Its SESSION-SIDE is LIVE from GA4 via Reporting Ninja
+    // (properties/506386258) — real sessions / CVR / funnel / traffic. 'all' = Contours Rx until the
+    // order feed backfills. Newnique's P&L is separate (LIGHT: revenue / COGS / Google Ads from the
+    // Account Tracker via sections.shopifypnl) and unaffected.
     newnique: {
       label: 'Newnique', store: 'newniquecare.com',
-      chart: {
-        max: 300, yTicks: ['£300', '£225', '£150', '£75', '£0'],
-        xLabels: ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'], xHighlight: '#404935',
-        series: [ { values: [17, 0, 85, 0, 0, 251], color: '#404935', area: true, main: true } ],
-        legend: [ { name: 'Net Sales', color: '#404935' } ]
-      },
-      stock: [], traffic: [],
-      placeholder: 'Inventory sync still ingesting in Porter — stock + traffic populate at the next bake.',
-      byPeriod: {
-        may: {
-          kpis1: [
-            { bar: '#404935',      lbl: 'Net Sales', val: '£251',    dCls: 'du', d: '▲ vs £85 Feb',  s: '6 orders' },
-            { bar: 'var(--blue)',  lbl: 'Orders',    val: '6',       dCls: 'df', d: 'May actual',    s: 'AOV £41.89' },
-            { bar: 'var(--green)', lbl: 'AOV',       val: '£41.89',  dCls: 'df', d: 'May blended',   s: '' },
-            { bar: 'var(--amber)', lbl: 'ASP',       val: '£7.18',   dCls: 'df', d: 'net ÷ units',   s: '35 units sold' }
-          ],
-          kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '—',     dCls: 'df', d: 'No GA4 for Newnique', s: 'add GA4 to enable' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '—',     dCls: 'df', d: 'No GA4 for Newnique', s: '' },
-            { bar: 'var(--green)', lbl: 'Units Sold',      val: '35',    dCls: 'df', d: 'hair-care range',     s: '3 active SKUs' },
-            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '16.7%', dCls: 'df', d: '1 of 6',             s: 'May actual' }
-          ],
-          funnel: null,
-          products: [
-            { name: 'GrowPod™ 5-in-1 Hair Care System', net: '£178', units: '3',  asp: '£59.33', orders: '—', share: '70.8%', shareCls: 'bg' },
-            { name: 'Advanced Hair Growth Serum',        net: '£42',  units: '3',  asp: '£14.02', orders: '2', share: '16.7%', shareCls: 'bb' },
-            { name: 'Advanced+ Hair Growth Serum',       net: '£31',  units: '24', asp: '£1.30',  orders: '2', share: '12.4%', shareCls: 'bb' }
-          ]
-        },
-        '3m': {
-          kpis1: [
-            { bar: '#404935',      lbl: 'Net Sales', val: '£251',   dCls: 'df', d: '3-mo actuals', s: 'Mar–May 2026' },
-            { bar: 'var(--blue)',  lbl: 'Orders',    val: '6',      dCls: 'df', d: '3-mo actuals', s: 'all in May' },
-            { bar: 'var(--green)', lbl: 'AOV',       val: '£41.89', dCls: 'df', d: '3-mo blended', s: '' },
-            { bar: 'var(--amber)', lbl: 'ASP',       val: '£7.18',  dCls: 'df', d: 'net ÷ units',  s: '35 units' }
-          ],
-          kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
-            { bar: 'var(--green)', lbl: 'Units Sold',      val: '35', dCls: 'df', d: 'hair-care range',     s: 'Mar–May' },
-            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '16.7%', dCls: 'df', d: '1 of 6',          s: '3-mo' }
-          ],
-          funnel: null,
-          products: [
-            { name: 'GrowPod™ 5-in-1 Hair Care System', net: '£178', units: '3',  asp: '£59.33', orders: '—', share: '70.8%', shareCls: 'bg' },
-            { name: 'Advanced Hair Growth Serum',        net: '£42',  units: '3',  asp: '£14.02', orders: '2', share: '16.7%', shareCls: 'bb' },
-            { name: 'Advanced+ Hair Growth Serum',       net: '£31',  units: '24', asp: '£1.30',  orders: '2', share: '12.4%', shareCls: 'bb' }
-          ]
-        },
-        '6m': {
-          kpis1: [
-            { bar: '#404935',      lbl: 'Net Sales', val: '£336',   dCls: 'df', d: 'YTD actuals',  s: 'Jan–May 2026' },
-            { bar: 'var(--blue)',  lbl: 'Orders',    val: '7',      dCls: 'df', d: 'YTD actuals',  s: 'Feb + May' },
-            { bar: 'var(--green)', lbl: 'AOV',       val: '£48.04', dCls: 'df', d: 'YTD blended',  s: '' },
-            { bar: 'var(--amber)', lbl: 'ASP',       val: '£8.41',  dCls: 'df', d: 'net ÷ units',  s: '40 units' }
-          ],
-          kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
-            { bar: 'var(--green)', lbl: 'Units Sold',      val: '40', dCls: 'df', d: 'hair-care range',     s: 'Jan–May' },
-            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~14%', dCls: 'df', d: 'est',              s: 'YTD window' }
-          ],
-          funnel: null,
-          products: [
-            { name: 'Hair-care range (GrowPod · Serums · Scalp)', net: '£336', units: '40', asp: '£8.41', orders: '7', share: '100%', shareCls: 'bg' }
-          ]
-        },
-        '12m': {
-          kpis1: [
-            { bar: '#404935',      lbl: 'Net Sales', val: '£385',   dCls: 'df', d: '12-mo actuals', s: 'Jun 25–May 26' },
-            { bar: 'var(--blue)',  lbl: 'Orders',    val: '12',     dCls: 'df', d: '12-mo actuals', s: '' },
-            { bar: 'var(--green)', lbl: 'AOV',       val: '£32.12', dCls: 'df', d: '12-mo blended',  s: '' },
-            { bar: 'var(--amber)', lbl: 'ASP',       val: '£7.87',  dCls: 'df', d: 'net ÷ units',    s: '49 units' }
-          ],
-          kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '—',  dCls: 'df', d: 'No GA4 for Newnique', s: '' },
-            { bar: 'var(--green)', lbl: 'Units Sold',      val: '49', dCls: 'df', d: 'hair-care range',     s: 'trailing year' },
-            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '~12%', dCls: 'df', d: 'est',              s: '12-mo window' }
-          ],
-          funnel: null,
-          products: [
-            { name: 'Hair-care range (GrowPod · Serums · Scalp)', net: '£385', units: '49', asp: '£7.87', orders: '12', share: '100%', shareCls: 'bg' }
-          ]
+      chart: null, stock: [],
+      // Traffic by GA4 default channel group (May 2026) via Reporting Ninja. Sum = 422 of 450 sessions.
+      traffic: [
+        { lbl: 'Paid Search',    pct: 40, val: '179', color: 'brand' },
+        { lbl: 'Direct',         pct: 23, val: '102', color: 'blue' },
+        { lbl: 'Cross-network',  pct: 19, val: '87',  color: 'amber' },
+        { lbl: 'Organic Search', pct: 12, val: '54',  color: 'green' }
+      ],
+      placeholder: 'Pending Executive integration — order data (sales / products / stock) populates once Newnique is connected; GA4 traffic is already live.',
+      byPeriod: (function () {
+        // Order-side cards stay "pending" until the Executive/MerchantSpring order feed backfills;
+        // session-side cards + funnel are live GA4 actuals per period.
+        function pend(lbl, bar) { return { bar: bar, lbl: lbl, val: '—', dCls: 'df', d: 'Pending Executive', s: '' }; }
+        function n(x) { return x.toLocaleString('en-GB'); }
+        function rate(a, b) { return (a / b * 100).toFixed(1); }
+        function period(sess, cart, chk, pur, cvr, win) {
+          return {
+            kpis1: [ pend('Net Sales', '#404935'), pend('Orders', 'var(--blue)'), pend('AOV', 'var(--green)'), pend('ASP', 'var(--amber)') ],
+            kpis2: [
+              { bar: '#404935',      lbl: 'Conversion Rate', val: cvr,    dCls: 'df', d: 'GA4 · ' + win, s: pur + ' of ' + n(sess) + ' sessions' },
+              { bar: 'var(--blue)',  lbl: 'Sessions',        val: n(sess), dCls: 'df', d: 'GA4 · ' + win, s: 'GA4 actuals' },
+              pend('Units Sold', 'var(--green)'),
+              pend('Returning Cust.', 'var(--amber)')
+            ],
+            funnel: [
+              { lbl: 'Sessions',         val: n(sess),    pct: '100%',            w: 100 },
+              { lbl: 'Added to Cart',    val: String(cart), pct: rate(cart, sess) + '%', w: +rate(cart, sess), sub: 'GA4 · ' + rate(cart, sess) + '% of sessions' },
+              { lbl: 'Reached Checkout', val: String(chk),  pct: rate(chk, sess) + '%',  w: +rate(chk, sess),  sub: 'GA4 begin_checkout' },
+              { lbl: 'Purchased',        val: String(pur),  pct: rate(pur, sess) + '%',  w: +rate(pur, sess),  sub: cvr + ' conversion' }
+            ],
+            products: []
+          };
         }
-      }
+        return {
+          may:  period(450,  100, 15, 3, '0.67%', 'May'),
+          '3m': period(661,  127, 22, 3, '0.45%', 'Mar–May'),
+          '6m': period(935,  136, 25, 3, '0.32%', 'Jan–May'),
+          '12m':period(1520, 186, 41, 4, '0.26%', 'trailing yr')
+        };
+      })()
     }
   }
 };
 
-/* 'All' = Contours Rx + Newnique, a TRUE SUM. Headline cards (Net Sales, Orders, AOV, ASP) and Units
-   sum both stores; Conversion/Sessions + the funnel are Contours Rx (GA4) since Newnique has no GA4;
-   products merge both ranges; stock/traffic/chart come from Contours Rx (Newnique adds < 2%). The
-   per-period sums are listed below — update them whenever either store's period figures change. */
+/* 'All' currently EQUALS Contours Rx. Newnique's order-side is pending Executive integration (see its
+   block above), so there's nothing to sum on the headline cards yet and 'all' just mirrors the Contours
+   Rx statement. When Newnique's orders backfill, restore the CRX + Newnique sum here (headline Net
+   Sales/Orders/AOV/ASP + Units sum both stores; Conversion/Sessions/funnel + stock/traffic/chart stay
+   Contours Rx; products merge both ranges). */
 window.DASHBOARD_DATA.sections.shopify.data.all = (function () {
-  var SH = window.DASHBOARD_DATA.sections.shopify, crx = SH.data.contoursrx, nkv = SH.data.newnique;
-  function gbp(n) { return '£' + Math.round(n).toLocaleString('en-GB'); }
-  // Combined net / orders / units (Contours Rx + Newnique) + combined returning-customer rate.
-  var S = {
-    may:  { net: 2667,  orders: 96,  units: 130, ret: '8.3%', retSub: '8 of 96' },
-    '3m': { net: 8531,  orders: 299, units: 343, ret: '~9%',  retSub: '3-mo' },
-    '6m': { net: 13650, orders: 482, units: 539, ret: '~12%', retSub: 'YTD' },
-    '12m':{ net: 20171, orders: 701, units: 772, ret: '~14%', retSub: '12-mo' }
-  };
-  var all = { label: 'All Brands', store: 'Contours Rx + Newnique (combined)', chart: crx.chart, stock: crx.stock, traffic: crx.traffic, byPeriod: {} };
+  var crx = window.DASHBOARD_DATA.sections.shopify.data.contoursrx;
+  var all = { label: 'All Brands', store: 'Contours Rx (Newnique orders pending)', chart: crx.chart, stock: crx.stock, traffic: crx.traffic, byPeriod: {} };
   Object.keys(crx.byPeriod).forEach(function (k) {
-    var c = crx.byPeriod[k], s = S[k] || {};
-    var k1 = c.kpis1.slice(), k2 = c.kpis2.slice();   // start from Contours Rx, override the summed cards
-    if (s.net != null) {
-      k1 = [
-        { bar: '#404935',      lbl: 'Net Sales', val: gbp(s.net),            dCls: 'df', d: 'CRX + Newnique', s: s.orders + ' orders' },
-        { bar: 'var(--blue)',  lbl: 'Orders',    val: String(s.orders),      dCls: 'df', d: 'combined',      s: 'AOV ' + gbp(s.net / s.orders) },
-        { bar: 'var(--green)', lbl: 'AOV',       val: gbp(s.net / s.orders), dCls: 'df', d: 'blended',       s: '' },
-        { bar: 'var(--amber)', lbl: 'ASP',       val: gbp(s.net / s.units),  dCls: 'df', d: 'net ÷ units',   s: s.units + ' units' }
-      ];
-      k2 = [
-        c.kpis2[0], c.kpis2[1],   // Conversion Rate + Sessions = Contours Rx (GA4)
-        { bar: 'var(--green)', lbl: 'Units Sold',      val: String(s.units), dCls: 'df', d: 'combined', s: 'both stores' },
-        { bar: 'var(--amber)', lbl: 'Returning Cust.', val: s.ret,           dCls: 'df', d: s.retSub,  s: 'combined' }
-      ];
-    }
-    var prods = (c.products || []).concat((nkv.byPeriod[k] && nkv.byPeriod[k].products) || []);
-    all.byPeriod[k] = { kpis1: k1, kpis2: k2, funnel: c.funnel, products: prods };
+    var c = crx.byPeriod[k];
+    all.byPeriod[k] = { kpis1: c.kpis1, kpis2: c.kpis2, funnel: c.funnel, products: c.products };
   });
   return all;
 })();

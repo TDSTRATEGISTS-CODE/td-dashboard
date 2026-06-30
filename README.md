@@ -190,21 +190,27 @@ sections.shopify = {
         products:[ { name, net, units, asp, orders, share, shareCls } ]
       } }
     },
-    newnique: { â€¦live (Porter/Shopify) â€” hair-care D2C; no GA4 so no sessions/funnelâ€¦ },
-    all:      { â€¦true sum = Contours Rx + Newniqueâ€¦ }
+    newnique: { â€¦order-side pending Executive integration; GA4 session-side LIVE (sessions/funnel/traffic)â€¦ },
+    all:      { â€¦currently = Contours Rx (Newnique orders pending)â€¦ }
   }
 }
 ```
 
-**Data source.** Pulled via **Porter** (17 Jun 2026): order-side (net sales, orders, AOV, units,
-products) from the **Shopify** connector; session-side (sessions, CVR, funnel, traffic-by-channel)
-from **GA4** â€” GA4 is connected for **Contours Rx only**, so Newnique shows no sessions/funnel. Porter's
-Shopify window reaches ~Feb 2026, so Contours Rx **May + 3-mo** are exact Porter actuals while **6-mo /
-12-mo** net/orders are kept from the earlier in-session Admin pull; Newnique's full history is sparse
-and captured exactly. **Stock** was still ingesting at bake time (separate Porter data type). Note GA4
-purchases (46 May) run below Shopify orders (90) â€” a normal GA4 tracking gap; the funnel uses GA4, the
-Orders KPI uses Shopify. A live proxy can overlay `sections.shopify` later,
-exactly like AMACX's sheet overlay.
+**Data source.** This is the **post-Porter** bake (30 Jun 2026). The Shopify-via-Porter feed is gone;
+the page now pairs two sources, mirroring the Amazon side:
+- **Order-side** (net sales, orders, AOV, units, product mix, stock-on-hand) → **MerchantSpring's
+  Shopify channels** — Contours Rx `33616599`, Newnique `110450469` (the same connector that already
+  serves NKV's Amazon actuals).
+- **Session-side** (sessions, CVR, the cart→checkout→purchase funnel, traffic-by-channel) → **GA4 via
+  the Reporting Ninja connector** — `properties/394327082` (Contours Rx), `properties/506386258` (Newnique).
+
+For **Contours Rx** both sides are exact actuals for every period (May / 3-mo / YTD / 12-mo). Note GA4
+purchases (46 May) run below the Orders KPI (90) — orders include repeat/manual/no-session orders, so
+the funnel + CVR are session-based while Orders is order-based (both valid, kept separate).
+**Newnique:** MerchantSpring is connected but **not yet ingesting its orders**, so its order-side reads
+**"pending Executive integration"** while its **GA4 session-side is live** (450 sessions May). `all`
+equals **Contours Rx** until Newnique's orders backfill (then restore the CRX + Newnique sum). A live
+proxy can overlay `sections.shopify` later, exactly like AMACX's sheet overlay.
 
 **Shopify P&L page (`shopifypnl` Â· `sections.shopifypnl`).** A second NKV-only page, sharing the same
 brand filter + date range (`switchBrand` repaints both; chips render into `#shop-brands` **and**
