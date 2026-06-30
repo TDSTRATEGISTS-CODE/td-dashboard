@@ -493,27 +493,125 @@ function showLoadingOverlay() {
     var st = document.createElement('style');
     st.id = 'live-loading-style';
     st.textContent =
-      '#live-loading{position:fixed;inset:0;background:var(--bg,#f1ece6);display:flex;align-items:center;' +
-      'justify-content:center;z-index:99999;transition:opacity .35s ease;}' +
+      '#live-loading{position:fixed;inset:0;background:var(--bg,#f1ece6);display:flex;flex-direction:column;' +
+        'align-items:center;justify-content:center;gap:30px;z-index:99999;transition:opacity .35s ease;}' +
       '#live-loading.is-hiding{opacity:0;pointer-events:none;}' +
-      '#live-loading .ll-spin{width:32px;height:32px;border-radius:50%;border:3px solid rgba(0,0,0,.10);' +
-      'border-top-color:var(--brand,#404935);animation:llSpin .8s linear infinite;}' +
-      '@keyframes llSpin{to{transform:rotate(360deg);}}';
+      // — the running crowd of little number-figures —
+      '#live-loading .nrun{display:flex;gap:20px;align-items:flex-end;height:64px;}' +
+      '#live-loading .nguy{position:relative;width:34px;height:54px;animation:nBob .56s ease-in-out infinite;}' +
+      '#live-loading .nguy:nth-child(2){animation-delay:.10s;}' +
+      '#live-loading .nguy:nth-child(3){animation-delay:.20s;}' +
+      '#live-loading .nguy:nth-child(4){animation-delay:.30s;}' +
+      '@keyframes nBob{0%,100%{transform:translateY(0);}30%{transform:translateY(-12px);}60%{transform:translateY(0);}}' +
+      '#live-loading .nbody{position:absolute;left:0;right:0;top:0;height:34px;display:flex;align-items:center;' +
+        'justify-content:center;font-family:var(--display,sans-serif);font-weight:800;font-size:23px;color:#fff;' +
+        'background:var(--brand,#404935);border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.16);}' +
+      '#live-loading .nbody::after{content:"";position:absolute;right:8px;top:12px;width:4px;height:4px;' +
+        'border-radius:50%;background:var(--accent,#ffe746);}' +   // a little eye
+      '#live-loading .narm{position:absolute;top:15px;width:11px;height:3px;border-radius:2px;background:var(--brand,#404935);}' +
+      '#live-loading .narm.l{left:-7px;transform-origin:100% 50%;animation:nArmL .28s linear infinite;}' +
+      '#live-loading .narm.r{right:-7px;transform-origin:0 50%;animation:nArmR .28s linear infinite;}' +
+      '@keyframes nArmL{0%,100%{transform:rotate(32deg);}50%{transform:rotate(-32deg);}}' +
+      '@keyframes nArmR{0%,100%{transform:rotate(-32deg);}50%{transform:rotate(32deg);}}' +
+      '#live-loading .nleg{position:absolute;top:33px;width:3px;height:17px;border-radius:2px;' +
+        'background:var(--brand,#404935);transform-origin:top center;}' +
+      '#live-loading .nleg.l{left:11px;animation:nLegL .28s linear infinite;}' +
+      '#live-loading .nleg.r{right:11px;animation:nLegR .28s linear infinite;}' +
+      '@keyframes nLegL{0%,100%{transform:rotate(26deg);}50%{transform:rotate(-26deg);}}' +
+      '@keyframes nLegR{0%,100%{transform:rotate(-26deg);}50%{transform:rotate(26deg);}}' +
+      '#live-loading .nshadow{width:150px;height:8px;border-radius:50%;background:rgba(0,0,0,.06);margin-top:-4px;}' +
+      // — the cycling status line —
+      '#live-loading .nload-txt{font-family:var(--display,sans-serif);font-size:15px;font-weight:600;' +
+        'color:var(--muted,#6b7160);letter-spacing:.3px;min-height:20px;text-align:center;}' +
+      '#live-loading .nload-line{display:inline-block;animation:nTxt .45s ease;}' +
+      '@keyframes nTxt{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}' +
+      '#live-loading .nload-dots::after{content:"";animation:nDots 1.3s steps(4,end) infinite;}' +
+      '@keyframes nDots{0%{content:"";}25%{content:".";}50%{content:"..";}75%{content:"...";}}' +
+      '@media(prefers-reduced-motion:reduce){#live-loading *{animation-duration:.001s !important;}}';
     document.head.appendChild(st);
+  }
+  function guy(n) {
+    return '<div class="nguy"><span class="narm l"></span><span class="narm r"></span>' +
+      '<div class="nbody">' + n + '</div><span class="nleg l"></span><span class="nleg r"></span></div>';
   }
   var ov = document.createElement('div');
   ov.id = 'live-loading';
-  ov.innerHTML = '<div class="ll-spin" role="status" aria-label="Loading live data"></div>';
+  ov.setAttribute('role', 'status'); ov.setAttribute('aria-label', 'Loading');
+  ov.innerHTML =
+    '<div class="nrun">' + guy('5') + guy('2') + guy('8') + guy('4') + '</div>' +
+    '<div class="nshadow"></div>' +
+    '<div class="nload-txt"><span class="nload-line" id="nload-line">Digital Dash loading</span><span class="nload-dots"></span></div>';
   (document.body || document.documentElement).appendChild(ov);
   document.documentElement.style.overflow = 'hidden';   // no scrollbar gutter behind the overlay
+  // Cycle the status line through a few playful phrases while the live data loads.
+  var phrases = ['Digital Dash loading', 'Numbers dividing by other numbers', 'Deep data downloading', 'Crunching the latest actuals'];
+  var pi = 0;
+  clearInterval(window.__nloadTimer);
+  window.__nloadTimer = setInterval(function () {
+    var el = document.getElementById('nload-line'); if (!el) return;
+    pi = (pi + 1) % phrases.length;
+    el.textContent = phrases[pi];
+    el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';   // replay the fade-in
+  }, 1700);
 }
 
 function hideLoadingOverlay() {
+  clearInterval(window.__nloadTimer);
   var ov = document.getElementById('live-loading');
   document.documentElement.style.overflow = '';         // restore scrolling
   if (!ov) return;
   ov.classList.add('is-hiding');
   setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 400);
+}
+
+// ---------- site-wide "update in progress" notice ----------
+// If a new build lands while someone is mid-session, their loaded app.js/data.js may now mismatch the
+// freshly-deployed shell. Poll the deployed page for a changed APP_VER and, when it differs from the
+// version we booted with, cover the dashboard with a refresh prompt rather than leave them on a
+// half-stale view. APP_VER is the single source of truth (bumped every deploy). Runs for all clients.
+function showUpdateOverlay() {
+  if (document.getElementById('update-overlay')) return;
+  var st = document.createElement('style');
+  st.textContent =
+    '#update-overlay{position:fixed;inset:0;background:rgba(241,236,230,.97);display:flex;align-items:center;' +
+      'justify-content:center;z-index:100000;padding:24px;font-family:var(--display,sans-serif);}' +
+    '#update-overlay .uo-card{max-width:440px;text-align:center;background:var(--surface,#fff);' +
+      'border:1px solid var(--border,#e0d9d0);border-radius:18px;padding:34px 30px;box-shadow:0 16px 50px rgba(0,0,0,.16);}' +
+    '#update-overlay .uo-ic{width:60px;height:60px;border-radius:16px;background:var(--brand,#404935);color:#fff;' +
+      'display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 18px;animation:uoSpin 1.7s linear infinite;}' +
+    '@keyframes uoSpin{to{transform:rotate(360deg);}}' +
+    '#update-overlay .uo-t{font-size:21px;font-weight:700;color:var(--brand,#404935);letter-spacing:-.3px;margin-bottom:9px;}' +
+    '#update-overlay .uo-m{font-size:14px;color:var(--muted,#6b7160);line-height:1.6;margin-bottom:22px;}' +
+    '#update-overlay .uo-b{font-size:15px;font-weight:700;color:#fff;background:var(--green,#2d6a4f);border:none;' +
+      'border-radius:11px;padding:13px 30px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12);}' +
+    '#update-overlay .uo-b:hover{filter:brightness(1.06);}';
+  document.head.appendChild(st);
+  var ov = document.createElement('div');
+  ov.id = 'update-overlay';
+  ov.innerHTML = '<div class="uo-card"><div class="uo-ic">&#10227;</div>' +
+    '<div class="uo-t">You caught us during an update</div>' +
+    '<div class="uo-m">Your dashboard will be available shortly &mdash; please refresh.</div>' +
+    '<button class="uo-b" type="button" onclick="location.reload()">Refresh</button></div>';
+  (document.body || document.documentElement).appendChild(ov);
+  document.documentElement.style.overflow = 'hidden';
+}
+
+function watchForUpdates() {
+  var boot = window.APP_VER;
+  if (!boot || !window.fetch) return;
+  var shown = false;
+  function check() {
+    if (shown || document.hidden) return;
+    fetch(location.pathname + '?_v=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.text() : null; })
+      .then(function (t) {
+        if (!t) return;
+        var m = t.match(/APP_VER\s*=\s*'([^']+)'/);
+        if (m && m[1] && m[1] !== boot) { shown = true; showUpdateOverlay(); }
+      })['catch'](function () { /* offline / transient — ignore, try again next tick */ });
+  }
+  setInterval(check, 90000);   // every 90s while the tab is open + visible
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) check(); });
 }
 
 // ---------- live data (Apps Script proxy → MerchantSpring in Phase 2) ----------
@@ -1712,6 +1810,7 @@ function boot() {
   if (MKT[currentMarket]) set('tb-title', MKT[currentMarket].t);
   if (PAGES.length) switchPage(PAGES[0].key);     // activate the first page (nav/tabs are generated)
   loadLiveData();
+  watchForUpdates();                              // site-wide refresh prompt if a new build deploys mid-session
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
