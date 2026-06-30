@@ -547,6 +547,13 @@ function updateMarketChips(d) {
 // fetch is in flight, so the static fallback never flashes. Hidden once live data has rendered, or
 // on fetch error / timeout (which reveals the static fallback). Self-contained — injects its own
 // markup + CSS, so no index.html changes and no per-client wiring. Uses the client's brand vars.
+// Are we running inside an iframe (e.g. embedded on the Wix site)? Wix auto-resizes the iframe to our
+// FULL content height, so a `position:fixed` overlay centred with the viewport lands in the middle of a
+// very tall page — far below the fold. When embedded we anchor overlays near the top instead.
+function isEmbedded() {
+  try { return window.self !== window.top; } catch (e) { return true; }   // cross-origin throw => embedded
+}
+
 function showLoadingOverlay() {
   if (document.getElementById('live-loading')) return;   // idempotent
   if (!document.getElementById('live-loading-style')) {
@@ -595,6 +602,7 @@ function showLoadingOverlay() {
     '<div class="nload-txt"><span class="nload-pad"></span><span class="nload-line" id="nload-line">Digital Dash loading</span><span class="nload-dots"></span></div>';
   (document.body || document.documentElement).appendChild(ov);
   document.documentElement.style.overflow = 'hidden';   // no scrollbar gutter behind the overlay
+  if (isEmbedded()) { ov.style.justifyContent = 'flex-start'; ov.style.paddingTop = '200px'; }   // fixed px (NOT vh — vh = the tall iframe height); centred-ish yet above the fold on mobile
 
   // Matrix-style scramble: on each tick only 1–2 random digits re-roll (the rest hold their value).
   // The digits always change (that's the content); only the drop-in *slide* is gated by reduced-motion.
@@ -672,6 +680,7 @@ function showUpdateOverlay() {
     '<button class="uo-b" type="button" onclick="location.reload()">Refresh</button></div>';
   (document.body || document.documentElement).appendChild(ov);
   document.documentElement.style.overflow = 'hidden';
+  if (isEmbedded()) { ov.style.alignItems = 'flex-start'; ov.style.paddingTop = '120px'; }   // anchor the card near the top in the tall Wix iframe
 }
 
 function watchForUpdates() {
