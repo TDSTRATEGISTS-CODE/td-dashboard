@@ -74,6 +74,19 @@ window.DASHBOARD_CONFIG = {
   // account yet, so their Advertising page is gated. See applyMarketMaintenance() in app.js.
   marketMaintenance: { irl: ['advertising'], usa: ['advertising'] },
 
+  // Per-client layout tweaks (applyClientLayout() in app.js). Overview: drop the Buy Box widget,
+  // move the Stock Warnings card into that slot, and relabel it FBA-only (Amazon FBA stock — not
+  // Shopify or warehouse). Advertising: stack Ad Spend Actuals under the trend chart to fill the
+  // gap, and hide the Ad Budgets + Forecast section (kept for AMACX, not yet rebuilt for NKV).
+  layout: {
+    relabel: [
+      { id: 'sec-stockwarn-card', title: '&#128230; FBA Stock Warnings', sub: 'Amazon FBA &middot; low &amp; out of stock' }
+    ],
+    stockToBuyBoxSlot: true,
+    actualsUnderChart: true,
+    hide: ['sec-buybox-card', 'sec-adbudget-forecast']
+  },
+
   // ---- Brand palette (written to :root CSS variables at runtime) ----
   // Default TD Strategists palette (no client override supplied yet for NKV).
   brand: {

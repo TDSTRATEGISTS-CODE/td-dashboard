@@ -408,6 +408,47 @@ function applyMarketMaintenance() {
   }
 }
 
+// Per-client structural tweaks to the shared Overview/Advertising markup, driven by CONFIG.layout so
+// each client opts in explicitly (a no-op when absent — AMACX/demo keep the full layout). Runs once at
+// load on the static cards; the data-driven content renders target the same inner ids, so relocating a
+// card never breaks its later updates. Supports: relabel (rewrite a card's title/sub), two named moves,
+// and a hide list (display:none — reversible, data untouched).
+function applyClientLayout() {
+  var L = CONFIG.layout; if (!L) return;
+
+  // Relabel cards (e.g. clarify Stock Warnings is Amazon-FBA-only — not Shopify or warehouse stock).
+  (L.relabel || []).forEach(function (r) {
+    var card = el(r.id); if (!card) return;
+    if (r.title != null) { var t = card.querySelector('.card-ttl'); if (t) t.innerHTML = r.title; }
+    if (r.sub != null)   { var s = card.querySelector('.card-sub'); if (s) s.innerHTML = r.sub; }
+  });
+
+  // Move the Stock Warnings card out of the top flags grid into the Buy Box slot (the Overview right
+  // column under Actual-vs-Target). The grid then reflows 4→3 cols via syncFlagsGridCols(); the now-
+  // empty Buy Box card is dropped by the hide list below.
+  if (L.stockToBuyBoxSlot) {
+    var sw = el('sec-stockwarn-card'), bb = el('sec-buybox-card');
+    if (sw && bb) { sw.style.order = ''; bb.parentNode.insertBefore(sw, bb); syncFlagsGridCols(); }
+  }
+
+  // Stack Ad Spend Actuals under the trend chart (in the chart's grid column) to fill the gap beside
+  // the tall Ad Metrics card. Wraps chart + actuals in a flex column so they share the left track.
+  if (L.actualsUnderChart) {
+    var grid = el('adv-grid'), actuals = el('sec-adactuals-card');
+    var chartCard = grid && grid.querySelector('.card');
+    if (grid && actuals && chartCard) {
+      var col = document.createElement('div');
+      col.style.cssText = 'display:flex;flex-direction:column;gap:16px;min-width:0;';
+      grid.insertBefore(col, chartCard);
+      col.appendChild(chartCard);
+      col.appendChild(actuals);
+    }
+  }
+
+  // Hide cards/sections this client doesn't use (reversible; the underlying data is left in place).
+  (L.hide || []).forEach(function (id) { var e = el(id); if (e) e.style.display = 'none'; });
+}
+
 // ---------- config-driven identity / brand / chips ----------
 function applyConfig() {
   var C = CONFIG;
@@ -982,18 +1023,20 @@ function renderTasks(spec) {
 
 // Completed tasks list (green dot) — same shape as Upcoming Tasks, sourced from Project Scope column G.
 // Data-driven: clients that don't supply a completedSpec (no Completed column) hide the card and the
-// Overview grid reflows from 4 → 3 columns, so the AMACX placeholder rows never leak to other clients.
+// Overview flags grid: column count follows the number of *visible* cards, so it reflows correctly
+// whether a card is hidden (AMACX has no Completed card → 3 cols) or relocated out of the grid (NKV
+// moves Stock Warnings into the Buy Box slot → 3 cols). Stays a no-op visual when all four are present.
+function syncFlagsGridCols() {
+  var grid = el('tasks-flags'); if (!grid) return;
+  var vis = [].slice.call(grid.children).filter(function (c) { return c.style.display !== 'none'; }).length;
+  grid.classList.toggle('tf-3', vis <= 3);   // 3-col on desktop; CSS still stacks to 1-col on mobile
+}
 function renderCompleted(spec) {
   var w = el('sec-completed');
   var card = w && w.closest ? w.closest('.card') : null;
-  var grid = el('tasks-flags');
-  if (!spec) {
-    if (card) card.style.display = 'none';
-    if (grid) grid.classList.add('tf-3');   // 3-col on desktop; CSS still stacks to 1-col on mobile
-    return;
-  }
-  if (card) card.style.display = '';
-  if (grid) grid.classList.remove('tf-3');   // 4-col on desktop (CSS default)
+  if (card) card.style.display = spec ? '' : 'none';
+  syncFlagsGridCols();
+  if (!spec) return;
   if (liveCardPending('completedSpec')) return renderUpdatingCard('sec-completed', 'sec-completed-badge');
   if (spec.badge != null) set('sec-completed-badge', spec.badge);
   if (!w || !spec.items) return;
@@ -1908,6 +1951,7 @@ function boot() {
   var _ds = CONFIG.dataSource || {};
   if (_ds.type === 'appsScript' && _ds.url) showLoadingOverlay();
   renderSections();                               // deep-page content (clients with data.sections only)
+  applyClientLayout();                            // per-client hide/move/relabel of shared cards (CONFIG.layout)
   switchDateRange(currentPeriod);                 // paints KPIs, market table, sidebar chips, topbar subtitle
   if (MKT[currentMarket]) set('tb-title', MKT[currentMarket].t);
   if (PAGES.length) switchPage(PAGES[0].key);     // activate the first page (nav/tabs are generated)

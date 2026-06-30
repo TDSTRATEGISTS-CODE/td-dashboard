@@ -210,10 +210,8 @@ window.DASHBOARD_DATA = {
         {text:'Tiered catalogue promo active', sub:'Completed'},
         {text:'Problem-solving code active', sub:'Completed'}
       ] },
-      buyBox: [
-        {flag:'gb',label:'United Kingdom',pct:99,valText:'99.3%',color:'green'},
-        {flag:'ie',label:'Ireland',pct:100,valText:'99.8%',color:'green'}
-      ],
+      // Buy Box widget removed from the NKV Overview (config.layout.hide: sec-buybox-card); the Stock
+      // Warnings card takes that slot. UK 99.3% / IE 99.8% featured-offer rate retained here for reference.
       cvr: { val:'9.5%', note:'May 2026 · 6,168 sessions', sub:'UK · session conversion' },
       // Stock Warnings = Amazon FBA low-stock / availability only (real, MerchantSpring May 2026).
       // (Account-health/strategy alerts moved to their own section — see ACCOUNT-HEALTH note below.)
@@ -221,14 +219,8 @@ window.DASHBOARD_DATA = {
         {level:'amber',title:'Contours Rx Lids Assortment 4–7mm — reorder soon',sub:'B0FYR8DQ2G · ~20 days cover · 41 units · top seller (68/mo)'},
         {level:'amber',title:'Girlactik Gel Eyeliner — watch cover',sub:'B099KVFGZP · ~26 days cover · 24 units · 30/mo'},
         {level:'green',title:'No out-of-stock or suppressed listings',sub:'all 46 sold SKUs in stock · catalogue clean'}
-      ] },
-      // Account Health = strategy / performance alerts (real, MerchantSpring May 2026). Renders in the
-      // bottom-of-Overview "Account Health" card (separate from the stock-only Stock Warnings card).
-      healthSpec: { badge:'3 alerts', items:[
-        {level:'red',title:'High-ACOS campaigns wasting spend',sub:'Whitening Kits 52.7% · Advanced Hair Growth 159% — review bids & keywords'},
-        {level:'amber',title:'Top SKU low on cover',sub:'Contours Rx Assortment B0FYR8DQ2G — ~20 days at 68/mo, reorder to protect Buy Box'},
-        {level:'amber',title:'Refund rate 3.3%',sub:'~£500 refunded in May · watch Contours Rx returns'}
       ] }
+      // Account Health (strategy/performance alerts) card removed from the NKV Overview per client request.
     },
     pnl: {
       statement: {

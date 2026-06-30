@@ -344,7 +344,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
           </div>
         </div>
       </div>
-      <div class="card" style="order:4;">
+      <div class="card" style="order:4;" id="sec-stockwarn-card">
         <div class="card-hdr">
           <div><div class="card-ttl">&#128230; Stock Warnings</div><div class="card-sub">Empty &amp; low stock</div></div>
           <span id="sec-stockwarn-badge" style="font-size:10px;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b);border-radius:5px;padding:2px 8px;font-weight:500;">2 alerts</span>
@@ -430,7 +430,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
             <div style="font-size:10px;color:var(--muted2);">Target = Performance Tracker &middot; units (no per-market target)</div>
           </div>
         </div>
-        <div class="card">
+        <div class="card" id="sec-buybox-card">
           <div class="card-hdr"><div><div class="card-ttl">Buy Box</div><div class="card-sub">Featured-offer % &middot; <span class="dr-period">May 2026</span> &middot; <span class="cfg-scope" id="bb-scope">All EU</span></div></div></div>
           <div class="card-body">
             <div style="display:flex;align-items:baseline;gap:10px;">
@@ -696,7 +696,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
             <div id="chart-campaign-pie-leg" style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:12px;"></div>
           </div>
         </div>
-        <div class="card" style="flex:1 1 340px;">
+        <div class="card" style="flex:1 1 340px;" id="sec-adactuals-card">
           <div class="card-hdr"><div><div class="card-ttl">Ad Spend Actuals by Market</div><div class="card-sub">Actual spend vs budget &mdash; <span class="dr-period">May 2026</span></div></div></div>
           <div class="tscroll">
             <table class="dtable" id="mkt-spend-tbody-wrapper">
@@ -708,7 +708,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       </div>
     </div>
 
-    <div class="fade">
+    <div class="fade" id="sec-adbudget-forecast">
       <div class="sec-lbl">Ad Budgets &amp; Forecast &mdash; <span id="sec-period-4">May 2026</span></div>
       <div class="g21">
         <div style="display:flex;flex-direction:column;gap:14px;">
