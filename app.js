@@ -618,18 +618,53 @@ function watchForUpdates() {
   var boot = window.APP_VER;
   if (!boot || !window.fetch) return;
   var shown = false;
-  function check() {
-    if (shown || document.hidden) return;
-    fetch(location.pathname + '?_v=' + Date.now(), { cache: 'no-store' })
+
+  // Fetch the deployed page (cache-bypassing) and read its APP_VER, or null on any failure.
+  function fetchLatest() {
+    return fetch(location.pathname + '?_v=' + Date.now(), { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.text() : null; })
       .then(function (t) {
-        if (!t) return;
+        if (!t) return null;
         var m = t.match(/APP_VER\s*=\s*'([^']+)'/);
-        if (m && m[1] && m[1] !== boot) { shown = true; showUpdateOverlay(); }
-      })['catch'](function () { /* offline / transient — ignore, try again next tick */ });
+        return (m && m[1]) || null;
+      })['catch'](function () { return null; });
   }
-  setInterval(check, 90000);   // every 90s while the tab is open + visible
-  document.addEventListener('visibilitychange', function () { if (!document.hidden) check(); });
+
+  // Ongoing watch: a new build landing mid-session → show the refresh overlay (don't yank the page).
+  function check() {
+    if (shown || document.hidden) return;
+    fetchLatest().then(function (latest) {
+      if (latest && latest !== boot) { shown = true; showUpdateOverlay(); }
+    });
+  }
+  function startPolling() {
+    setInterval(check, 90000);   // every 90s while the tab is open + visible
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) check(); });
+  }
+
+  // Silent self-heal on load. GitHub Pages serves index.html with its own 10-min browser cache and
+  // ignores our repo cache headers, so a fresh load (esp. on mobile) can boot from a stale cached copy
+  // — old data, old app.js. Here we check the server's true version and, if we're behind, reload ONCE
+  // with a cache-busting query (a new URL the browser hasn't cached) so it corrects itself before the
+  // user notices. sessionStorage guards against any reload loop; if we can't reload safely we just prompt.
+  function selfHeal() {
+    if (!window.sessionStorage || !window.URLSearchParams) return startPolling();
+    fetchLatest().then(function (latest) {
+      if (!latest || latest === boot) return startPolling();   // already current
+      var key = 'ddash_heal_' + latest, tried = null;
+      try { tried = sessionStorage.getItem(key); } catch (e) {}
+      if (tried) {                                  // reloaded for this version already → prompt instead of looping
+        if (!shown) { shown = true; showUpdateOverlay(); }
+        return startPolling();
+      }
+      try { sessionStorage.setItem(key, '1'); } catch (e) {}
+      var p = new URLSearchParams(location.search);
+      p.set('_cb', latest);                          // changing the URL bypasses the stale cached copy
+      location.replace(location.pathname + '?' + p.toString());
+    });
+  }
+
+  setTimeout(selfHeal, 1000);   // just after boot, once the page is interactive
 }
 
 // ---------- live data (Apps Script proxy → MerchantSpring in Phase 2) ----------
