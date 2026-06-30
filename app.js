@@ -509,9 +509,11 @@ function showLoadingOverlay() {
       // — the cycling status line —
       '#live-loading .nload-txt{font-family:var(--display,sans-serif);font-size:15px;font-weight:600;' +
         'color:var(--muted,#6b7160);letter-spacing:.3px;min-height:20px;text-align:center;}' +
-      '#live-loading .nload-line{display:inline-block;animation:nTxt .5s ease;}' +
+      '#live-loading .nload-line{display:inline-block;animation:nTxt .45s ease;}' +
       '@keyframes nTxt{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}' +
-      '#live-loading .nload-dots::after{content:"";animation:nDots 1.6s steps(4,end) infinite;}' +
+      // dots sit in a fixed-width slot so the centred phrase never shuffles sideways as they cycle
+      '#live-loading .nload-dots{display:inline-block;width:1.4em;text-align:left;}' +
+      '#live-loading .nload-dots::after{content:"";animation:nDots 1.3s steps(4,end) infinite;}' +
       '@keyframes nDots{0%{content:"";}25%{content:".";}50%{content:"..";}75%{content:"...";}}' +
       '@media(prefers-reduced-motion:reduce){#live-loading .notp-d{animation:none !important;}}';
     document.head.appendChild(st);
@@ -521,7 +523,7 @@ function showLoadingOverlay() {
   ov.setAttribute('role', 'status'); ov.setAttribute('aria-label', 'Loading');
   var cells = '';
   for (var ci = 0; ci < 6; ci++) {
-    cells += '<div class="notp-cell"><span class="notp-d" id="notp-d' + ci + '">0</span></div>';
+    cells += '<div class="notp-cell"><span class="notp-d" id="notp-d' + ci + '">' + Math.floor(Math.random() * 10) + '</span></div>';
     if (ci === 2) cells += '<span class="notp-dash">-</span>';   // OTP-style "###-###" separator
   }
   ov.innerHTML =
@@ -530,23 +532,25 @@ function showLoadingOverlay() {
   (document.body || document.documentElement).appendChild(ov);
   document.documentElement.style.overflow = 'hidden';   // no scrollbar gutter behind the overlay
 
-  // Matrix-style scramble: each cell re-rolls a random digit on its own staggered cadence,
+  // Matrix-style scramble: on each tick only 1–2 random digits re-roll (the rest hold their value),
   // each new digit dropping in from the top. Reduced-motion leaves the code static.
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   (window.__notpTimers || []).forEach(function (t) { clearInterval(t); });
   window.__notpTimers = [];
   if (!reduce) {
-    for (var c = 0; c < 6; c++) {
-      (function (idx) {
-        var period = 150 + idx * 28;                   // staggered so the row shimmers, not flips in unison
-        window.__notpTimers.push(setInterval(function () {
-          var el = document.getElementById('notp-d' + idx);
-          if (!el) return;
-          el.textContent = Math.floor(Math.random() * 10);
-          el.classList.remove('drop'); void el.offsetWidth; el.classList.add('drop');
-        }, period));
-      })(c);
-    }
+    window.__notpTimers.push(setInterval(function () {
+      var howMany = 1 + Math.floor(Math.random() * 2);   // 1 or 2 digits this tick
+      var done = {};
+      for (var k = 0; k < howMany; k++) {
+        var idx = Math.floor(Math.random() * 6);
+        if (done[idx]) continue;                          // don't pick the same cell twice
+        done[idx] = 1;
+        var el = document.getElementById('notp-d' + idx);
+        if (!el) continue;
+        el.textContent = Math.floor(Math.random() * 10);
+        el.classList.remove('drop'); void el.offsetWidth; el.classList.add('drop');
+      }
+    }, 420));
   }
 
   // Cycle the status line through a few playful phrases while the live data loads.
