@@ -385,6 +385,66 @@ window.DASHBOARD_DATA = {
   }
 };
 
+/* Products page — period + MARKET aware (MerchantSpring, 30 Jun 2026). The KPI row, the
+   Performance-by-Market table and the Sales-by-Brand groups all now follow the date selector (and the
+   table + groups follow the market chip). UK = channel actuals; brand splits / Top Brand Rev from the
+   product report; Ireland is early-stage €-converted; USA not launched. These per-period structures
+   supersede the static products.kpis/table/groups above (kept as the May fallback). */
+(function () {
+  var P = window.DASHBOARD_DATA.sections.products;
+  var LBL = { may: 'May', '3m': '3-mo', '6m': 'YTD', '12m': '12-mo' };
+  var UK = {
+    may:  { rev:'£15,290',  units:584,  orders:551,  aov:'£27.75', cvr:'9.5%', asp:'£26.18', topRev:'£10,516',  topPct:'69%', sold:42 },
+    '3m': { rev:'£45,587',  units:1659, orders:1553, aov:'£29.35', cvr:'8.2%', asp:'£27.48', topRev:'£32,825',  topPct:'74%', sold:45 },
+    '6m': { rev:'£75,488',  units:2858, orders:2687, aov:'£28.09', cvr:'8.2%', asp:'£26.41', topRev:'£53,413',  topPct:'74%', sold:46 },
+    '12m':{ rev:'£167,239', units:6457, orders:6049, aov:'£27.65', cvr:'7.8%', asp:'£25.90', topRev:'£102,859', topPct:'70%', sold:46 }
+  };
+  var IRL = {
+    may:  { rev:'£480',   units:18,  orders:16, aov:'£30.00', cvr:'5.0%' },
+    '3m': { rev:'£1,215', units:44,  orders:41, aov:'£29.63', cvr:'5.0%' },
+    '6m': { rev:'£1,660', units:59,  orders:55, aov:'£30.18', cvr:'5.0%' },
+    '12m':{ rev:'£2,887', units:103, orders:96, aov:'£30.07', cvr:'5.0%' }
+  };
+  var GROUPS = {
+    may:  [['Contours Rx — Eyelid Strips','£10,516',314,'69%'],['White Luxe — Teeth Whitening','£2,113',72,'14%'],['Lilibeth — Brow & Dermaplaning','£1,045',117,'7%'],['Newnique — Hair Growth','£1,093',47,'7%'],['Girlactik — Eyeliner','£488',30,'3%']],
+    '3m': [['Contours Rx — Eyelid Strips','£32,825',973,'74%'],['White Luxe — Teeth Whitening','£5,576',173,'12%'],['Lilibeth — Brow & Dermaplaning','£2,752',286,'6%'],['Newnique — Hair Growth','£2,141',82,'5%'],['Girlactik — Eyeliner','£1,319',80,'3%']],
+    '6m': [['Contours Rx — Eyelid Strips','£53,413',1597,'74%'],['White Luxe — Teeth Whitening','£9,041',282,'12%'],['Lilibeth — Brow & Dermaplaning','£4,446',473,'6%'],['Newnique — Hair Growth','£3,383',147,'5%'],['Girlactik — Eyeliner','£2,301',139,'3%']],
+    '12m':[['Contours Rx — Eyelid Strips','£102,859',3103,'70%'],['White Luxe — Teeth Whitening','£20,192',572,'14%'],['Lilibeth — Brow & Dermaplaning','£11,401',1148,'8%'],['Newnique — Hair Growth','£8,906',336,'6%'],['Girlactik — Eyeliner','£4,540',289,'3%']]
+  };
+  function num(x) { return x.toLocaleString('en-GB'); }
+  function ukCards(u, lbl) { return [
+    { bar:'#404935',      lbl:'Active SKUs',    val:'46',          dCls:'df', d:'UK listings',  s:u.sold + ' sold (' + lbl + ')' },
+    { bar:'var(--green)', lbl:'Top Brand Rev.', val:u.topRev,      dCls:'du', d:'Contours Rx',  s:u.topPct + ' of ' + lbl + ' sales' },
+    { bar:'var(--blue)',  lbl:'Orders',         val:num(u.orders), dCls:'df', d:lbl + ' actuals', s:'AOV ' + u.aov },
+    { bar:'var(--amber)', lbl:'ASP',            val:u.asp,         dCls:'df', d:lbl + ' avg',     s:'per unit' }
+  ]; }
+  function irlCards(r, lbl) { return [
+    { bar:'#404935',      lbl:'Active SKUs',    val:'12',          dCls:'df', d:'IRL listings', s:'early stage' },
+    { bar:'var(--green)', lbl:'Top Brand Rev.', val:r.rev,         dCls:'du', d:'Contours Rx',  s:'~100% of IRL' },
+    { bar:'var(--blue)',  lbl:'Orders',         val:num(r.orders), dCls:'df', d:lbl + ' actuals', s:'AOV ' + r.aov },
+    { bar:'var(--amber)', lbl:'ASP',            val:r.aov,         dCls:'df', d:lbl + ' avg',     s:'per unit' }
+  ]; }
+  var usaCards = [
+    { bar:'#404935',      lbl:'Active SKUs',    val:'—',     dCls:'df', d:'Not launched', s:'channel pending' },
+    { bar:'var(--green)', lbl:'Top Brand Rev.', val:'£0',    dCls:'df', d:'Not launched', s:'' },
+    { bar:'var(--blue)',  lbl:'Orders',         val:'0',     dCls:'df', d:'Not launched', s:'' },
+    { bar:'var(--amber)', lbl:'ASP',            val:'£0.00', dCls:'df', d:'—',            s:'' }
+  ];
+  function rows(u, r) { return [
+    { name:'United Kingdom', flag:'gb', revenue:u.rev, units:num(u.units), orders:num(u.orders), cvr:u.cvr, cvrCls:'bg', aov:u.aov },
+    { name:'Ireland',        flag:'ie', revenue:r.rev, units:num(r.units), orders:num(r.orders), cvr:r.cvr, cvrCls:'ba', aov:r.aov },
+    { name:'United States',  flag:'us', revenue:'£0',  units:'0',          orders:'0',           cvr:'—',   cvrCls:'bb', aov:'£0.00' }
+  ]; }
+  function grp(g) { return g.map(function (x) { return { name:x[0], sales:x[1], units:num(x[2]), pct:x[3], oosRate:'0%', oosCls:'bg' }; }); }
+  P.kpisByPeriod = {}; P.tableByPeriod = {}; P.groupsByPeriod = {};
+  ['may', '3m', '6m', '12m'].forEach(function (p) {
+    var u = UK[p], r = IRL[p], lbl = LBL[p], uc = ukCards(u, lbl), g = grp(GROUPS[p]);
+    P.kpisByPeriod[p]   = { all:uc, uk:uc, irl:irlCards(r, lbl), usa:usaCards };
+    P.tableByPeriod[p]  = rows(u, r);
+    P.groupsByPeriod[p] = { all:g, uk:g, irl:g, usa:g };
+  });
+})();
+
 /* ============================================================================================
    SHOPIFY (D2C) — sections.shopify  ·  brand-filtered: All / Newnique / Contours Rx (2 stores)
    --------------------------------------------------------------------------------------------

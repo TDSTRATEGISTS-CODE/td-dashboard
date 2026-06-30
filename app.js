@@ -1531,7 +1531,10 @@ function renderPeriodSections(d) {
     if (prk) renderKpis('sec-prod-kpis', prk);
     var tp = pr.tableByPeriod && pr.tableByPeriod[currentPeriod];
     var prtAll = tp || pick(spr.table, pr.table);
-    if (prtAll) renderProdTable(pmKey ? prtAll.filter(function (r) { return r.flag === pmKey; }) : prtAll);
+    // Render all market rows; applyMarketFilter (sec-prod-table is in MKT_FILTER_IDS) row-filters to the
+    // selected chip by matcher (flag/code/chip), which is correct even when the market key (e.g. 'uk')
+    // differs from the flag ('gb') — the old r.flag===pmKey compare silently blanked the table for those.
+    if (prtAll) renderProdTable(prtAll);
     // Product groups: AMACX uses groupsByPeriod[period][market]; clients with only a static `groups`
     // array (demo/nkv) fall back to it (renderProdGroups tolerates the missing adSpend/tacos fields).
     var gp = pr.groupsByPeriod && pr.groupsByPeriod[currentPeriod];
