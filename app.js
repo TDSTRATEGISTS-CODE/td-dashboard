@@ -496,49 +496,56 @@ function showLoadingOverlay() {
       '#live-loading{position:fixed;inset:0;background:var(--bg,#f1ece6);display:flex;flex-direction:column;' +
         'align-items:center;justify-content:center;gap:30px;z-index:99999;transition:opacity .35s ease;}' +
       '#live-loading.is-hiding{opacity:0;pointer-events:none;}' +
-      // — the running crowd of little number-figures —
-      '#live-loading .nrun{display:flex;gap:20px;align-items:flex-end;height:64px;}' +
-      '#live-loading .nguy{position:relative;width:34px;height:54px;animation:nBob .56s ease-in-out infinite;}' +
-      '#live-loading .nguy:nth-child(2){animation-delay:.10s;}' +
-      '#live-loading .nguy:nth-child(3){animation-delay:.20s;}' +
-      '#live-loading .nguy:nth-child(4){animation-delay:.30s;}' +
-      '@keyframes nBob{0%,100%{transform:translateY(0);}30%{transform:translateY(-12px);}60%{transform:translateY(0);}}' +
-      '#live-loading .nbody{position:absolute;left:0;right:0;top:0;height:34px;display:flex;align-items:center;' +
-        'justify-content:center;font-family:var(--display,sans-serif);font-weight:800;font-size:23px;color:#fff;' +
-        'background:var(--brand,#404935);border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.16);}' +
-      '#live-loading .nbody::after{content:"";position:absolute;right:8px;top:12px;width:4px;height:4px;' +
-        'border-radius:50%;background:var(--accent,#ffe746);}' +   // a little eye
-      '#live-loading .narm{position:absolute;top:15px;width:11px;height:3px;border-radius:2px;background:var(--brand,#404935);}' +
-      '#live-loading .narm.l{left:-7px;transform-origin:100% 50%;animation:nArmL .28s linear infinite;}' +
-      '#live-loading .narm.r{right:-7px;transform-origin:0 50%;animation:nArmR .28s linear infinite;}' +
-      '@keyframes nArmL{0%,100%{transform:rotate(32deg);}50%{transform:rotate(-32deg);}}' +
-      '@keyframes nArmR{0%,100%{transform:rotate(-32deg);}50%{transform:rotate(32deg);}}' +
-      '#live-loading .nleg{position:absolute;top:33px;width:3px;height:17px;border-radius:2px;' +
+      // — a crowd of bare number-characters that wave, run, hurdle and somersault (slow & playful) —
+      '#live-loading .nrun{display:flex;gap:34px;align-items:flex-end;height:74px;}' +
+      '#live-loading .nguy{position:relative;width:40px;height:58px;}' +
+      '#live-loading .nguy.hurdle{animation:nHurdle 3.6s ease-in-out infinite;}' +
+      '#live-loading .nguy.flip{animation:nFlip 4s ease-in-out infinite;}' +
+      '#live-loading .nguy:nth-child(2){animation-delay:.9s;}' +
+      '#live-loading .nguy:nth-child(3){animation-delay:1.8s;}' +
+      '#live-loading .nguy:nth-child(4){animation-delay:2.6s;}' +
+      // hurdle = leap up and over, leaning into it; flip = a full slow somersault
+      '@keyframes nHurdle{0%,55%{transform:translateY(0) rotate(0deg);}68%{transform:translateY(-36px) translateX(6px) rotate(-16deg);}' +
+        '79%{transform:translateY(-36px) translateX(-4px) rotate(12deg);}92%,100%{transform:translateY(0) rotate(0deg);}}' +
+      '@keyframes nFlip{0%,50%{transform:translateY(0) rotate(0deg);}68%{transform:translateY(-46px) rotate(-200deg);}' +
+        '86%,100%{transform:translateY(0) rotate(-360deg);}}' +
+      // the bare digit IS the body — no box, limbs attach straight to the numeral
+      '#live-loading .nbody{position:absolute;left:0;right:0;top:0;height:42px;display:flex;align-items:center;' +
+        'justify-content:center;font-family:var(--display,sans-serif);font-weight:800;font-size:42px;line-height:1;' +
+        'color:var(--brand,#404935);text-shadow:0 2px 3px rgba(0,0,0,.12);}' +
+      // arms — waving (raised, oscillating)
+      '#live-loading .narm{position:absolute;top:13px;width:13px;height:3px;border-radius:2px;background:var(--brand,#404935);}' +
+      '#live-loading .narm.l{left:-5px;transform-origin:100% 50%;animation:nWaveL 1.9s ease-in-out infinite;}' +
+      '#live-loading .narm.r{right:-5px;transform-origin:0 50%;animation:nWaveR 1.9s ease-in-out infinite;}' +
+      '@keyframes nWaveL{0%,100%{transform:rotate(-118deg);}50%{transform:rotate(-162deg);}}' +
+      '@keyframes nWaveR{0%,100%{transform:rotate(118deg);}50%{transform:rotate(162deg);}}' +
+      // legs — slow jog, attached at the base of the digit
+      '#live-loading .nleg{position:absolute;top:39px;width:3px;height:17px;border-radius:2px;' +
         'background:var(--brand,#404935);transform-origin:top center;}' +
-      '#live-loading .nleg.l{left:11px;animation:nLegL .28s linear infinite;}' +
-      '#live-loading .nleg.r{right:11px;animation:nLegR .28s linear infinite;}' +
-      '@keyframes nLegL{0%,100%{transform:rotate(26deg);}50%{transform:rotate(-26deg);}}' +
-      '@keyframes nLegR{0%,100%{transform:rotate(-26deg);}50%{transform:rotate(26deg);}}' +
-      '#live-loading .nshadow{width:150px;height:8px;border-radius:50%;background:rgba(0,0,0,.06);margin-top:-4px;}' +
+      '#live-loading .nleg.l{left:15px;animation:nRunL 1.6s ease-in-out infinite;}' +
+      '#live-loading .nleg.r{right:15px;animation:nRunR 1.6s ease-in-out infinite;}' +
+      '@keyframes nRunL{0%,100%{transform:rotate(22deg);}50%{transform:rotate(-22deg);}}' +
+      '@keyframes nRunR{0%,100%{transform:rotate(-22deg);}50%{transform:rotate(22deg);}}' +
+      '#live-loading .nshadow{width:200px;height:9px;border-radius:50%;background:rgba(0,0,0,.06);margin-top:4px;}' +
       // — the cycling status line —
       '#live-loading .nload-txt{font-family:var(--display,sans-serif);font-size:15px;font-weight:600;' +
         'color:var(--muted,#6b7160);letter-spacing:.3px;min-height:20px;text-align:center;}' +
-      '#live-loading .nload-line{display:inline-block;animation:nTxt .45s ease;}' +
+      '#live-loading .nload-line{display:inline-block;animation:nTxt .5s ease;}' +
       '@keyframes nTxt{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}' +
-      '#live-loading .nload-dots::after{content:"";animation:nDots 1.3s steps(4,end) infinite;}' +
+      '#live-loading .nload-dots::after{content:"";animation:nDots 1.6s steps(4,end) infinite;}' +
       '@keyframes nDots{0%{content:"";}25%{content:".";}50%{content:"..";}75%{content:"...";}}' +
-      '@media(prefers-reduced-motion:reduce){#live-loading *{animation-duration:.001s !important;}}';
+      '@media(prefers-reduced-motion:reduce){#live-loading *{animation:none !important;}}';
     document.head.appendChild(st);
   }
-  function guy(n) {
-    return '<div class="nguy"><span class="narm l"></span><span class="narm r"></span>' +
+  function guy(n, move) {
+    return '<div class="nguy ' + move + '"><span class="narm l"></span><span class="narm r"></span>' +
       '<div class="nbody">' + n + '</div><span class="nleg l"></span><span class="nleg r"></span></div>';
   }
   var ov = document.createElement('div');
   ov.id = 'live-loading';
   ov.setAttribute('role', 'status'); ov.setAttribute('aria-label', 'Loading');
   ov.innerHTML =
-    '<div class="nrun">' + guy('5') + guy('2') + guy('8') + guy('4') + '</div>' +
+    '<div class="nrun">' + guy('7', 'flip') + guy('5', 'hurdle') + guy('9', 'flip') + guy('3', 'hurdle') + '</div>' +
     '<div class="nshadow"></div>' +
     '<div class="nload-txt"><span class="nload-line" id="nload-line">Digital Dash loading</span><span class="nload-dots"></span></div>';
   (document.body || document.documentElement).appendChild(ov);
@@ -552,7 +559,7 @@ function showLoadingOverlay() {
     pi = (pi + 1) % phrases.length;
     el.textContent = phrases[pi];
     el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';   // replay the fade-in
-  }, 1700);
+  }, 2400);
 }
 
 function hideLoadingOverlay() {
