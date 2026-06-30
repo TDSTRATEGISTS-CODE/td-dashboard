@@ -561,7 +561,7 @@ function showLoadingOverlay() {
     '<div class="nload-txt"><span class="nload-pad"></span><span class="nload-line" id="nload-line">Digital Dash loading</span><span class="nload-dots"></span></div>';
   (document.body || document.documentElement).appendChild(ov);
   document.documentElement.style.overflow = 'hidden';   // no scrollbar gutter behind the overlay
-  if (isEmbedded()) { ov.style.justifyContent = 'flex-start'; ov.style.paddingTop = '150px'; }   // fixed px (NOT vh — vh = the tall iframe height); keeps it above the fold
+  if (isEmbedded()) { ov.style.justifyContent = 'flex-start'; ov.style.paddingTop = '300px'; }   // fixed px (NOT vh — vh = the tall iframe height); centred-ish yet above the fold on mobile
 
   // Matrix-style scramble: on each tick only 1–2 random digits re-roll (the rest hold their value).
   // The digits always change (that's the content); only the drop-in *slide* is gated by reduced-motion.
