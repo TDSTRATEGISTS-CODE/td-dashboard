@@ -532,26 +532,24 @@ function showLoadingOverlay() {
   (document.body || document.documentElement).appendChild(ov);
   document.documentElement.style.overflow = 'hidden';   // no scrollbar gutter behind the overlay
 
-  // Matrix-style scramble: on each tick only 1–2 random digits re-roll (the rest hold their value),
-  // each new digit dropping in from the top. Reduced-motion leaves the code static.
+  // Matrix-style scramble: on each tick only 1–2 random digits re-roll (the rest hold their value).
+  // The digits always change (that's the content); only the drop-in *slide* is gated by reduced-motion.
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   (window.__notpTimers || []).forEach(function (t) { clearInterval(t); });
   window.__notpTimers = [];
-  if (!reduce) {
-    window.__notpTimers.push(setInterval(function () {
-      var howMany = 1 + Math.floor(Math.random() * 2);   // 1 or 2 digits this tick
-      var done = {};
-      for (var k = 0; k < howMany; k++) {
-        var idx = Math.floor(Math.random() * 6);
-        if (done[idx]) continue;                          // don't pick the same cell twice
-        done[idx] = 1;
-        var el = document.getElementById('notp-d' + idx);
-        if (!el) continue;
-        el.textContent = Math.floor(Math.random() * 10);
-        el.classList.remove('drop'); void el.offsetWidth; el.classList.add('drop');
-      }
-    }, 420));
-  }
+  window.__notpTimers.push(setInterval(function () {
+    var howMany = 1 + Math.floor(Math.random() * 2);   // 1 or 2 digits this tick
+    var done = {};
+    for (var k = 0; k < howMany; k++) {
+      var idx = Math.floor(Math.random() * 6);
+      if (done[idx]) continue;                          // don't pick the same cell twice
+      done[idx] = 1;
+      var el = document.getElementById('notp-d' + idx);
+      if (!el) continue;
+      el.textContent = Math.floor(Math.random() * 10);
+      if (!reduce) { el.classList.remove('drop'); void el.offsetWidth; el.classList.add('drop'); }  // slide-in
+    }
+  }, 420));
 
   // Cycle the status line through a few playful phrases while the live data loads.
   var phrases = ['Digital Dash loading', 'Numbers dividing by other numbers', 'Deep data downloading', 'Crunching the latest actuals'];
