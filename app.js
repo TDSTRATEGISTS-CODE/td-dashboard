@@ -496,13 +496,14 @@ function showLoadingOverlay() {
       '#live-loading{position:fixed;inset:0;background:var(--bg,#f1ece6);display:flex;flex-direction:column;' +
         'align-items:center;justify-content:center;gap:30px;z-index:99999;transition:opacity .35s ease;}' +
       '#live-loading.is-hiding{opacity:0;pointer-events:none;}' +
-      // — a 6-digit code (OTP style) that re-scrambles matrix-style, each digit dropping in from the top —
-      '#live-loading .notp{display:flex;gap:12px;}' +
-      '#live-loading .notp-cell{width:46px;height:62px;border-radius:12px;background:var(--surface,#fff);' +
-        'border:1.5px solid var(--border,#e0d9d0);box-shadow:0 4px 14px rgba(0,0,0,.06);' +
-        'display:flex;align-items:center;justify-content:center;overflow:hidden;}' +
+      // — a 6-digit code (OTP style, "###-###") that re-scrambles matrix-style, each digit dropping in from the top —
+      '#live-loading .notp{display:flex;align-items:center;gap:6px;}' +
+      // no box: the cell is just an invisible fixed slot whose overflow clips the drop-in
+      '#live-loading .notp-cell{width:30px;height:56px;display:flex;align-items:center;justify-content:center;overflow:hidden;}' +
       '#live-loading .notp-d{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:800;' +
-        'font-size:30px;line-height:1;color:var(--brand,#404935);}' +
+        'font-size:42px;line-height:1;color:var(--brand,#404935);}' +
+      '#live-loading .notp-dash{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:800;' +
+        'font-size:34px;line-height:1;color:var(--muted,#6b7160);margin:0 6px;}' +
       '#live-loading .notp-d.drop{animation:nDrop .24s ease;}' +
       '@keyframes nDrop{0%{transform:translateY(-118%);opacity:0;}55%{opacity:1;}100%{transform:translateY(0);opacity:1;}}' +
       // — the cycling status line —
@@ -519,7 +520,10 @@ function showLoadingOverlay() {
   ov.id = 'live-loading';
   ov.setAttribute('role', 'status'); ov.setAttribute('aria-label', 'Loading');
   var cells = '';
-  for (var ci = 0; ci < 6; ci++) cells += '<div class="notp-cell"><span class="notp-d" id="notp-d' + ci + '">0</span></div>';
+  for (var ci = 0; ci < 6; ci++) {
+    cells += '<div class="notp-cell"><span class="notp-d" id="notp-d' + ci + '">0</span></div>';
+    if (ci === 2) cells += '<span class="notp-dash">-</span>';   // OTP-style "###-###" separator
+  }
   ov.innerHTML =
     '<div class="notp">' + cells + '</div>' +
     '<div class="nload-txt"><span class="nload-line" id="nload-line">Digital Dash loading</span><span class="nload-dots"></span></div>';
