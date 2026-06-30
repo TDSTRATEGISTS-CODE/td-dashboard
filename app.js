@@ -720,6 +720,11 @@ function applyLive(j) {
   if (ds.overlay === 'sections') {
     var changed = false;
     if (j.sections && !j.sections.error && DATA.sections) {
+      // Record which overview project-board cards the live payload actually supplied. Any card NOT
+      // supplied stays on the "Currently updating" placeholder rather than a stale baked snapshot.
+      DATA.__liveOverview = DATA.__liveOverview || {};
+      var lo = j.sections.overview;
+      if (lo) ['tasksSpec', 'flagsSpec', 'completedSpec'].forEach(function (k) { if (lo[k]) DATA.__liveOverview[k] = true; });
       mergeSections(DATA.sections, j.sections);
       if (typeof renderSections === 'function') renderSections();
       changed = true;
@@ -922,7 +927,28 @@ function renderTargetAttainment(o) {
   });
 }
 
+// True when this client pulls its overview project-board cards LIVE from the sheet (appsScript /
+// overlay:'sections') but the live payload hasn't supplied this particular card yet — at boot, or
+// because the proxy is down / didn't include it. In that window we show a "Currently updating"
+// placeholder instead of a potentially stale baked snapshot. Static clients never count as pending
+// (their baked content IS the real content). Generic — applies to every brand.
+function liveCardPending(key) {
+  var ds = CONFIG.dataSource || {};
+  if (ds.type !== 'appsScript' || ds.overlay !== 'sections') return false;
+  return !(DATA.__liveOverview && DATA.__liveOverview[key]);
+}
+
+// Shared "Currently updating" placeholder for a sheet-driven card whose live data hasn't landed.
+function renderUpdatingCard(containerId, badgeId) {
+  if (badgeId) set(badgeId, 'Updating');
+  var w = el(containerId); if (!w) return;
+  w.innerHTML = '<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;">' +
+    '<div style="width:7px;height:7px;border-radius:50%;background:var(--muted2);flex-shrink:0;animation:pulse2 1.5s infinite;"></div>' +
+    '<div style="font-size:12px;font-weight:500;color:var(--muted);">Currently updating&hellip;</div></div>';
+}
+
 function renderTasks(spec) {
+  if (spec && liveCardPending('tasksSpec')) return renderUpdatingCard('sec-tasks', 'sec-tasks-badge');
   if (!spec) return;
   if (spec.badge != null) set('sec-tasks-badge', spec.badge);
   var w = el('sec-tasks'); if (!w || !spec.items) return;
@@ -949,6 +975,7 @@ function renderCompleted(spec) {
   }
   if (card) card.style.display = '';
   if (grid) grid.classList.remove('tf-3');   // 4-col on desktop (CSS default)
+  if (liveCardPending('completedSpec')) return renderUpdatingCard('sec-completed', 'sec-completed-badge');
   if (spec.badge != null) set('sec-completed-badge', spec.badge);
   if (!w || !spec.items) return;
   w.innerHTML = spec.items.map(function (t, i) {
@@ -980,7 +1007,10 @@ function renderAlertList(id, badgeId, spec) {
       '<div style="font-size:11px;color:' + s.sub + ';margin-top:1px;">' + f.sub + '</div></div></div>';
   }).join('');
 }
-function renderFlags(spec) { renderAlertList('sec-flags', 'sec-flags-badge', spec); }
+function renderFlags(spec) {
+  if (spec && liveCardPending('flagsSpec')) return renderUpdatingCard('sec-flags', 'sec-flags-badge');
+  renderAlertList('sec-flags', 'sec-flags-badge', spec);
+}
 
 function renderCvr(spec) {
   if (!spec) return;
