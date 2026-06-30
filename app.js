@@ -105,6 +105,7 @@ window.switchPage = function (key, sideNavEl, tabEl) {
   if (sideNavEl) sideNavEl.classList.add('active');
   if (tabEl) tabEl.classList.add('active');
   closeSidebar();
+  syncEmbedHeight();   // page changed → re-report height to the embedding host (Wix iframe)
 };
 
 window.switchMarket = function (k, el) {
@@ -377,6 +378,7 @@ window.switchDateRange = function (val) {
   applyMarketFilter();   // re-filter the freshly-rendered per-market rows to the current market
   applyNldPages();       // NLD pre-launch: swap Overview/Advertising/Inventory content for the banner
   applyMarketMaintenance(); // per-market page maintenance banner (e.g. NKV Ireland/USA Advertising)
+  syncEmbedHeight();     // content height may have changed (tables/cards) → re-report to the host
 };
 
 // Netherlands pre-launch: mark Overview/Advertising/Inventory .nld-active when NLD is the selected
@@ -442,6 +444,7 @@ function applyClientLayout() {
       grid.insertBefore(col, chartCard);
       col.appendChild(chartCard);
       col.appendChild(actuals);
+      actuals.style.flex = 'none';   // was flex:1 1 340px (side-by-side row) → don't grow/min-height in the column
     }
   }
 
@@ -458,6 +461,13 @@ function applyClientLayout() {
       rcol.appendChild(metricsCard);
       rcol.appendChild(pieCard);
       pieCard.style.flex = 'none';   // was flex:1 1 340px for the old side-by-side row
+      // Compact the pie for the narrow column: keep the legend beside a smaller pie (instead of letting
+      // it wrap underneath and balloon the card height), so this column lines up with the left one.
+      var pbody = pieCard.querySelector('.card-body');
+      if (pbody) { pbody.style.flexWrap = 'nowrap'; pbody.style.gap = '16px'; }
+      var psvg = pieCard.querySelector('svg');
+      if (psvg) { psvg.style.width = '116px'; psvg.style.height = '116px'; }
+      var pleg = el('chart-campaign-pie-leg'); if (pleg) pleg.style.minWidth = '0';
     }
   }
 
@@ -568,6 +578,28 @@ function updateMarketChips(d) {
 // very tall page — far below the fold. When embedded we anchor overlays near the top instead.
 function isEmbedded() {
   try { return window.self !== window.top; } catch (e) { return true; }   // cross-origin throw => embedded
+}
+
+// Embedded height sync: inside the Wix iframe we report our ACTIVE content height to the host on every
+// change (page switch, date/market change, live-data render, font load, resize) so it can size the iframe
+// to the page you're on. Without this the iframe keeps the tallest page's height and shorter pages get
+// trailing whitespace — "uneven scroll across pages". A ResizeObserver on <body> catches every height
+// change automatically; the timed calls cover first paint. A no-op when not embedded. Host listens for
+// window 'message' { type:'td-embed-height', height } and sets the iframe/HtmlComponent height to match.
+var _embedH = 0, _embedT = null;
+function reportEmbedHeight() {
+  if (!isEmbedded() || !document.body) return;
+  var h = Math.max(document.documentElement.scrollHeight || 0, document.body.scrollHeight || 0);
+  if (!h || Math.abs(h - _embedH) <= 1) return;
+  _embedH = h;
+  try { window.parent.postMessage({ type: 'td-embed-height', height: h }, '*'); } catch (e) {}
+}
+function syncEmbedHeight() { if (_embedT) clearTimeout(_embedT); _embedT = setTimeout(reportEmbedHeight, 60); }
+function initEmbedHeight() {
+  if (!isEmbedded()) return;
+  if (window.ResizeObserver && document.body) { try { new ResizeObserver(syncEmbedHeight).observe(document.body); } catch (e) {} }
+  window.addEventListener('resize', syncEmbedHeight);
+  [0, 250, 800, 1600].forEach(function (d) { setTimeout(reportEmbedHeight, d); });
 }
 
 function showLoadingOverlay() {
@@ -1992,6 +2024,7 @@ function boot() {
   if (PAGES.length) switchPage(PAGES[0].key);     // activate the first page (nav/tabs are generated)
   loadLiveData();
   watchForUpdates();                              // site-wide refresh prompt if a new build deploys mid-session
+  initEmbedHeight();                              // report height to the Wix host so the iframe fits each page
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
