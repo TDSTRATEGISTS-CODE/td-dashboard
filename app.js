@@ -589,7 +589,12 @@ function isEmbedded() {
 var _embedH = 0, _embedT = null;
 function reportEmbedHeight() {
   if (!isEmbedded() || !document.body) return;
-  var h = Math.max(document.documentElement.scrollHeight || 0, document.body.scrollHeight || 0);
+  // Measure the ACTIVE page's content bottom (document coords), NOT body.scrollHeight: body/.main have
+  // min-height:100vh, so once the host sizes the iframe tall, scrollHeight sticks at that height and can
+  // never shrink for a shorter page. The active .page-content's bottom edge reflects real content height.
+  var h = 0, ap = document.querySelector('.page-content.active');
+  if (ap) h = Math.ceil(ap.getBoundingClientRect().bottom + (window.scrollY || window.pageYOffset || 0));
+  if (!h) h = document.body.scrollHeight || 0;   // fallback before the first page is activated
   if (!h || Math.abs(h - _embedH) <= 1) return;
   _embedH = h;
   try { window.parent.postMessage({ type: 'td-embed-height', height: h }, '*'); } catch (e) {}
