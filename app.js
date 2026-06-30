@@ -1314,12 +1314,14 @@ function fInfoBar(id, text, kind) {
 
 function renderFounderOverview(o) {
   if (!o) return;
+  // Overview page: alert + Notion cards (tasks/stockWarn/milestones).
   fInfoBar('f-ov-alert', o.alert, 'alert');
   fDotList('f-ov-tasks', 'f-ov-tasks-badge', o.tasks);
   fDotList('f-ov-stockwarn', 'f-ov-stockwarn-badge', o.stockWarn);
   fDotList('f-ov-milestones', 'f-ov-milestones-badge', o.milestones);
+  // Forecast cards below now live on the P&L DETAIL page (markup moved; ids unchanged). o.revChart
+  // is no longer rendered — the Revenue Trend chart was consolidated into the P&L Breakdown chart.
   renderKpis('f-ov-kpis', o.kpis);
-  if (o.revChart) renderChart('f-chart-frev', 'f-chart-frev-leg', o.revChart);
   if (o.loanCard) {
     var lc = o.loanCard, w = el('f-ov-loan');
     if (lc.sub != null) set('f-ov-loan-sub', lc.sub);

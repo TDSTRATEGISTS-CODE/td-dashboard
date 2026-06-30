@@ -19,15 +19,21 @@ dashboard/
     demo/           ← AMAZON-template demo (UK · GBP · channels Amazon/eBay/D2C · static)
       config.js
       data.js       ← dateRanges + a full `sections` object that data-drives every deep page
-    harvaza/        ← FOUNDER-template client (brand "Bervera" · GBP · static Year-1 forecast)
-      config.js     ← template:'founder', olive/gold brand, markets = Harvaza UK + Harvaza US ('Soon')
-      data.js       ← minimal dateRanges + a `sections.founder` object (overview / pnl / stock / loan)
+    harvaza/        ← FOUNDER client (brand "Bervera") — HYBRID: founder forecast (Google Sheet + Notion)
+      config.js        + live Amazon ACTUALS (MerchantSpring UK £ + US $). template:'founder', olive/gold,
+      data.js          markets Harvaza UK(£)+US($), hiddenPages:['keywords'], pageLabels:{pnl:'Amazon P&L'},
+                       dataSource appsScript/overlay:'founder'. data.js = dateRanges may/3m/6m (period-aware
+                       Amazon actuals) + sections.founder (forecast/Notion) + Amazon sections
+                       (products/inventory/pnl/advertising/overviewActuals). See "Harvaza" below.
     nkv/            ← AMAZON-template client (UK · GBP · MerchantSpring · live Apps Script overlay)
       config.js     ← markets = UK + Ireland + USA('Soon'), scopeLabel 'UK', maintenancePages:['amazonpnl']
       data.js       ← dateRanges + sections, hand-baked from MerchantSpring (UK actuals); the sheet
                        overlay supplies live overview tasks/flags + advertising budget
   tools/
-    build-amacx-data.ps1  ← generator that writes clients/amacx/data.js from a baked MerchantSpring + sheet snapshot
+    build-amacx-data.ps1     ← generator that writes clients/amacx/data.js from a baked MerchantSpring + sheet snapshot
+    build-harvaza-data.ps1   ← regenerates Harvaza's Amazon products blocks → tools/harvaza-amazon-baked.js (splice helper)
+    harvaza-sheet-proxy.gs   ← Apps Script reference: reads the Founder-Dashboard Sheet + Notion Deal Hub (see "Harvaza")
+    harvaza-amazon-baked.js  ← GENERATED splice snippet (not loaded by the app; safe to ignore/regenerate)
 ```
 
 > **Apps Script proxies** (`amacx-data-proxy.gs`, `harvaza-sheet-proxy.gs`, `nkv-sheet-proxy.gs`) live at the
@@ -219,6 +225,59 @@ sales are read below it (skipping the annual-total decoy) and `All` is summed fr
 **TODO (next):** add earlier-month expenses to the Tracker so the 12-mo view is a true trailing year
 (itâ€™s YTD for now); confirm Newnique's store domain (placeholder `D2C Â· Shopify`); optionally split
 the shared opex across brands once the Tracker itemises it per store.
+
+---
+
+## Harvaza — founder forecast + live Amazon actuals
+
+Harvaza (brand **Bervera**, a recently-acquired coconut-water business) is the founder-template client, but
+it's a **hybrid**: it pairs the acquisition *forecast* with *live Amazon actuals*. Three data sources:
+
+| Source | Feeds | How |
+|---|---|---|
+| **Google Sheet** ("Founder Dashboard") | The Year-1 **forecast** — Overview→**P&L Detail** KPIs, monthly P&L chart + 12-month table | Apps Script proxy → `overlay:'founder'` (deep-merge onto `sections.founder`) |
+| **Notion** ("🥥 Bervera Acquisition — Deal Hub") | Overview **project cards** — Upcoming Tasks (open handover to-dos) + Key Milestones (Timeline) | Same proxy (`harvaza-sheet-proxy.gs`) calls the Notion API; token in the script's **Script Properties** |
+| **MerchantSpring** (Harvaza Distribution **UK** + **US**) | The **Amazon actuals** — Overview KPIs/trend/buy-box/CVR, Products, Inventory, **Amazon P&L**, Advertising | Baked snapshot in `data.js` (per-month pulls), refreshed in-session (see baker below) |
+
+**Actuals-only policy (the key design rule):** the dashboard shows **actuals everywhere**; the **forecast
+lives ONLY on the P&L Detail page**. So:
+- **Date selector** = `may` (Last Month, default) / `3m` (Last 3 Months) / `6m` (Year to Date). No
+  "Forecast" option. (Data starts at the acquisition, so YTD ≈ "all time".)
+- **Sidebar chips** = per-period actual sales (UK £, US $; `'all'` = UK £ — currencies are never summed).
+- **Overview** = project cards (Notion) on top, then Amazon-actuals widgets (KPI row + Revenue Trend +
+  Buy Box + CVR), all period-aware.
+- **P&L Detail** = the forecast home (KPIs + Revenue Trend + Director's Loan + P&L Waterfall + monthly
+  breakdown + 12-month table) — period-independent (it's an annual forecast).
+- **Stock & COGS** and **Director's Loan** are forecast/structure (left period-independent). **Inventory**
+  is *current* stock (period-independent by design). **Keywords** is hidden (MerchantSpring has no keyword data).
+
+**Period-awareness** of the Amazon pages is driven by `dateRanges[p].sec.{products,pnl,advertising,overviewActuals}`
+(3m/6m overrides; the top-level `sections.*` is the May default). P&L and Advertising are 30-day-capped in
+MerchantSpring, so the period figures are **summed from per-month pulls**. Note: *ordered* revenue
+(getSalesByChannels — used for chips/products/Overview KPIs) ≠ *net* P&L revenue (getStoreProfitAndLoss) —
+both are valid Amazon lenses, kept separate (same as AMACX).
+
+**Currency:** UK = **£**, US = **$**, shown per-market, never summed across currencies.
+
+### Deploying the Harvaza proxy (`tools/harvaza-sheet-proxy.gs`)
+
+1. Apps Script (standalone or bound) → paste the `.gs`. It opens the Sheet **by ID** (works standalone) and
+   reads the **Forecast** tab by content (a "Revenue Estimate" row — robust to the SKU-master tab).
+2. For Notion: create an **internal integration** (Access token), add it as a **Script Property** named
+   `NOTION_TOKEN`, and **share the Deal Hub page** with that integration. (Leave the property unset to skip Notion.)
+3. The script needs the **`script.external_request`** OAuth scope (to call Notion) — declare it in
+   `appsscript.json` `oauthScopes`, run once to consent, then **redeploy a new version**.
+4. Deploy as a **Web app** (Execute as: Me · Access: **Anyone**) and paste the `/exec` URL into
+   `config.dataSource.url`. Verify with `…/exec?debug=1`.
+   *(PS gotcha for the bakers: never name a function `GBP` — it's a built-in alias for `Get-PSBreakpoint`.)*
+
+### Re-baking Harvaza's Amazon data (`tools/build-harvaza-data.ps1`)
+
+Same strategy as AMACX, but it only owns the **Amazon block** (the founder forecast is owned by the Sheet/Notion
+proxy, so the baker must NOT clobber it). It regenerates the Products sections from in-session MerchantSpring
+pulls and writes **`tools/harvaza-amazon-baked.js`** — a splice snippet you paste into `clients/harvaza/data.js`
+(it does **not** overwrite `data.js`). To refresh the period-aware P&L/Advertising/Overview actuals, re-pull the
+per-month figures (`getStoreProfitAndLoss` per month, `getSalesByChannels` per period) and update the literals.
 
 ---
 
