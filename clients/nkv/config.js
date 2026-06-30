@@ -35,15 +35,18 @@ window.DASHBOARD_CONFIG = {
 
   // Pages to hide for this client (nav item + tab + page).
   // 'keywords' dropped — MerchantSpring's MCP exposes no keyword-level data (matches AMACX).
-  // 'pnl' (the real P&L & Expenses page) hidden for now — Amazon P&L is shown as a maintenance
-  //   stub instead (see maintenancePages). The real P&L data still lives baked in data.js, ready
-  //   to expose later by removing 'pnl' here and dropping 'amazonpnl' from maintenancePages.
+  // 'pnl' (the real P&L & Expenses page) hidden for now — Amazon P&L is shown as the locked paywall
+  //   blocker (page-amazonpnl) instead. The real P&L data still lives baked in data.js, ready to
+  //   expose later by removing 'pnl' here and pointing the 'amazonpnl' nav at the real renderer.
   hiddenPages: ['keywords', 'pnl'],
 
-  // Pages routed to the shared "under maintenance" / pay-gate stub (nav item shows, content is the
-  // stub). 'amazonpnl' → Amazon P&L; 'shopifypnl' → Shopify P&L is gated for now (its real builder +
-  // live proxy stay intact in data.js / nkv-sheet-proxy.gs — drop the key here to expose it).
-  maintenancePages: ['amazonpnl', 'shopifypnl'],
+  // Pages shown as the locked "paywall blocker" (Executive Subscription upsell) rather than their full
+  // data view. Both P&L pages route to a dedicated paywall gate, NOT the generic maintenance stub:
+  //   • 'amazonpnl'  → page-amazonpnl  (the Amazon P&L upsell block in index.html).
+  //   • 'shopifypnl' → page-shopifypnl, whose real builder + live data stay intact in data.js /
+  //     nkv-sheet-proxy.gs but are hidden behind the gate (#spnl-locked) — drop the gate to expose.
+  // maintenancePages is now empty: nothing routes to the generic "under maintenance" stub.
+  maintenancePages: [],
 
   // ---- Date-range selector (drives the topbar dropdown) ----
   dateRangeOptions: [
