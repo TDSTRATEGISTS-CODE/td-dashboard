@@ -32,14 +32,17 @@ dashboard/
   tools/
     build-amacx-data.ps1     ← generator that writes clients/amacx/data.js from a baked MerchantSpring + sheet snapshot
     build-harvaza-data.ps1   ← regenerates Harvaza's Amazon products blocks → tools/harvaza-amazon-baked.js (splice helper)
-    harvaza-sheet-proxy.gs   ← Apps Script reference: reads the Founder-Dashboard Sheet + Notion Deal Hub (see "Harvaza")
+    amacx-data-proxy.gs      ← Apps Script source for AMACX (sheet → dateRanges + sections); deploy in Apps Script
+    nkv-sheet-proxy.gs       ← Apps Script source for NKV (scope board + Shopify P&L + supplier POs); deploy in Apps Script
+    harvaza-sheet-proxy.gs   ← Apps Script source for Harvaza (Founder-Dashboard Sheet + Notion Deal Hub; see "Harvaza")
     harvaza-amazon-baked.js  ← GENERATED splice snippet (not loaded by the app; safe to ignore/regenerate)
 ```
 
-> **Apps Script proxies** (`amacx-data-proxy.gs`, `harvaza-sheet-proxy.gs`, `nkv-sheet-proxy.gs`) live at the
-> repo **root, OUTSIDE this `dashboard/` folder** — they're deployed in Google Apps Script and are **not**
-> served from GitHub, so they're kept out of the `dashboard/` upload. Editing a `.gs` only takes effect after you
-> **redeploy** the Apps Script web app (keep the same `/exec` URL, or update `config.dataSource.url`).
+> **Apps Script proxies** (`amacx-data-proxy.gs`, `harvaza-sheet-proxy.gs`, `nkv-sheet-proxy.gs`) are now
+> **versioned in `tools/`** (so they can be read/edited from a cloud session), but they actually **run in
+> Google Apps Script** and are **not** served from GitHub. Editing the `.gs` in this repo does **nothing**
+> on its own — you must paste it into the bound Apps Script project and **redeploy a new version** (Deploy ▸
+> Manage deployments ▸ edit ▸ New version) to keep the same `/exec` URL (or update `config.dataSource.url`).
 > The AMACX proxy reads the Project-Scope board by **fixed column** — `E` = In Progress, `F` = Upcoming,
 > `G` = Completed, `I` = Flags & Warnings — and supplies the live per-market ad budgets + forecast.
 > The **NKV proxy** (`nkv-sheet-proxy.gs`) instead locates the board columns by **header text**
