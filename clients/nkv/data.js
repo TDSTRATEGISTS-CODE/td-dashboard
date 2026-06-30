@@ -1,7 +1,7 @@
 /* NKV Beauty — client data (window.DASHBOARD_DATA).
    ACTUALS: MerchantSpring MCP, pulled 30 Jun 2026 (channel 71662311, seller A1SNRD9T28Z9ZM), native GBP.
-   UK is the live market (real data). Ireland is early-stage (small real May/Apr actuals; longer-period
-   figures are approximate). USA is a not-yet-launched placeholder (zeros).
+   UK is the live market (real data). Ireland is early-stage and EUR-native — its £ figures are the
+   actual €-sales converted at €1 ≈ £0.855. USA is a not-yet-launched placeholder (zeros).
    NOTE: the shared app.js trend-chart axis formatter (moneyK) hardcodes '€' — KPI cards/tables/P&L here
    are all in £, but the two trend-chart Y-axes will display '€' until the template adds a currency option.
    dataSource.type is 'static' (no Sheet/Apps Script proxy for NKV yet). */
@@ -28,44 +28,42 @@ window.DASHBOARD_DATA = {
       irl: { rev:'£480', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£32.00', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'15 orders', roasAdS:'£480 revenue', aovD:'', aovS:'15 orders May', adSalesS:'No ad spend', revD:'Early stage', revS:'vs £352 Apr', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
       usa: { rev:'£0', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£0', tacosAd:'—', roasAd:'—', revC:'df', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Not launched', roasS:'—', roasAdS:'Not launched', aovD:'', aovS:'—', adSalesS:'Not launched', revD:'Not launched', revS:'channel pending', spendD:'', spendS:'—', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
     },
-    // Campaign-type mix from the MerchantSpring campaigns report (May 2026, real). Sales share + ACOS
-    // by ad type. SP/SB split is structural (~86.5/13.5); longer periods scale sales to that period's
-    // actual ad-sales total with per-type ACOS tracked to the period's blended efficiency.
+    // Campaign-type mix — real ad-type sales share + ACOS from the MerchantSpring campaigns report.
+    // Every period (may/3m/6m/12m) is pulled from its own campaigns-report window — no estimates.
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.5,sales:'£6.7k',acos:'44.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.5,sales:'£1.0k',acos:'28.1%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
   },
   '3m': {
     label: 'Mar–May 2026', shortLabel: 'Mar–May 2026',
-    rev: '£46,819', revD: '3-month actuals', revC: 'du', revS: '',
+    rev: '£46,802', revD: '3-month actuals', revC: 'du', revS: '',
     adSales: '£24,525', adSalesD: '3-month actuals', adSalesC: 'df', adSalesS: '52.4% of revenue',
     tacos: '19.0%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
     roas: '2.76×', roasD: '', roasC: 'df', roasS: '',
     spend: '£8,885', spendD: '3-month actuals', spendC: 'df', spendS: '',
     tacosAd: '19.0%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
-    roasAd: '2.76×', roasAdD: '', roasAdC: 'df', roasAdS: '£46,819 revenue',
+    roasAd: '2.76×', roasAdD: '', roasAdC: 'df', roasAdS: '£46,802 revenue',
     aov: '£29.35', aovD: '', aovC: 'df', aovS: '',
     mktRows: [
       ['UK','gb','—','£8,885','bb','UK ad-managed','£45,587','ba','19.5%'],
-      ['IRL','ie','—','£0','bb','Early stage · no ads','£1,232','bb','—'],
+      ['IRL','ie','—','£0','bb','Early stage · no ads','£1,215','bb','—'],
       ['USA','us','—','£0','bb','Not launched','£0','bb','—'],
-      ['Total',null,'—','£8,885','bb','3-month actuals','£46,819','ba','19.0%']
+      ['Total',null,'—','£8,885','bb','3-month actuals','£46,802','ba','19.0%']
     ],
     marketKpis: {
       uk: { rev:'£45,587', adSales:'£24,525', tacos:'19.5%', roas:'2.76×', spend:'£8,885', aov:'£29.35', tacosAd:'19.5%', roasAd:'2.76×', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£45,587 revenue', aovD:'', aovS:'', adSalesS:'53.8% of revenue', revD:'3-month actuals', revS:'', spendD:'3-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'3-month actuals' },
-      irl: { rev:'£1,232', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£30.00', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£1,232 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage (approx)', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
+      irl: { rev:'£1,215', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£30.00', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£1,215 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
       usa: { rev:'£0', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£0', tacosAd:'—', roasAd:'—', revC:'df', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Not launched', roasS:'', roasAdS:'Not launched', aovD:'', aovS:'', adSalesS:'Not launched', revD:'Not launched', revS:'', spendD:'', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
     },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.5,sales:'£21.2k',acos:'38.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.5,sales:'£3.3k',acos:'24.2%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
-    // Period-aware Ad Metrics (3-mo). Spend/AdSales/ACOS/TACOS/ROAS/Impressions = real MerchantSpring
-    // sums; CPC + New-to-Brand held at the structural level (per-period detail not pulled).
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:88.6,sales:'£21.7k',acos:'37.8%'}, {name:'Sponsored Brands',color:'#6b7160',pct:11.4,sales:'£2.8k',acos:'24.2%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
+    // Period-aware Ad Metrics (3-mo) — all actuals (MerchantSpring channel + campaigns reports, Mar–May).
     sec: { advertising: { metrics: [
       {lbl:'Total Spend',  val:'£8,885',  id:'a-spend'},
       {lbl:'Ad Sales',     val:'£24,525', color:'brand'},
       {lbl:'ACOS',         val:'36.2%',  color:'amber'},
       {lbl:'TACOS',        val:'19.0%',  color:'amber', id:'a-tacos'},
       {lbl:'ROAS',         val:'2.76×',  id:'a-roas'},
-      {lbl:'Avg. CPC',     val:'£0.90'},
+      {lbl:'Avg. CPC',     val:'£0.80'},
       {lbl:'Impressions',  val:'3.53M'},
-      {lbl:'New-to-Brand', val:'10.5%',  color:'green'}
+      {lbl:'New-to-Brand', val:'9.0%',   color:'green'}
     ],
     // Real per-campaign actuals for the 3-mo window (MerchantSpring campaigns report, Mar–May 2026,
     // top 13 of 41 by spend). Follows the date selector; row-filtered by the market chip.
@@ -87,37 +85,36 @@ window.DASHBOARD_DATA = {
   },
   '6m': {
     label: 'Jan–May 2026 (YTD)', shortLabel: 'Jan–May 2026',
-    rev: '£77,588', revD: '5-month actuals', revC: 'du', revS: '',
-    adSales: '£42,928', adSalesD: '5-month actuals', adSalesC: 'df', adSalesS: '55.3% of revenue',
-    tacos: '19.4%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
+    rev: '£77,148', revD: '5-month actuals', revC: 'du', revS: '',
+    adSales: '£42,928', adSalesD: '5-month actuals', adSalesC: 'df', adSalesS: '55.6% of revenue',
+    tacos: '19.6%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
     roas: '2.85×', roasD: '', roasC: 'df', roasS: '',
     spend: '£15,087', spendD: '5-month actuals', spendC: 'df', spendS: '',
-    tacosAd: '19.4%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
-    roasAd: '2.85×', roasAdD: '', roasAdC: 'df', roasAdS: '£77,588 revenue',
+    tacosAd: '19.6%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
+    roasAd: '2.85×', roasAdD: '', roasAdC: 'df', roasAdS: '£77,148 revenue',
     aov: '£28.15', aovD: '', aovC: 'df', aovS: '',
     mktRows: [
       ['UK','gb','—','£15,087','bb','UK ad-managed','£75,488','ba','20.0%'],
-      ['IRL','ie','—','£0','bb','Early stage · no ads','£2,100','bb','—'],
+      ['IRL','ie','—','£0','bb','Early stage · no ads','£1,660','bb','—'],
       ['USA','us','—','£0','bb','Not launched','£0','bb','—'],
-      ['Total',null,'—','£15,087','bb','5-month actuals','£77,588','ba','19.4%']
+      ['Total',null,'—','£15,087','bb','5-month actuals','£77,148','ba','19.6%']
     ],
     marketKpis: {
       uk: { rev:'£75,488', adSales:'£42,928', tacos:'20.0%', roas:'2.85×', spend:'£15,087', aov:'£28.09', tacosAd:'20.0%', roasAd:'2.85×', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£75,488 revenue', aovD:'', aovS:'', adSalesS:'56.9% of revenue', revD:'5-month actuals', revS:'', spendD:'5-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'5-month actuals' },
-      irl: { rev:'£2,100', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£30.00', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£2,100 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage (approx)', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
+      irl: { rev:'£1,660', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£30.00', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£1,660 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
       usa: { rev:'£0', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£0', tacosAd:'—', roasAd:'—', revC:'df', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Not launched', roasS:'', roasAdS:'Not launched', aovD:'', aovS:'', adSalesS:'Not launched', revD:'Not launched', revS:'', spendD:'', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
     },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.5,sales:'£37.1k',acos:'37.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.5,sales:'£5.8k',acos:'23.5%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
-    // Period-aware Ad Metrics (YTD). Spend/AdSales/ACOS/TACOS/ROAS/Impressions = real MerchantSpring
-    // sums; CPC + New-to-Brand held at the structural level (per-period detail not pulled).
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:88.4,sales:'£38.0k',acos:'36.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:11.6,sales:'£5.0k',acos:'25.8%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
+    // Period-aware Ad Metrics (YTD) — all actuals (MerchantSpring channel + campaigns reports, Jan–May).
     sec: { advertising: { metrics: [
       {lbl:'Total Spend',  val:'£15,087', id:'a-spend'},
       {lbl:'Ad Sales',     val:'£42,928', color:'brand'},
       {lbl:'ACOS',         val:'35.1%',  color:'amber'},
       {lbl:'TACOS',        val:'19.4%',  color:'amber', id:'a-tacos'},
       {lbl:'ROAS',         val:'2.85×',  id:'a-roas'},
-      {lbl:'Avg. CPC',     val:'£0.90'},
+      {lbl:'Avg. CPC',     val:'£0.80'},
       {lbl:'Impressions',  val:'5.50M'},
-      {lbl:'New-to-Brand', val:'10.5%',  color:'green'}
+      {lbl:'New-to-Brand', val:'8.8%',   color:'green'}
     ],
     // Real per-campaign actuals for the YTD window (MerchantSpring campaigns report, Jan–May 2026,
     // top 13 of 44 by spend). Follows the date selector; row-filtered by the market chip.
@@ -139,37 +136,37 @@ window.DASHBOARD_DATA = {
   },
   '12m': {
     label: 'Last 12 Months', shortLabel: 'Last 12 Months',
-    rev: '£173,200', revD: 'Trailing 12 months', revC: 'du', revS: 'incl. 1 estimated month (Oct)',
-    adSales: '£93,973', adSalesD: 'Trailing 12 months', adSalesC: 'df', adSalesS: '54.3% of revenue',
-    tacos: '19.1%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
-    roas: '2.84×', roasD: '', roasC: 'df', roasS: '',
-    spend: '£33,105', spendD: 'Trailing 12 months', spendC: 'df', spendS: '',
-    tacosAd: '19.1%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
-    roasAd: '2.84×', roasAdD: '', roasAdC: 'df', roasAdS: '£173,200 revenue',
-    aov: '£27.60', aovD: '', aovC: 'df', aovS: '',
+    rev: '£170,126', revD: 'Trailing 12 months', revC: 'du', revS: '12-mo actuals',
+    adSales: '£88,097', adSalesD: 'Trailing 12 months', adSalesC: 'df', adSalesS: '51.8% of revenue',
+    tacos: '18.6%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
+    roas: '2.79×', roasD: '', roasC: 'df', roasS: '',
+    spend: '£31,621', spendD: 'Trailing 12 months', spendC: 'df', spendS: '',
+    tacosAd: '18.6%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
+    roasAd: '2.79×', roasAdD: '', roasAdC: 'df', roasAdS: '£170,126 revenue',
+    aov: '£27.65', aovD: '', aovC: 'df', aovS: '',
     mktRows: [
-      ['UK','gb','—','£33,105','bb','UK ad-managed','£168,700','ba','19.6%'],
-      ['IRL','ie','—','£0','bb','Early stage · no ads','£4,500','bb','—'],
+      ['UK','gb','—','£31,621','bb','UK ad-managed','£167,239','ba','18.9%'],
+      ['IRL','ie','—','£0','bb','Early stage · no ads','£2,887','bb','—'],
       ['USA','us','—','£0','bb','Not launched','£0','bb','—'],
-      ['Total',null,'—','£33,105','bb','Trailing 12 months','£173,200','ba','19.1%']
+      ['Total',null,'—','£31,621','bb','Trailing 12 months','£170,126','ba','18.6%']
     ],
     marketKpis: {
-      uk: { rev:'£168,700', adSales:'£93,973', tacos:'19.6%', roas:'2.84×', spend:'£33,105', aov:'£27.42', tacosAd:'19.6%', roasAd:'2.84×', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£168,700 revenue', aovD:'', aovS:'', adSalesS:'55.7% of revenue', revD:'Trailing 12 months', revS:'incl. 1 estimated month', spendD:'Trailing 12 months', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'Trailing 12 months' },
-      irl: { rev:'£4,500', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£30.00', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£4,500 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage (approx)', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
+      uk: { rev:'£167,239', adSales:'£88,097', tacos:'18.9%', roas:'2.79×', spend:'£31,621', aov:'£27.65', tacosAd:'18.9%', roasAd:'2.79×', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£167,239 revenue', aovD:'', aovS:'', adSalesS:'52.7% of revenue', revD:'Trailing 12 months', revS:'12-mo actuals', spendD:'Trailing 12 months', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'Trailing 12 months' },
+      irl: { rev:'£2,887', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£30.00', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£2,887 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
       usa: { rev:'£0', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£0', tacosAd:'—', roasAd:'—', revC:'df', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Not launched', roasS:'', roasAdS:'Not launched', aovD:'', aovS:'', adSalesS:'Not launched', revD:'Not launched', revS:'', spendD:'', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
     },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.5,sales:'£81.3k',acos:'37.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.5,sales:'£12.7k',acos:'23.5%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.0,sales:'£0.0k',acos:'n/a'} ] },
-    // Period-aware Ad Metrics (12-mo). Spend/AdSales/ACOS/TACOS/ROAS = real; Impressions ~trailing-year
-    // sum (incl. est. Oct); CPC + New-to-Brand held at the structural level.
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:88.4,sales:'£77.9k',acos:'36.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:11.5,sales:'£10.2k',acos:'33.5%'}, {name:'Sponsored Display',color:'#a7ab90',pct:0.1,sales:'£0.1k',acos:'146%'} ] },
+    // Period-aware Ad Metrics (12-mo) — all actuals from the MerchantSpring campaigns report (Jun 2025–
+    // May 2026; includes October, which the monthly-sales endpoint glitches but the campaigns report has).
     sec: { advertising: { metrics: [
-      {lbl:'Total Spend',  val:'£33,105', id:'a-spend'},
-      {lbl:'Ad Sales',     val:'£93,973', color:'brand'},
-      {lbl:'ACOS',         val:'35.2%',  color:'amber'},
-      {lbl:'TACOS',        val:'19.1%',  color:'amber', id:'a-tacos'},
-      {lbl:'ROAS',         val:'2.84×',  id:'a-roas'},
-      {lbl:'Avg. CPC',     val:'£0.90'},
-      {lbl:'Impressions',  val:'12.8M'},
-      {lbl:'New-to-Brand', val:'10.5%',  color:'green'}
+      {lbl:'Total Spend',  val:'£31,621', id:'a-spend'},
+      {lbl:'Ad Sales',     val:'£88,097', color:'brand'},
+      {lbl:'ACOS',         val:'35.9%',  color:'amber'},
+      {lbl:'TACOS',        val:'18.6%',  color:'amber', id:'a-tacos'},
+      {lbl:'ROAS',         val:'2.79×',  id:'a-roas'},
+      {lbl:'Avg. CPC',     val:'£0.82'},
+      {lbl:'Impressions',  val:'11.69M'},
+      {lbl:'New-to-Brand', val:'8.9%',   color:'green'}
     ],
     // Real per-campaign actuals for the trailing-year window (MerchantSpring campaigns report,
     // Jun 2025–May 2026, top 13 of 51 by spend). Follows the date selector; row-filtered by market.
@@ -284,9 +281,9 @@ window.DASHBOARD_DATA = {
         {lbl:'ACOS',         val:'42.0%',  color:'amber'},
         {lbl:'TACOS',        val:'21.2%',  color:'amber', id:'a-tacos'},
         {lbl:'ROAS',         val:'2.38×',  id:'a-roas'},
-        {lbl:'Avg. CPC',     val:'£0.92'},
+        {lbl:'Avg. CPC',     val:'£0.88'},
         {lbl:'Impressions',  val:'1.56M'},
-        {lbl:'New-to-Brand', val:'10.5%',  color:'green'}
+        {lbl:'New-to-Brand', val:'11.2%',  color:'green'}
       ],
       // Ad budget = £3,000/mo (NKV tracker · Marketing Activity sheet) vs real May actual spend.
       // Overwrites the template's AMACX placeholder budget table. Goes live via nkv-sheet-proxy.
