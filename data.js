@@ -22,7 +22,7 @@ window.DASHBOARD_DATA = {
       ['NLD','nl','€0','€0','bb','Early launch','€0','bb','—'],
       ['Total EU',null,'€2,500','€2,307','bg','92% utilised','€8,178','br','28.2%']
     ],
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#9caf78',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#e8a87c',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
   },
   '3m': {
     label: 'Mar–May 2026', shortLabel: 'Mar–May 2026',
@@ -42,7 +42,7 @@ window.DASHBOARD_DATA = {
       ['NLD','nl','€0','€0','bb','Early launch','€0','bb','—'],
       ['Total EU',null,'€5,950','€5,321','bg','89% utilised','€19,302','br','27.6%']
     ],
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#9caf78',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#e8a87c',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
   },
   '6m': {
     label: 'Jan–May 2026 (YTD)', shortLabel: 'Jan–May 2026',
@@ -62,7 +62,7 @@ window.DASHBOARD_DATA = {
       ['NLD','nl','€0','€0','bb','Early launch','€0','bb','—'],
       ['Total EU',null,'€8,250','€5,822','bg','71% utilised','€26,321','ba','22.1%']
     ],
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#9caf78',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#e8a87c',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
   },
   '2025': {
     label: 'Full Year 2025', shortLabel: 'FY 2025',
@@ -82,7 +82,7 @@ window.DASHBOARD_DATA = {
       ['NLD','nl','€0','€0','bb','Early launch','€0','bb','—'],
       ['Total EU',null,'€18,880','€11,337','bg','60% utilised','€41,404','br','27.4%']
     ],
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#9caf78',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#e8a87c',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
   },
   '12m': {
     label: 'Last 12 Months', shortLabel: 'Last 12 Months',
@@ -102,7 +102,7 @@ window.DASHBOARD_DATA = {
       ['NLD','nl','€0','€0','bb','Early launch','€0','bb','—'],
       ['Total EU',null,'€25,100','€15,693','bg','63% utilised','€60,253','ba','26.0%']
     ],
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#6b7160',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#9caf78',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#e8a87c',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
   }
   },
   sections: {

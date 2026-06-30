@@ -28,7 +28,7 @@ window.DASHBOARD_DATA = {
     adChart: { max:32000, yTicks:['£32k','£24k','£16k','£8k','£0'], xLabels:['Dec','Jan','Feb','Mar','Apr','May'], xHighlight:'#404935',
       series:[ {color:'#404935',values:[19500,19800,21500,22300,24900,29400],main:true,area:true}, {color:'#a7ab90',values:[4000,4100,4400,4600,5200,6000],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:78.8,sales:'£21.6k',acos:'19.2%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.1,sales:'£3.6k',acos:'20.6%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.0,sales:'£2.2k',acos:'23.6%'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:78.8,sales:'£21.6k',acos:'19.2%'}, {name:'Sponsored Brands',color:'#9caf78',pct:13.1,sales:'£3.6k',acos:'20.6%'}, {name:'Sponsored Display',color:'#e8a87c',pct:8.0,sales:'£2.2k',acos:'23.6%'} ] },
   },
   '3m': {
     label: 'Mar–May 2026', shortLabel: 'Mar–May 2026',
@@ -55,7 +55,7 @@ window.DASHBOARD_DATA = {
     adChart: { max:32000, yTicks:['£32k','£24k','£16k','£8k','£0'], xLabels:['Mar','Apr','May'], xHighlight:'#404935',
       series:[ {color:'#404935',values:[22300,24900,29400],main:true,area:true}, {color:'#a7ab90',values:[4600,5200,6000],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:78.0,sales:'£55.4k',acos:'19.0%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.5,sales:'£9.6k',acos:'20.4%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.5,sales:'£6.0k',acos:'23.2%'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:78.0,sales:'£55.4k',acos:'19.0%'}, {name:'Sponsored Brands',color:'#9caf78',pct:13.5,sales:'£9.6k',acos:'20.4%'}, {name:'Sponsored Display',color:'#e8a87c',pct:8.5,sales:'£6.0k',acos:'23.2%'} ] },
     sec: {
       overview: {
         buyBox: [ {label:'Sport Hydration Mix',pct:97,color:'green'}, {label:'Energy Gel 25pk',pct:96,color:'green'}, {label:'Recovery Powder',pct:95,color:'green'}, {label:'Isotonic Mix 1kg',pct:90,color:'amber'} ],
@@ -114,7 +114,7 @@ window.DASHBOARD_DATA = {
     adChart: { max:32000, yTicks:['£32k','£24k','£16k','£8k','£0'], xLabels:['Jan','Feb','Mar','Apr','May'], xHighlight:'#404935',
       series:[ {color:'#404935',values:[19800,21500,22300,24900,29400],main:true,area:true}, {color:'#a7ab90',values:[4100,4400,4600,5200,6000],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:77.5,sales:'£85.8k',acos:'18.8%'}, {name:'Sponsored Brands',color:'#6b7160',pct:14.0,sales:'£15.5k',acos:'20.2%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.5,sales:'£9.4k',acos:'23.0%'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:77.5,sales:'£85.8k',acos:'18.8%'}, {name:'Sponsored Brands',color:'#9caf78',pct:14.0,sales:'£15.5k',acos:'20.2%'}, {name:'Sponsored Display',color:'#e8a87c',pct:8.5,sales:'£9.4k',acos:'23.0%'} ] },
     sec: {
       overview: {
         buyBox: [ {label:'Sport Hydration Mix',pct:96,color:'green'}, {label:'Energy Gel 25pk',pct:95,color:'green'}, {label:'Recovery Powder',pct:94,color:'green'}, {label:'Isotonic Mix 1kg',pct:89,color:'amber'} ],
@@ -197,7 +197,7 @@ window.DASHBOARD_DATA = {
       series:[ {color:'#404935',values:[15000,15500,16000,16500,18000,21500,19500,19800,21500,22300,24900,29400],main:true,area:true},
                {color:'#a7ab90',values:[3050,3150,3250,3350,3700,4400,4000,4100,4400,4600,5200,6000],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:79.0,sales:'£176.0k',acos:'19.5%'}, {name:'Sponsored Brands',color:'#6b7160',pct:13.0,sales:'£29.0k',acos:'20.8%'}, {name:'Sponsored Display',color:'#a7ab90',pct:8.0,sales:'£18.0k',acos:'23.8%'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:79.0,sales:'£176.0k',acos:'19.5%'}, {name:'Sponsored Brands',color:'#9caf78',pct:13.0,sales:'£29.0k',acos:'20.8%'}, {name:'Sponsored Display',color:'#e8a87c',pct:8.0,sales:'£18.0k',acos:'23.8%'} ] },
     sec: {
       overview: {
         buyBox: [ {label:'Sport Hydration Mix',pct:95,color:'green'}, {label:'Energy Gel 25pk',pct:94,color:'green'}, {label:'Recovery Powder',pct:93,color:'green'}, {label:'Isotonic Mix 1kg',pct:88,color:'amber'} ],
