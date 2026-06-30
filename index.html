@@ -197,7 +197,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
      instead of a stale cached copy. Appended as ?v= to all three script loads below + app.js.
      app.js (watchForUpdates) ALSO polls this value on the live page — if it changes mid-session it
      shows the "You caught us during an update — please refresh" overlay. So: one bump, both jobs. */
-  var APP_VER = '2026-06-30o';
+  var APP_VER = '2026-06-30p';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');

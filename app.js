@@ -590,8 +590,12 @@ function showUpdateOverlay() {
     '#update-overlay .uo-card{max-width:440px;text-align:center;background:var(--surface,#fff);' +
       'border:1px solid var(--border,#e0d9d0);border-radius:18px;padding:34px 30px;box-shadow:0 16px 50px rgba(0,0,0,.16);}' +
     '#update-overlay .uo-ic{width:60px;height:60px;border-radius:16px;background:var(--brand,#404935);color:#fff;' +
-      'display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 18px;animation:uoSpin 1.7s linear infinite;}' +
-    '@keyframes uoSpin{to{transform:rotate(360deg);}}' +
+      'display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 18px;animation:uoSpinBox 2.2s linear infinite;}' +
+    // the box turns one way and the arrow glyph inside it the other; nested, with the arrow at half the
+    // period, its net motion is an equal-and-opposite spin to the box
+    '#update-overlay .uo-arrow{display:inline-block;animation:uoSpinArrow 1.1s linear infinite;}' +
+    '@keyframes uoSpinBox{to{transform:rotate(-360deg);}}' +
+    '@keyframes uoSpinArrow{to{transform:rotate(360deg);}}' +
     '#update-overlay .uo-t{font-size:21px;font-weight:700;color:var(--brand,#404935);letter-spacing:-.3px;margin-bottom:9px;}' +
     '#update-overlay .uo-m{font-size:14px;color:var(--muted,#6b7160);line-height:1.6;margin-bottom:22px;}' +
     '#update-overlay .uo-b{font-size:15px;font-weight:700;color:#fff;background:var(--green,#2d6a4f);border:none;' +
@@ -600,9 +604,9 @@ function showUpdateOverlay() {
   document.head.appendChild(st);
   var ov = document.createElement('div');
   ov.id = 'update-overlay';
-  ov.innerHTML = '<div class="uo-card"><div class="uo-ic">&#10227;</div>' +
+  ov.innerHTML = '<div class="uo-card"><div class="uo-ic"><span class="uo-arrow">&#10227;</span></div>' +
     '<div class="uo-t">You caught us during an update</div>' +
-    '<div class="uo-m">Your dashboard will be available shortly &mdash; please refresh.</div>' +
+    '<div class="uo-m">Your dashboard will be available shortly<br>&mdash; please refresh.</div>' +
     '<button class="uo-b" type="button" onclick="location.reload()">Refresh</button></div>';
   (document.body || document.documentElement).appendChild(ov);
   document.documentElement.style.overflow = 'hidden';
