@@ -507,8 +507,10 @@ function showLoadingOverlay() {
       '#live-loading .notp-d.drop{animation:nDrop .24s ease;}' +
       '@keyframes nDrop{0%{transform:translateY(-118%);opacity:0;}55%{opacity:1;}100%{transform:translateY(0);opacity:1;}}' +
       // — the cycling status line —
-      '#live-loading .nload-txt{font-family:var(--display,sans-serif);font-size:15px;font-weight:600;' +
-        'color:var(--muted,#6b7160);letter-spacing:.3px;min-height:20px;text-align:center;}' +
+      // fixed-height, no-wrap, vertically-centred row so every phrase sits at the exact same height
+      '#live-loading .nload-txt{display:flex;align-items:center;justify-content:center;height:22px;white-space:nowrap;' +
+        'font-family:var(--display,sans-serif);font-size:15px;font-weight:600;' +
+        'color:var(--muted,#6b7160);letter-spacing:.3px;}' +
       '#live-loading .nload-line{display:inline-block;animation:nTxt .45s ease;}' +
       '@keyframes nTxt{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}' +
       // dots sit in a fixed-width slot so the centred phrase never shuffles sideways as they cycle;
