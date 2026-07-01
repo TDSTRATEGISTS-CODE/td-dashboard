@@ -523,17 +523,25 @@ is the "Last Month" slot — keep the key literally `may`; only update its `labe
    ✅ Confirm the check prints `shape OK` and the sanity pass is clean.
 10. **Bump the cache-buster.** Increment **`APP_VER`** in `index.html` (e.g. `2026-07-01e` → the new bake date+letter)
     so browsers fetch the fresh `data.js`. A pure data refresh needs **no proxy redeploy**.
-11. **Open a PR (do not merge).** Commit `clients/nkv/data.js` + `index.html` + `clients/nkv/config.js`, push, and
-    open a PR titled **`NKV monthly re-bake — <Mon YYYY>`** whose body is the headline figures (rev / ad spend /
-    TACOS / ROAS **vs prior month**) plus a **`✅ validations passed`** line, so review is a 30-second glance. If any
-    MerchantSpring pull returns null/empty or a check fails, **STOP** — open the PR as a **draft** explaining what
-    failed rather than pushing partial data.
+11. **Publish + notify.** If **every** self-check passes (see the gate below), commit `clients/nkv/data.js` +
+    `index.html` + `clients/nkv/config.js` and **push straight to `main`** — that host mirrors the repo, so it's
+    live (no proxy redeploy for a data-only refresh). Then log the run in GitHub issue
+    [**#4 "NKV monthly re-bake — run log"**](../../issues/4) with the headline figures (rev / ad spend / TACOS /
+    ROAS **vs prior month**) + `✅ validations passed`. **On any failure, do NOT touch `main`** — open a **draft PR**
+    (`… (NEEDS REVIEW)`) explaining what failed and drop a `⚠️` note on issue #4.
 
-**Automating it (monthly Routine).** This runbook is driven unattended by a Claude Code **Routine**
+    **Self-check gate (auto-publish only when all pass):** MerchantSpring connector present · every expected pull
+    returned data · `node` shape/syntax check prints `shape OK` · sanity clean (TACOS ≤100%, ROAS ~2–3×, no
+    negative/blank rev, all MoM deltas present, **no headline metric swinging >60% MoM** without cause — that's the
+    "plausible-but-wrong" case, so it routes to human review instead of publishing).
+
+**Automating it (monthly Routine).** This runbook runs unattended as a Claude Code **Routine**
 (`claude.ai/code/routines`) whose prompt lives at [`tools/nkv-monthly-rebake.prompt.md`](tools/nkv-monthly-rebake.prompt.md).
 Wire it with a **schedule trigger on the 1st of each month** (cron `0 6 1 * *` via `/schedule update`; min interval
-is 1h), the **MerchantSpring connector** attached, and default (`claude/`-branch) push perms so each run opens a PR
-for review. It's a review gate, not auto-merge — the numbers are client-facing.
+is 1h), the **MerchantSpring connector** attached, and **"Allow unrestricted branch pushes" enabled** so it can
+publish to `main`. It's **auto-publish + notify**: green runs go live and log to issue #4 (watch it for the email);
+only a failed self-check falls back to a draft PR + review. Flip it back to a pure review gate by turning off
+unrestricted pushes — then every run just opens a PR.
 
 ---
 

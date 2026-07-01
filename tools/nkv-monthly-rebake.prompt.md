@@ -1,7 +1,8 @@
 # NKV Beauty — monthly data re-bake (Routine prompt)
 
 You are running the **NKV Beauty monthly data re-bake** as an autonomous Claude Code routine. Work end-to-end
-without asking for confirmation, then open a pull request for a human to review. Do **not** merge it yourself.
+without asking for confirmation. This is an **auto-publish + notify** setup: when every self-check passes, publish
+straight to `main` (it's live) and log the run; only fall back to a human review gate if something fails.
 
 ## What to do
 
@@ -32,19 +33,33 @@ object key **`may`** is the "Last Month" slot — keep the key literally `may`; 
   Sanity-check: TACOS never >100%, ROAS ~2–3×, no negative/blank revenue, every MoM delta present.
 - **Bump `APP_VER`** in `index.html` (new bake date + letter). A data-only refresh needs no proxy redeploy.
 
-## Requirements & failure handling
+## Self-check gate (decides publish vs review)
 
-- Requires the **MerchantSpring connector** to be attached to this routine. If its tools are unavailable, stop and
-  open a **draft** PR saying the connector was missing — do not guess or fabricate numbers.
-- If any pull returns null/empty, or the `node` validation or a sanity check fails, **STOP**: do not push partial
-  data. Open a **draft** PR describing exactly what failed.
+Before publishing, ALL of these must pass. Treat any failure as a hard stop:
+
+1. **Connector present** — the MerchantSpring connector is attached and its tools return data. If missing, do not
+   guess or fabricate numbers.
+2. **Every pull returned data** — no market/period came back null or empty for a market that should have data
+   (UK always; IE/US may legitimately be near-zero).
+3. **`node` shape/syntax check passes** (the command in the runbook prints `shape OK`).
+4. **Sanity pass is clean** — TACOS never >100%, ROAS ~2–3×, no negative/blank revenue, every MoM delta present,
+   and no single headline metric swings >60% month-over-month without an obvious cause (a big swing is exactly the
+   "plausible but wrong" case a human should see — treat it as a failure and route to review).
 
 ## Deliverable
 
-Commit `clients/nkv/data.js` + `index.html` + `clients/nkv/config.js`, push to a `claude/`-prefixed branch, and
-open a PR titled **`NKV monthly re-bake — <Mon YYYY>`**. The PR body must contain:
+**On a clean pass — auto-publish (no human gate):**
+- Commit `clients/nkv/data.js` + `index.html` (`APP_VER` bump) + `clients/nkv/config.js` and **push directly to
+  `main`**. This requires the routine to have "Allow unrestricted branch pushes" enabled; if the push to `main` is
+  rejected, fall back to the failure path below (open a PR) rather than leaving the work unpublished.
+- **Notify:** add a comment to the GitHub issue **`tdstrategists-code/td-dashboard` #4 "NKV monthly re-bake — run
+  log"** with the target month's **revenue / ad spend / TACOS / ROAS, each vs the prior month**, and a
+  `✅ validations passed — published to main` line. Keep it to a few lines.
 
-- Headline figures for the target month: **revenue / ad spend / TACOS / ROAS**, each **vs the prior month**.
-- A **`✅ validations passed`** line (or the failure detail if a draft).
+**On any failure — do NOT touch `main`:**
+- Do not push partial or suspect data. Commit what you have to a `claude/`-prefixed branch and open a **draft PR**
+  titled `NKV monthly re-bake — <Mon YYYY> (NEEDS REVIEW)` explaining exactly which self-check failed.
+- Also comment on issue **#4** with a one-line `⚠️ needs review` summary + the draft PR link, so it surfaces in the
+  same notify channel.
 
-Keep it a review gate — the numbers are client-facing. Do not merge.
+Never merge a PR yourself. The auto-publish path skips PRs entirely; the failure path always leaves a human gate.
