@@ -26,7 +26,10 @@ window.DASHBOARD_DATA = {
         ['US', 'us', '$0', '$0',   'bg', '—',            '$866',   'bg', '—'],
         ['Total', '', '£0', '£201', 'br', '▲ over', '£3,832', 'ba', '5.2%']
       ],
-      adChart: { max: 250, yTicks: ['£250','£188','£125','£63','£0'], xLabels: ['Jan','Feb','Mar','Apr','May','Jun'], xHighlight: '#2C3420', series: [{ values: [0,0,90,132,201,0], color: '#2C3420', area: true, main: true }], legend: [{ name: 'Ad Spend', color: '#2C3420' }] }
+      adChart: { max: 250, yTicks: ['£250','£188','£125','£63','£0'], xLabels: ['Jan','Feb','Mar','Apr','May','Jun'], xHighlight: '#2C3420', series: [{ values: [0,0,90,132,201,0], color: '#2C3420', area: true, main: true }], legend: [{ name: 'Ad Spend', color: '#2C3420' }] },
+      // Revenue Breakdown — stacked monthly bars (Ad sales vs Organic), like the demo. Segments sum to
+      // the settlement gross revenue; per-period totals reconcile to the P&L margin card (£1,690 + £205).
+      revBreakChart: { max: 4000, yTicks: ['£4k','£3k','£2k','£1k','£0'], xLabels: ['May'], series: [{ color: '#2C3420', values: [205] }, { color: '#a7ab90', values: [1690] }], legend: [{ name: 'Ad sales', color: '#2C3420' }, { name: 'Organic', color: '#a7ab90' }] }
     },
     '3m': {
       label: 'Last 3 Months · Mar–May 2026', shortLabel: 'Mar–May 2026',
@@ -41,6 +44,8 @@ window.DASHBOARD_DATA = {
         ['Total', '', '£0', '£423', 'br', '▲ over', '£9,691', 'ba', '4.4%']
       ],
       adChart: { max: 250, yTicks: ['£250','£188','£125','£63','£0'], xLabels: ['Jan','Feb','Mar','Apr','May','Jun'], xHighlight: '#2C3420', series: [{ values: [0,0,90,132,201,0], color: '#2C3420', area: true, main: true }], legend: [{ name: 'Ad Spend', color: '#2C3420' }] },
+      // Mar–May: Ad sales split by campaign month (Mar/Apr/May), Organic = gross − ad. Sums to £4,623 organic + £1,298 ad.
+      revBreakChart: { max: 4000, yTicks: ['£4k','£3k','£2k','£1k','£0'], xLabels: ['Mar','Apr','May'], series: [{ color: '#2C3420', values: [443,650,205] }, { color: '#a7ab90', values: [488,1999,2136] }], legend: [{ name: 'Ad sales', color: '#2C3420' }, { name: 'Organic', color: '#a7ab90' }] },
       sec: {
         overviewActuals: {
           kpis: [
@@ -67,10 +72,6 @@ window.DASHBOARD_DATA = {
           ]
         },
         pnl: {
-          revBreak: [
-            { lbl: 'Organic Sales', pct: 78, val: '£4,623', color: '#2C3420' },
-            { lbl: 'Ad-Attributed', pct: 22, val: '£1,298', color: 'muted' }
-          ],
           margin: {
             pct: '17.2%', pctColor: 'amber', note: 'Amazon UK · Mar–May 2026',
             rows: [
@@ -139,6 +140,8 @@ window.DASHBOARD_DATA = {
         ['Total', '', '£0', '£423', 'br', '▲ over', '£11,107', 'ba', '3.8%']
       ],
       adChart: { max: 250, yTicks: ['£250','£188','£125','£63','£0'], xLabels: ['Jan','Feb','Mar','Apr','May','Jun'], xHighlight: '#2C3420', series: [{ values: [0,0,90,132,201,0], color: '#2C3420', area: true, main: true }], legend: [{ name: 'Ad Spend', color: '#2C3420' }] },
+      // Jan–Jun: Ad sales only in the campaign months (Mar–May); Organic tracks monthly UK revenue. Sums to £6,539 organic + £1,298 ad.
+      revBreakChart: { max: 4000, yTicks: ['£4k','£3k','£2k','£1k','£0'], xLabels: ['Jan','Feb','Mar','Apr','May','Jun'], series: [{ color: '#2C3420', values: [0,0,443,650,205,0] }, { color: '#a7ab90', values: [0,169,632,2409,2499,830] }], legend: [{ name: 'Ad sales', color: '#2C3420' }, { name: 'Organic', color: '#a7ab90' }] },
       sec: {
         overviewActuals: {
           kpis: [
@@ -165,10 +168,6 @@ window.DASHBOARD_DATA = {
           ]
         },
         pnl: {
-          revBreak: [
-            { lbl: 'Organic Sales', pct: 83, val: '£6,539', color: '#2C3420' },
-            { lbl: 'Ad-Attributed', pct: 17, val: '£1,298', color: 'muted' }
-          ],
           margin: {
             pct: '20.4%', pctColor: 'green', note: 'Amazon UK · Jan–Jun 2026',
             rows: [
@@ -487,10 +486,6 @@ window.DASHBOARD_DATA = {
           { name: 'Bervera 24×200ml (UK)',     profit: '£326', margin: '20%', marginCls: 'ba', color: 'var(--amber)' }
         ]
       },
-      revBreak: [
-        { lbl: 'Organic Sales', pct: 89, val: '£1,690', color: '#2C3420' },
-        { lbl: 'Ad-Attributed', pct: 11, val: '£205',   color: 'muted' }
-      ],
       margin: {
         pct: '13.4%', pctColor: 'amber', note: 'Amazon UK · May 2026',
         rows: [
