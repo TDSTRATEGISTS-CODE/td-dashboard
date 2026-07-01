@@ -207,12 +207,14 @@ window.DASHBOARD_DATA = {
       // Buy Box widget removed from the NKV Overview (config.layout.hide: sec-buybox-card); the Stock
       // Warnings card takes that slot. UK 99.3% / IE 99.8% featured-offer rate retained here for reference.
       cvr: { val:'9.5%', note:'May 2026 · 6,168 sessions', sub:'UK · session conversion' },
-      // Stock Warnings = Amazon FBA low-stock / availability only (real, MerchantSpring May 2026).
+      // FBA Stock Warnings = Amazon FBA low-stock / availability only (real, MerchantSpring UK 1 Jul 2026).
+      // 26 of the 77 UK listings are at 0 FBA stock (out of stock / suppressed) — mostly dormant Girlactik
+      // & Lilibeth long-tail variants that don't sell; the 46 selling SKUs are all in stock.
       // (Account-health/strategy alerts moved to their own section — see ACCOUNT-HEALTH note below.)
-      stockWarn: { badge:'2 reorder watch', items:[
-        {level:'amber',title:'Contours Rx Lids Assortment 4–7mm — reorder soon',sub:'B0FYR8DQ2G · ~20 days cover · 41 units · top seller (68/mo)'},
+      stockWarn: { badge:'2 stock-up · 26 OOS', items:[
+        {level:'amber',title:'Contours Rx Lids Assortment 4–7mm — stock-up soon',sub:'B0FYR8DQ2G · ~20 days cover · 41 units · top seller (68/mo)'},
         {level:'amber',title:'Girlactik Gel Eyeliner — watch cover',sub:'B099KVFGZP · ~26 days cover · 24 units · 30/mo'},
-        {level:'green',title:'No out-of-stock or suppressed listings',sub:'all 46 sold SKUs in stock · catalogue clean'}
+        {level:'amber',title:'26 listings out of stock / suppressed',sub:'mostly dormant Girlactik & Lilibeth long-tail variants · all 46 selling SKUs in stock'}
       ] }
       // Account Health (strategy/performance alerts) card removed from the NKV Overview per client request.
     },
