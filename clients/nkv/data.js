@@ -488,12 +488,31 @@ window.DASHBOARD_DATA = {
     { name:'United States',  flag:'us', revenue:'£0',  units:'0',          orders:'0',           cvr:'—',   cvrCls:'bb', aov:'£0.00' }
   ]; }
   function grp(g) { return g.map(function (x) { return { name:x[0], sales:x[1], units:num(x[2]), pct:x[3], adSpend:x[4], tacos:x[5], tacosCls:x[6], oosRate:'0%', oosCls:'bg' }; }); }
+  // Ireland — early-stage, NO ads (so Ad Spend £0 / TACOS n/a). Only three brands sell there; the split
+  // is allocated from the real trailing-12mo IE brand mix (MerchantSpring product report: Contours Rx 82%
+  // / White Luxe 10% / Newnique 8% by sales, 74/12/14 by units) applied to each period's IE actuals.
+  function irlGroups(r) {
+    var rev = gbp(r.rev), u = r.units;
+    function row(name, sShare, uShare, pct) {
+      return { name:name, sales:'£' + num(Math.round(rev * sShare)), adSpend:'£0', tacos:null,
+               units:num(Math.round(u * uShare)), pct:pct, oosRate:'0%', oosCls:'bg' };
+    }
+    return [
+      row('Contours Rx — Eyelid Strips', 0.82, 0.74, '82%'),
+      row('White Luxe — Teeth Whitening', 0.10, 0.12, '10%'),
+      row('Newnique — Hair Growth', 0.08, 0.14, '8%')
+    ];
+  }
+  // USA — recently launched (Jun 2026), so the May-anchored periods have no sales yet (Newnique only).
+  var usaGroups = [
+    { name:'Newnique — Hair Growth', sales:'£0', adSpend:'£0', tacos:null, units:'0', pct:'—', oosRate:'—', oosCls:'bb' }
+  ];
   P.kpisByPeriod = {}; P.tableByPeriod = {}; P.groupsByPeriod = {};
   ['may', '3m', '6m', '12m'].forEach(function (p) {
     var u = UK[p], r = IRL[p], lbl = LBL[p], uc = ukCards(u, lbl), g = grp(GROUPS[p]);
     P.kpisByPeriod[p]   = { all:allCards(u, r, lbl), uk:uc, irl:irlCards(r, lbl), usa:usaCards };
     P.tableByPeriod[p]  = rows(u, r);
-    P.groupsByPeriod[p] = { all:g, uk:g, irl:g, usa:g };
+    P.groupsByPeriod[p] = { all:g, uk:g, irl:irlGroups(r), usa:usaGroups };
   });
 })();
 

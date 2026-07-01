@@ -640,7 +640,7 @@ function showLoadingOverlay() {
         'font-family:var(--display,sans-serif);font-size:15px;font-weight:600;' +
         'color:var(--muted,#6b7160);letter-spacing:.3px;}' +
       '#live-loading .nload-line{display:inline-block;animation:nTxt .45s ease;}' +
-      '@keyframes nTxt{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}' +
+      '@keyframes nTxt{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}' +
       // dots sit in a fixed-width slot so the centred phrase never shuffles sideways as they cycle;
       // an equal-width spacer on the left keeps the phrase truly centred (so it lines up with the OTP row)
       '#live-loading .nload-pad{display:inline-block;width:1.4em;}' +
@@ -685,7 +685,7 @@ function showLoadingOverlay() {
   }, 420));
 
   // Cycle the status line through a few playful phrases while the live data loads.
-  var phrases = ['Digital Dash loading', 'Numbers dividing by other numbers', 'Deep data downloading', 'Crunching the latest actuals'];
+  var phrases = ['Digital Dash loading', 'Deep data downloading', 'Crunching the latest actuals', 'Numbers dividing by other numbers'];
   var pi = 0;
   clearInterval(window.__nloadTimer);
   window.__nloadTimer = setInterval(function () {
