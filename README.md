@@ -11,6 +11,9 @@ dashboard/
   app.js            ← shared LOGIC: page registry + templates, generated nav/tabs, all renderers, the
                        live-data overlay. Reads config + data and paints the UI. No client values.
   td-logo.png       ← shared TD Strategists logo (used by every client for now).
+  wix-embed.js      ← Wix Custom Element `<td-dashboard>` — iframes the dashboard and auto-resizes to the
+                       height the page reports on every view. Hosted next to index.html; self-locating.
+                       See "Embedding in Wix" below.
   clients/
     amacx/          ← AMAZON-template client (EU · MerchantSpring · live Apps Script overlay)
       config.js     ← window.DASHBOARD_CONFIG — identity, brand, markets, template, hiddenPages, dataSource
@@ -25,10 +28,13 @@ dashboard/
                        dataSource appsScript/overlay:'founder'. data.js = dateRanges may/3m/6m (period-aware
                        Amazon actuals) + sections.founder (forecast/Notion) + Amazon sections
                        (products/inventory/pnl/advertising/overviewActuals). See "Harvaza" below.
-    nkv/            ← AMAZON-template client (UK · GBP · MerchantSpring · live Apps Script overlay)
-      config.js     ← markets = UK + Ireland + USA('Soon'), scopeLabel 'UK', maintenancePages:['amazonpnl']
-      data.js       ← dateRanges + sections, hand-baked from MerchantSpring (UK actuals); the sheet
-                       overlay supplies live overview tasks/flags + advertising budget
+    nkv/            ← AMAZON-template client (UK-led · GBP · MerchantSpring · live Apps Script overlay)
+      config.js     ← markets = UK + Ireland('New') + USA('New', recently launched), scopeLabel 'UK',
+                       maintenancePages:['amazonpnl'], plus `marketMaintenance` (gates IE/US Advertising)
+                       and `layout` (per-client card hide/relabel/move — see "Per-client layout" below)
+      data.js       ← dateRanges + sections, hand-baked from MerchantSpring (UK actuals + real IE/US FBA
+                       stock and IE brand mix); the sheet overlay supplies live overview tasks/flags,
+                       advertising budget + forecast, Shopify P&L, and supplier POs
   tools/
     build-amacx-data.ps1     ← generator that writes clients/amacx/data.js from a baked MerchantSpring + sheet snapshot
     build-harvaza-data.ps1   ← regenerates Harvaza's Amazon products blocks → tools/harvaza-amazon-baked.js (splice helper)
@@ -431,6 +437,8 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
 | `template` | Page set: `'amazon'` (default if unset) or `'founder'`. Decides the nav + which `page-<key>` blocks show. |
 | `pages` | *(optional)* explicit page-key list, overriding the template's order. Rarely needed. |
 | `maintenancePages` | *(optional)* page keys forced to the shared maintenance stub. Founder stubs all Amazon pages by default. |
+| `marketMaintenance` | *(optional)* `{ market: [pageKeys] }` — selecting that market shows a maintenance banner on those pages (NKV: IE/US Advertising). |
+| `layout` | *(optional)* per-client card `hide` / `relabel` / move (`stockToBuyBoxSlot`, `actualsUnderChart`, `pieIntoAdGrid`) on the shared markup. See "Per-client layout". |
 | `logoSrc` / `logoWidth` | Logo image + size (all clients use `td-logo.png`, `110px`). |
 | `hiddenPages` | Array of page keys to hide entirely (nav item + tab + page). AMACX: `['keywords','pnl']`. Demo: `['amazonpnl']`. |
 | `currencyIcon` | P&L nav icon + scope currency (`€` / `£` / `$`). Demo + Harvaza use `£`. |
@@ -498,6 +506,59 @@ No per-client code lives in `app.js`.
 > The old per-card market-filter `<select>` dropdowns were removed — the sidebar chips do the scoping, so
 > the dropdowns were redundant.
 
+### Per-client layout & market gating (`CONFIG.layout` / `CONFIG.marketMaintenance`)
+
+Two config-driven mechanisms let a client reshape the **shared** markup without forking `index.html` — both
+no-ops when the client doesn't opt in (so AMACX/demo are untouched):
+
+- **`config.layout`** (`applyClientLayout()` in `app.js`, run once at boot) hides / relabels / relocates
+  cards by id:
+  - `hide: ['id', …]` — `display:none` on those elements (reversible; data untouched).
+  - `relabel: [{ id, title, sub }]` — rewrite a card's `.card-ttl` / `.card-sub`.
+  - `stockToBuyBoxSlot: true` — move the Overview Stock-Warnings card out of the top flags grid into the
+    Buy-Box slot (grid reflows 4→3 via `syncFlagsGridCols`, which counts *visible* cards).
+  - `actualsUnderChart: true` — stack Advertising's *Ad Spend Actuals* under the trend chart.
+  - `pieIntoAdGrid: true` — move the campaign-type pie into the Advertising chart row's right column
+    (under Ad Metrics) and compact it so the two columns line up.
+
+  NKV uses all of these: Buy Box + Account Health removed, Stock Warnings → **FBA Stock Warnings** in the
+  Buy-Box slot, and the Advertising row rebalanced (actuals under the chart, pie beside Ad Metrics).
+
+- **`config.marketMaintenance`** (`applyMarketMaintenance()`) maps a **market → page keys** to gate. When
+  that market is selected the listed pages show a maintenance banner (`.maint-ph`) instead of their content
+  (mirrors the AMACX NLD pre-launch pattern, but per-market). NKV: `{ irl:['advertising'], usa:['advertising'] }`
+  — Ireland (early-stage) and USA (recently launched) have no live ad account yet.
+
+**Market-aware Inventory & Sales-by-Brand (NKV).** Inventory follows the market chip via per-market
+overrides in `sections.inventory`: `kpisByMarket` / `stockByMarket` / `restockByMarket` /
+`supplierPOsByMarket` (`[]` hides the Supplier-PO card for a market the UK forecast doesn't cover, e.g. US).
+Ireland & USA are **real FBA snapshots** (MerchantSpring). Similarly `sections.products.groupsByPeriod`
+now carries per-market Sales-by-Brand: UK real per-brand Ad Spend + TACOS, Ireland allocated from its real
+12-mo brand mix (no ads → TACOS n/a), USA recently-launched (£0). *(Per-market list rows must not name a
+**different** market's code — `applyMarketFilter` scans row text and would hide a row tagged with another
+market.)*
+
+---
+
+## Embedding in Wix
+
+The dashboard is hosted on **GitHub Pages** and embedded on the client's **Wix** site. Wix's built-in
+*Embed HTML* element is fixed-height and can't be resized from code, so a multi-page SPA scrolls unevenly
+(the iframe keeps the tallest page's height; shorter pages get trailing whitespace). The fix is two-sided:
+
+- **Dashboard side** (`app.js`, `reportEmbedHeight` / `initEmbedHeight`): when embedded, it posts its
+  **active page's** content height to the parent on every change — page switch, date/market change, live
+  render, font load, resize — via `postMessage({ type:'td-embed-height', height })`. A `ResizeObserver` on
+  `<body>` catches any height change automatically. It measures the *active `.page-content` bottom* (not
+  `body.scrollHeight`, which is pinned to `min-height:100vh` and couldn't shrink), and **floors to the
+  sidebar's intrinsic height** on desktop so a short page never clips the fixed side menu. No-op off-Wix.
+- **Wix side** (`wix-embed.js`): a **Custom Element** (needs Wix Dev Mode) that wraps the dashboard iframe
+  and resizes itself (and reflows the Wix page) to each `td-embed-height` message. Self-locating — it loads
+  `index.html` from wherever the script is hosted — so nothing is hardcoded. Add in the editor as
+  **Embed Code → Custom Element**: tag `td-dashboard`, Server URL = `…/wix-embed.js`, attribute
+  `data-client=<nkv|amacx|…>`. Because it loads the live dashboard, **every published change flows through
+  automatically** — only the embed's own tag/URL/attribute is a Wix-side concern.
+
 ---
 
 ## Test locally (before pushing to GitHub)
@@ -537,7 +598,8 @@ config.js + data.js  ──►  app.js boot:
 ## Caching, deploy & front-end resilience
 
 The static files are served from **GitHub Pages** (`https://tdstrategists-code.github.io/td-dashboard/…`)
-and embedded into the client site via a **Wix iframe**. GitHub Pages sends its own
+and embedded into the client site via a **Wix Custom Element** (`wix-embed.js`, see "Embedding in Wix"
+above — it auto-resizes to each page's height). GitHub Pages sends its own
 `Cache-Control: max-age=600` on `index.html` and ignores repo-level cache headers, so the entry HTML can
 be briefly (≤10 min) stale on a fresh load. Three mechanisms keep clients on the current build:
 
