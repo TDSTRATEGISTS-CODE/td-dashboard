@@ -77,7 +77,8 @@ window.DASHBOARD_CONFIG = {
   // Per-client layout tweaks (applyClientLayout() in app.js). Overview: drop the Buy Box widget,
   // move the Stock Warnings card into that slot, and relabel it FBA-only (Amazon FBA stock — not
   // Shopify or warehouse). Advertising: stack Ad Spend Actuals under the trend chart to fill the
-  // gap, and hide the Ad Budgets + Forecast section (kept for AMACX, not yet rebuilt for NKV).
+  // gap, move the campaign-type pie beside Ad Metrics, and hide the Ad Budgets + Forecast section
+  // (Ad Budgets by Market + Ad Spend Forecast — not helpful for NKV; kept for AMACX).
   layout: {
     relabel: [
       { id: 'sec-stockwarn-card', title: '&#128230; FBA Stock Warnings', sub: 'Amazon FBA &middot; low &amp; out of stock' }
@@ -85,7 +86,7 @@ window.DASHBOARD_CONFIG = {
     stockToBuyBoxSlot: true,
     actualsUnderChart: true,
     pieIntoAdGrid: true,
-    hide: ['sec-buybox-card', 'sec-campaign-mix-row']
+    hide: ['sec-buybox-card', 'sec-campaign-mix-row', 'sec-adbudget-forecast']
   },
 
   // ---- Brand palette (written to :root CSS variables at runtime) ----
