@@ -14,14 +14,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+/* House default = Harvaza colour layout (deep green + gold). Paints before app.js applies the
+   per-client brand block, so the pre-JS flash + any fallback match the client theme. */
 :root{
-  --brand:#404935;--brand2:#333c28;
-  --accent:#ffe746;--accent-l:#fffde7;--accent-m:#fff176;
-  --bg:#f1ece6;--surface:#ffffff;--surface2:#f7f4f0;
-  --border:#e0d9d0;--text:#404935;--muted:#6b7160;--muted2:#a7ab90;
-  --green:#2d6a4f;--green-bg:#eaf4ef;--green-b:#95d5b2;
-  --red:#b5373a;--red-bg:#fdf0f0;--red-b:#f5b8b9;
-  --amber:#92660a;--amber-bg:#fdf6e7;--amber-b:#f5d98a;
+  --brand:#2C3420;--brand2:#222a18;
+  --accent:#C8A84B;--accent-l:#f6efd9;--accent-m:#d8bd6a;
+  --bg:#F5F2EC;--surface:#ffffff;--surface2:#faf9f7;
+  --border:#e0dcd5;--text:#2C3420;--muted:#6b7160;--muted2:#a7ab90;
+  --green:#3B6D11;--green-bg:#edf6e8;--green-b:#9fce86;
+  --red:#A32D2D;--red-bg:#fdf0f0;--red-b:#f5b8b9;
+  --amber:#7a5c1e;--amber-bg:#fdf6e7;--amber-b:#f5d98a;
   --blue:#1e4fa0;--blue-bg:#edf2fc;--blue-b:#b3c9f0;
   --sans:'Poppins',sans-serif;--display:'Space Grotesk',sans-serif;
   --sw:224px;
@@ -215,7 +217,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
      cached page (GitHub Pages caps index.html at a 10-min browser cache) by reloading once with a
      cache-bust param; and if it changes mid-session it shows the "please refresh" overlay. One bump,
      all jobs. */
-  var APP_VER = '2026-07-01f';
+  var APP_VER = '2026-07-01g';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');

@@ -626,7 +626,7 @@ function showLoadingOverlay() {
     var st = document.createElement('style');
     st.id = 'live-loading-style';
     st.textContent =
-      '#live-loading{position:fixed;inset:0;background:var(--bg,#f1ece6);display:flex;flex-direction:column;' +
+      '#live-loading{position:fixed;inset:0;background:var(--bg,#F5F2EC);display:flex;flex-direction:column;' +
         'align-items:center;justify-content:center;z-index:99999;transition:opacity .35s ease;}' +
       '#live-loading.is-hiding{opacity:0;pointer-events:none;}' +
       // content sits in an inner block; when embedded we give this block a fixed-height top band so the
@@ -638,7 +638,7 @@ function showLoadingOverlay() {
       // no box: the cell is just an invisible fixed slot whose overflow clips the drop-in
       '#live-loading .notp-cell{width:30px;height:56px;display:flex;align-items:center;justify-content:center;overflow:hidden;}' +
       '#live-loading .notp-d{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:800;' +
-        'font-size:42px;line-height:1;color:var(--brand,#404935);}' +
+        'font-size:42px;line-height:1;color:var(--brand,#2C3420);}' +
       '#live-loading .notp-dash{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:800;' +
         'font-size:34px;line-height:1;color:var(--muted,#6b7160);margin:0 6px;}' +
       '#live-loading .notp-d.drop{animation:nDrop .24s ease;}' +
@@ -738,17 +738,17 @@ function showUpdateOverlay() {
     '#update-overlay{position:fixed;inset:0;background:rgba(241,236,230,.97);display:flex;align-items:center;' +
       'justify-content:center;z-index:100000;padding:24px;font-family:var(--display,sans-serif);}' +
     '#update-overlay .uo-card{max-width:440px;text-align:center;background:var(--surface,#fff);' +
-      'border:1px solid var(--border,#e0d9d0);border-radius:18px;padding:34px 30px;box-shadow:0 16px 50px rgba(0,0,0,.16);}' +
-    '#update-overlay .uo-ic{width:60px;height:60px;border-radius:16px;background:var(--brand,#404935);color:#fff;' +
+      'border:1px solid var(--border,#e0dcd5);border-radius:18px;padding:34px 30px;box-shadow:0 16px 50px rgba(0,0,0,.16);}' +
+    '#update-overlay .uo-ic{width:60px;height:60px;border-radius:16px;background:var(--brand,#2C3420);color:#fff;' +
       'display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 18px;animation:uoSpinBox 2.2s linear infinite;}' +
     // the box turns one way and the arrow glyph inside it the other; nested, with the arrow at half the
     // period, its net motion is an equal-and-opposite spin to the box
     '#update-overlay .uo-arrow{display:inline-block;animation:uoSpinArrow 1.1s linear infinite;}' +
     '@keyframes uoSpinBox{to{transform:rotate(-360deg);}}' +
     '@keyframes uoSpinArrow{to{transform:rotate(360deg);}}' +
-    '#update-overlay .uo-t{font-size:21px;font-weight:700;color:var(--brand,#404935);letter-spacing:-.3px;margin-bottom:9px;}' +
+    '#update-overlay .uo-t{font-size:21px;font-weight:700;color:var(--brand,#2C3420);letter-spacing:-.3px;margin-bottom:9px;}' +
     '#update-overlay .uo-m{font-size:14px;color:var(--muted,#6b7160);line-height:1.6;margin-bottom:22px;}' +
-    '#update-overlay .uo-b{font-size:15px;font-weight:700;color:#fff;background:var(--green,#2d6a4f);border:none;' +
+    '#update-overlay .uo-b{font-size:15px;font-weight:700;color:#fff;background:var(--green,#3B6D11);border:none;' +
       'border-radius:11px;padding:13px 30px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12);}' +
     '#update-overlay .uo-b:hover{filter:brightness(1.06);}';
   document.head.appendChild(st);
