@@ -286,13 +286,18 @@ window.applyMarketFilter = function () {
 };
 
 window.toggleSidebar = function () {
-  document.getElementById('sidebar').classList.toggle('open');
+  var open = document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('open');
+  // Lock background page scroll while the mobile menu is open, otherwise the touch
+  // gesture chains through to .main and the sidebar's own list (incl. the Marketplace
+  // selector at the bottom) only scrolls once the page behind it hits the bottom.
+  document.body.classList.toggle('nav-open', open);
 };
 window.closeSidebar = closeSidebar;
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('open');
+  document.body.classList.remove('nav-open');
 }
 
 // ---------- date-range repaint (the only dynamic table + all KPIs) ----------
