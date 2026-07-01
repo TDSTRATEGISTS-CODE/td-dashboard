@@ -211,7 +211,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
      cached page (GitHub Pages caps index.html at a 10-min browser cache) by reloading once with a
      cache-bust param; and if it changes mid-session it shows the "please refresh" overlay. One bump,
      all jobs. */
-  var APP_VER = '2026-06-30w';
+  var APP_VER = '2026-07-01c';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -766,7 +766,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   <div class="page-content" id="page-inventory">
     <div class="fade nld-ph" id="sec-inv-nld" style="display:none;">       <div class="card" style="padding:56px 24px;text-align:center;">         <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>         <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>         <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>       </div>     </div>
     <div>
-      <div class="sec-lbl">Stock Status &mdash; Last Update</div>
+      <div class="sec-lbl">Amazon FBA Stock Status &mdash; Last Update</div>
       <div class="g4" id="sec-inv-kpis">
         <div class="kpi fade"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">In Stock</div><div class="kpi-val">14</div><div class="kpi-d du">ASINs healthy</div><div class="kpi-s">Across all markets</div></div>
         <div class="kpi fade"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">Low Stock</div><div class="kpi-val">3</div><div class="kpi-d" style="color:var(--amber)">Reorder advised</div><div class="kpi-s">&lt;14 days cover</div></div>
@@ -776,7 +776,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
     </div>
     <div class="g21 fade">
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Stock by ASIN</div><div class="card-sub"><span class="cfg-scope" id="inv-stock-scope">All marketplaces</span> &mdash; current</div></div></div>
+        <div class="card-hdr"><div><div class="card-ttl">Stock by ASIN</div><div class="card-sub">Amazon FBA &middot; <span class="cfg-scope" id="inv-stock-scope">All marketplaces</span> &mdash; current</div></div></div>
         <div class="inv-list" id="sec-inv-stock">
           <div class="inv-row"><div class="sdot dg"></div><div class="inv-info"><div class="inv-name">Sport Drink Mix &mdash; DE</div><div class="inv-note">B0CX1234DE &middot; Healthy</div></div><div class="inv-r"><div class="inv-u">842 units</div><div class="inv-d">~34 days</div></div></div>
           <div class="inv-row"><div class="sdot dg"></div><div class="inv-info"><div class="inv-name">Sport Drink Mix &mdash; ES</div><div class="inv-note">B0CX1234ES &middot; Healthy</div></div><div class="inv-r"><div class="inv-u">421 units</div><div class="inv-d">~28 days</div></div></div>
