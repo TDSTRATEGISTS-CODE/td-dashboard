@@ -32,20 +32,6 @@
       this.style.width = '100%';
       this.style.background = '#f1ece6';   // dashboard --bg: mask any Wix section colour behind the iframe
 
-      // Full-bleed on mobile. Wix places the element inside a column narrower than the phone screen, so a
-      // strip of the (dark) Wix section shows down the right edge. Break the element out to the full
-      // viewport width on small screens so the dashboard spans edge-to-edge and no host colour is exposed.
-      // Injected once; !important beats the inline width above.
-      if (!document.getElementById('td-embed-style')) {
-        var gs = document.createElement('style');
-        gs.id = 'td-embed-style';
-        gs.textContent =
-          'td-dashboard{display:block;box-sizing:border-box;background:#f1ece6;}' +
-          '@media(max-width:768px){td-dashboard{width:100vw !important;max-width:100vw !important;' +
-          'margin-left:calc(50% - 50vw) !important;margin-right:calc(50% - 50vw) !important;}}';
-        (document.head || document.documentElement).appendChild(gs);
-      }
-
       var f = document.createElement('iframe');
       f.src = src;
       f.title = 'TD Strategists Dashboard';
