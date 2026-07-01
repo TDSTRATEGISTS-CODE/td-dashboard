@@ -48,10 +48,18 @@ window.DASHBOARD_CONFIG = {
     { key: 'd2c',  flag: 'gb', chip: 'D2C · Shopify', code: 'D2C',          t: 'D2C · Shopify', m: 'Direct-to-Consumer' }
   ],
 
-  // ---- Brand palette ----
-  // Intentionally omitted: every account currently shares the house TD theme defined in
-  // index.html :root (olive/yellow). Add a `brand: {...}` block here later to white-label
-  // this client without touching the template.
+  // ---- Brand palette (written to :root CSS variables at runtime) ----
+  // Shared house palette = Harvaza colour layout (deep green + gold) across all clients.
+  brand: {
+    'brand': '#2C3420', 'brand2': '#222a18',
+    'accent': '#C8A84B', 'accent-l': '#f6efd9', 'accent-m': '#d8bd6a',
+    'bg': '#F5F2EC', 'surface': '#ffffff', 'surface2': '#faf9f7',
+    'border': '#e0dcd5', 'text': '#2C3420', 'muted': '#6b7160', 'muted2': '#a7ab90',
+    'green': '#3B6D11', 'green-bg': '#edf6e8', 'green-b': '#9fce86',
+    'red': '#A32D2D', 'red-bg': '#fdf0f0', 'red-b': '#f5b8b9',
+    'amber': '#7a5c1e', 'amber-bg': '#fdf6e7', 'amber-b': '#f5d98a',
+    'blue': '#1e4fa0', 'blue-bg': '#edf2fc', 'blue-b': '#b3c9f0'
+  },
 
   // ---- Live data source ----
   // Demo is fully self-contained: data.js only, no proxy.

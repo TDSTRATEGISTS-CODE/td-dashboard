@@ -90,15 +90,15 @@ window.DASHBOARD_CONFIG = {
   },
 
   // ---- Brand palette (written to :root CSS variables at runtime) ----
-  // Default TD Strategists palette (no client override supplied yet for NKV).
+  // Shared house palette = Harvaza colour layout (deep green + gold) across all clients.
   brand: {
-    'brand': '#404935', 'brand2': '#333c28',
-    'accent': '#ffe746', 'accent-l': '#fffde7', 'accent-m': '#fff176',
-    'bg': '#f1ece6', 'surface': '#ffffff', 'surface2': '#f7f4f0',
-    'border': '#e0d9d0', 'text': '#404935', 'muted': '#6b7160', 'muted2': '#a7ab90',
-    'green': '#2d6a4f', 'green-bg': '#eaf4ef', 'green-b': '#95d5b2',
-    'red': '#b5373a', 'red-bg': '#fdf0f0', 'red-b': '#f5b8b9',
-    'amber': '#92660a', 'amber-bg': '#fdf6e7', 'amber-b': '#f5d98a',
+    'brand': '#2C3420', 'brand2': '#222a18',
+    'accent': '#C8A84B', 'accent-l': '#f6efd9', 'accent-m': '#d8bd6a',
+    'bg': '#F5F2EC', 'surface': '#ffffff', 'surface2': '#faf9f7',
+    'border': '#e0dcd5', 'text': '#2C3420', 'muted': '#6b7160', 'muted2': '#a7ab90',
+    'green': '#3B6D11', 'green-bg': '#edf6e8', 'green-b': '#9fce86',
+    'red': '#A32D2D', 'red-bg': '#fdf0f0', 'red-b': '#f5b8b9',
+    'amber': '#7a5c1e', 'amber-bg': '#fdf6e7', 'amber-b': '#f5d98a',
     'blue': '#1e4fa0', 'blue-bg': '#edf2fc', 'blue-b': '#b3c9f0'
   },
 
