@@ -622,8 +622,12 @@ function showLoadingOverlay() {
     st.id = 'live-loading-style';
     st.textContent =
       '#live-loading{position:fixed;inset:0;background:var(--bg,#f1ece6);display:flex;flex-direction:column;' +
-        'align-items:center;justify-content:center;gap:30px;z-index:99999;transition:opacity .35s ease;}' +
+        'align-items:center;justify-content:center;z-index:99999;transition:opacity .35s ease;}' +
       '#live-loading.is-hiding{opacity:0;pointer-events:none;}' +
+      // content sits in an inner block; when embedded we give this block a fixed-height top band so the
+      // loader is CENTRED within the first screenful (consistent across clients + content heights) rather
+      // than centred in the whole tall iframe (which lands far below the fold).
+      '#live-loading .nload-inner{display:flex;flex-direction:column;align-items:center;gap:30px;}' +
       // — a 6-digit code (OTP style, "###-###") that re-scrambles matrix-style, each digit dropping in from the top —
       '#live-loading .notp{display:flex;align-items:center;gap:6px;}' +
       // no box: the cell is just an invisible fixed slot whose overflow clips the drop-in
@@ -659,11 +663,20 @@ function showLoadingOverlay() {
     if (ci === 2) cells += '<span class="notp-dash">-</span>';   // OTP-style "###-###" separator
   }
   ov.innerHTML =
-    '<div class="notp">' + cells + '</div>' +
-    '<div class="nload-txt"><span class="nload-pad"></span><span class="nload-line" id="nload-line">Digital Dash loading</span><span class="nload-dots"></span></div>';
+    '<div class="nload-inner" id="nload-inner">' +
+      '<div class="notp">' + cells + '</div>' +
+      '<div class="nload-txt"><span class="nload-pad"></span><span class="nload-line" id="nload-line">Digital Dash loading</span><span class="nload-dots"></span></div>' +
+    '</div>';
   (document.body || document.documentElement).appendChild(ov);
   document.documentElement.style.overflow = 'hidden';   // no scrollbar gutter behind the overlay
-  if (isEmbedded()) { ov.style.justifyContent = 'flex-start'; ov.style.paddingTop = '250px'; }   // fixed px (NOT vh — vh = the tall iframe height); centred-ish yet above the fold on mobile
+  if (isEmbedded()) {
+    // Embedded (Wix): the iframe is auto-sized to our FULL content height, so viewport-centring lands far
+    // below the fold. Instead centre the content within a fixed 600px band anchored to the top — same
+    // placement for every client regardless of page height. (Fixed px, NOT vh: vh = the tall iframe height.)
+    ov.style.justifyContent = 'flex-start';
+    var inner = document.getElementById('nload-inner');
+    if (inner) { inner.style.height = '600px'; inner.style.justifyContent = 'center'; }
+  }
 
   // Matrix-style scramble: on each tick only 1–2 random digits re-roll (the rest hold their value).
   // The digits always change (that's the content); only the drop-in *slide* is gated by reduced-motion.

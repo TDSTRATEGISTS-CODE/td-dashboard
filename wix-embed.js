@@ -30,13 +30,15 @@
 
       this.style.display = 'block';
       this.style.width = '100%';
+      this.style.background = '#f1ece6';   // dashboard --bg: mask any Wix section colour behind the iframe
 
       var f = document.createElement('iframe');
       f.src = src;
       f.title = 'TD Strategists Dashboard';
       f.setAttribute('scrolling', 'no');
-      f.setAttribute('allowtransparency', 'true');
-      f.style.cssText = 'width:100%;border:0;display:block;height:' + minH + 'px;transition:height .18s ease;';
+      // No allowtransparency: keep the iframe opaque so the host page never shows through a gap (the
+      // "green bar" some mobiles showed). Give it the dashboard bg so there's no flash before it paints.
+      f.style.cssText = 'width:100%;border:0;display:block;background:#f1ece6;height:' + minH + 'px;transition:height .18s ease;';
       this.appendChild(f);
 
       var self = this;
