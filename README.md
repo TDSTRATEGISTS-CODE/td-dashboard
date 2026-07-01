@@ -469,6 +469,72 @@ Newnique-only seller).
 structure (Buy Box/Account-Health removed, pie moved, Ad-Budgets section hidden, IE/US Advertising gated)
 lives in `config.layout` / `config.marketMaintenance` — see "Per-client layout & market gating".
 
+### Monthly re-bake routine (agent runbook)
+
+A monthly NKV refresh is a **Claude-session task** (the browser can't reach the MerchantSpring MCP). It runs
+unattended as a **Routine** (see "Automating it" below) or by hand any time. Follow these steps **in order**;
+each ends with a ✅ confirmation. **"This month" = the latest fully-closed calendar month** (e.g. run in early
+Aug → target July). Everything is repo-relative (repo root *is* the dashboard folder).
+
+**Channels** (pass `channelId` + `merchantId`):
+
+| Market | channelId | merchantId | Notes |
+|---|---|---|---|
+| UK  | `71662311`  | `A1SNRD9T28Z9ZM @ A1F83G8C2ARO7P` | the live market — real data, ad-managed |
+| IE  | `86715690`  | `… @ A28R8C7NBKEWEA`              | early-stage, EUR-native, **no ads**; ships FBA from UK |
+| US  | `109142957` | `A18Z9VPWTLGIMA @ ATVPDKIKX0DER`  | separate Newnique-only seller; **placeholder (zeros)** until it trades |
+
+**Periods** (recompute epochs each run with `calculateDateEpoch`, tz **`Europe/London`**): the object key **`may`
+is the "Last Month" slot — keep the key literally `may`; only update its `label`/`shortLabel`** to the new month.
+`3m`/`6m`/`12m` = trailing 3 / 6 / 12. UK is the only fully-live market; IE is early-stage; US stays zeros.
+
+**Steps:**
+1. **Headline actuals → `dateRanges` + `marketKpis`.** Per market per period, pull `getSalesByPeriod`
+   (**single-month**, `includeTax:true`) + `getAdvertisingByChannels`. Update the KPI strings (rev/adSales/tacos/
+   roas/spend/aov), their **MoM deltas** (`revD`, `spendD`, …) and colour codes (`revC` `du`/`df`), and the
+   `mktRows` table. Top-level `all` = **UK** figures; `marketKpis.{uk,irl,usa}` are the per-market overlays.
+   ✅ Confirm the `may` headline (rev / spend / TACOS / ROAS) matches Seller Central for the target month.
+2. **Ad Metrics + campaigns → `sections.advertising.metrics` (+ per-period `sec`) & `campaigns`.** UK
+   `getAdvertisingByChannels` / `getSalesByProduct`. (TACOS/ROAS are intentionally **omitted** from the metrics list.)
+   ✅ Confirm `metrics` totals reconcile with step 1's UK spend/ad-sales.
+3. **Campaign-type pie → `campaignMix` (per period).** UK campaign sales-share by `ad_type` — colours
+   **SP `#404935` / SB `#9caf78` / SD `#e8a87c`**. ✅ Confirm each period's pcts sum to ~100%.
+4. **Inventory → `sections.inventory.{kpisByMarket,stockByMarket,restockByMarket}` (irl/usa).**
+   `getSalesByProduct` `includeNoInventory:true` per channel (current snapshot). IE ships FBA from UK; the US
+   Supplier-PO card stays hidden via `supplierPOsByMarket:{usa:[]}`. ✅ Confirm per-market SKU counts are sane.
+5. **Overview FBA stock warning → `stockWarn`.** UK `getSalesByProduct` `includeNoInventory:true`; `quantity==0`
+   ⇒ out-of-stock/suppressed. ✅ Confirm the "N of M UK listings" count.
+6. **Product groups → `sections.products.groupsByPeriod` (per market).** `getSalesByProduct` per window × brand.
+   **UK real** (TACOS = ad spend ÷ brand sales); **IE allocated from its real 12-mo brand mix** (no ads → TACOS
+   `n/a`); **US £0**. ✅ Confirm 4 periods present per live market.
+7. **Sheet-baked → `sections.advertising.{budgets,forecast}` + `sections.shopify`.** Re-read the **NKV Beauty
+   Account Tracker** (Marketing Metrics row + Shopify block) — *not* MerchantSpring. **Do NOT touch the live-proxy
+   blocks** (Overview project board, `sections.shopifypnl`, `sections.inventory.supplierPOs` — served live by
+   `nkv-sheet-proxy.gs`). ✅ Confirm budgets/forecast reflect the current sheet.
+8. **Labels & metadata.** Update the `data.js` header comment (`pulled <date>`), each period's `label`/`shortLabel`,
+   and `config.js` `reportPeriodLabel` → `'<Mon YYYY> · Monthly Report'`. `defaultPeriod` stays `may`.
+9. **Validate.** Run the shape/syntax check (throws on any JS error, prints the keys):
+   ```bash
+   node -e "global.window={}; require('./clients/nkv/data.js'); const d=window.DASHBOARD_DATA; \
+     ['may','3m','6m','12m'].forEach(p=>{if(!d.dateRanges[p]) throw new Error('missing period '+p)}); \
+     console.log('shape OK →', d.dateRanges.may.label, d.dateRanges.may.rev)"
+   ```
+   Then eyeball sanity: TACOS never >100%, ROAS plausible (~2–3×), no negative/blank rev, every MoM delta present.
+   ✅ Confirm the check prints `shape OK` and the sanity pass is clean.
+10. **Bump the cache-buster.** Increment **`APP_VER`** in `index.html` (e.g. `2026-07-01e` → the new bake date+letter)
+    so browsers fetch the fresh `data.js`. A pure data refresh needs **no proxy redeploy**.
+11. **Open a PR (do not merge).** Commit `clients/nkv/data.js` + `index.html` + `clients/nkv/config.js`, push, and
+    open a PR titled **`NKV monthly re-bake — <Mon YYYY>`** whose body is the headline figures (rev / ad spend /
+    TACOS / ROAS **vs prior month**) plus a **`✅ validations passed`** line, so review is a 30-second glance. If any
+    MerchantSpring pull returns null/empty or a check fails, **STOP** — open the PR as a **draft** explaining what
+    failed rather than pushing partial data.
+
+**Automating it (monthly Routine).** This runbook is driven unattended by a Claude Code **Routine**
+(`claude.ai/code/routines`) whose prompt lives at [`tools/nkv-monthly-rebake.prompt.md`](tools/nkv-monthly-rebake.prompt.md).
+Wire it with a **schedule trigger on the 1st of each month** (cron `0 6 1 * *` via `/schedule update`; min interval
+is 1h), the **MerchantSpring connector** attached, and default (`claude/`-branch) push perms so each run opens a PR
+for review. It's a review gate, not auto-merge — the numbers are client-facing.
+
 ---
 
 ## Per-client config highlights (`config.js`)
