@@ -29,8 +29,12 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
 .shell{display:flex;min-height:100vh;overflow-x:hidden;width:100%;}
-.sidebar{width:var(--sw);background:var(--brand);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .25s;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-.sidebar::-webkit-scrollbar{display:none;}
+.sidebar{width:var(--sw);background:var(--brand);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .25s;overflow:hidden;}
+/* Scroll on an inner flex-item wrapper, not on the fixed flex-column root: iOS Safari refuses
+   touch-scroll when overflow + flex-column live on the same fixed element (it scrolls only
+   programmatically), so the market list was unreachable by touch. min-height:0 lets it shrink. */
+.sb-scroll{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.sb-scroll::-webkit-scrollbar{display:none;}
 .sb-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .logo-mark{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:13px;font-weight:700;color:var(--brand);flex-shrink:0;}
 .logo-name{font-family:var(--display);font-size:14px;font-weight:700;color:#fff;letter-spacing:-.1px;}
@@ -224,6 +228,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 <div class="shell">
 <!-- ===== SIDEBAR ===== -->
 <aside class="sidebar" id="sidebar">
+  <div class="sb-scroll">
   <div class="sb-logo" style="padding:16px 16px 14px;background:var(--brand);">
     <img id="cfg-logo" alt="" style="width:110px;height:auto;display:block;mix-blend-mode:screen;">
     <div class="logo-sub" id="cfg-portal" style="margin-top:6px;padding-left:2px;"></div>
@@ -238,6 +243,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   <div class="sb-sec2">Marketplace</div>
   <div id="cfg-markets"></div>
   <div class="sb-footer" id="cfg-footer"></div>
+  </div>
 </aside>
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
