@@ -684,23 +684,25 @@ function showLoadingOverlay() {
     if (inner) { inner.style.height = '700px'; inner.style.justifyContent = 'center'; }
   }
 
-  // Matrix-style scramble: on each tick only 1–2 random digits re-roll (the rest hold their value).
-  // The digits always change (that's the content); only the drop-in *slide* is gated by reduced-motion.
+  // Matrix-style scramble: on each tick re-roll at most one digit per side (the rest hold their value).
+  // The code reads "###-###" — a left group (cells 0–2) and a right group (cells 3–5). Picking at most
+  // one cell from each group means the two re-rolling digits are always split by the dash, so two
+  // adjacent digits never change on the same tick. Randomly roll the left, the right, or both (never a
+  // no-op tick). The digits always change (that's the content); only the drop-in *slide* is reduced-motion gated.
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   (window.__notpTimers || []).forEach(function (t) { clearInterval(t); });
   window.__notpTimers = [];
+  function nRoll(idx) {
+    var el = document.getElementById('notp-d' + idx);
+    if (!el) return;
+    el.textContent = Math.floor(Math.random() * 10);
+    if (!reduce) { el.classList.remove('drop'); void el.offsetWidth; el.classList.add('drop'); }  // slide-in
+  }
   window.__notpTimers.push(setInterval(function () {
-    var howMany = 1 + Math.floor(Math.random() * 2);   // 1 or 2 digits this tick
-    var done = {};
-    for (var k = 0; k < howMany; k++) {
-      var idx = Math.floor(Math.random() * 6);
-      if (done[idx]) continue;                          // don't pick the same cell twice
-      done[idx] = 1;
-      var el = document.getElementById('notp-d' + idx);
-      if (!el) continue;
-      el.textContent = Math.floor(Math.random() * 10);
-      if (!reduce) { el.classList.remove('drop'); void el.offsetWidth; el.classList.add('drop'); }  // slide-in
-    }
+    var doLeft = Math.random() < 0.5, doRight = Math.random() < 0.5;
+    if (!doLeft && !doRight) { if (Math.random() < 0.5) doLeft = true; else doRight = true; }  // never skip a whole tick
+    if (doLeft) nRoll(Math.floor(Math.random() * 3));         // one of cells 0,1,2
+    if (doRight) nRoll(3 + Math.floor(Math.random() * 3));    // one of cells 3,4,5
   }, 420));
 
   // Cycle the status line through a few playful phrases while the live data loads.
