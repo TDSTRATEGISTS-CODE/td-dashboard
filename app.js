@@ -671,11 +671,12 @@ function showLoadingOverlay() {
   document.documentElement.style.overflow = 'hidden';   // no scrollbar gutter behind the overlay
   if (isEmbedded()) {
     // Embedded (Wix): the iframe is auto-sized to our FULL content height, so viewport-centring lands far
-    // below the fold. Instead centre the content within a fixed 600px band anchored to the top — same
+    // below the fold. Instead centre the content within a fixed 700px band anchored to the top — same
     // placement for every client regardless of page height. (Fixed px, NOT vh: vh = the tall iframe height.)
+    // Band height sets the drop: content centres at band/2 from the top (700 → ~350px down).
     ov.style.justifyContent = 'flex-start';
     var inner = document.getElementById('nload-inner');
-    if (inner) { inner.style.height = '600px'; inner.style.justifyContent = 'center'; }
+    if (inner) { inner.style.height = '700px'; inner.style.justifyContent = 'center'; }
   }
 
   // Matrix-style scramble: on each tick only 1–2 random digits re-roll (the rest hold their value).
