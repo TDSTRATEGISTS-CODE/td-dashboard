@@ -430,6 +430,36 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
 
 ---
 
+## Refreshing NKV (hand-baked — no generator)
+
+NKV's `data.js` has **no `.ps1`** — it's hand-baked from MerchantSpring in a Claude session, with the
+sheet-driven parts overlaid **live** by `nkv-sheet-proxy.gs`. To refresh: re-pull the blocks below via the
+MCP, hand-edit `clients/nkv/data.js`, bump **`APP_VER`**, and upload `data.js` + `index.html` (no proxy
+redeploy for a data-only refresh). Channels — **UK `71662311`** (`A1SNRD9T28Z9ZM @ A1F83G8C2ARO7P`),
+**IE `86715690`** (`… @ A28R8C7NBKEWEA`), **US `109142957`** (`A18Z9VPWTLGIMA @ ATVPDKIKX0DER`, a separate
+Newnique-only seller).
+
+**Live via the proxy (never re-baked):** Overview project board (In Progress / Upcoming / Completed),
+`sections.shopifypnl`, `sections.inventory.supplierPOs`.
+
+**Baked from MerchantSpring (refresh in-session):**
+
+| Block | Source | Notes |
+|---|---|---|
+| `dateRanges` KPIs + `marketKpis` (uk/irl/usa) | `getSalesByPeriod` (single-month, `includeTax:true`) + `getAdvertisingByChannels` | period-aware; `all` = UK top-level, per-market overlays |
+| `sections.advertising.metrics` (+ per-period `sec`) & `campaigns` | `getAdvertisingByChannels` / `getSalesByProduct` (UK) | Ad Metrics card (TACOS/ROAS intentionally dropped from the list) + Active Campaigns |
+| `campaignMix` (per period) | campaign sales-share by `ad_type` (UK) | pie — colours **#404935 / #9caf78 / #e8a87c** (SP / SB / SD) |
+| `sections.inventory.{kpisByMarket,stockByMarket,restockByMarket}` (irl/usa) | `getSalesByProduct` `includeNoInventory:true` per channel (current snapshot) | IE ships FBA from UK; US Supplier-PO card hidden via `supplierPOsByMarket:{usa:[]}` |
+| `stockWarn` (Overview FBA card) | `getSalesByProduct` `includeNoInventory:true` (UK) | `quantity==0` ⇒ out of stock / suppressed (currently 26 of 77 UK listings) |
+| `sections.products.groupsByPeriod` (Ad Spend + TACOS, per market) | `getSalesByProduct` per window × brand | UK real (TACOS = ad spend ÷ brand sales); **IE allocated from its real 12-mo brand mix** (no ads → TACOS n/a); **US £0** (recently launched) |
+
+**Sheet-baked (re-read the NKV Beauty Account Tracker, not MS):** `sections.advertising.budgets` + `forecast`
+(Marketing Metrics row — currently a flat forward budget), and the `sections.shopify` blocks. Per-client
+structure (Buy Box/Account-Health removed, pie moved, Ad-Budgets section hidden, IE/US Advertising gated)
+lives in `config.layout` / `config.marketMaintenance` — see "Per-client layout & market gating".
+
+---
+
 ## Per-client config highlights (`config.js`)
 
 | Field | What it does |
@@ -542,22 +572,28 @@ market.)*
 
 ## Embedding in Wix
 
-The dashboard is hosted on **GitHub Pages** and embedded on the client's **Wix** site. Wix's built-in
-*Embed HTML* element is fixed-height and can't be resized from code, so a multi-page SPA scrolls unevenly
-(the iframe keeps the tallest page's height; shorter pages get trailing whitespace). The fix is two-sided:
+The dashboard is hosted on **GitHub Pages** and embedded on the client's **Wix** site.
 
-- **Dashboard side** (`app.js`, `reportEmbedHeight` / `initEmbedHeight`): when embedded, it posts its
-  **active page's** content height to the parent on every change — page switch, date/market change, live
-  render, font load, resize — via `postMessage({ type:'td-embed-height', height })`. A `ResizeObserver` on
-  `<body>` catches any height change automatically. It measures the *active `.page-content` bottom* (not
-  `body.scrollHeight`, which is pinned to `min-height:100vh` and couldn't shrink), and **floors to the
-  sidebar's intrinsic height** on desktop so a short page never clips the fixed side menu. No-op off-Wix.
-- **Wix side** (`wix-embed.js`): a **Custom Element** (needs Wix Dev Mode) that wraps the dashboard iframe
-  and resizes itself (and reflows the Wix page) to each `td-embed-height` message. Self-locating — it loads
-  `index.html` from wherever the script is hosted — so nothing is hardcoded. Add in the editor as
-  **Embed Code → Custom Element**: tag `td-dashboard`, Server URL = `…/wix-embed.js`, attribute
-  `data-client=<nkv|amacx|…>`. Because it loads the live dashboard, **every published change flows through
-  automatically** — only the embed's own tag/URL/attribute is a Wix-side concern.
+**Current setup — Wix built-in *Embed HTML*** (an iframe pointing at the Pages URL, e.g.
+`…/index.html?client=nkv`). The element is a **fixed height**, so a tall page (Advertising) scrolls
+*inside* the iframe — a "double scroll" — while shorter pages fit. That reads neatly on both desktop and
+mobile once the frame is opaque. To keep it tidy the dashboard, when embedded:
+- paints an **opaque beige background** (`--bg`) on the page so no host colour shows through a gap (fixed
+  the mobile dark/"green" edge bar);
+- **centres the loading screen in a fixed top band** (not the viewport centre, which lands far down a tall
+  iframe); and
+- **truncates the mobile topbar title** so the date selector never crops.
+
+**Optional upgrade — true per-page auto-height (`wix-embed.js`, kept in the repo, not currently wired).**
+For a frame that grows/shrinks to each view (no inner scroll), the repo ships a Wix **Custom Element**
+`<td-dashboard>` (needs Dev Mode). It wraps the iframe and resizes itself to the height the dashboard
+already reports: when embedded, `app.js` (`reportEmbedHeight` / `initEmbedHeight`) posts its **active page's**
+content height on every change via `postMessage({ type:'td-embed-height', height })` — measured from the
+active `.page-content` bottom (not `body.scrollHeight`, pinned to `min-height:100vh`) and floored to the
+sidebar height so a short page never clips the menu. Add as **Embed Code → Custom Element**: tag
+`td-dashboard`, Server URL `…/wix-embed.js`, attribute `data-client=<nkv|amacx|…>` (self-locating — no
+dashboard URL to hardcode). Both the height posting and `wix-embed.js` are **inert when unused**, so they
+sit in the repo as a drop-in swap if the double-scroll ever needs to go.
 
 ---
 
@@ -598,8 +634,9 @@ config.js + data.js  ──►  app.js boot:
 ## Caching, deploy & front-end resilience
 
 The static files are served from **GitHub Pages** (`https://tdstrategists-code.github.io/td-dashboard/…`)
-and embedded into the client site via a **Wix Custom Element** (`wix-embed.js`, see "Embedding in Wix"
-above — it auto-resizes to each page's height). GitHub Pages sends its own
+and embedded into the client site via a **Wix *Embed HTML* iframe** (fixed height, inner scroll — see
+"Embedding in Wix" above; a `wix-embed.js` custom element for auto-height is available but not wired).
+GitHub Pages sends its own
 `Cache-Control: max-age=600` on `index.html` and ignores repo-level cache headers, so the entry HTML can
 be briefly (≤10 min) stale on a fresh load. Three mechanisms keep clients on the current build:
 
