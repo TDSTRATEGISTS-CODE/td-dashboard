@@ -112,6 +112,7 @@ window.switchMarket = function (k, el) {
   currentMarket = k;
   document.querySelectorAll('.mkt-btn').forEach(function (b) { b.classList.remove('active'); });
   if (el) el.classList.add('active');
+  var _msel = document.getElementById('mkt-select'); if (_msel && _msel.value !== k) _msel.value = k;
   if (MKT[k]) set('tb-title', MKT[k].t);
   // Repaint the whole period for this market: EU KPIs + per-market overlay + row filter + topbar.
   switchDateRange(currentPeriod);
@@ -555,6 +556,22 @@ function buildMarketChips() {
     btn.addEventListener('click', function () { switchMarket(mt.key, btn); });
     wrap.appendChild(btn);
   });
+  // Mobile native picker mirrors the same markets (see .mkt-select in index.html). Selecting an option
+  // routes through switchMarket via the matching chip so desktop chips + everything else stay in sync.
+  var selEl = document.getElementById('mkt-select');
+  if (selEl) {
+    selEl.innerHTML = '';
+    CONFIG.markets.forEach(function (mt) {
+      var opt = document.createElement('option');
+      opt.value = mt.key;
+      opt.textContent = mt.chip + (mt.launchPill ? ' · ' + mt.launchPill : '');
+      if (mt.key === currentMarket) opt.selected = true;
+      selEl.appendChild(opt);
+    });
+    selEl.onchange = function () {
+      switchMarket(selEl.value, wrap.querySelector('.mkt-btn[data-key="' + selEl.value + '"]'));
+    };
+  }
 }
 
 function updateMarketChips(d) {
@@ -571,6 +588,17 @@ function updateMarketChips(d) {
     if (mt.launchPill && (sales == null || sales === '€0')) rev.textContent = mt.launchPill;
     else rev.textContent = (sales != null ? sales : '');
   });
+  // Keep the mobile <select> option labels in step (chip · revenue), mirroring the chip list above.
+  var selEl = document.getElementById('mkt-select');
+  if (selEl) {
+    Array.prototype.forEach.call(selEl.options, function (opt) {
+      var mt = CONFIG.markets.filter(function (m) { return m.key === opt.value; })[0];
+      if (!mt) return;
+      var base = mt.chip + (mt.launchPill ? ' · ' + mt.launchPill : '');
+      var rv = (mt.key === 'all') ? (d.rev || '') : (salesByCode[mt.code] != null ? salesByCode[mt.code] : '');
+      opt.textContent = rv ? (base + ' — ' + rv) : base;
+    });
+  }
 }
 
 // ---------- live-fetch loading overlay ----------

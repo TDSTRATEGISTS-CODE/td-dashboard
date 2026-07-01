@@ -55,6 +55,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .mkt-btn:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);}
 .mkt-btn.active{color:#fff;background:rgba(255,255,255,.1);}
 .mkt-rev{font-size:11px;color:rgba(255,255,255,.38);font-variant-numeric:tabular-nums;}
+/* Mobile-only native market picker: inside the fixed-height Wix iframe a phone can't reliably scroll
+   the green menu to reach the lower markets, so on mobile we swap the button list for a native
+   <select> (the OS picker opens over everything — no menu scrolling needed). Desktop keeps the list. */
+.mkt-select{display:none;width:calc(100% - 16px);margin:4px 8px 6px;padding:10px 30px 10px 11px;border-radius:7px;background-color:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.16);font-family:inherit;font-size:13px;line-height:1.2;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 11px center;}
+.mkt-select option{color:#111;}
 .mkt-btn.active .mkt-rev{color:rgba(255,255,255,.55);}
 .nld-pill{font-size:9px;background:rgba(255,231,70,.2);color:#ffe746;border-radius:4px;padding:1px 5px;margin-left:4px;}
 .sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,.07);font-size:11px;color:rgba(255,255,255,.48);line-height:1.7;flex-shrink:0;}
@@ -209,6 +214,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 .f-stat-val{font-family:var(--display);font-size:18px;font-weight:700;margin-top:4px;letter-spacing:-.2px;}
 @media(max-width:768px){.f-stat-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:480px){.f-stat-grid{grid-template-columns:1fr;}}
+@media(max-width:768px){.mkt-select{display:block;}#cfg-markets{display:none;}}
 </style>
 <script>
   /* Cache-buster: bump APP_VER on every GitHub upload so browsers fetch the new config/data/app
@@ -243,6 +249,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
   <div class="sb-sec">Pages</div>
   <div id="sb-nav"></div>
   <div class="sb-sec2">Marketplace</div>
+  <select id="mkt-select" class="mkt-select" aria-label="Select marketplace"></select>
   <div id="cfg-markets"></div>
   <div class="sb-footer" id="cfg-footer"></div>
   </div>
