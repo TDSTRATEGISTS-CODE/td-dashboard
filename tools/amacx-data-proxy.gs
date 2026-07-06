@@ -342,15 +342,15 @@ function buildSections() {
   var sections = { advertising: { budgets: { rows: budRows, headers: budHeaders, subLabel: budSub }, forecast: forecast }, overview: {} };
 
   // sections.charts — the Revenue Trend chart's TARGET line (gold dotted), served LIVE from the sheet's
-  // "Revenue Target" row so it self-advances every month and never sticks. Only revTarget is overlaid;
-  // rev/adSpend/adSales/TACOS bars stay baked in data.js (adSales is a MerchantSpring metric, not in the
-  // sheet). The window = trailing 6 months ending at the latest reported month, matching the baked
-  // charts.months window — computed across the 2025→2026 boundary so it's always exactly 6 values.
+  // "Revenue Target" row. Emitted as a month→value MAP (2026) so app.js aligns it to the baked chart's
+  // month labels BY NAME. Aligning by label — not by the sheet's latest-actuals index — keeps the target
+  // correct even when Revenue Actuals lag the baked MerchantSpring months (the baked charts show e.g. June
+  // before June actuals are typed into the sheet, so an index-anchored window would sit a month off).
+  // Only the target is overlaid; rev/adSpend/adSales/TACOS bars stay baked (adSales isn't in the sheet).
   if (m.revenueTarget) {
-    var tgt24 = (m.revenueTarget.y2025 || []).concat(m.revenueTarget.y2026 || []);   // idx 0=Jan2025 … 12=Jan2026
-    var endIdx = 12 + latest, startIdx = endIdx - 5, revTarget = [];
-    for (var ti = startIdx; ti <= endIdx; ti++) revTarget.push(Math.round(toNum_(tgt24[ti]) || 0));
-    sections.charts = { revTarget: revTarget };
+    var revTargetByMonth = {};
+    for (var mi = 0; mi < 12; mi++) revTargetByMonth[monthShort_(mi)] = Math.round(toNum_(m.revenueTarget.y2026[mi]) || 0);
+    sections.charts = { revTargetByMonth: revTargetByMonth };   // { Jan:.., …, Dec:.. } for 2026
   }
 
   if (scope.tasks && scope.tasks.length) sections.overview.tasksSpec = { badge: 'From project scope', items: scope.tasks };
