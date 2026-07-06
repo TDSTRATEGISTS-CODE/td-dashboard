@@ -569,3 +569,149 @@ function monthShort_(i) { return mName_(i); }
 function aggDescriptor_(key) {
   return ({ '3m': '3-month actuals', '6m': '5-month actuals', '2025': 'Full year actuals', '12m': 'Actuals only' })[key] || '';
 }
+
+// ============================ WRITE-BACK (doPost) ============================
+/**
+ * Write a month's actuals back into the Project Tracker.
+ *
+ * POST body (JSON), e.g.:
+ *   { "client":"amacx", "month":"June", "year":"2026",
+ *     "actuals": { "revenue_total":8856, "ad_spend_total":2320, "units_total":269,
+ *                  "orders_total":185, "aov":47.87, "tacos":26.2 },
+ *     "revenue_by_market":  { "DE":2095, "FR":2201, "ES":2167, "IT":2393, "NLD":0 },
+ *     "ad_spend_by_market": { "DE":529,  "FR":575,  "ES":609,  "IT":607 } }
+ *
+ * The target MONTH column is located by matching the 2026 header row (the SECOND "JANUARY"
+ * block), and the target ROWS by LABEL in column A — never by fixed cell references, so
+ * inserting/moving rows or columns in the tracker won't break it.
+ *
+ * Response:
+ *   Success:  { "status":"ok",    "written":[...rows updated] }
+ *   Failure:  { "status":"error", "message":"...", "missing":[...rows not found] }
+ */
+function doPost(e) {
+  var written = [], missing = [];
+  try {
+    if (!e || !e.postData || !e.postData.contents) throw new Error('Missing POST body.');
+    var body = JSON.parse(e.postData.contents);
+    var month = String(body.month || '').trim();
+    if (!month) throw new Error('Missing "month" in request body.');
+    var monthUP = month.toUpperCase();
+
+    var sheets = openBook_().getSheets();
+
+    // ---- 1) Master 2025|2026 actuals grid — rows matched by column-A label ----
+    var actuals = body.actuals || {};
+    var masterSpecs = [
+      { label: 'Revenue Actuals',           match: 'REVENUE ACTUALS',          value: actuals.revenue_total },
+      { label: 'Ad Spend Actuals',          match: 'AD SPEND ACTUALS',         value: actuals.ad_spend_total },
+      { label: 'Unit Sold Actuals',         match: 'UNIT SOLD ACTUALS',        value: actuals.units_total },
+      { label: 'Number of Orders Actuals',  match: 'NUMBER OF ORDERS ACTUALS', value: actuals.orders_total },
+      { label: 'Average Order Value (AOV)', match: 'AVERAGE ORDER VALUE',      value: actuals.aov },
+      { label: 'Actual TACOS',              match: 'ACTUAL TACOS',             value: actuals.tacos }
+    ];
+
+    // Locate the master header row (two JANUARYs + a "TOTALS" marker), then the 2026 month column.
+    var master = null; // { sheet, values, monthCol }
+    for (var s = 0; s < sheets.length && !master; s++) {
+      var vals = sheets[s].getDataRange().getValues();
+      for (var r = 0; r < vals.length; r++) {
+        var jc = findJanCols_(vals[r]);
+        if (jc && rowHasTotalsMarker_(vals[r])) {
+          master = { sheet: sheets[s], values: vals, monthCol: findMonthCol_(vals[r], jc[1], monthUP) };
+          break;
+        }
+      }
+    }
+    if (!master) throw new Error('Could not locate the master 2025|2026 month grid header row.');
+    if (master.monthCol < 0) throw new Error('Could not find the ' + month + ' 2026 column in the master header row.');
+
+    masterSpecs.forEach(function (spec) {
+      if (spec.value == null) return;                       // value not supplied → skip
+      var rowIdx = matchRowIndex_(master.values, spec.match);
+      if (rowIdx < 0) { missing.push(spec.label); return; } // label not found in column A
+      master.sheet.getRange(rowIdx + 1, master.monthCol + 1).setValue(spec.value);
+      written.push(spec.label);
+    });
+
+    // ---- 2) Per-market grids — one value per market for the same 2026 month column ----
+    var marketSpecs = [
+      { title: 'REVENUE PER MARKET',  label: 'Revenue per Market',  data: body.revenue_by_market || {} },
+      { title: 'AD SPEND PER MARKET', label: 'Ad Spend per Market', data: body.ad_spend_by_market || {} }
+    ];
+
+    marketSpecs.forEach(function (grid) {
+      var codes = Object.keys(grid.data);
+      if (!codes.length) return;
+
+      // Find the grid title in column A (on any tab), then its 2026 month column.
+      var found = null; // { sheet, values, headerRowIdx, monthCol }
+      for (var gs = 0; gs < sheets.length && !found; gs++) {
+        var gv = sheets[gs].getDataRange().getValues();
+        for (var gr = 0; gr < gv.length; gr++) {
+          if (String(gv[gr][0]).trim().toUpperCase() !== grid.title) continue;
+          var gjc = findJanCols_(gv[gr]);
+          if (!gjc) continue;
+          found = { sheet: sheets[gs], values: gv, headerRowIdx: gr, monthCol: findMonthCol_(gv[gr], gjc[1], monthUP) };
+          break;
+        }
+      }
+      if (!found || found.monthCol < 0) {
+        codes.forEach(function (c) { if (grid.data[c] != null) missing.push(grid.label + ' (' + c + ')'); });
+        return;
+      }
+
+      // Rows below the header, keyed by market name in column A → code (DE/FR/ES/IT/NLD).
+      var doneCodes = {};
+      for (var mr = found.headerRowIdx + 1; mr < found.values.length; mr++) {
+        var nm = String(found.values[mr][0]).trim();
+        if (!nm) break;                        // blank row ends the grid
+        if (!isKnownMarket_(nm)) break;        // non-market row ends the grid
+        var code = marketCode_(nm);
+        if (code && grid.data[code] != null) {
+          found.sheet.getRange(mr + 1, found.monthCol + 1).setValue(grid.data[code]);
+          written.push(grid.label + ' (' + code + ')');
+          doneCodes[code] = 1;
+        }
+      }
+      // Any supplied market that has no matching row in the grid.
+      codes.forEach(function (c) { if (grid.data[c] != null && !doneCodes[c]) missing.push(grid.label + ' (' + c + ')'); });
+    });
+
+    if (missing.length) {
+      return jsonOut_({ status: 'error', message: 'Some rows/markets were not found in the sheet.', missing: missing, written: written });
+    }
+    return jsonOut_({ status: 'ok', written: written });
+  } catch (err) {
+    return jsonOut_({ status: 'error', message: String(err && err.message || err), missing: missing });
+  }
+}
+
+function jsonOut_(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+/** First column at/after `startCol` whose header text contains the (upper-cased) month name → the 2026 column. */
+function findMonthCol_(row, startCol, monthUP) {
+  for (var c = startCol; c < row.length; c++) {
+    if (String(row[c]).toUpperCase().indexOf(monthUP) !== -1) return c;
+  }
+  return -1;
+}
+
+/** First row whose column-A label contains `targetUP` (upper-cased, trimmed) → row index, else -1. */
+function matchRowIndex_(values, targetUP) {
+  for (var r = 0; r < values.length; r++) {
+    if (String(values[r][0]).trim().toUpperCase().indexOf(targetUP) !== -1) return r;
+  }
+  return -1;
+}
+
+/** Map a market display name (e.g. "Germany") to its code (e.g. "DE"), or null. */
+function marketCode_(name) {
+  var up = String(name).toUpperCase();
+  for (var i = 0; i < CONFIG.MARKETS.length; i++) {
+    if (CONFIG.MARKETS[i].name.toUpperCase() === up) return CONFIG.MARKETS[i].code;
+  }
+  return null;
+}
