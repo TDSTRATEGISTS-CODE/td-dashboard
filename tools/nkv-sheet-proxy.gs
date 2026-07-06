@@ -14,9 +14,10 @@
  * whole `dateRanges` object stay in the dashboard's data.js — the dashboard is configured with
  * overlay:'sections', so app.js merges ONLY the keys returned here and never touches the rest.
  *
- * doPost (write-back) — the monthly Amazon-actuals SYNC. Writes last month's UK/EU revenue, units and
- * ad metrics into the "Amazon Account Tracker" tab (rows 2–10 inputs + rows 24–27), formula-safe, never
- * touching the Stock / External-Costs / profit rows. Driven by tools/nkv-monthly-sync.routine.md.
+ * doPost (write-back) — the monthly SYNC. Writes last month's actuals into two tabs in one POST:
+ * "Amazon Account Tracker" (UK/EU revenue, units, ad metrics — rows 2–10 inputs + 24–27) and
+ * "Shopify Account Tracker" (Contours Rx sales/units + Shopify Google/social ad spend). Formula-safe,
+ * never touching the Stock / External-Costs / profit rows. Driven by tools/nkv-monthly-sync.routine.md.
  *
  * IMPORTANT — this needs a NATIVE Google Sheet, not the uploaded .xlsx:
  *   1. In Drive, open "NKV Beauty Account Tracker.xlsx" ▸ File ▸ Save as Google Sheets.
@@ -47,10 +48,12 @@ var CONFIG = {
   // Row label (column A) of the actual monthly ad-spend series, matched case-insensitively/contains.
   AD_SPEND_ROW: 'Total Amazon Ad Spend',
 
-  // ---- Write-back (doPost) — monthly Amazon-actuals sync (see tools/nkv-monthly-sync.routine.md) ----
-  // The tab the monthly sync writes into. Its row 1 carries a "2025" grid then a "2026" grid; the target
-  // month column is located from the requested year's header block, never a hardcoded column.
+  // ---- Write-back (doPost) — monthly sync (see tools/nkv-monthly-sync.routine.md) ----
+  // Tabs the monthly sync writes into, each with a DIFFERENT header shape:
+  //  • Amazon: row 1 carries a "2025" grid then a "2026" grid → column found from the requested YEAR block.
+  //  • Shopify: row 1 is a single month row (no year block) → column found by the month header alone.
   AMAZON_TAB: 'Amazon Account Tracker',
+  SHOPIFY_TAB: 'Shopify Account Tracker',
 
   // Scope-board column headers → which dashboard card each feeds.
   SCOPE_HEADERS: { inProgress: 'In Progress', upcoming: 'Upcoming', flags: 'Flags & Warnings' },
@@ -120,24 +123,30 @@ function doGet(e) {
 
 // ============================ WRITE-BACK (doPost) ============================
 /**
- * Write a month's Amazon actuals into the "Amazon Account Tracker" tab — the write-side counterpart to
- * doGet, driven by tools/nkv-monthly-sync.routine.md.
+ * Write a month's actuals into the tracker — the write-side counterpart to doGet, driven by
+ * tools/nkv-monthly-sync.routine.md. Two tabs are synced in one POST:
+ *
+ *   • "Amazon Account Tracker"  (rows 2–10 inputs + 24–27 marketing metrics)
+ *   • "Shopify Account Tracker" (Contours Rx sales/units + Shopify Google/social ad spend)
  *
  * POST body (JSON), e.g.:
  *   { "client":"nkv", "month":"June", "year":"2026",
  *     "revenue_by_market": { "UK":14112, "EU":224 },
  *     "units_total": 562,
- *     "advertising": { "ad_spend":3500, "ad_sales":6153, "acos":0.49, "tacos":0.24 } }
+ *     "advertising": { "ad_spend":3500, "ad_sales":6153, "acos":0.49, "tacos":0.24 },
+ *     "shopify": { "crx_sales":2826, "crx_units_variations":42, "crx_assortment_packs":62,
+ *                  "crx_google_ad_spend":713.84, "newnique_sales":28.95, "newnique_units":2,
+ *                  "newnique_google_ad_spend":194.5, "social_media_ad_spend":21.5 } }
+ * Any field/section omitted is simply not written — pass only what you have.
  *
- * SCOPE — writes ONLY these column-A rows (rows 2–10 inputs + rows 24–27 marketing metrics):
- *   NKV UK · NKV Europe · NKV Units Sold on Amazon · Total Amazon Ad Spend · Total Ad Sales · ACOS · TACOS.
- * It NEVER writes the Stock section, External Costs, the profit rows, or any formula cell (the derived
- * "Amazon Revenue inc VAT" total, ex-VAT, VAT-held, disbursements, etc.) — see FORMULA-SAFE below.
+ * SCOPE — writes ONLY the labelled rows in each tab's spec list below. It NEVER writes the Stock section,
+ * External Costs, the profit rows, or any formula cell (derived totals such as "Amazon Revenue inc VAT" /
+ * "Total Shopify Revenue") — see FORMULA-SAFE below.
  *
- * The target MONTH column is located from the requested year's header block (the "2026" cell on row 1,
- * then the first month-named column to its right that is not a "Totals" column). Rows are matched by an
- * EXACT column-A label (case-insensitive, trimmed) — so "ACOS" never collides with "TACOS", and inserting
- * or moving rows/columns won't break it.
+ * COLUMN — the target month column differs by tab: the Amazon tab is located from the requested YEAR block
+ * (the "2026" header cell, then the month to its right), the Shopify tab from the month header alone (it
+ * has no year block). Rows are matched by an EXACT column-A label (case-insensitive, trimmed) — so "ACOS"
+ * never collides with "TACOS" and "Units ordered (variations…)" never collides with "Units ordered".
  *
  * FORMULA-SAFE: a target cell that already holds a formula is LEFT INTACT and reported under "skipped".
  *
@@ -157,17 +166,12 @@ function doPost(e) {
     var monthUP = month.toUpperCase();
 
     var book = CONFIG.SPREADSHEET_ID ? SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = book.getSheetByName(CONFIG.AMAZON_TAB);
-    if (!sheet) throw new Error('Could not find the "' + CONFIG.AMAZON_TAB + '" tab.');
-    var values = sheet.getDataRange().getValues();
-
-    var loc = findYearMonthCol_(values, year, monthUP);
-    if (!loc) throw new Error('Could not find the ' + month + ' ' + year + ' column in the "' + CONFIG.AMAZON_TAB + '" header.');
-
     var rev = body.revenue_by_market || {};
     var adv = body.advertising || {};
-    // Each spec: EXACT column-A label → value. null/undefined values are simply not supplied → skipped silently.
-    var specs = [
+    var shp = body.shopify || {};
+
+    // Amazon tab — column found from the requested YEAR block. null value = field not supplied → skipped.
+    syncTab_(book, CONFIG.AMAZON_TAB, { year: year, monthUP: monthUP, month: month }, [
       { label: 'NKV UK',                   value: rev.UK },
       { label: 'NKV Europe',               value: rev.EU },
       { label: 'NKV Units Sold on Amazon', value: body.units_total },
@@ -175,15 +179,19 @@ function doPost(e) {
       { label: 'Total Ad Sales',           value: adv.ad_sales },
       { label: 'ACOS',                     value: adv.acos },
       { label: 'TACOS',                    value: adv.tacos }
-    ];
+    ], written, missing, skipped);
 
-    specs.forEach(function (spec) {
-      if (spec.value == null) return;                        // value not supplied → skip
-      var rowIdx = matchRowExact_(values, spec.label);
-      if (rowIdx < 0) { missing.push(spec.label); return; }  // label not found in column A
-      if (writeCellIfPlain_(sheet, rowIdx, loc.col, spec.value)) written.push(spec.label);
-      else skipped.push(spec.label);                         // formula cell → left intact
-    });
+    // Shopify tab — column found from the month header alone (no year block).
+    syncTab_(book, CONFIG.SHOPIFY_TAB, { monthUP: monthUP, month: month }, [
+      { label: 'Contours Rx Shopify Sales',                 value: shp.crx_sales },
+      { label: 'Units ordered (variations not Ass Pack.)',  value: shp.crx_units_variations },
+      { label: 'Assortment Packs bought on discount',       value: shp.crx_assortment_packs },
+      { label: 'Contours Rx Google Ad Spend',               value: shp.crx_google_ad_spend },
+      { label: 'Newnique Shopify Sales',                    value: shp.newnique_sales },
+      { label: 'Units ordered',                             value: shp.newnique_units },
+      { label: 'Newnique Google Ad Spend',                  value: shp.newnique_google_ad_spend },
+      { label: 'Social Media Ad Spend',                     value: shp.social_media_ad_spend }
+    ], written, missing, skipped);
 
     if (missing.length) {
       return jsonOut_({ status: 'error', message: 'Some rows were not found in the sheet.', missing: missing, written: written, skipped: skipped });
@@ -194,15 +202,45 @@ function doPost(e) {
   }
 }
 
+/**
+ * Write one tab's specs into the target month column. Skips the tab entirely if none of its specs carry a
+ * value (so a Shopify-less or Amazon-less POST touches only what it supplies). Locates the column via the
+ * YEAR block when opts.year is set (Amazon), else via the month header alone (Shopify). Each written /
+ * skipped / missing entry is prefixed with the tab name so a two-tab response stays unambiguous.
+ */
+function syncTab_(book, tabName, opts, specs, written, missing, skipped) {
+  var any = false;
+  for (var i = 0; i < specs.length; i++) { if (specs[i].value != null) { any = true; break; } }
+  if (!any) return;                                          // nothing supplied for this tab → leave it alone
+
+  var sheet = book.getSheetByName(tabName);
+  if (!sheet) throw new Error('Could not find the "' + tabName + '" tab.');
+  var values = sheet.getDataRange().getValues();
+
+  var loc = opts.year ? findYearMonthCol_(values, opts.year, opts.monthUP)
+                      : findMonthHeaderCol_(values, opts.monthUP);
+  if (!loc) throw new Error('Could not find the ' + opts.month + (opts.year ? ' ' + opts.year : '') + ' column in the "' + tabName + '" header.');
+
+  specs.forEach(function (spec) {
+    if (spec.value == null) return;                          // value not supplied → skip
+    var rowIdx = matchRowExact_(values, spec.label);
+    if (rowIdx < 0) { missing.push(tabName + ' » ' + spec.label); return; }
+    if (writeCellIfPlain_(sheet, rowIdx, loc.col, spec.value)) written.push(tabName + ' » ' + spec.label);
+    else skipped.push(tabName + ' » ' + spec.label);         // formula cell → left intact
+  });
+}
+
 function jsonOut_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
+var MONTHS_UP_ = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+
 /**
- * Locate the requested year's month column: scan the top rows for a cell whose text is exactly `yearStr`
- * (e.g. "2026"), then return the first column to its right whose header contains `monthUP` and is NOT a
- * "Totals" column. Returns { row, col } (0-based) or null. Anchoring on the year cell skips the 2025 grid,
- * so "JANUARY" resolves to the 2026 January, not the 2025 one.
+ * Locate the requested year's month column (Amazon tab): scan the top rows for a cell whose text is exactly
+ * `yearStr` (e.g. "2026"), then return the first column to its right whose header contains `monthUP` and is
+ * NOT a "Totals" column. Returns { row, col } (0-based) or null. Anchoring on the year cell skips the 2025
+ * grid, so "JANUARY" resolves to the 2026 January, not the 2025 one.
  */
 function findYearMonthCol_(values, yearStr, monthUP) {
   var want = String(yearStr).trim();
@@ -216,6 +254,28 @@ function findYearMonthCol_(values, yearStr, monthUP) {
       var h = String(values[r][cc]).toUpperCase();
       if (h.indexOf('TOTAL') !== -1) continue;               // never write into a totals/sum column
       if (h.indexOf(monthUP) !== -1) return { row: r, col: cc };
+    }
+  }
+  return null;
+}
+
+/**
+ * Locate a month column on a single-year tab (Shopify): find the header row (the first top row carrying ≥3
+ * month names), then the first column in it that contains `monthUP` and is NOT a "Totals" column. Requiring
+ * a real month-header row avoids matching a stray month word in a label cell. Returns { row, col } or null.
+ */
+function findMonthHeaderCol_(values, monthUP) {
+  for (var r = 0; r < Math.min(values.length, 8); r++) {
+    var months = 0;
+    for (var c = 0; c < values[r].length; c++) {
+      var h = String(values[r][c]).toUpperCase();
+      for (var mi = 0; mi < MONTHS_UP_.length; mi++) { if (h.indexOf(MONTHS_UP_[mi]) !== -1) { months++; break; } }
+    }
+    if (months < 3) continue;                                // not the header row
+    for (var cc = 0; cc < values[r].length; cc++) {
+      var hh = String(values[r][cc]).toUpperCase();
+      if (hh.indexOf('TOTAL') !== -1) continue;              // never write into a totals/sum column
+      if (hh.indexOf(monthUP) !== -1) return { row: r, col: cc };
     }
   }
   return null;
