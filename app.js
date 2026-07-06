@@ -1190,6 +1190,49 @@ function renderEarlyLaunch(spec) {
     '<div><div class="nld-ttl">' + spec.title + '</div><div class="nld-body">' + spec.body + '</div></div></div>';
 }
 
+// Our Strategy Recommendations — client-agnostic renderer for the AI-compiled Overview section.
+// spec = { summary, updated?, sources:[str], items:[ { cat, pri, icon?, title, body, metric?, impact?,
+// aud?, sources?:[str] } ] }. pri ∈ high|med|win|low (priority stripe + pill). aud ∈ am|client|both.
+// The whole wrap is hidden when no spec/items, so it's a no-op for any client that doesn't supply it.
+function renderRecommendations(wrapId, sumId, gridId, spec) {
+  var wrap = el(wrapId); if (!wrap) return;
+  if (!spec || !spec.items || !spec.items.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  function chips(arr) { return (arr || []).map(function (s) { return '<span class="rec-src">' + s + '</span>'; }).join(''); }
+  var sm = el(sumId);
+  if (sm) {
+    sm.innerHTML =
+      '<div class="rec-badge">&#10024; AI Strategy</div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div class="rec-sum-txt">' + (spec.summary || '') + '</div>' +
+        (spec.sources && spec.sources.length
+          ? '<div class="rec-sum-src">' + (spec.updated ? spec.updated + ' &middot; synthesised from ' : 'Synthesised from ') + chips(spec.sources) + '</div>'
+          : '') +
+      '</div>';
+  }
+  var pill = { high: { t: 'Priority', c: 'br' }, med: { t: 'Opportunity', c: 'ba' }, win: { t: 'Working', c: 'bg' }, low: { t: 'Watch', c: 'bb' } };
+  var audTxt = { am: 'Account Manager', client: 'Client', both: 'Client + AM' };
+  var g = el(gridId); if (!g) return;
+  g.innerHTML = spec.items.map(function (it) {
+    var p = pill[it.pri] || pill.med;
+    var srcs = chips(it.sources);
+    return '<div class="rec-card p-' + (it.pri || 'med') + '">' +
+      '<div class="rec-top">' +
+        (it.cat ? '<span class="rec-cat">' + it.cat + '</span>' : '') +
+        '<span class="badge ' + p.c + '">' + p.t + '</span>' +
+        (it.aud ? '<span class="rec-aud">' + (audTxt[it.aud] || it.aud) + '</span>' : '') +
+      '</div>' +
+      '<div class="rec-ttl">' + (it.icon ? '<span>' + it.icon + '</span>' : '') + '<span>' + it.title + '</span></div>' +
+      '<div class="rec-body">' + it.body + '</div>' +
+      '<div class="rec-foot">' +
+        (it.metric ? '<span class="rec-metric">' + it.metric + '</span>' : '') +
+        (it.impact ? '<span class="rec-impact">&rarr; ' + it.impact + '</span>' : '') +
+        (srcs ? '<span style="margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;">' + srcs + '</span>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
 function renderPnlSummary(arr) {
   var w = el('sec-pnl-summary'); if (!w || !arr) return;
   w.innerHTML = arr.map(function (c) {
@@ -1677,6 +1720,7 @@ function renderFounderOverview(o) {
       '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted2);margin-top:6px;">' + (lc.meta || []).map(function (m) { return '<span>' + m + '</span>'; }).join('') + '</div>';
   }
   if (o.waterfall) renderBars('f-ov-waterfall', o.waterfall);
+  renderRecommendations('f-ov-recs-wrap', 'f-ov-recs-summary', 'f-ov-recs', o.recommendations);  // AI strategy brief
 }
 
 // Generic founder data table (P&L detail + stock phases): cols + rows of pre-formatted cell HTML.
@@ -1753,6 +1797,7 @@ function renderSections() {
   renderAlertList('sec-health', 'sec-health-badge', o.healthSpec);        // Account Health (strategy alerts)
   var healthWrap = el('sec-health-wrap'); if (healthWrap) healthWrap.style.display = o.healthSpec ? '' : 'none';
   renderEarlyLaunch(o.earlyLaunch);
+  renderRecommendations('sec-recs-wrap', 'sec-recs-summary', 'sec-recs', o.recommendations);  // AI strategy brief
 
   var pl = S.pnl || {};
   if (pl.revBreak) renderBars('sec-pnl-revbreak', pl.revBreak);           // static fallback only

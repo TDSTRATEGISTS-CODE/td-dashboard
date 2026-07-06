@@ -215,8 +215,41 @@ window.DASHBOARD_DATA = {
         {level:'amber',title:'Contours Rx Lids Assortment 4–7mm — stock-up soon',sub:'B0FYR8DQ2G · ~20 days cover · 41 units · top seller (68/mo)'},
         {level:'amber',title:'Girlactik Gel Eyeliner — watch cover',sub:'B099KVFGZP · ~26 days cover · 24 units · 30/mo'},
         {level:'amber',title:'26 listings out of stock / suppressed',sub:'mostly dormant Girlactik & Lilibeth long-tail variants · all 46 selling SKUs in stock'}
-      ] }
+      ] },
       // Account Health (strategy/performance alerts) card removed from the NKV Overview per client request.
+      // Our Strategy Recommendations — AI-compiled from MerchantSpring actuals + NKV Beauty Account Tracker
+      // (Google Sheet) + the Notion/sheet project scope. Re-derive on each monthly re-bake.
+      recommendations: {
+        updated: 'May 2026',
+        sources: ['MerchantSpring','Google Sheet','Notion'],
+        summary: 'May delivered &pound;14,369 revenue at a healthy 29.5% net margin and a standout 9.5% UK conversion rate. The watch-items are operational: the hero SKU (Lids Assortment 4&ndash;7mm) is ~20 days from stock-out, ad spend ran 8% over budget at 42% ACOS, and one campaign (Whitening Kits) absorbs a quarter of spend at below-target efficiency. Scale the branded winners, protect the best-seller&rsquo;s stock, and keep an eye on the 3.5% refund line.',
+        items: [
+          { cat:'Inventory', pri:'high', icon:'&#128230;', aud:'both', sources:['MerchantSpring','Google Sheet'],
+            title:'Reorder the hero SKU before it stocks out',
+            body:'Contours Rx Lids by Design Assortment 4&ndash;7mm (B0FYR8DQ2G) is the top seller at 68 units/mo but down to 41 units &mdash; about 20 days of cover. Every other selling SKU is in stock, so this is the one stock risk that matters. The supplier-PO note flags Nailah is aware; place the order this week to avoid a Buy-Box-losing outage on the account&rsquo;s #1 line.',
+            metric:'~20 days cover &middot; 68/mo', impact:'protect the account&rsquo;s best-selling line' },
+          { cat:'Advertising', pri:'med', icon:'&#128200;', aud:'am', sources:['MerchantSpring'],
+            title:'Tighten Whitening Kits, scale the branded winners',
+            body:'Whitening Kits (SP Manual) is the biggest spend at &pound;880 but only 1.90&times; ROAS (52.7% ACOS) &mdash; a quarter of the ad budget running below target. Meanwhile Lids by Design (Branded Manual) returns 9.28&times; at 10.8% ACOS and the Contours Rx Brand Banner 4.06&times;. Shift budget out of broad Whitening-Kits terms into the branded/PAT campaigns that already convert.',
+            metric:'Whitening Kits 52.7% vs Lids 10.8% ACOS', impact:'pull blended TACOS from 21.3% toward &lt;20%' },
+          { cat:'Advertising', pri:'high', icon:'&#128465;', aud:'am', sources:['MerchantSpring','Google Sheet'],
+            title:'Kill the auto campaign burning at 159% ACOS',
+            body:'Advanced Hair Growth (SP Auto) is live and spending &pound;64 to return &pound;40 &mdash; 159% ACOS, 0.63&times; ROAS. The NWN Grow Bundle autos were already paused for the same reason; this one should follow. Ad spend ran &pound;3,241 vs the &pound;3,000 budget (108%), so trimming the waste also brings pacing back in line.',
+            metric:'159% ACOS &middot; &pound;3,241 vs &pound;3,000 budget', impact:'stop the leak + hit budget' },
+          { cat:'Conversion', pri:'win', icon:'&#9889;', aud:'both', sources:['MerchantSpring'],
+            title:'A 9.5% conversion rate is the green light to buy more traffic',
+            body:'UK sessions convert at 9.5% (6,168 in May) with the Buy Box at 99.3% &mdash; well above category norms. When conversion is this strong, buying more qualified traffic pays back faster than tinkering with the funnel. This is the case to scale the branded campaigns above rather than hold budget flat.',
+            metric:'9.5% CVR &middot; 99.3% Buy Box', impact:'traffic scales efficiently at this CVR' },
+          { cat:'Profitability', pri:'low', icon:'&#128176;', aud:'both', sources:['MerchantSpring'],
+            title:'Watch the refund line on whitening kits',
+            body:'Refunds were 3.5% of revenue in May (&pound;500) plus &pound;496 in promotions &mdash; modest, but teeth-whitening is a higher-return category, so it is worth a monthly check rather than letting it drift. If returns climb, a listing/expectation-setting tweak on the kits protects margin more cheaply than discounting.',
+            metric:'refunds 3.5% of revenue', impact:'protect the 29.5% net margin' },
+          { cat:'Growth', pri:'med', icon:'&#128302;', aud:'both', sources:['Notion','MerchantSpring'],
+            title:'Get Newnique orders into MerchantSpring to unlock its reporting',
+            body:'Newnique&rsquo;s listing optimisations are in progress and its Brand Defense campaign already returns 3.16&times;, but MerchantSpring is not yet ingesting Newnique&rsquo;s orders &mdash; so its order-side performance is invisible on the dashboard. Finishing that integration turns Newnique from a blind spot into a measurable growth lane alongside Contours Rx.',
+            metric:'Newnique Brand Defense 3.16&times; ROAS', impact:'make the #2 brand measurable' }
+        ]
+      }
     },
     pnl: {
       statement: {

@@ -208,7 +208,40 @@ window.DASHBOARD_DATA = {
         {level:'amber',title:'Hydro Tabs Orange — DE/ES/FR',sub:'B0CCJW62HZ · since 3 Jun'},
         {level:'amber',title:'Hydro Tabs Lime — DE/ES/FR',sub:'B0CCJWBX6W · since 28 Jun'},
         {level:'amber',title:'Hydro Tabs Forest Fruit — DE/ES/FR',sub:'B0CCJWLKTM · since 29 Jun'}
-      ] }
+      ] },
+      // Our Strategy Recommendations — AI-compiled from MerchantSpring actuals + Google Sheet targets/budgets
+      // + the Notion/sheet project scope. Re-derive on each monthly re-bake from the current month's signals.
+      recommendations: {
+        updated: 'June 2026',
+        sources: ['MerchantSpring','Google Sheet','Notion'],
+        summary: 'June closed at &#8364;8,847 revenue (flat MoM) but with a big efficiency swing &mdash; blended TACOS fell to 15.0% (from 26.2%) after ad spend was cut 43%. That opens 5pp of headroom under the &lt;20% target, yet revenue is only 72% of the &#8364;12,250 goal. The fastest levers now: reinvest the TACOS savings into the branded/PAT campaigns already returning 5&ndash;17&times; ROAS, get three long-OOS hero SKUs back in stock, and stop spending on out-of-stock listings.',
+        items: [
+          { cat:'Advertising', pri:'med', icon:'&#128200;', aud:'am', sources:['MerchantSpring','Google Sheet'],
+            title:'Reinvest the TACOS headroom into proven branded campaigns',
+            body:'TACOS dropped to 15% &mdash; 5pp under target &mdash; but revenue sits at 72% of the &#8364;12,250 goal. Rather than bank all the savings, scale the winners: IT Energy Gels (Branded Manual) returns 17.4&times; ROAS at 5.7% ACOS, ES PAT Brand Defence 7.8&times;, DE PAT Brand Defence 4.3&times;. These have room to absorb more budget before efficiency slips.',
+            metric:'TACOS 15.0% &middot; target &lt;20%', impact:'close the ~&#8364;3.4k/mo gap to target' },
+          { cat:'Advertising', pri:'high', icon:'&#128465;', aud:'am', sources:['MerchantSpring'],
+            title:'Cut spend on zero-return and out-of-stock campaigns',
+            body:'~&#8364;250/mo is leaking into campaigns with no sales or ACOS above 140%: FR Energy Gels (Turbo &amp; OG) PAT at 232% ACOS, FR 1KG Energy Drinks at 140%, plus four &#8364;25&ndash;38 campaigns returning &#8364;0. Several Hydro Tabs campaigns are also advertising SKUs that are currently out of stock &mdash; pure waste. Pause or de-fund these first.',
+            metric:'~&#8364;250/mo at &gt;100% ACOS', impact:'redeploy to winners, no revenue lost' },
+          { cat:'Inventory', pri:'high', icon:'&#128230;', aud:'both', sources:['MerchantSpring'],
+            title:'Restock three heroes that have been out for 1&ndash;4 months',
+            body:'31 of 69 SKUs are out of stock (25 for 30+ days). Energy Ice Gel Lemon-Lime has been OOS since 18 Feb &mdash; four months of lost sales and a suppressed listing that now shows &ldquo;No Buy Box Winner&rdquo;. Fast Bar Lemon (14 May) and Energy Drink Lemon 1kg (15 Apr) are next. Each is a top seller in its group.',
+            metric:'31 OOS &middot; 25 over 30 days', impact:'recover suppressed-listing revenue + Buy Box' },
+          { cat:'Conversion', pri:'med', icon:'&#127919;', aud:'both', sources:['MerchantSpring'],
+            title:'Lift Italy &amp; Germany conversion toward France&rsquo;s benchmark',
+            body:'France converts at 6.7% (session) versus Italy 3.1% and Germany 3.4% &mdash; yet Italy carries the highest AOV (&#8364;41). Closing even half that gap on existing Italian traffic beats buying new clicks. Prioritise IT/DE listing images, A+ content and review velocity; France&rsquo;s listings are the template that works.',
+            metric:'FR 6.7% vs IT 3.1% CVR', impact:'~+&#8364;600/mo at IT parity, no extra ad spend' },
+          { cat:'Inventory', pri:'low', icon:'&#128176;', aud:'both', sources:['MerchantSpring'],
+            title:'Free up cash tied in slow-moving overstock',
+            body:'Four SKUs hold 12+ months of cover &mdash; Cherry Juice+ (714 units), Fruit Chew Blackcurrant (655), Energy Gel Citrus (447) and Turbo Drink Watermelon (332). That is working capital sitting still and exposed to Amazon aged-inventory surcharges. A targeted promo or bundle clears it and helps fund the restocks above.',
+            metric:'4 SKUs &gt;12mo cover', impact:'release cash + avoid long-term storage fees' },
+          { cat:'Buy Box', pri:'med', icon:'&#127942;', aud:'am', sources:['MerchantSpring'],
+            title:'Recover the DE Buy Box on three SKUs losing by cents',
+            body:'Germany is losing the Buy Box on Energy Gel Citrus, Turbo Gel Blackcurrant and Turbo Gel Citrus by just &#8364;0.96&ndash;&#8364;2.96. A small price match or a short coupon on these three recaptures the featured offer without a broad price cut.',
+            metric:'gap &#8364;0.96&ndash;&#8364;2.96', impact:'recover featured-offer share in DE' }
+        ]
+      }
     },
     pnl: {
       fixedLabel: 'Last 12 months (Jun 2025–May 2026) · financial basis',
