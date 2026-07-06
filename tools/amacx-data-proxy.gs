@@ -705,10 +705,16 @@ function jsonOut_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
-/** First column at/after `startCol` whose header text contains the (upper-cased) month name → the 2026 column. */
+/**
+ * First column at/after `startCol` whose header is the (upper-cased) month → the 2026 column.
+ * SUM/TOTALS columns (e.g. "2025 TOTALS", "2026 TOTALS") are skipped outright, so a write can
+ * never land on a formula-total column even if its header happened to contain a month substring.
+ */
 function findMonthCol_(row, startCol, monthUP) {
   for (var c = startCol; c < row.length; c++) {
-    if (String(row[c]).toUpperCase().indexOf(monthUP) !== -1) return c;
+    var h = String(row[c]).toUpperCase();
+    if (h.indexOf('TOTAL') !== -1) continue;              // never write into a totals/sum column
+    if (h.indexOf(monthUP) !== -1) return c;
   }
   return -1;
 }
