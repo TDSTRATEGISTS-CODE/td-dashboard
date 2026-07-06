@@ -599,12 +599,16 @@ function aggDescriptor_(key) {
  * block), and the target ROWS by LABEL in column A — never by fixed cell references, so
  * inserting/moving rows or columns in the tracker won't break it.
  *
+ * FORMULA-SAFE: any target cell that already holds a formula (SUM/derived rows such as
+ * "Revenue Actuals", "Ad Spend Actuals", "Actual TACOS", "Average Order Value") is LEFT INTACT
+ * and reported under "skipped" — the write never clobbers a calculated cell.
+ *
  * Response:
- *   Success:  { "status":"ok",    "written":[...rows updated] }
- *   Failure:  { "status":"error", "message":"...", "missing":[...rows not found] }
+ *   Success:  { "status":"ok",    "written":[...cells written], "skipped":[...formula cells left intact] }
+ *   Failure:  { "status":"error", "message":"...", "missing":[...labels not found], "skipped":[...] }
  */
 function doPost(e) {
-  var written = [], missing = [];
+  var written = [], missing = [], skipped = [];
   try {
     if (!e || !e.postData || !e.postData.contents) throw new Error('Missing POST body.');
     var body = JSON.parse(e.postData.contents);
@@ -644,8 +648,8 @@ function doPost(e) {
       if (spec.value == null) return;                       // value not supplied → skip
       var rowIdx = matchRowIndex_(master.values, spec.match);
       if (rowIdx < 0) { missing.push(spec.label); return; } // label not found in column A
-      master.sheet.getRange(rowIdx + 1, master.monthCol + 1).setValue(spec.value);
-      written.push(spec.label);
+      if (writeCellIfPlain_(master.sheet, rowIdx, master.monthCol, spec.value)) written.push(spec.label);
+      else skipped.push(spec.label);                         // formula cell → left intact
     });
 
     // ---- 2) Per-market grids — one value per market for the same 2026 month column ----
@@ -683,8 +687,8 @@ function doPost(e) {
         if (!isKnownMarket_(nm)) break;        // non-market row ends the grid
         var code = marketCode_(nm);
         if (code && grid.data[code] != null) {
-          found.sheet.getRange(mr + 1, found.monthCol + 1).setValue(grid.data[code]);
-          written.push(grid.label + ' (' + code + ')');
+          if (writeCellIfPlain_(found.sheet, mr, found.monthCol, grid.data[code])) written.push(grid.label + ' (' + code + ')');
+          else skipped.push(grid.label + ' (' + code + ')');  // formula cell → left intact
           doneCodes[code] = 1;
         }
       }
@@ -693,16 +697,29 @@ function doPost(e) {
     });
 
     if (missing.length) {
-      return jsonOut_({ status: 'error', message: 'Some rows/markets were not found in the sheet.', missing: missing, written: written });
+      return jsonOut_({ status: 'error', message: 'Some rows/markets were not found in the sheet.', missing: missing, written: written, skipped: skipped });
     }
-    return jsonOut_({ status: 'ok', written: written });
+    return jsonOut_({ status: 'ok', written: written, skipped: skipped });
   } catch (err) {
-    return jsonOut_({ status: 'error', message: String(err && err.message || err), missing: missing });
+    return jsonOut_({ status: 'error', message: String(err && err.message || err), missing: missing, skipped: skipped });
   }
 }
 
 function jsonOut_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Write `value` into a cell ONLY if it is a plain (non-formula) cell.
+ * Returns true if written, false if the cell holds a formula and was left untouched.
+ * This is the guard that stops the write from clobbering calculated rows — Revenue Actuals,
+ * Ad Spend Actuals, Actual TACOS, AOV, per-market "Total EU" — which are formulas in the sheet.
+ */
+function writeCellIfPlain_(sheet, rowIdx, colIdx, value) {
+  var cell = sheet.getRange(rowIdx + 1, colIdx + 1);
+  if (String(cell.getFormula()) !== '') return false;   // formula cell → do not clobber
+  cell.setValue(value);
+  return true;
 }
 
 /**
