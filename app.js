@@ -877,6 +877,17 @@ function applyLive(j) {
       var lo = j.sections.overview;
       if (lo) ['tasksSpec', 'flagsSpec', 'completedSpec'].forEach(function (k) { if (lo[k]) DATA.__liveOverview[k] = true; });
       mergeSections(DATA.sections, j.sections);
+      // Live revenue-TARGET line: the proxy sends it as a month→value map so we align it to the baked
+      // chart's month labels BY NAME. This keeps the dotted target correct even when the sheet's actuals
+      // lag the baked MerchantSpring months. Falls back to the baked revTarget value for any missing month.
+      var lc = j.sections.charts, cc = DATA.sections.charts;
+      if (lc && lc.revTargetByMonth && cc && cc.months) {
+        var baked = cc.revTarget || [];
+        cc.revTarget = cc.months.map(function (mn, i) {
+          var v = lc.revTargetByMonth[mn];
+          return (v != null) ? v : (baked[i] != null ? baked[i] : null);
+        });
+      }
       if (typeof renderSections === 'function') renderSections();
       changed = true;
     }
