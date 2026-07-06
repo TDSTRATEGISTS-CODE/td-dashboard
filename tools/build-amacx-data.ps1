@@ -584,15 +584,21 @@ $ovJs = @"
       ] }
     }
 "@
-# ---- sections.charts: trailing-6-month trend series (Dec 2025 - May 2026), EU + per market. ----
+# ---- sections.charts: trailing-6-month trend series, EU + per market. ----
 # Drives the Revenue Trend (monthly revenue) and Spend vs TACOS (monthly ad spend + TACOS%) cards.
 # app.js renderMarketCharts() picks the series for the selected market; 'all' = EU (sum of markets).
-$cidx = 11..16
+# The window is DERIVED from the newest populated month so it ADVANCES automatically every bake — do
+# NOT hand-pin it. (A hand-pinned window is exactly what left these charts frozen at Dec–May through the
+# June 2026 rebake while every KPI showed June.) Appending this month to $M is all it takes.
+$lastIdx = ($M.DE.sales.Count) - 1                 # newest month index (the $M arrays grow by one each bake)
+$cidx = ($lastIdx - 5)..$lastIdx                    # trailing 6 months, self-advancing
 $monLabels = ($cidx | ForEach-Object { "'" + (MonShort $_) + "'" }) -join ','
 # EU revenue TARGET (dotted chart line, All EU only) — Performance Tracker row 8 "Revenue Target
-# (past vs future)". Monthly, idx 0=Jan2025 … 16=May2026. NOT from MCP — SYNC from the sheet each bake.
-# Sliced by $cidx so it always aligns to the same trailing window as the rev series.
+# (past vs future)". Monthly, idx 0=Jan2025 … NOT from MCP — SYNC from the sheet each bake and APPEND
+# the new month (keep it as long as $M). Sliced by $cidx to align with the rev series. The live proxy
+# also overlays sections.charts.revTarget from the sheet, so this baked array is the offline fallback.
 $REVTGT = @(820,1020,1935,2800,4180,6160,8280,8400,11000,10750,7600,7680,4500,5700,5120,8497,10206)
+if ($REVTGT.Count -le $lastIdx) { throw ("REVTGT has {0} months but the newest data index is {1} — append this month's Revenue Target to REVTGT before baking (README 'Re-baking AMACX' step 2)." -f $REVTGT.Count, $lastIdx) }
 $chartsJs = @"
 {
       months: [$monLabels],
