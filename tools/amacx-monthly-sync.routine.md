@@ -75,8 +75,9 @@ DO NOT send Revenue Actuals, Ad Spend Actuals, Actual TACOS, AOV, or any EU tota
 SUM/derived formulas in the sheet and must not be touched. The sheet recalculates them automatically
 from the per-market revenue, per-market ad spend, and orders you write above.
 
-Send with Bash curl (use -L — Apps Script issues a 302):
-curl -sS -L -X POST -H "Content-Type: application/json" -d '<json body>' "<url>"
+Send with Bash curl. Use -L (Apps Script 302-redirects to script.googleusercontent.com) and let -d
+imply POST — do NOT add -X POST, as forcing POST on the redirect makes the follow fail with a 405:
+curl -sS -L -H "Content-Type: application/json" -d '<json body>' "<url>"
 
 The endpoint returns {"status":"ok","written":[...],"skipped":[...]} or {"status":"error","message":"...","missing":[...]}.
 Treat ONLY a non-ok status, a non-empty "missing" list, or a non-2xx HTTP response as a failure to surface in Step 4.
