@@ -340,9 +340,14 @@ Notes:
   is a **baked literal injected by a SEPARATE PowerShell pass** from per-period `getSalesByProduct` pulls joined
   to the sheet's SKU→Group map (column B). Re-running this script preserves it; to **refresh the group numbers**
   you must re-run that injection pass — editing `$M` alone won't update `groupsByPeriod`.
-- **Advertising / Overview charts:** `sections.charts.adSales` (Ad Spend vs Ad Sales vs TACOS trend) is computed
-  from `$M`; `sections.charts.revTarget` (dotted EU goal line, All-EU only) is hardcoded from **Performance Tracker
-  row 8 "Revenue Target (past vs future)"** in `$REVTGT` (re-sync each bake). **`sections.advertising.campaignMixByPeriod`**
+- **Advertising / Overview charts:** the two trend cards read `sections.charts`. The 6-month window
+  (`months` + `rev`/`adSpend`/`adSales`/`adTacos`, EU + per market) is **computed from `$M` over a trailing-6
+  window that DERIVES from the newest populated month (`$lastIdx`/`$cidx`) — so it auto-advances every bake;
+  never hand-pin it.** `sections.charts.revTarget` (dotted EU goal line, All-EU only) is synced from **Performance
+  Tracker row 8 "Revenue Target (past vs future)"** into `$REVTGT` (append the new month each bake). That baked
+  target is only the **offline fallback** — the live Apps Script proxy overlays `sections.charts.revTarget` from
+  the same sheet row on every load (`buildSections`), so the dotted line is always the true sheet value when the
+  proxy is reachable. **`sections.advertising.campaignMixByPeriod`**
   (the Performance-by-Campaign-Type pie, `period → market`) is a **baked literal** aggregated from
   `generateCampaignsReport` per period × channel (SP/SB/SD by `ad_type`) — like `groupsByPeriod`, editing `$M` won't
   refresh it; you must re-run the campaign pulls.
@@ -383,7 +388,10 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
    `searchText:'AMACX'` to filter to seller `A1O4H4W8GP4BN2`). These feed the Ad Metrics card's Impressions / CTR / Avg-CPC
    and the Overview Conversion-Rate KPI. ✅ Confirm: the script's printed per-period summary matches Seller Central for `may`.
 2. **Budgets → `$BUD`** and **revenue target → `$REVTGT`.** Re-read the Google Sheet (`read_file_content`): per-market ad
-   budgets and **row 8 "Revenue Target (past vs future)"**. ✅ Confirm: `$REVTGT` last value = the sheet's current month.
+   budgets and **row 8 "Revenue Target (past vs future)"**. **APPEND** this month's target to `$REVTGT` (don't replace the
+   history — the chart window `$cidx` slices it, and the generator throws if `$REVTGT` is shorter than `$M`). The trailing-6
+   chart window itself auto-advances from `$M` — no manual month-index edit needed. ✅ Confirm: `$REVTGT` last value = the
+   sheet's current-month target, and `$REVTGT.Count == $M.DE.sales.Count`.
 3. **CVR → `$CVRP`.** Pull `getSalesByChannels` `conversions` (units/page-views) per market per rolling window. ✅ Confirm: 4 markets × 4 windows present.
 4. **Product groups → `groupsByPeriod`.** Re-run the groups injection pass: `getSalesByProduct` per rolling window × channel,
    join to the sheet SKU→Group map (col B), 15 groups with sales/units/pct/adSpend/TACOS/OOS. ✅ Confirm: 4 periods × {all,de,fr,es,it} × 15 groups.
@@ -413,7 +421,7 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
    ```
    ✅ Confirm: braces balanced, brackets balanced, all keys present.
 9. **Verify in preview** (`tools/static-server.ps1` + Preview MCP, `?client=amacx`): switch a couple of date ranges ×
-   markets and confirm the Revenue Trend (target line on All-EU), Ad Spend/Sales/TACOS chart, Products KPIs/table/groups,
+   markets and confirm the Revenue Trend (**last x-axis month = this month**, not a month behind; target line on All-EU), Ad Spend/Sales/TACOS chart, Products KPIs/table/groups,
    the Campaign-Type pie, the **Buy Box % + per-market bars + loss list**, the Inventory KPIs (per-market), the Overview
    5-card **Conversion-Rate** KPI, and the **Ad Metrics** card (Impressions / CTR / Avg-CPC / Ad Budget / Utilisation —
    budget & util come LIVE from the sheet via `overlayBudgets`) all move with date+market.
@@ -424,6 +432,9 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
 11. **Confirm + hand off.** Report the headline `may` figures back, then list the changed files to upload to GitHub:
    **`clients/amacx/data.js`** + **`index.html`** (the `APP_VER` bump) — and `tools/build-amacx-data.ps1` if the generator
    itself changed. A pure data refresh needs **no proxy redeploy** (the proxy only serves sheet sections, which stay live).
+   **Exception:** if `tools/amacx-data-proxy.gs` itself changed (e.g. the one-time addition of the live
+   `sections.charts.revTarget` overlay), copy it into the Apps Script editor and **Deploy ▸ Manage deployments ▸ Edit ▸
+   New version** once — otherwise the live dotted target line won't update. This is a one-off per proxy change, not monthly.
 
 > **What does NOT need re-pulling monthly:** FY 2025 columns (frozen history), the live sheet sections (budgets/forecast/
 > Project-Scope — served by the proxy), and `index.html`/`app.js` (only when behaviour changes).

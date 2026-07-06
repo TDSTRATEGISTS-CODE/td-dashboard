@@ -30,6 +30,7 @@ var CONFIG = {
   // trimmed, "contains". Adjust here if you rename rows in the sheet.
   ROWS: {
     revenueActuals: 'Revenue Actuals',
+    revenueTarget:  'Revenue Target',           // "Revenue Target (past vs future)" — dotted line on the Revenue Trend chart
     adSpendActuals: 'Ad Spend Actuals',
     adBudget:       'Ad Budget / Spend',        // "Ad Budget / Spend (past vs future)"
     aov:            'Average Order Value',       // "Average Order Value (AOV)"
@@ -339,6 +340,19 @@ function buildSections() {
   var budSub = monthShort_(latest) + ' 2026';
 
   var sections = { advertising: { budgets: { rows: budRows, headers: budHeaders, subLabel: budSub }, forecast: forecast }, overview: {} };
+
+  // sections.charts — the Revenue Trend chart's TARGET line (gold dotted), served LIVE from the sheet's
+  // "Revenue Target" row so it self-advances every month and never sticks. Only revTarget is overlaid;
+  // rev/adSpend/adSales/TACOS bars stay baked in data.js (adSales is a MerchantSpring metric, not in the
+  // sheet). The window = trailing 6 months ending at the latest reported month, matching the baked
+  // charts.months window — computed across the 2025→2026 boundary so it's always exactly 6 values.
+  if (m.revenueTarget) {
+    var tgt24 = (m.revenueTarget.y2025 || []).concat(m.revenueTarget.y2026 || []);   // idx 0=Jan2025 … 12=Jan2026
+    var endIdx = 12 + latest, startIdx = endIdx - 5, revTarget = [];
+    for (var ti = startIdx; ti <= endIdx; ti++) revTarget.push(Math.round(toNum_(tgt24[ti]) || 0));
+    sections.charts = { revTarget: revTarget };
+  }
+
   if (scope.tasks && scope.tasks.length) sections.overview.tasksSpec = { badge: 'From project scope', items: scope.tasks };
   if (scope.flags && scope.flags.length) sections.overview.flagsSpec = { badge: scope.flags.length + ' in progress', items: scope.flags };
   if (scope.completed && scope.completed.length) sections.overview.completedSpec = { badge: scope.completed.length + ' done', items: scope.completed };
