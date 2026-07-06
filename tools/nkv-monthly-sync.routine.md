@@ -17,8 +17,8 @@ changes, edit this file (via git) — the trigger prompt just points here, so th
 - **Currency:** GBP (£), revenue **including VAT** (the row is literally "Amazon Revenue inc VAT").
 - **MerchantSpring channels:** UK `71662311` (live), IE `86715690` (early-stage), US `109142957` (placeholder).
   UK is the only fully-live Amazon market.
-- **Write endpoint (doPost):** _«NKV `doPost` /exec — NOT yet deployed; the NKV proxy is read-only today.
-  See "Maintenance notes → Adding the write endpoint" before the first run.»_
+- **Write endpoint (doPost):** _«paste the NKV Apps Script `/exec` URL here after deploying — the `doPost`
+  handler now lives in `nkv-sheet-proxy.gs`; it just needs a (re)deploy. See "Maintenance notes".»_
 - **Connectors needed:** MerchantSpring (pull), Notion (log).
 
 ---
@@ -138,16 +138,13 @@ If an entry for this month already exists, update it instead of creating a dupli
 
 ## Maintenance notes (not run steps)
 
-- **Adding the write endpoint (prerequisite for the first run).** `nkv-sheet-proxy.gs` currently exposes
-  only `doGet` (read). Before this routine can run, add a `doPost(e)` handler to that script that:
-  1. Opens the sheet and selects the **`Amazon Account Tracker`** tab.
-  2. Finds the prior-month column by matching the **2026** header block (skip any "Totals" column).
-  3. Maps the JSON fields to column-A labels exactly as in the STEP 3 table (`NKV UK`, `NKV Europe`,
-     `NKV Units Sold on Amazon`, `Total Amazon Ad Spend`, `Total Ad Sales`, `ACOS`, `TACOS`).
-  4. Is **formula-safe** — writes a cell only when it holds no formula, and reports the rest under `skipped`
-     (see `amacx-data-proxy.gs` → `writeCellIfPlain_` / `findMonthCol_` / `matchRowIndex_` for the pattern).
-  Deploy it as a Web app (Execute as: Me · Who has access: Anyone) and paste the `/exec` URL into **Context**
-  above and into the `curl` in STEP 3.
+- **Deploy the write endpoint (prerequisite for the first run).** The `doPost(e)` handler already lives in
+  `nkv-sheet-proxy.gs` (it selects the **`Amazon Account Tracker`** tab, finds the prior-month column from
+  the requested year's header block, maps the JSON fields to the column-A labels in the STEP 3 table, and is
+  **formula-safe** via `writeCellIfPlain_`). `doPost` and `doGet` share one deployment, so you just need to
+  (re)deploy the script as a **new version** and paste the resulting `/exec` URL into **Context** above and
+  the `curl` in STEP 3. Deploy as a Web app (Execute as: Me · Who has access: Anyone). It is the SAME `/exec`
+  URL the dashboard already reads from — deploying a new version does not change it.
 - **Redeploy after code changes:** if `nkv-sheet-proxy.gs` changes, redeploy the Apps Script as a
   **new version** (Deploy ▸ Manage deployments ▸ edit the Web app ▸ Version: New version ▸ Deploy). Google
   serves the last *deployed* version, not the latest GitHub code. The `/exec` URL stays the same.

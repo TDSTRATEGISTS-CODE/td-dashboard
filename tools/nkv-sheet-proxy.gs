@@ -14,12 +14,19 @@
  * whole `dateRanges` object stay in the dashboard's data.js — the dashboard is configured with
  * overlay:'sections', so app.js merges ONLY the keys returned here and never touches the rest.
  *
+ * doPost (write-back) — the monthly Amazon-actuals SYNC. Writes last month's UK/EU revenue, units and
+ * ad metrics into the "Amazon Account Tracker" tab (rows 2–10 inputs + rows 24–27), formula-safe, never
+ * touching the Stock / External-Costs / profit rows. Driven by tools/nkv-monthly-sync.routine.md.
+ *
  * IMPORTANT — this needs a NATIVE Google Sheet, not the uploaded .xlsx:
  *   1. In Drive, open "NKV Beauty Account Tracker.xlsx" ▸ File ▸ Save as Google Sheets.
  *   2. Open the new native sheet, copy its ID from the URL into CONFIG.SPREADSHEET_ID below.
  *   3. Extensions ▸ Apps Script ▸ paste this file ▸ Deploy ▸ New deployment ▸ Web app
  *        Execute as: Me   ·   Who has access: Anyone
  *   4. Copy the /exec URL into clients/nkv/config.js dataSource.url and set type:'appsScript'.
+ *      The SAME /exec URL serves both doGet (dashboard read) and doPost (monthly sync) — paste it into
+ *      the "Write endpoint" line of tools/nkv-monthly-sync.routine.md too. After editing this file,
+ *      redeploy as a NEW version (Deploy ▸ Manage deployments) or Google keeps serving the old code.
  *
  * Robustness: the scope board is located by MARKER text and its columns by HEADER text
  * ("In Progress" / "Upcoming" / "Completed" / "Flags & Warnings"), NOT by fixed coordinates — so
@@ -39,6 +46,11 @@ var CONFIG = {
 
   // Row label (column A) of the actual monthly ad-spend series, matched case-insensitively/contains.
   AD_SPEND_ROW: 'Total Amazon Ad Spend',
+
+  // ---- Write-back (doPost) — monthly Amazon-actuals sync (see tools/nkv-monthly-sync.routine.md) ----
+  // The tab the monthly sync writes into. Its row 1 carries a "2025" grid then a "2026" grid; the target
+  // month column is located from the requested year's header block, never a hardcoded column.
+  AMAZON_TAB: 'Amazon Account Tracker',
 
   // Scope-board column headers → which dashboard card each feeds.
   SCOPE_HEADERS: { inProgress: 'In Progress', upcoming: 'Upcoming', flags: 'Flags & Warnings' },
@@ -104,6 +116,130 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JAVASCRIPT);
   }
   return ContentService.createTextOutput(body).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ============================ WRITE-BACK (doPost) ============================
+/**
+ * Write a month's Amazon actuals into the "Amazon Account Tracker" tab — the write-side counterpart to
+ * doGet, driven by tools/nkv-monthly-sync.routine.md.
+ *
+ * POST body (JSON), e.g.:
+ *   { "client":"nkv", "month":"June", "year":"2026",
+ *     "revenue_by_market": { "UK":14112, "EU":224 },
+ *     "units_total": 562,
+ *     "advertising": { "ad_spend":3500, "ad_sales":6153, "acos":0.49, "tacos":0.24 } }
+ *
+ * SCOPE — writes ONLY these column-A rows (rows 2–10 inputs + rows 24–27 marketing metrics):
+ *   NKV UK · NKV Europe · NKV Units Sold on Amazon · Total Amazon Ad Spend · Total Ad Sales · ACOS · TACOS.
+ * It NEVER writes the Stock section, External Costs, the profit rows, or any formula cell (the derived
+ * "Amazon Revenue inc VAT" total, ex-VAT, VAT-held, disbursements, etc.) — see FORMULA-SAFE below.
+ *
+ * The target MONTH column is located from the requested year's header block (the "2026" cell on row 1,
+ * then the first month-named column to its right that is not a "Totals" column). Rows are matched by an
+ * EXACT column-A label (case-insensitive, trimmed) — so "ACOS" never collides with "TACOS", and inserting
+ * or moving rows/columns won't break it.
+ *
+ * FORMULA-SAFE: a target cell that already holds a formula is LEFT INTACT and reported under "skipped".
+ *
+ * Response:
+ *   Success:  { "status":"ok",    "written":[...], "skipped":[...] }
+ *   Failure:  { "status":"error", "message":"...", "missing":[...], "written":[...], "skipped":[...] }
+ */
+function doPost(e) {
+  var written = [], missing = [], skipped = [];
+  try {
+    if (!e || !e.postData || !e.postData.contents) throw new Error('Missing POST body.');
+    var body = JSON.parse(e.postData.contents);
+    var month = String(body.month || '').trim();
+    if (!month) throw new Error('Missing "month" in request body.');
+    var year = String(body.year || '').trim();
+    if (!year) throw new Error('Missing "year" in request body.');
+    var monthUP = month.toUpperCase();
+
+    var book = CONFIG.SPREADSHEET_ID ? SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = book.getSheetByName(CONFIG.AMAZON_TAB);
+    if (!sheet) throw new Error('Could not find the "' + CONFIG.AMAZON_TAB + '" tab.');
+    var values = sheet.getDataRange().getValues();
+
+    var loc = findYearMonthCol_(values, year, monthUP);
+    if (!loc) throw new Error('Could not find the ' + month + ' ' + year + ' column in the "' + CONFIG.AMAZON_TAB + '" header.');
+
+    var rev = body.revenue_by_market || {};
+    var adv = body.advertising || {};
+    // Each spec: EXACT column-A label → value. null/undefined values are simply not supplied → skipped silently.
+    var specs = [
+      { label: 'NKV UK',                   value: rev.UK },
+      { label: 'NKV Europe',               value: rev.EU },
+      { label: 'NKV Units Sold on Amazon', value: body.units_total },
+      { label: 'Total Amazon Ad Spend',    value: adv.ad_spend },
+      { label: 'Total Ad Sales',           value: adv.ad_sales },
+      { label: 'ACOS',                     value: adv.acos },
+      { label: 'TACOS',                    value: adv.tacos }
+    ];
+
+    specs.forEach(function (spec) {
+      if (spec.value == null) return;                        // value not supplied → skip
+      var rowIdx = matchRowExact_(values, spec.label);
+      if (rowIdx < 0) { missing.push(spec.label); return; }  // label not found in column A
+      if (writeCellIfPlain_(sheet, rowIdx, loc.col, spec.value)) written.push(spec.label);
+      else skipped.push(spec.label);                         // formula cell → left intact
+    });
+
+    if (missing.length) {
+      return jsonOut_({ status: 'error', message: 'Some rows were not found in the sheet.', missing: missing, written: written, skipped: skipped });
+    }
+    return jsonOut_({ status: 'ok', written: written, skipped: skipped });
+  } catch (err) {
+    return jsonOut_({ status: 'error', message: String(err && err.message || err), missing: missing, written: written, skipped: skipped });
+  }
+}
+
+function jsonOut_(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Locate the requested year's month column: scan the top rows for a cell whose text is exactly `yearStr`
+ * (e.g. "2026"), then return the first column to its right whose header contains `monthUP` and is NOT a
+ * "Totals" column. Returns { row, col } (0-based) or null. Anchoring on the year cell skips the 2025 grid,
+ * so "JANUARY" resolves to the 2026 January, not the 2025 one.
+ */
+function findYearMonthCol_(values, yearStr, monthUP) {
+  var want = String(yearStr).trim();
+  for (var r = 0; r < Math.min(values.length, 6); r++) {
+    var yc = -1;
+    for (var c = 0; c < values[r].length; c++) {
+      if (String(values[r][c]).trim() === want) { yc = c; break; }
+    }
+    if (yc === -1) continue;
+    for (var cc = yc + 1; cc < values[r].length; cc++) {
+      var h = String(values[r][cc]).toUpperCase();
+      if (h.indexOf('TOTAL') !== -1) continue;               // never write into a totals/sum column
+      if (h.indexOf(monthUP) !== -1) return { row: r, col: cc };
+    }
+  }
+  return null;
+}
+
+/** First row whose column-A label EXACTLY equals `label` (case-insensitive, trimmed) → row index, else -1. */
+function matchRowExact_(values, label) {
+  var want = String(label).trim().toLowerCase();
+  for (var r = 0; r < values.length; r++) {
+    if (String(values[r][0] == null ? '' : values[r][0]).trim().toLowerCase() === want) return r;
+  }
+  return -1;
+}
+
+/**
+ * Write `value` into a cell ONLY if it holds no formula. Returns true if written, false if the cell is a
+ * formula and was left untouched — the guard that stops the sync clobbering the derived rows (the
+ * "Amazon Revenue inc VAT" total, ex-VAT, VAT-held, disbursements, profit rows).
+ */
+function writeCellIfPlain_(sheet, rowIdx, colIdx, value) {
+  var cell = sheet.getRange(rowIdx + 1, colIdx + 1);
+  if (String(cell.getFormula()) !== '') return false;        // formula cell → do not clobber
+  cell.setValue(value);
+  return true;
 }
 
 // ============================ BUILD sections ============================
