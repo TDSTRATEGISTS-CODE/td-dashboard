@@ -317,38 +317,42 @@ window.DASHBOARD_DATA = {
     },
     inventory: {
       kpis: [
-        {bar:'green',lbl:'In Stock',val:'38',dCls:'du',d:'SKUs',s:'of 69 products'},
-        {bar:'red',lbl:'Out of Stock',val:'31',dCls:'dd',d:'SKUs suppressed',s:'59 listings · unique count'},
-        {bar:'#404935',lbl:'Active SKUs',val:'69',dCls:'df',d:'unique products',s:'199 EU listings'},
-        {bar:'amber',lbl:'Restock 30d+',val:'25',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'see priority list'}
+        {bar:'green',lbl:'In Stock',val:'40',dCls:'du',d:'SKUs',s:'of 49 products'},
+        {bar:'red',lbl:'Out of Stock',val:'9',dCls:'dd',d:'SKUs suppressed',s:'28 listings · unique count'},
+        {bar:'#404935',lbl:'Active SKUs',val:'49',dCls:'df',d:'unique products',s:'179 EU listings'},
+        {bar:'amber',lbl:'Restock 30d+',val:'5',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'see priority list'}
       ],
       // Per-market KPI cards — counts are that marketplace's own listings (unique-SKU basis, getSalesByProduct
-      // quantity==0 = OOS). app.js swaps these in when a market chip is selected; EU 'kpis' above = unique products.
+      // quantity==0 = OOS, EXCLUDING PARENT-* aggregator rows — those are non-buyable variation groupers that
+      // always report quantity 0 and are not real stockouts; counting them had inflated OOS by ~2x). app.js
+      // swaps these in when a market chip is selected; EU 'kpis' above = unique products (deduped by ASIN).
       kpisByMarket: {
-        de: [ {bar:'green',lbl:'In Stock',val:'34',dCls:'du',d:'SKUs',s:'Germany'}, {bar:'red',lbl:'Out of Stock',val:'16',dCls:'dd',d:'SKUs suppressed',s:'Germany'}, {bar:'#404935',lbl:'Active SKUs',val:'50',dCls:'df',d:'DE listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'11',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Germany'} ],
-        fr: [ {bar:'green',lbl:'In Stock',val:'38',dCls:'du',d:'SKUs',s:'France'}, {bar:'red',lbl:'Out of Stock',val:'11',dCls:'dd',d:'SKUs suppressed',s:'France'}, {bar:'#404935',lbl:'Active SKUs',val:'49',dCls:'df',d:'FR listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'5',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'France'} ],
-        es: [ {bar:'green',lbl:'In Stock',val:'34',dCls:'du',d:'SKUs',s:'Spain'}, {bar:'red',lbl:'Out of Stock',val:'16',dCls:'dd',d:'SKUs suppressed',s:'Spain'}, {bar:'#404935',lbl:'Active SKUs',val:'50',dCls:'df',d:'ES listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'10',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Spain'} ],
-        it: [ {bar:'green',lbl:'In Stock',val:'34',dCls:'du',d:'SKUs',s:'Italy'}, {bar:'red',lbl:'Out of Stock',val:'16',dCls:'dd',d:'SKUs suppressed',s:'Italy'}, {bar:'#404935',lbl:'Active SKUs',val:'50',dCls:'df',d:'IT listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'11',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Italy'} ]
+        de: [ {bar:'green',lbl:'In Stock',val:'37',dCls:'du',d:'SKUs',s:'Germany'}, {bar:'red',lbl:'Out of Stock',val:'5',dCls:'dd',d:'SKUs suppressed',s:'Germany'}, {bar:'#404935',lbl:'Active SKUs',val:'42',dCls:'df',d:'DE listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'2',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Germany'} ],
+        fr: [ {bar:'green',lbl:'In Stock',val:'40',dCls:'du',d:'SKUs',s:'France'}, {bar:'red',lbl:'Out of Stock',val:'9',dCls:'dd',d:'SKUs suppressed',s:'France'}, {bar:'#404935',lbl:'Active SKUs',val:'49',dCls:'df',d:'FR listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'5',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'France'} ],
+        es: [ {bar:'green',lbl:'In Stock',val:'36',dCls:'du',d:'SKUs',s:'Spain'}, {bar:'red',lbl:'Out of Stock',val:'9',dCls:'dd',d:'SKUs suppressed',s:'Spain'}, {bar:'#404935',lbl:'Active SKUs',val:'45',dCls:'df',d:'ES listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'5',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Spain'} ],
+        it: [ {bar:'green',lbl:'In Stock',val:'38',dCls:'du',d:'SKUs',s:'Italy'}, {bar:'red',lbl:'Out of Stock',val:'5',dCls:'dd',d:'SKUs suppressed',s:'Italy'}, {bar:'#404935',lbl:'Active SKUs',val:'43',dCls:'df',d:'IT listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'3',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Italy'} ]
       },
       stock: [
-        {dot:'dr',name:'Fast Bar Lemon',note:'B086XB1N46 · DE ES FR IT (14 May)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Energy Drink Lemon 1kg',note:'B0GS21WT66 · DE ES FR IT (15 Apr)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Energy Ice Gel Lemon-Lime',note:'B0F332LV9B · DE ES FR IT (18 Feb)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Energy Drink Forest Fruit 320g',note:'B0GZ469Z98 · DE ES FR IT (10 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Hydro Tabs Orange',note:'B0CCJW62HZ · DE ES FR (3 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Turbo Drink Lemon',note:'B0GM195X6S · DE ES FR IT (16 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Fast Bar Vanilla',note:'B0868T4MCP · DE ES FR IT (15 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Energy Drink Forest Fruit 1kg',note:'B0GSWK3DNX · DE ES FR IT (17 Jun)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dg',name:'Cherry Juice+ 12x500ml',note:'B0GZW1BJ1C · EU · Healthy',units:'714 units',days:'>12 mo'},
-        {dot:'dg',name:'Fruit Chew Blackcurrant',note:'B0C9MWY4G3 · EU · Healthy',units:'655 units',days:'>12 mo'},
-        {dot:'dg',name:'Energy Gel Citrus',note:'B0CRFD8L2X · EU · Healthy',units:'447 units',days:'>12 mo'},
-        {dot:'dg',name:'Turbo Drink Watermelon 850g',note:'B0GSWHPXQV · EU · Healthy',units:'332 units',days:'>12 mo'}
+        {dot:'dr',name:'Cherry Juice Booster',note:'B0F32S8KRN · FR ES IT (22 Apr 2025)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Energy Drink Grape 1kg',note:'B0CZ9QMR9F · FR ES (6 Nov 2025)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Fast Bar Lemon',note:'B086XB1N46 · DE FR ES IT (14 May 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Turbo Drink Watermelon',note:'B0GM16BM5K · FR ES IT (22 May 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Hydro Tabs Orange',note:'B0CCJW62HZ · DE FR ES (3 Jun 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Turbo Drink Lemon',note:'B0GM195X6S · FR ES IT (16 Jun 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Protein Delux Vanilla',note:'B0869QQR93 · DE FR ES IT (22 Jun 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Hydro Tabs Lime',note:'B0CCJWBX6W · DE FR ES (28 Jun 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dr',name:'Hydro Tabs Forest Fruit',note:'B0CCJWLKTM · DE FR ES (29 Jun 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
+        {dot:'dg',name:'Cherry Juice+ 12x500ml',note:'B0GZW1BJ1C · EU · Healthy',units:'4,269 units',days:'>12 mo'},
+        {dot:'dg',name:'Turbo Gel Citrus',note:'B0C9MZVSZW · EU · Healthy',units:'2,048 units',days:'>12 mo'},
+        {dot:'dg',name:'Fruit Chew Blackcurrant',note:'B0C9MWY4G3 · EU · Healthy',units:'2,039 units',days:'>12 mo'},
+        {dot:'dg',name:'Energy Gel Citrus',note:'B0CRFD8L2X · EU · Healthy',units:'1,918 units',days:'>12 mo'}
       ],
       restock: [
-        {level:'red',title:'Fast Bar Lemon — all 4 markets',sub:'B086XB1N46 · OOS since 14 May · top restock priority'},
-        {level:'red',title:'Energy Drink Lemon 1kg — all 4 markets',sub:'B0GS21WT66 · OOS since 15 Apr'},
-        {level:'red',title:'Energy Ice Gel Lemon-Lime — all 4 markets',sub:'B0F332LV9B · OOS since 18 Feb · longest outage'},
-        {level:'amber',title:'Hydro Tabs Orange — DE/ES/FR',sub:'B0CCJW62HZ · OOS since 3 Jun'}
+        {level:'amber',title:'Cherry Juice Booster — FR/ES/IT',sub:'B0F32S8KRN · OOS since 22 Apr 2025 · longest outage'},
+        {level:'amber',title:'Energy Drink Grape 1kg — FR/ES',sub:'B0CZ9QMR9F · OOS since 6 Nov 2025'},
+        {level:'red',title:'Fast Bar Lemon — all 4 markets',sub:'B086XB1N46 · OOS since 14 May 2026'},
+        {level:'amber',title:'Turbo Drink Watermelon — FR/ES/IT',sub:'B0GM16BM5K · OOS since 22 May 2026'},
+        {level:'amber',title:'Hydro Tabs Orange — DE/FR/ES',sub:'B0CCJW62HZ · OOS since 3 Jun 2026'}
       ]
     },
     products: {
