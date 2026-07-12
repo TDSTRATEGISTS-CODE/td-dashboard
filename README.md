@@ -393,8 +393,10 @@ in MerchantSpring, so 3m/6m figures are **summed from per-month pulls**.
 
 **Automating it (monthly Routine).** This runbook runs unattended as a Claude Code **Routine** whose prompt lives
 at [`tools/harvaza-monthly-rebake.prompt.md`](tools/harvaza-monthly-rebake.prompt.md). Wire it with a **schedule
-trigger on the 1st of each month** (cron `0 6 1 * *`), the **MerchantSpring connector** attached, and **"Allow
-unrestricted branch pushes" enabled** so it can publish to `main`. It's **auto-publish + notify**: green runs go
+trigger on the 5th of each month** (cron `40 9 5 * *` — 09:40, staggered after AMACX 09:00 + NKV 09:20 so the three
+bakes don't hit MerchantSpring or push to `main` at once; times are UTC, so +1h UK during BST), the
+**MerchantSpring connector** attached, and **"Allow unrestricted branch pushes" enabled** so it can publish to
+`main`. It's **auto-publish + notify**: green runs go
 live and log to issue #19; only a failed self-check falls back to a draft PR + review.
 
 ---
@@ -633,9 +635,10 @@ is the "Last Month" slot — keep the key literally `may`; only update its `labe
 
 **Automating it (monthly Routine).** This runbook runs unattended as a Claude Code **Routine**
 (`claude.ai/code/routines`) whose prompt lives at [`tools/nkv-monthly-rebake.prompt.md`](tools/nkv-monthly-rebake.prompt.md).
-Wire it with a **schedule trigger on the 1st of each month** (cron `0 6 1 * *` via `/schedule update`; min interval
-is 1h), the **MerchantSpring connector** attached, and **"Allow unrestricted branch pushes" enabled** so it can
-publish to `main`. It's **auto-publish + notify**: green runs go live and log to issue #4 (watch it for the email);
+Wire it with a **schedule trigger on the 5th of each month** (cron `20 9 5 * *` via `/schedule update` — 09:20,
+staggered between AMACX 09:00 and Harvaza 09:40 so the bakes don't collide; times are UTC, +1h UK during BST; min
+interval is 1h), the **MerchantSpring connector** attached, and **"Allow unrestricted branch pushes" enabled** so it
+can publish to `main`. It's **auto-publish + notify**: green runs go live and log to issue #4 (watch it for the email);
 only a failed self-check falls back to a draft PR + review. Flip it back to a pure review gate by turning off
 unrestricted pushes — then every run just opens a PR.
 
