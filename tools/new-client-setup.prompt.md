@@ -2,7 +2,8 @@
 
 You are setting up a **brand-new client dashboard**. Work end-to-end. This file is the ordered
 procedure for the *full* flow (identity + tier decision → bake real data → wire files → live-overlay
-proxy → verify); the **`README.md` → "Add a new client"** section is the quick reference, and the
+proxy → verify → publish the client's Wix page); the **`README.md` → "Add a new client"** section is
+the quick reference, and the
 deeper mechanics (per-client layout, market filter, currency) live in their own README sections
 linked below. `clients/abimax/` is the reference implementation this runbook was written from
 (Amazon-only, USA, single-market, Digital Dash tier).
@@ -144,3 +145,28 @@ ROAS plausible, no blank/negative revenue, MoM deltas present.
 One commit with `clients/<slug>/`, **`tools/<slug>-sheet-proxy.gs`**, **and** the `index.html`
 `APP_VER` bump together (the client files + version bump are inseparable — see `CLAUDE.md`). Do not
 open a PR unless asked.
+
+## 9. Publish the client's Wix page (manual — Wix Editor)
+
+The dashboard is embedded on the **"T D Strategists"** Wix site, one page per client. This step is
+**Editor-only** — Wix's API can't duplicate a page, edit the embed element, or set per-page SEO on
+this (classic Editor) site, so you can't automate it; hand these instructions to whoever manages the
+site. Do this **after** the change is on `main` (GitHub Pages must be serving `?client=<slug>`).
+
+1. **Duplicate** an existing client dashboard page (Pages panel → ⋯ → Duplicate). **Match its page
+   permissions** — client pages are members-only / password-protected, so set the same on the copy.
+2. **URL slug** — the client's hyphenated brand name (house convention), e.g. `nkv-beauty`, `abimax`.
+3. **Embed** — click the embedded dashboard element → *Enter Code / Settings*, and change the client
+   param in the GitHub Pages URL:
+   `…/td-dashboard/index.html?client=<oldslug>` → `?client=<slug>`
+   (or, on the `wix-embed.js` Custom Element, `data-client="<slug>"`).
+4. **Page SEO** (*SEO Basics*), house convention:
+   - **Title tag:** `<Client> Digital Dashboard` (e.g. `Abimax Digital Dashboard`)
+   - **Meta description** (reusable verbatim across clients): `Your Sales & Performance analytics
+     combined with your Project Tracker and brand performance — updated by Those Digital Strategists.`
+5. **Publish.**
+
+> **Slug vs client key — don't conflate them.** The embed `?client=<slug>` MUST equal the
+> `clients/<slug>/` folder / dashboard key from step 1 (e.g. `nkv`, `abimax`). The Wix **URL slug** is
+> the marketing brand name and can differ (e.g. dashboard key `nkv` ↔ Wix slug `nkv-beauty`). For
+> Abimax both are `abimax`.
