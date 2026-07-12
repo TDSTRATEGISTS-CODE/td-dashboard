@@ -241,7 +241,7 @@ window.DASHBOARD_DATA = {
           items: [
             { dot: 'amber', title: 'Apply for Harvaza EORI number', sub: 'GOV.UK · Before 18 Jun shipment' },
             { dot: 'amber', title: "Sign director's loan agreement", sub: 'Before releasing payment to Arjun' },
-            { dot: 'amber', title: '750ml 6-pack reorder via Arjun', sub: 'Sserenee · Target net-30 terms' },
+            { dot: 'amber', title: '750ml 6-pack stock-up via Arjun', sub: 'Sserenee · Target net-30 terms' },
             { dot: 'muted', title: 'Amazon brand registry transfer', sub: 'Listing · Upcoming' }
           ]
         },
@@ -249,7 +249,7 @@ window.DASHBOARD_DATA = {
           badge: '2 OOS SKUs',
           items: [
             { dot: 'red',   tint: true, title: '200ml 24-pack — OOS · 1–2 weeks', sub: '360 cartons arriving 18 Jun' },
-            { dot: 'red',   tint: true, title: '750ml 6-pack — OOS · 2–3 months', sub: 'Reorder required · Labels on order' },
+            { dot: 'red',   tint: true, title: '750ml 6-pack — OOS · 2–3 months', sub: 'Stock-up required · Labels on order' },
             { dot: 'amber', tint: true, title: 'Label MOQ cost pending', sub: '£1,000 · 5-week lead time' },
             { dot: 'green', tint: true, title: 'DCTS/REX preference confirmed', sub: '0% duty on India imports · Sep 2025' }
           ]
@@ -464,7 +464,7 @@ window.DASHBOARD_DATA = {
       ],
       restock: [
         { level: 'red',   title: 'Bervera 6×200ml — UK',  sub: '<1 day cover · Immediate restock' },
-        { level: 'amber', title: 'Bervera 24×200ml — UK', sub: '2 days cover · Order now' }
+        { level: 'amber', title: 'Bervera 24×200ml — UK', sub: '2 days cover · Stock-up now' }
       ]
     },
 

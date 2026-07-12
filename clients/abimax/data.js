@@ -108,7 +108,7 @@ window.DASHBOARD_DATA = {
         {text:'Restock Magnostream Pro + Pack of 3', sub:'Supply · Upcoming', active:false}
       ] },
       flagsSpec: { badge: '3 in progress', items: [
-        {level:'amber', title:'Magnostream Pro — low FBA cover', sub:'B0GGRJKS2D · ~30 days · reorder soon'},
+        {level:'amber', title:'Magnostream Pro — low FBA cover', sub:'B0GGRJKS2D · ~30 days · stock-up soon'},
         {level:'amber', title:'Ad spend scaling — hold ACOS <20%', sub:'Spend +88% MoM · ACOS 16.4%'},
         {level:'muted', title:'Parent-child variation family', sub:'Consolidating 5 ASINs under one listing'}
       ] },
@@ -231,8 +231,8 @@ window.DASHBOARD_DATA = {
         {dot:'da',name:'Magnostream Multi-Unit Bundle',note:'B0GH7YKPZJ · US · slow mover',units:'3 units',unitsColor:'amber',days:'~90 days'}
       ],
       restock: [
-        {level:'amber',title:'Magnostream Pro — US',sub:'B0GGRJKS2D · ~30 days cover · 8 units · top revenue SKU — order this week'},
-        {level:'amber',title:'Magnostream Pack of 3 — US',sub:'B0GLPWZCRV · ~30 days cover · 5 units — order soon'}
+        {level:'amber',title:'Magnostream Pro — US',sub:'B0GGRJKS2D · ~30 days cover · 8 units · top revenue SKU — stock-up this week'},
+        {level:'amber',title:'Magnostream Pack of 3 — US',sub:'B0GLPWZCRV · ~30 days cover · 5 units — stock-up soon'}
       ]
     },
     products: {
