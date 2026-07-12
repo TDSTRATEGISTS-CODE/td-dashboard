@@ -46,6 +46,7 @@ dashboard/
     new-client-setup.prompt.md    ← agent runbook: end-to-end new-client setup (data bake + proxy + verify)
     nkv-monthly-rebake.prompt.md  ← Routine trigger: monthly NKV Amazon re-bake (auto-publish + notify, issue #4)
     harvaza-monthly-rebake.prompt.md ← Routine trigger: monthly Harvaza Amazon re-bake (auto-publish + notify, issue #19)
+    abimax-monthly-rebake.prompt.md ← Routine trigger: monthly Abimax Amazon re-bake (auto-publish + notify, issue #21)
     amacx-monthly-sync.routine.md ← Routine trigger: monthly AMACX sheet/data sync
 ```
 
