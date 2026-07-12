@@ -452,7 +452,7 @@ window.DASHBOARD_DATA = {
     inventory: {
       kpis: [
         { bar: 'green', lbl: 'In Stock',  val: '2',   dCls: 'du', d: 'ASINs healthy',  s: 'US bottles' },
-        { bar: 'amber', lbl: 'Low Stock', val: '2',   dCls: 'df', dColor: 'amber', d: 'Reorder urgent', s: 'UK <3 days cover' },
+        { bar: 'amber', lbl: 'Low Stock', val: '2',   dCls: 'df', dColor: 'amber', d: 'Stock-up urgent', s: 'UK <3 days cover' },
         { bar: 'red',   lbl: 'OOS',       val: '0',   dCls: 'du', d: 'None currently', s: '—' },
         { bar: 'blue',  lbl: 'OOS %',     val: '33%', dCls: 'dd', d: 'UK channel',     s: 'US 25%' }
       ],
