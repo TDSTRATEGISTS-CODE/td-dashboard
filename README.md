@@ -40,8 +40,10 @@ dashboard/
     build-harvaza-data.ps1   ← regenerates Harvaza's Amazon products blocks → tools/harvaza-amazon-baked.js (splice helper)
     amacx-data-proxy.gs      ← Apps Script source for AMACX (sheet → dateRanges + sections); deploy in Apps Script
     nkv-sheet-proxy.gs       ← Apps Script source for NKV (scope board + Shopify P&L + supplier POs); deploy in Apps Script
+    abimax-sheet-proxy.gs    ← Apps Script source for Abimax (scope board only — Amazon-only client); deploy in Apps Script
     harvaza-sheet-proxy.gs   ← Apps Script source for Harvaza (Founder-Dashboard Sheet + Notion Deal Hub; see "Harvaza")
     harvaza-amazon-baked.js  ← GENERATED splice snippet (not loaded by the app; safe to ignore/regenerate)
+    new-client-setup.prompt.md ← agent runbook: end-to-end new-client setup (data bake + proxy + verify)
 ```
 
 > **Apps Script proxies** (`amacx-data-proxy.gs`, `harvaza-sheet-proxy.gs`, `nkv-sheet-proxy.gs`) are now
@@ -55,7 +57,12 @@ dashboard/
 > (`In Progress` / `Upcoming` / `Completed` / `Flags & Warnings` — case-sensitive for the first two) and
 > returns `sections.overview` (the project board) **plus** live `sections.shopifypnl` and
 > `sections.inventory.supplierPOs`. The board on the sheet MUST carry those exact header cells, or the
-> proxy returns no overview and the Overview cards show the **"Currently updating"** fallback. After
+> proxy returns no overview and the Overview cards show the **"Currently updating"** fallback.
+> The **Abimax proxy** (`abimax-sheet-proxy.gs`) is the same header-text approach trimmed to
+> **scope board only** (no Shopify P&L / supplier POs — Abimax is Amazon-only); it's the lean template
+> to copy for a new single-brand Amazon client. **Every client gets one** — the setup runbook
+> (`tools/new-client-setup.prompt.md`) always writes a `tools/<slug>-sheet-proxy.gs` for the client's
+> project tracker. After
 > editing any `.gs`, **redeploy a new version** (Deploy ▸ Manage deployments ▸ edit ▸ New version) to keep
 > the same `/exec` URL, and ensure access is **Execute as: Me · Anyone**.
 
@@ -569,19 +576,33 @@ hides `amazonpnl` and shows its own real P&L. All the AMACX P&L data still lives
 
 ## Add a new client (≈5 minutes)
 
-1. **Copy** a like-for-like client: `demo/` for an Amazon client, `harvaza/` for a founder client →
-   `clients/<newclient>/`.
+1. **Copy** a **complete** like-for-like client → `clients/<newclient>/`: `nkv/` for an Amazon client
+   (or `amacx/`), `harvaza/` for a founder client. (`demo/` is a deliberately simplified *static*
+   reference — fine to read for the minimal `sections` shape, but copy a full client to start.)
 2. **`config.js`** — edit identity (`client.name`, `title`, footer), set `template` (`'amazon'` or
    `'founder'`), `brand` colours, `markets`, `hiddenPages`, and `dataSource` (`type:'static'`, or an Apps
-   Script `/exec` URL to overlay live values).
+   Script `/exec` URL to overlay live values). Set `client.currencyIcon` for non-€ clients (`'&#36;'` $,
+   `'&#163;'` £). Decide the **subscription tier**: on Digital Dash, gate the P&L behind the Executive
+   paywall by hiding the real page and leaving the locked gate — `hiddenPages:['keywords','pnl']` keeps
+   `amazonpnl` (the 🔒 gate) as the only P&L surface (see NKV / `clients/abimax/`).
 3. **`data.js`** — supply `dateRanges`, plus the matching `sections` (Amazon pages) or `sections.founder`
-   (founder pages) to data-drive the deep pages.
+   (founder pages) to data-drive the deep pages. `marketKpis` / `sec` / `campaignMix` / `sections.charts`
+   are all **optional** (guarded fallbacks) — a single-market static client can omit them and put its
+   trend charts in each period's `revChart`/`adChart`/`revBreakChart` (the demo pattern).
 4. **Logo** — set `config.logoSrc` (drop `td-logo.png` in, or a client logo; if it's a transparent PNG leave
    `logoBlend:''`).
-5. Open `index.html?client=<newclient>` and check.
+5. **Bump `APP_VER`** in `index.html` — adding a client ships new `clients/<newclient>/*.js`, and the
+   `?v=APP_VER` cache-buster must change or browsers (and the Wix embed) may serve a stale miss. Same
+   mechanical bump the re-bake runbook requires; see `CLAUDE.md`.
+6. Open `index.html?client=<newclient>` and check (ideally headless — see the runbook below).
 
-**Nothing in `index.html` or `app.js` should ever change per client.** If you're tempted to, that value belongs
-in `config.js`/`data.js` instead.
+**Nothing in `index.html` or `app.js` should ever change per client** (the `APP_VER` bump is a repo-wide
+cache-buster, not a per-client value). If you're tempted to add a client value there, it belongs in
+`config.js`/`data.js` instead.
+
+> **Baking real data & the full end-to-end flow** (MerchantSpring MCP pull sequence → files → verify) is
+> written up as an agent runbook in **`tools/new-client-setup.prompt.md`**. `clients/abimax/` is a worked
+> example: Amazon-only, USA, single-market, Digital Dash tier.
 
 ---
 
