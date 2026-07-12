@@ -43,7 +43,10 @@ dashboard/
     abimax-sheet-proxy.gs    ← Apps Script source for Abimax (scope board only — Amazon-only client); deploy in Apps Script
     harvaza-sheet-proxy.gs   ← Apps Script source for Harvaza (Founder-Dashboard Sheet + Notion Deal Hub; see "Harvaza")
     harvaza-amazon-baked.js  ← GENERATED splice snippet (not loaded by the app; safe to ignore/regenerate)
-    new-client-setup.prompt.md ← agent runbook: end-to-end new-client setup (data bake + proxy + verify)
+    new-client-setup.prompt.md    ← agent runbook: end-to-end new-client setup (data bake + proxy + verify)
+    nkv-monthly-rebake.prompt.md  ← Routine trigger: monthly NKV Amazon re-bake (auto-publish + notify, issue #4)
+    harvaza-monthly-rebake.prompt.md ← Routine trigger: monthly Harvaza Amazon re-bake (auto-publish + notify, issue #19)
+    amacx-monthly-sync.routine.md ← Routine trigger: monthly AMACX sheet/data sync
 ```
 
 > **Apps Script proxies** (`amacx-data-proxy.gs`, `harvaza-sheet-proxy.gs`, `nkv-sheet-proxy.gs`) are now
@@ -307,6 +310,92 @@ proxy, so the baker must NOT clobber it). It regenerates the Products sections f
 pulls and writes **`tools/harvaza-amazon-baked.js`** — a splice snippet you paste into `clients/harvaza/data.js`
 (it does **not** overwrite `data.js`). To refresh the period-aware P&L/Advertising/Overview actuals, re-pull the
 per-month figures (`getStoreProfitAndLoss` per month, `getSalesByChannels` per period) and update the literals.
+
+The `.ps1` is an optional splice helper; the authoritative monthly process is the hand-baked runbook below
+(same shape as NKV — no generator required).
+
+### Monthly re-bake routine (agent runbook)
+
+A monthly Harvaza refresh is a **Claude-session task** (the browser can't reach the MerchantSpring MCP). It runs
+unattended as a **Routine** (see "Automating it" below) or by hand any time. Follow these steps **in order**;
+each ends with a ✅ confirmation. **"Last month" = the latest fully-closed calendar month** (run in early Aug →
+target July). Everything is repo-relative (repo root *is* the dashboard folder).
+
+**This bake owns the Amazon actuals ONLY.** Never touch `sections.founder` (Overview project cards, **P&L Detail**,
+Stock & COGS, Director's Loan) — served **live** by `harvaza-sheet-proxy.gs` (Google Sheet forecast + Notion,
+`overlay:'founder'`). There is **no "Forecast" date option**: the selector is `may` / `3m` / `6m` only.
+
+**Channels** (pass `channelId` + `merchantId`; `getSalesByChannels`/`getAdvertisingByChannels` take
+`searchText:"Harvaza"` and return **both** in one call):
+
+| Market | channelId | merchantId | Notes |
+|---|---|---|---|
+| UK | `106474509` | `APPQBM8SKYNLC @ A1F83G8C2ARO7P` | live market, **GBP £**, ad-managed |
+| US | `106482207` | `A3LN9JCI8BPO2W @ ATVPDKIKX0DER` | **USD $**, **no ad account** (ad figures `$0`) |
+
+**Currency:** UK = £, US = $, per-market, **never summed**. `'all'` chip + `dateRanges[p].rev` use **UK £** only.
+**Periods** (recompute epochs each run with `calculateDateEpoch`, tz **`Europe/London`**): the object key **`may`
+is the "Last Month" slot — keep the key literally `may`; only update its `label`/`shortLabel`**. `3m` = trailing 3
+complete months; `6m` = **Year to Date** (Jan 1 → end of last complete month). P&L + advertising are **30-day-capped**
+in MerchantSpring, so 3m/6m figures are **summed from per-month pulls**.
+
+**Steps:**
+1. **Headline actuals → `dateRanges` + `mktRows` + Overview/Products.** Per period pull `getSalesByChannels`
+   (`searchText:"Harvaza"`, `includeTax:true`, `orderedRevenue`, pass the prior period for `may` MoM deltas).
+   Update `rev` (UK £) + delta/colour, `aov`, `mktRows` (UK £ + US $ sales), `sec.overviewActuals.{kpis,cvr}`,
+   `sec.products.{kpis,table}` (`cvr` = units ÷ page-views; `cvrCls` ≥8 `bg`/≥4 `ba`/else `br`), and
+   `sections.overviewActuals.revTrend` (last ~6 months UK ordered). ✅ Confirm the `may` UK £ + US $ sales match
+   Seller Central.
+2. **Amazon P&L → `sections.pnl.{margin,statement,mkt}` (+ per-period `sec.pnl`).** `getStoreProfitAndLoss` per
+   channel, **one call per calendar month, summed**. `margin`/`statement` = UK (net/settlement revenue — *not* the
+   ordered figure from step 1); `mkt` = UK + US. Top-level `sections.pnl` = the `may` default; `3m`/`6m` overrides
+   live in `dateRanges[p].sec.pnl`. ✅ Confirm UK net profit + margin % reconcile across margin/statement/mkt.
+3. **Product portfolio → `sections.pnl.portfolio`.** `getProductProfitAndLoss` per channel (last month, all SKUs).
+   Combine UK + US, rank by **margin %**; `total`/profitable/breakeven/unprofitable counts; `most` = top 3, `least`
+   = bottom 2 (amber). `profit` in native currency. ✅ Confirm counts sum to `total`.
+4. **Advertising → `dateRanges[p]` ad KPIs + `adChart` + `sections.advertising.metrics`.**
+   `getAdvertisingByChannels` (`searchText:"Harvaza"`, UK) per period (sum months for 3m/6m). `spend`, `tacosAd`,
+   `roasAd`; `adChart` = last ~6 months UK spend trend; `metrics` = Total Spend / Ad Sales / ACOS (amber >25%) /
+   TACOS / ROAS / `Avg. CPC '—'`. US spend `$0`. If UK ads are paused in a window, spend `£0` and note it in the
+   comment. ✅ Confirm `metrics` reconcile with the ad KPIs.
+5. **Revenue Breakdown → `dateRanges[p].revBreakChart`** (stacked monthly bars, Ad sales vs Organic). Per month:
+   Ad-attributed = UK ad **sales** (step 4); Organic = UK gross revenue (step 2) − Ad-attributed. `may` = 1 bar;
+   `3m` = 3 bars; `6m` = `['Jan'…'<Mon>']`. `series[0]` Ad `#2C3420` (bottom), `series[1]` Organic `#a7ab90` (top);
+   `legend` `Ad sales`/`Organic`; `max` = tallest month rounded up, 5 `yTicks`. ✅ **Reconcile:** per slot
+   `Σad + Σorganic` == that period's gross revenue, and `Σad` == the period ad sales.
+6. **Inventory → `sections.inventory.{kpis,stock,restock}`.** `getSalesByProduct` `includeNoInventory:true` per
+   channel (current snapshot — period-independent). `quantity==0` ⇒ OOS; `dot` `dg`/`da`/`dr` by cover; `restock`
+   = SKUs under ~7 days, most-urgent first. ✅ Confirm the OOS/low counts and per-SKU days-cover are sane.
+7. **Labels & metadata.** Update the `data.js` header comment (`pulled <date>`), each period's `label`/`shortLabel`
+   to the real months, and `config.js` `reportPeriodLabel` → `'<Mon YYYY> · Year 1 Forecast'`. Keys stay `may`/`3m`/`6m`.
+8. **Validate.** Run the shape/reconciliation check (throws on any JS error):
+   ```bash
+   node -e "global.window={}; require('./clients/harvaza/data.js'); const d=window.DASHBOARD_DATA.dateRanges; \
+     ['may','3m','6m'].forEach(p=>{if(!d[p]) throw new Error('missing period '+p); \
+       const c=d[p].revBreakChart, a=c.series[0].values.reduce((x,y)=>x+y,0), o=c.series[1].values.reduce((x,y)=>x+y,0); \
+       console.log(p,'ad',a,'organic',o,'gross',a+o);}); console.log('shape OK →', d.may.label, d.may.rev)"
+   ```
+   Then eyeball: TACOS never >100%, ROAS plausible (~2–3×), no negative/blank revenue, every MoM delta present, US
+   ad spend `$0` everywhere. ✅ Confirm `shape OK`, each slot's `ad+organic` == its P&L gross revenue, sanity clean.
+9. **Bump the cache-buster.** Increment **`APP_VER`** in `index.html` (e.g. `2026-07-01h` → the new bake date+letter)
+   so browsers fetch the fresh `data.js`. A pure data refresh needs **no proxy redeploy** (founder sections stay live).
+10. **Publish + notify.** If **every** self-check passes (gate below), commit `clients/harvaza/data.js` + `index.html`
+    + `clients/harvaza/config.js` and **push straight to `main`** (live). Then log the run in GitHub issue
+    [**#19 "Harvaza monthly re-bake — run log"**](../../issues/19) with the headline figures (UK £ sales / US $ sales /
+    UK net profit + margin / ad spend + state / OOS SKUs **vs prior month**) + `✅ validations passed`. **On any
+    failure, do NOT touch `main`** — open a **draft PR** (`… (NEEDS REVIEW)`) explaining what failed and drop a `⚠️`
+    note on issue #19.
+
+    **Self-check gate (auto-publish only when all pass):** MerchantSpring connector present · every expected UK pull
+    returned data (US may legitimately be near-zero) · `node` check prints `shape OK` · each slot's revBreak
+    reconciles to its P&L gross revenue · sanity clean (TACOS ≤100%, ROAS ~2–3×, no negative/blank rev, all MoM
+    deltas present, **no headline metric swinging >60% MoM** without cause — route that to human review).
+
+**Automating it (monthly Routine).** This runbook runs unattended as a Claude Code **Routine** whose prompt lives
+at [`tools/harvaza-monthly-rebake.prompt.md`](tools/harvaza-monthly-rebake.prompt.md). Wire it with a **schedule
+trigger on the 1st of each month** (cron `0 6 1 * *`), the **MerchantSpring connector** attached, and **"Allow
+unrestricted branch pushes" enabled** so it can publish to `main`. It's **auto-publish + notify**: green runs go
+live and log to issue #19; only a failed self-check falls back to a draft PR + review.
 
 ---
 
