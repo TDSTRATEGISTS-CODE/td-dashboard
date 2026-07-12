@@ -401,8 +401,8 @@ window.DASHBOARD_DATA = {
       },
       restock: [
         { level: 'red',   title: 'Isotonic Mix 1kg — Amazon UK', sub: 'OOS · Immediate restock needed' },
-        { level: 'amber', title: 'Energy Gel — eBay UK', sub: '9 days cover · Order this week' },
-        { level: 'amber', title: 'Isotonic Mix 1kg — Amazon UK', sub: '11 days cover · Order this week' }
+        { level: 'amber', title: 'Energy Gel — eBay UK', sub: '9 days cover · Stock-up this week' },
+        { level: 'amber', title: 'Isotonic Mix 1kg — Amazon UK', sub: '11 days cover · Stock-up this week' }
       ]
     },
 
