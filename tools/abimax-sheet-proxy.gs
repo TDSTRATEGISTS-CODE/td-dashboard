@@ -147,11 +147,16 @@ function scanScopeBoard_(values) {
     var out = [];
     if (colIdx == null) return out;
     for (var rr = headerRow + 1; rr < values.length; rr++) {
-      var txt = String(values[rr][colIdx] != null ? values[rr][colIdx] : '').trim();
-      var key = txt.toLowerCase();
-      if (!txt || txt.length < 3 || CONFIG.SKIP.indexOf(key) !== -1 || seenSet[key]) continue;
-      seenSet[key] = 1;
-      out.push(txt);
+      // Cells on this board often stack several tasks on separate lines — split so each line becomes
+      // its own card item (otherwise they render mashed onto one line).
+      var lines = String(values[rr][colIdx] != null ? values[rr][colIdx] : '').split(/[\r\n]+/);
+      for (var li = 0; li < lines.length; li++) {
+        var txt = lines[li].trim();
+        var key = txt.toLowerCase();
+        if (!txt || txt.length < 3 || CONFIG.SKIP.indexOf(key) !== -1 || seenSet[key]) continue;
+        seenSet[key] = 1;
+        out.push(txt);
+      }
     }
     return out;
   }

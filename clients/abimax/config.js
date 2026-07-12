@@ -76,19 +76,22 @@ window.DASHBOARD_CONFIG = {
     'blue': '#1e4fa0', 'blue-bg': '#edf2fc', 'blue-b': '#b3c9f0'
   },
 
-  // ---- Live data source ----
+  // ---- Live data source (LIVE) ----
   // Baked MerchantSpring snapshot (channel 106785689, seller A267LLT9LT0HS9, Amazon US, native USD);
   // a monthly re-bake refreshes data.js directly.
   //
-  // LIVE OVERLAY — PENDING DEPLOY. The Abimax project tracker
-  //   (Google Sheet 1Fg_ZKND-7OWqipOkhOtXUA1y4w019280IuXD0slK0GY) drives the Overview scope board
-  //   (In Progress / Upcoming / Completed). The proxy is written and versioned at
-  //   tools/abimax-sheet-proxy.gs — it just needs deploying: paste it into the sheet's bound Apps
-  //   Script project ▸ Deploy ▸ Web app (Execute as: Me · Anyone), then swap the block below for
-  //     dataSource: { type:'appsScript', overlay:'sections', url:'<PASTE /exec URL>' }
-  //   and bump APP_VER in index.html. Until then this stays 'static' and the baked overview
-  //   tasks/flags/completed in data.js are shown as the fallback.
+  // overlay:'sections' fetches the Apps Script proxy (via JSONP) and merges ONLY the live
+  // sheet-controlled sections onto the baked data — here that's the Overview scope board
+  // (sections.overview: In Progress / Upcoming / Completed). The baked dateRanges + MerchantSpring
+  // sections in data.js are left untouched, and the baked overview tasks/flags/completed remain the
+  // fallback if the proxy is down.
+  // Proxy source: tools/abimax-sheet-proxy.gs (deployed in Google Apps Script, NOT served from
+  // GitHub). It reads the Abimax project tracker (Google Sheet
+  // 1Fg_ZKND-7OWqipOkhOtXUA1y4w019280IuXD0slK0GY). After editing the .gs, redeploy a NEW version
+  // (Deploy ▸ Manage deployments ▸ edit ▸ New version) to keep this same /exec URL.
   dataSource: {
-    type: 'static'
+    type: 'appsScript',
+    overlay: 'sections',
+    url: 'https://script.google.com/macros/s/AKfycbxUvKvcHrgQswsnUWG4alYwt7Lv_o0ZLybJJKjtTstPGLMtb46Eqe6Or-EVUZqIaJeB6g/exec'
   }
 };
