@@ -40,8 +40,10 @@ dashboard/
     build-harvaza-data.ps1   ← regenerates Harvaza's Amazon products blocks → tools/harvaza-amazon-baked.js (splice helper)
     amacx-data-proxy.gs      ← Apps Script source for AMACX (sheet → dateRanges + sections); deploy in Apps Script
     nkv-sheet-proxy.gs       ← Apps Script source for NKV (scope board + Shopify P&L + supplier POs); deploy in Apps Script
+    abimax-sheet-proxy.gs    ← Apps Script source for Abimax (scope board only — Amazon-only client); deploy in Apps Script
     harvaza-sheet-proxy.gs   ← Apps Script source for Harvaza (Founder-Dashboard Sheet + Notion Deal Hub; see "Harvaza")
     harvaza-amazon-baked.js  ← GENERATED splice snippet (not loaded by the app; safe to ignore/regenerate)
+    new-client-setup.prompt.md ← agent runbook: end-to-end new-client setup (data bake + proxy + verify)
 ```
 
 > **Apps Script proxies** (`amacx-data-proxy.gs`, `harvaza-sheet-proxy.gs`, `nkv-sheet-proxy.gs`) are now
@@ -55,7 +57,12 @@ dashboard/
 > (`In Progress` / `Upcoming` / `Completed` / `Flags & Warnings` — case-sensitive for the first two) and
 > returns `sections.overview` (the project board) **plus** live `sections.shopifypnl` and
 > `sections.inventory.supplierPOs`. The board on the sheet MUST carry those exact header cells, or the
-> proxy returns no overview and the Overview cards show the **"Currently updating"** fallback. After
+> proxy returns no overview and the Overview cards show the **"Currently updating"** fallback.
+> The **Abimax proxy** (`abimax-sheet-proxy.gs`) is the same header-text approach trimmed to
+> **scope board only** (no Shopify P&L / supplier POs — Abimax is Amazon-only); it's the lean template
+> to copy for a new single-brand Amazon client. **Every client gets one** — the setup runbook
+> (`tools/new-client-setup.prompt.md`) always writes a `tools/<slug>-sheet-proxy.gs` for the client's
+> project tracker. After
 > editing any `.gs`, **redeploy a new version** (Deploy ▸ Manage deployments ▸ edit ▸ New version) to keep
 > the same `/exec` URL, and ensure access is **Execute as: Me · Anyone**.
 

@@ -77,11 +77,17 @@ window.DASHBOARD_CONFIG = {
   },
 
   // ---- Live data source ----
-  // Static for now: Abimax's data.js is a hand-baked MerchantSpring snapshot (channel 106785689,
-  // seller A267LLT9LT0HS9, Amazon US, native USD). No Google Sheet / Apps Script proxy is wired up
-  // yet, so there is no live overlay — a monthly re-bake refreshes data.js directly. When a scope
-  // board / budget sheet exists, add an Apps Script proxy and switch this to
-  // { type:'appsScript', overlay:'sections', url:'…/exec' } (see NKV for the pattern).
+  // Baked MerchantSpring snapshot (channel 106785689, seller A267LLT9LT0HS9, Amazon US, native USD);
+  // a monthly re-bake refreshes data.js directly.
+  //
+  // LIVE OVERLAY — PENDING DEPLOY. The Abimax project tracker
+  //   (Google Sheet 1Fg_ZKND-7OWqipOkhOtXUA1y4w019280IuXD0slK0GY) drives the Overview scope board
+  //   (In Progress / Upcoming / Completed). The proxy is written and versioned at
+  //   tools/abimax-sheet-proxy.gs — it just needs deploying: paste it into the sheet's bound Apps
+  //   Script project ▸ Deploy ▸ Web app (Execute as: Me · Anyone), then swap the block below for
+  //     dataSource: { type:'appsScript', overlay:'sections', url:'<PASTE /exec URL>' }
+  //   and bump APP_VER in index.html. Until then this stays 'static' and the baked overview
+  //   tasks/flags/completed in data.js are shown as the fallback.
   dataSource: {
     type: 'static'
   }
