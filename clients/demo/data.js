@@ -377,7 +377,7 @@ window.DASHBOARD_DATA = {
     inventory: {
       kpis: [
         { bar: 'green', lbl: 'In Stock',      val: '22',   dCls: 'du', d: 'ASINs healthy',      s: 'Across all channels' },
-        { bar: 'amber', lbl: 'Low Stock',     val: '3',    dCls: 'df', dColor: 'amber', d: 'Reorder advised', s: '<14 days cover' },
+        { bar: 'amber', lbl: 'Low Stock',     val: '3',    dCls: 'df', dColor: 'amber', d: 'Stock-up advised', s: '<14 days cover' },
         { bar: 'red',   lbl: 'OOS',           val: '1',    dCls: 'dd', d: 'Listing suppressed', s: 'Amazon UK — Isotonic' },
         { bar: 'blue',  lbl: 'Late Dispatch', val: '0.6%', dCls: 'du', d: '▼ 0.2pp MoM',        s: 'Target <4%' }
       ],
@@ -386,7 +386,7 @@ window.DASHBOARD_DATA = {
         { dot: 'dg', name: 'Energy Gel 25pk',     note: 'B0CXUK002 · Amazon UK · Healthy', units: '740 units', days: '~30 days' },
         { dot: 'dg', name: 'Recovery Powder',     note: 'SKU-RP-01 · D2C · Healthy', units: '410 units', days: '~26 days' },
         { dot: 'dg', name: 'Hydration Tabs 40s',  note: 'B0CXUK003 · eBay UK · Healthy', units: '360 units', days: '~24 days' },
-        { dot: 'da', name: 'Isotonic Mix 1kg',    note: 'B0CXUK004 · Amazon UK · Low — reorder', units: '150 units', unitsColor: 'amber', days: '~11 days' },
+        { dot: 'da', name: 'Isotonic Mix 1kg',    note: 'B0CXUK004 · Amazon UK · Low — stock-up', units: '150 units', unitsColor: 'amber', days: '~11 days' },
         { dot: 'da', name: 'Energy Gel',          note: 'B0CXUK005 · eBay UK · Low', units: '88 units', unitsColor: 'amber', days: '~9 days' },
         { dot: 'da', name: 'Sport Hydration',     note: 'SKU-SH-02 · D2C · Low', units: '120 units', unitsColor: 'amber', days: '~12 days' },
         { dot: 'dr', name: 'Isotonic Mix 1kg',    note: 'B0CXUK004 · Amazon UK · OOS · suppressed', units: '0 units', unitsColor: 'red', days: 'OOS', daysColor: 'red' }

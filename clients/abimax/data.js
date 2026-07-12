@@ -220,7 +220,7 @@ window.DASHBOARD_DATA = {
       kpis: [
         {bar:'green',lbl:'In Stock',val:'5',dCls:'du',d:'ASINs · 0 OOS',s:'all sold listings live'},
         {bar:'#404935',lbl:'Units on Hand',val:'74',dCls:'df',d:'FBA total',s:'across 5 SKUs'},
-        {bar:'amber',lbl:'Reorder Watch',val:'2',dCls:'df',dColor:'amber',d:'selling · <30d cover',s:'Pro + Pack of 3'},
+        {bar:'amber',lbl:'Stock-up Watch',val:'2',dCls:'df',dColor:'amber',d:'selling · <30d cover',s:'Pro + Pack of 3'},
         {bar:'green',lbl:'Buy Box (Jun)',val:'99.1%',dCls:'du',d:'featured-offer %',s:'vs 98.4% May'}
       ],
       stock: [
