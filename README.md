@@ -40,8 +40,10 @@ dashboard/
     build-harvaza-data.ps1   ← regenerates Harvaza's Amazon products blocks → tools/harvaza-amazon-baked.js (splice helper)
     amacx-data-proxy.gs      ← Apps Script source for AMACX (sheet → dateRanges + sections); deploy in Apps Script
     nkv-sheet-proxy.gs       ← Apps Script source for NKV (scope board + Shopify P&L + supplier POs); deploy in Apps Script
+    abimax-sheet-proxy.gs    ← Apps Script source for Abimax (scope board only — Amazon-only client); deploy in Apps Script
     harvaza-sheet-proxy.gs   ← Apps Script source for Harvaza (Founder-Dashboard Sheet + Notion Deal Hub; see "Harvaza")
     harvaza-amazon-baked.js  ← GENERATED splice snippet (not loaded by the app; safe to ignore/regenerate)
+    new-client-setup.prompt.md ← agent runbook: end-to-end new-client setup (data bake + proxy + verify)
 ```
 
 > **Apps Script proxies** (`amacx-data-proxy.gs`, `harvaza-sheet-proxy.gs`, `nkv-sheet-proxy.gs`) are now
@@ -55,7 +57,12 @@ dashboard/
 > (`In Progress` / `Upcoming` / `Completed` / `Flags & Warnings` — case-sensitive for the first two) and
 > returns `sections.overview` (the project board) **plus** live `sections.shopifypnl` and
 > `sections.inventory.supplierPOs`. The board on the sheet MUST carry those exact header cells, or the
-> proxy returns no overview and the Overview cards show the **"Currently updating"** fallback. After
+> proxy returns no overview and the Overview cards show the **"Currently updating"** fallback.
+> The **Abimax proxy** (`abimax-sheet-proxy.gs`) is the same header-text approach trimmed to
+> **scope board only** (no Shopify P&L / supplier POs — Abimax is Amazon-only); it's the lean template
+> to copy for a new single-brand Amazon client. **Every client gets one** — the setup runbook
+> (`tools/new-client-setup.prompt.md`) always writes a `tools/<slug>-sheet-proxy.gs` for the client's
+> project tracker. After
 > editing any `.gs`, **redeploy a new version** (Deploy ▸ Manage deployments ▸ edit ▸ New version) to keep
 > the same `/exec` URL, and ensure access is **Execute as: Me · Anyone**.
 
@@ -340,9 +347,14 @@ Notes:
   is a **baked literal injected by a SEPARATE PowerShell pass** from per-period `getSalesByProduct` pulls joined
   to the sheet's SKU→Group map (column B). Re-running this script preserves it; to **refresh the group numbers**
   you must re-run that injection pass — editing `$M` alone won't update `groupsByPeriod`.
-- **Advertising / Overview charts:** `sections.charts.adSales` (Ad Spend vs Ad Sales vs TACOS trend) is computed
-  from `$M`; `sections.charts.revTarget` (dotted EU goal line, All-EU only) is hardcoded from **Performance Tracker
-  row 8 "Revenue Target (past vs future)"** in `$REVTGT` (re-sync each bake). **`sections.advertising.campaignMixByPeriod`**
+- **Advertising / Overview charts:** the two trend cards read `sections.charts`. The 6-month window
+  (`months` + `rev`/`adSpend`/`adSales`/`adTacos`, EU + per market) is **computed from `$M` over a trailing-6
+  window that DERIVES from the newest populated month (`$lastIdx`/`$cidx`) — so it auto-advances every bake;
+  never hand-pin it.** `sections.charts.revTarget` (dotted EU goal line, All-EU only) is synced from **Performance
+  Tracker row 8 "Revenue Target (past vs future)"** into `$REVTGT` (append the new month each bake). That baked
+  target is only the **offline fallback** — the live Apps Script proxy overlays `sections.charts.revTarget` from
+  the same sheet row on every load (`buildSections`), so the dotted line is always the true sheet value when the
+  proxy is reachable. **`sections.advertising.campaignMixByPeriod`**
   (the Performance-by-Campaign-Type pie, `period → market`) is a **baked literal** aggregated from
   `generateCampaignsReport` per period × channel (SP/SB/SD by `ad_type`) — like `groupsByPeriod`, editing `$M` won't
   refresh it; you must re-run the campaign pulls.
@@ -383,7 +395,10 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
    `searchText:'AMACX'` to filter to seller `A1O4H4W8GP4BN2`). These feed the Ad Metrics card's Impressions / CTR / Avg-CPC
    and the Overview Conversion-Rate KPI. ✅ Confirm: the script's printed per-period summary matches Seller Central for `may`.
 2. **Budgets → `$BUD`** and **revenue target → `$REVTGT`.** Re-read the Google Sheet (`read_file_content`): per-market ad
-   budgets and **row 8 "Revenue Target (past vs future)"**. ✅ Confirm: `$REVTGT` last value = the sheet's current month.
+   budgets and **row 8 "Revenue Target (past vs future)"**. **APPEND** this month's target to `$REVTGT` (don't replace the
+   history — the chart window `$cidx` slices it, and the generator throws if `$REVTGT` is shorter than `$M`). The trailing-6
+   chart window itself auto-advances from `$M` — no manual month-index edit needed. ✅ Confirm: `$REVTGT` last value = the
+   sheet's current-month target, and `$REVTGT.Count == $M.DE.sales.Count`.
 3. **CVR → `$CVRP`.** Pull `getSalesByChannels` `conversions` (units/page-views) per market per rolling window. ✅ Confirm: 4 markets × 4 windows present.
 4. **Product groups → `groupsByPeriod`.** Re-run the groups injection pass: `getSalesByProduct` per rolling window × channel,
    join to the sheet SKU→Group map (col B), 15 groups with sales/units/pct/adSpend/TACOS/OOS. ✅ Confirm: 4 periods × {all,de,fr,es,it} × 15 groups.
@@ -413,7 +428,7 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
    ```
    ✅ Confirm: braces balanced, brackets balanced, all keys present.
 9. **Verify in preview** (`tools/static-server.ps1` + Preview MCP, `?client=amacx`): switch a couple of date ranges ×
-   markets and confirm the Revenue Trend (target line on All-EU), Ad Spend/Sales/TACOS chart, Products KPIs/table/groups,
+   markets and confirm the Revenue Trend (**last x-axis month = this month**, not a month behind; target line on All-EU), Ad Spend/Sales/TACOS chart, Products KPIs/table/groups,
    the Campaign-Type pie, the **Buy Box % + per-market bars + loss list**, the Inventory KPIs (per-market), the Overview
    5-card **Conversion-Rate** KPI, and the **Ad Metrics** card (Impressions / CTR / Avg-CPC / Ad Budget / Utilisation —
    budget & util come LIVE from the sheet via `overlayBudgets`) all move with date+market.
@@ -424,6 +439,9 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
 11. **Confirm + hand off.** Report the headline `may` figures back, then list the changed files to upload to GitHub:
    **`clients/amacx/data.js`** + **`index.html`** (the `APP_VER` bump) — and `tools/build-amacx-data.ps1` if the generator
    itself changed. A pure data refresh needs **no proxy redeploy** (the proxy only serves sheet sections, which stay live).
+   **Exception:** if `tools/amacx-data-proxy.gs` itself changed (e.g. the one-time addition of the live
+   `sections.charts.revTarget` overlay), copy it into the Apps Script editor and **Deploy ▸ Manage deployments ▸ Edit ▸
+   New version** once — otherwise the live dotted target line won't update. This is a one-off per proxy change, not monthly.
 
 > **What does NOT need re-pulling monthly:** FY 2025 columns (frozen history), the live sheet sections (budgets/forecast/
 > Project-Scope — served by the proxy), and `index.html`/`app.js` (only when behaviour changes).
@@ -458,6 +476,80 @@ Newnique-only seller).
 structure (Buy Box/Account-Health removed, pie moved, Ad-Budgets section hidden, IE/US Advertising gated)
 lives in `config.layout` / `config.marketMaintenance` — see "Per-client layout & market gating".
 
+### Monthly re-bake routine (agent runbook)
+
+A monthly NKV refresh is a **Claude-session task** (the browser can't reach the MerchantSpring MCP). It runs
+unattended as a **Routine** (see "Automating it" below) or by hand any time. Follow these steps **in order**;
+each ends with a ✅ confirmation. **"This month" = the latest fully-closed calendar month** (e.g. run in early
+Aug → target July). Everything is repo-relative (repo root *is* the dashboard folder).
+
+**Channels** (pass `channelId` + `merchantId`):
+
+| Market | channelId | merchantId | Notes |
+|---|---|---|---|
+| UK  | `71662311`  | `A1SNRD9T28Z9ZM @ A1F83G8C2ARO7P` | the live market — real data, ad-managed |
+| IE  | `86715690`  | `… @ A28R8C7NBKEWEA`              | early-stage, EUR-native, **no ads**; ships FBA from UK |
+| US  | `109142957` | `A18Z9VPWTLGIMA @ ATVPDKIKX0DER`  | separate Newnique-only seller; **placeholder (zeros)** until it trades |
+
+**Periods** (recompute epochs each run with `calculateDateEpoch`, tz **`Europe/London`**): the object key **`may`
+is the "Last Month" slot — keep the key literally `may`; only update its `label`/`shortLabel`** to the new month.
+`3m`/`6m`/`12m` = trailing 3 / 6 / 12. UK is the only fully-live market; IE is early-stage; US stays zeros.
+
+**Steps:**
+1. **Headline actuals → `dateRanges` + `marketKpis`.** Per market per period, pull `getSalesByPeriod`
+   (**single-month**, `includeTax:true`) + `getAdvertisingByChannels`. Update the KPI strings (rev/adSales/tacos/
+   roas/spend/aov), their **MoM deltas** (`revD`, `spendD`, …) and colour codes (`revC` `du`/`df`), and the
+   `mktRows` table. Top-level `all` = **UK** figures; `marketKpis.{uk,irl,usa}` are the per-market overlays.
+   ✅ Confirm the `may` headline (rev / spend / TACOS / ROAS) matches Seller Central for the target month.
+2. **Ad Metrics + campaigns → `sections.advertising.metrics` (+ per-period `sec`) & `campaigns`.** UK
+   `getAdvertisingByChannels` / `getSalesByProduct`. (TACOS/ROAS are intentionally **omitted** from the metrics list.)
+   ✅ Confirm `metrics` totals reconcile with step 1's UK spend/ad-sales.
+3. **Campaign-type pie → `campaignMix` (per period).** UK campaign sales-share by `ad_type` — colours
+   **SP `#404935` / SB `#9caf78` / SD `#e8a87c`**. ✅ Confirm each period's pcts sum to ~100%.
+4. **Inventory → `sections.inventory.{kpisByMarket,stockByMarket,restockByMarket}` (irl/usa).**
+   `getSalesByProduct` `includeNoInventory:true` per channel (current snapshot). IE ships FBA from UK; the US
+   Supplier-PO card stays hidden via `supplierPOsByMarket:{usa:[]}`. ✅ Confirm per-market SKU counts are sane.
+5. **Overview FBA stock warning → `stockWarn`.** UK `getSalesByProduct` `includeNoInventory:true`; `quantity==0`
+   ⇒ out-of-stock/suppressed. ✅ Confirm the "N of M UK listings" count.
+6. **Product groups → `sections.products.groupsByPeriod` (per market).** `getSalesByProduct` per window × brand.
+   **UK real** (TACOS = ad spend ÷ brand sales); **IE allocated from its real 12-mo brand mix** (no ads → TACOS
+   `n/a`); **US £0**. ✅ Confirm 4 periods present per live market.
+7. **Sheet-baked → `sections.advertising.{budgets,forecast}` + `sections.shopify`.** Re-read the **NKV Beauty
+   Account Tracker** (Marketing Metrics row + Shopify block) — *not* MerchantSpring. **Do NOT touch the live-proxy
+   blocks** (Overview project board, `sections.shopifypnl`, `sections.inventory.supplierPOs` — served live by
+   `nkv-sheet-proxy.gs`). ✅ Confirm budgets/forecast reflect the current sheet.
+8. **Labels & metadata.** Update the `data.js` header comment (`pulled <date>`), each period's `label`/`shortLabel`,
+   and `config.js` `reportPeriodLabel` → `'<Mon YYYY> · Monthly Report'`. `defaultPeriod` stays `may`.
+9. **Validate.** Run the shape/syntax check (throws on any JS error, prints the keys):
+   ```bash
+   node -e "global.window={}; require('./clients/nkv/data.js'); const d=window.DASHBOARD_DATA; \
+     ['may','3m','6m','12m'].forEach(p=>{if(!d.dateRanges[p]) throw new Error('missing period '+p)}); \
+     console.log('shape OK →', d.dateRanges.may.label, d.dateRanges.may.rev)"
+   ```
+   Then eyeball sanity: TACOS never >100%, ROAS plausible (~2–3×), no negative/blank rev, every MoM delta present.
+   ✅ Confirm the check prints `shape OK` and the sanity pass is clean.
+10. **Bump the cache-buster.** Increment **`APP_VER`** in `index.html` (e.g. `2026-07-01e` → the new bake date+letter)
+    so browsers fetch the fresh `data.js`. A pure data refresh needs **no proxy redeploy**.
+11. **Publish + notify.** If **every** self-check passes (see the gate below), commit `clients/nkv/data.js` +
+    `index.html` + `clients/nkv/config.js` and **push straight to `main`** — that host mirrors the repo, so it's
+    live (no proxy redeploy for a data-only refresh). Then log the run in GitHub issue
+    [**#4 "NKV monthly re-bake — run log"**](../../issues/4) with the headline figures (rev / ad spend / TACOS /
+    ROAS **vs prior month**) + `✅ validations passed`. **On any failure, do NOT touch `main`** — open a **draft PR**
+    (`… (NEEDS REVIEW)`) explaining what failed and drop a `⚠️` note on issue #4.
+
+    **Self-check gate (auto-publish only when all pass):** MerchantSpring connector present · every expected pull
+    returned data · `node` shape/syntax check prints `shape OK` · sanity clean (TACOS ≤100%, ROAS ~2–3×, no
+    negative/blank rev, all MoM deltas present, **no headline metric swinging >60% MoM** without cause — that's the
+    "plausible-but-wrong" case, so it routes to human review instead of publishing).
+
+**Automating it (monthly Routine).** This runbook runs unattended as a Claude Code **Routine**
+(`claude.ai/code/routines`) whose prompt lives at [`tools/nkv-monthly-rebake.prompt.md`](tools/nkv-monthly-rebake.prompt.md).
+Wire it with a **schedule trigger on the 1st of each month** (cron `0 6 1 * *` via `/schedule update`; min interval
+is 1h), the **MerchantSpring connector** attached, and **"Allow unrestricted branch pushes" enabled** so it can
+publish to `main`. It's **auto-publish + notify**: green runs go live and log to issue #4 (watch it for the email);
+only a failed self-check falls back to a draft PR + review. Flip it back to a pure review gate by turning off
+unrestricted pushes — then every run just opens a PR.
+
 ---
 
 ## Per-client config highlights (`config.js`)
@@ -484,19 +576,33 @@ hides `amazonpnl` and shows its own real P&L. All the AMACX P&L data still lives
 
 ## Add a new client (≈5 minutes)
 
-1. **Copy** a like-for-like client: `demo/` for an Amazon client, `harvaza/` for a founder client →
-   `clients/<newclient>/`.
+1. **Copy** a **complete** like-for-like client → `clients/<newclient>/`: `nkv/` for an Amazon client
+   (or `amacx/`), `harvaza/` for a founder client. (`demo/` is a deliberately simplified *static*
+   reference — fine to read for the minimal `sections` shape, but copy a full client to start.)
 2. **`config.js`** — edit identity (`client.name`, `title`, footer), set `template` (`'amazon'` or
    `'founder'`), `brand` colours, `markets`, `hiddenPages`, and `dataSource` (`type:'static'`, or an Apps
-   Script `/exec` URL to overlay live values).
+   Script `/exec` URL to overlay live values). Set `client.currencyIcon` for non-€ clients (`'&#36;'` $,
+   `'&#163;'` £). Decide the **subscription tier**: on Digital Dash, gate the P&L behind the Executive
+   paywall by hiding the real page and leaving the locked gate — `hiddenPages:['keywords','pnl']` keeps
+   `amazonpnl` (the 🔒 gate) as the only P&L surface (see NKV / `clients/abimax/`).
 3. **`data.js`** — supply `dateRanges`, plus the matching `sections` (Amazon pages) or `sections.founder`
-   (founder pages) to data-drive the deep pages.
+   (founder pages) to data-drive the deep pages. `marketKpis` / `sec` / `campaignMix` / `sections.charts`
+   are all **optional** (guarded fallbacks) — a single-market static client can omit them and put its
+   trend charts in each period's `revChart`/`adChart`/`revBreakChart` (the demo pattern).
 4. **Logo** — set `config.logoSrc` (drop `td-logo.png` in, or a client logo; if it's a transparent PNG leave
    `logoBlend:''`).
-5. Open `index.html?client=<newclient>` and check.
+5. **Bump `APP_VER`** in `index.html` — adding a client ships new `clients/<newclient>/*.js`, and the
+   `?v=APP_VER` cache-buster must change or browsers (and the Wix embed) may serve a stale miss. Same
+   mechanical bump the re-bake runbook requires; see `CLAUDE.md`.
+6. Open `index.html?client=<newclient>` and check (ideally headless — see the runbook below).
 
-**Nothing in `index.html` or `app.js` should ever change per client.** If you're tempted to, that value belongs
-in `config.js`/`data.js` instead.
+**Nothing in `index.html` or `app.js` should ever change per client** (the `APP_VER` bump is a repo-wide
+cache-buster, not a per-client value). If you're tempted to add a client value there, it belongs in
+`config.js`/`data.js` instead.
+
+> **Baking real data & the full end-to-end flow** (MerchantSpring MCP pull sequence → files → verify) is
+> written up as an agent runbook in **`tools/new-client-setup.prompt.md`**. `clients/abimax/` is a worked
+> example: Amazon-only, USA, single-market, Digital Dash tier.
 
 ---
 
