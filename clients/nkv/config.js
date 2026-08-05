@@ -9,7 +9,7 @@ window.DASHBOARD_CONFIG = {
     name: 'NKV Beauty',                       // sidebar client name
     title: 'NKV Beauty — TD Strategists',     // browser tab <title>
     portalLabel: 'CLIENT PORTAL',             // small label under the logo
-    reportPeriodLabel: 'June 2026 · Monthly Report',
+    reportPeriodLabel: 'July 2026 · Monthly Report',
     scopeLabel: 'UK',                         // replaces the template's '.cfg-scope' default ('All EU')
     logo: 'logo.jpg',                         // per-client fallback (unused while logoSrc is set)
     logoSrc: 'td-logo.png',                   // shared TD logo for now (all clients) — dashboard/td-logo.png
