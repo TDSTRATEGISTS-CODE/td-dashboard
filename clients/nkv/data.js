@@ -431,10 +431,13 @@ window.DASHBOARD_DATA = {
       ]
     },
     charts: {
-      months: ['Jan','Feb','Mar','Apr','May','Jun'],
-      rev: { all:[15798,14104,17458,12839,15290,14144], uk:[15798,14104,17458,12839,15290,14144], irl:[204,241,385,349,481,224], usa:[0,0,0,0,0,644] },
-      adSpend: { all:[3241,2960,3250,2394,3241,2933], uk:[3241,2960,3250,2394,3241,2933], irl:[0,0,0,0,0,0], usa:[0,0,0,0,0,29] },
-      adTacos: { all:[20.5,21.0,18.6,18.6,21.2,20.7], uk:[20.5,21.0,18.6,18.6,21.2,20.7], irl:[0,0,0,0,0,0], usa:[0,0,0,0,0,4.5] }
+      // Rolling trailing-6-month window — shift forward one month + append the new month on every
+      // re-bake (drop the oldest). Values are MerchantSpring actuals (uk == top-level 'all'; irl/usa
+      // are the per-market overlays), same convention as dateRanges.
+      months: ['Feb','Mar','Apr','May','Jun','Jul'],
+      rev: { all:[14104,17458,12839,15290,14079,13290], uk:[14104,17458,12839,15290,14079,13290], irl:[241,385,349,481,224,356], usa:[0,0,0,0,644,714] },
+      adSpend: { all:[2960,3250,2394,3241,2932,2506], uk:[2960,3250,2394,3241,2932,2506], irl:[0,0,0,0,0,0], usa:[0,0,0,0,29,74] },
+      adTacos: { all:[21.0,18.6,18.6,21.2,20.8,18.9], uk:[21.0,18.6,18.6,21.2,20.8,18.9], irl:[0,0,0,0,0,0], usa:[0,0,0,0,4.5,10.4] }
     }
   }
 };
