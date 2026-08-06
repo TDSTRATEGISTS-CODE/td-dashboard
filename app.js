@@ -568,7 +568,8 @@ function updateMarketChips(d) {
     if (!mt || !rev) return;
     if (mt.key === 'all') { rev.textContent = d.rev || ''; return; }
     var sales = salesByCode[mt.code];
-    if (mt.launchPill && (sales == null || sales === '€0')) rev.textContent = mt.launchPill;
+    var curIcon = (CONFIG.client && CONFIG.client.currencyIcon) || '€';
+    if (mt.launchPill && (sales == null || sales === curIcon + '0')) rev.textContent = mt.launchPill;
     else rev.textContent = (sales != null ? sales : '');
   });
 }
@@ -1431,41 +1432,45 @@ function niceMax(v) {
   return 10 * mag;
 }
 function axisTicks(max, fmt) { var T = 5, a = []; for (var k = 0; k < T; k++) a.push(fmt(max * (1 - k / (T - 1)))); return a; }
-function moneyK(v) { v = Math.round(v); if (v >= 1000) { var t = v / 1000; return '€' + (t === Math.floor(t) ? t : t.toFixed(1)) + 'k'; } return '€' + v; }
+function moneyK(v, cur) { cur = cur || '€'; v = Math.round(v); if (v >= 1000) { var t = v / 1000; return cur + (t === Math.floor(t) ? t : t.toFixed(1)) + 'k'; } return cur + v; }
 function arrMax(a) { return Math.max.apply(null, (a && a.length ? a : [1])); }
 
 // Render the two trend cards (Revenue Trend, Spend vs TACOS) for the current market, or EU for
 // 'All EU'. Data: DATA.sections.charts (trailing-6-month series, EU + per market, from the generator).
 function renderMarketCharts() {
   var C = DATA.sections && DATA.sections.charts;
-  if (!C || !C.rev) return;                                  // only AMACX ships sections.charts
+  if (!C || !C.rev) return;                                  // only AMACX/NKV ship sections.charts
   var m = (currentMarket && currentMarket !== 'all' && C.rev[currentMarket]) ? currentMarket : 'all';
   var months = C.months;
+  // Client's own currency (£/€/$ — config.js currencyIcon), not hardcoded €, so these two trend
+  // charts match every other £/€/$ figure on the page (KPI cards, tables, P&L).
+  var CUR = (CONFIG.client && CONFIG.client.currencyIcon) || '€';
+  function mk(v) { return moneyK(v, CUR); }
 
   var rev = C.rev[m] || [];
   // Revenue target = dotted reference line, EU only (no per-market target) → shown only for 'All EU'.
   var tgt = (m === 'all' && C.revTarget && C.revTarget.length) ? C.revTarget : null;
   var rMax = niceMax(Math.max(arrMax(rev), tgt ? arrMax(tgt) : 0));
-  var revSeries = [{ values: rev, color: '#404935', area: true, main: true, name: 'Revenue', endVal: moneyK(rev[rev.length - 1] || 0) }];
+  var revSeries = [{ values: rev, color: '#404935', area: true, main: true, name: 'Revenue', endVal: mk(rev[rev.length - 1] || 0) }];
   var revLegend = [{ name: 'Revenue', color: '#404935' }];
   if (tgt) {
-    revSeries.push({ values: tgt, color: '#b08900', dash: '2 3', dots: false, name: 'Target', endVal: moneyK(tgt[tgt.length - 1] || 0) });
+    revSeries.push({ values: tgt, color: '#b08900', dash: '2 3', dots: false, name: 'Target', endVal: mk(tgt[tgt.length - 1] || 0) });
     revLegend.push({ name: 'Target', color: '#b08900' });
   }
   renderChart('chart-rev', 'chart-rev-leg', {
-    max: rMax, yTicks: axisTicks(rMax, moneyK), xLabels: months, xHighlight: '#404935',
+    max: rMax, yTicks: axisTicks(rMax, mk), xLabels: months, xHighlight: '#404935',
     series: revSeries, legend: revLegend
   });
 
   var sp = C.adSpend[m] || [], sl = (C.adSales && C.adSales[m]) || [], ta = C.adTacos[m] || [];
-  var mnMax = niceMax(Math.max(arrMax(sp), arrMax(sl)));   // left € axis spans both Ad Spend + Ad Sales
+  var mnMax = niceMax(Math.max(arrMax(sp), arrMax(sl)));   // left currency axis spans both Ad Spend + Ad Sales
   var taMax = Math.max(40, Math.ceil(arrMax(ta) / 20) * 20);
   var TACOS_TARGET = 20;                                   // ad-efficiency goal: keep TACOS under 20%
   // Draw order (last on top): Ad Spend area, Ad Sales line, TACOS line, dotted TACOS target.
-  var adSeries = [{ values: sp, color: '#404935', area: true, main: true, name: 'Ad Spend', endVal: moneyK(sp[sp.length - 1] || 0) }];
+  var adSeries = [{ values: sp, color: '#404935', area: true, main: true, name: 'Ad Spend', endVal: mk(sp[sp.length - 1] || 0) }];
   var adLegend = [{ name: 'Ad Spend', color: '#404935' }];
   if (sl.length) {
-    adSeries.push({ values: sl, color: '#1e4fa0', main: true, name: 'Ad Sales', endVal: moneyK(sl[sl.length - 1] || 0) });
+    adSeries.push({ values: sl, color: '#1e4fa0', main: true, name: 'Ad Sales', endVal: mk(sl[sl.length - 1] || 0) });
     adLegend.push({ name: 'Ad Sales', color: '#1e4fa0' });
   }
   adSeries.push({ values: ta, color: '#b5373a', axis: 'right', name: 'TACOS', endVal: Math.round(ta[ta.length - 1] || 0) + '%' });   // red — matches the TACOS KPI card
@@ -1473,7 +1478,7 @@ function renderMarketCharts() {
   adSeries.push({ values: months.map(function () { return TACOS_TARGET; }), color: '#b08900', dash: '2 3', dots: false, axis: 'right', name: 'Target', endVal: '<20%' });
   adLegend.push({ name: 'Target <20%', color: '#b08900' });
   renderChart('chart-adtrend', 'chart-adtrend-leg', {
-    max: mnMax, yTicks: axisTicks(mnMax, moneyK), xHighlight: '#404935',
+    max: mnMax, yTicks: axisTicks(mnMax, mk), xHighlight: '#404935',
     maxRight: taMax, yTicksRight: axisTicks(taMax, function (v) { return Math.round(v) + '%'; }),
     xLabels: months,
     series: adSeries,

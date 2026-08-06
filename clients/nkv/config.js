@@ -11,6 +11,9 @@ window.DASHBOARD_CONFIG = {
     portalLabel: 'CLIENT PORTAL',             // small label under the logo
     reportPeriodLabel: 'July 2026 · Monthly Report',
     scopeLabel: 'UK',                         // replaces the template's '.cfg-scope' default ('All EU')
+    currencyIcon: '£',                        // NKV trades in GBP — was missing, so the P&L icon and the
+                                               // Revenue Trend / Ad Spend vs TACOS charts (app.js moneyK)
+                                               // fell back to the shared template's € default
     logo: 'logo.jpg',                         // per-client fallback (unused while logoSrc is set)
     logoSrc: 'td-logo.png',                   // shared TD logo for now (all clients) — dashboard/td-logo.png
     logoAlt: 'TD Strategists',
