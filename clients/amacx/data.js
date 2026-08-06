@@ -168,7 +168,7 @@ window.DASHBOARD_DATA = {
   },
   sections: {
     overview: {
-      targetAttainment: { 'may': { rev:{actual:'€8,847',target:'€12,250',pct:72,pctTxt:'72%',cls:'dd'}, units:{actual:'240',target:'350',pct:69,pctTxt:'69%',cls:'dd'} }, '3m': { rev:{actual:'€24,725',target:'€30,952',pct:80,pctTxt:'80%',cls:'dd'}, units:{actual:'724',target:'920',pct:79,pctTxt:'79%',cls:'dd'} }, '6m': { rev:{actual:'€37,213',target:'€46,272',pct:80,pctTxt:'80%',cls:'dd'}, units:{actual:'1,128',target:'1,420',pct:79,pctTxt:'79%',cls:'dd'} }, '2025': { rev:{actual:'€44,515',target:'€70,625',pct:63,pctTxt:'63%',cls:'dd'}, units:{actual:'1,456',target:'1,630',pct:89,pctTxt:'89%',cls:'dd'} }, '12m': { rev:{actual:'€69,201',target:'€99,982',pct:69,pctTxt:'69%',cls:'dd'}, units:{actual:'2,173',target:'2,650',pct:82,pctTxt:'82%',cls:'dd'} } },
+      targetAttainment: { 'may': { rev:{actual:'€8,769',target:'€16,056',pct:55,pctTxt:'55%',cls:'dd'}, units:{actual:'213',target:'350',pct:61,pctTxt:'61%',cls:'dd'} }, '3m': { rev:{actual:'€24,725',target:'€30,952',pct:80,pctTxt:'80%',cls:'dd'}, units:{actual:'724',target:'920',pct:79,pctTxt:'79%',cls:'dd'} }, '6m': { rev:{actual:'€37,213',target:'€46,272',pct:80,pctTxt:'80%',cls:'dd'}, units:{actual:'1,128',target:'1,420',pct:79,pctTxt:'79%',cls:'dd'} }, '2025': { rev:{actual:'€44,515',target:'€70,625',pct:63,pctTxt:'63%',cls:'dd'}, units:{actual:'1,456',target:'1,630',pct:89,pctTxt:'89%',cls:'dd'} }, '12m': { rev:{actual:'€69,201',target:'€99,982',pct:69,pctTxt:'69%',cls:'dd'}, units:{actual:'2,173',target:'2,650',pct:82,pctTxt:'82%',cls:'dd'} } },
       buyBox: [
         {flag:'de',label:'Germany',pct:88,valText:'87.9%',color:'green'},
         {flag:'fr',label:'France',pct:90,valText:'90.0%',color:'green'},
@@ -386,16 +386,16 @@ window.DASHBOARD_DATA = {
       },
     },
     charts: {
-      // Trailing-6-month trend window. ADVANCED to Jan–Jun 2026 (June rebake shipped June KPIs but
-      // left this block frozen at Dec–May). revTarget's June value is a carried-forward FALLBACK only —
-      // the live Apps Script proxy overlays the true sheet value onto revTarget on every load
-      // (buildSections → sections.charts.revTarget). If the proxy is unreachable, this fallback shows.
-      months: ['Jan','Feb','Mar','Apr','May','Jun'],
-      revTarget: [4500,5700,5120,8497,10206,10206],
-      rev: { all:[3928,3599,4961,7023,8855,8847], de:[2154,1150,1914,2240,2095,2164], fr:[569,503,868,1577,2201,2288], es:[352,617,1034,1630,2167,1944], it:[853,1329,1145,1575,2393,2451] },
-      adSpend: { all:[275,220,950,2009,2317,1328], de:[142,77,364,677,529,388], fr:[58,28,168,464,575,363], es:[23,46,221,402,608,264], it:[52,69,196,466,604,312] },
-      adSales: { all:[1588,1209,2376,4390,4967,2826], de:[947,349,1150,1903,1286,1032], fr:[243,157,282,904,1285,370], es:[77,222,457,877,1105,555], it:[320,480,488,706,1291,869] },
-      adTacos: { all:[7,6.1,19.2,28.6,26.2,15], de:[6.6,6.7,19,30.2,25.3,17.9], fr:[10.3,5.5,19.3,29.4,26.1,15.9], es:[6.4,7.5,21.4,24.7,28.1,13.6], it:[6.1,5.2,17.2,29.6,25.2,12.7] }
+      // Trailing-6-month trend window. ADVANCED to Feb–Jul 2026 (July rebake). revTarget's Jul value is a
+      // carried-forward FALLBACK only — the live Apps Script proxy overlays the true sheet value onto
+      // revTarget on every load (buildSections → sections.charts.revTarget). If the proxy is unreachable,
+      // this fallback shows.
+      months: ['Feb','Mar','Apr','May','Jun','Jul'],
+      revTarget: [5700,5120,8497,10206,10206,16056],
+      rev: { all:[3599,4961,7023,8855,8847,8769], de:[1150,1914,2240,2095,2164,2061], fr:[503,868,1577,2201,2288,2534], es:[617,1034,1630,2167,1944,1462], it:[1329,1145,1575,2393,2451,2713] },
+      adSpend: { all:[220,950,2009,2317,1328,1363], de:[77,364,677,529,388,533], fr:[28,168,464,575,363,319], es:[46,221,402,608,264,231], it:[69,196,466,604,312,280] },
+      adSales: { all:[1209,2376,4390,4967,2826,3855], de:[349,1150,1903,1286,1032,1478], fr:[157,282,904,1285,370,585], es:[222,457,877,1105,555,736], it:[480,488,706,1291,869,1057] },
+      adTacos: { all:[6.1,19.2,28.6,26.2,15,15.5], de:[6.7,19,30.2,25.3,17.9,25.9], fr:[5.5,19.3,29.4,26.1,15.9,12.6], es:[7.5,21.4,24.7,28.1,13.6,15.8], it:[5.2,17.2,29.6,25.2,12.7,10.3] }
     }
   }
 };
