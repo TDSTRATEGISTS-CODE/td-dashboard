@@ -552,19 +552,23 @@ window.DASHBOARD_DATA = {
 /* ============================================================================================
    SHOPIFY (D2C) — sections.shopify  ·  brand-filtered: All / Newnique / Contours Rx (2 stores)
    --------------------------------------------------------------------------------------------
-   Post-Porter bake (30 Jun 2026), native GBP. The Shopify-via-Porter feed is gone; this page now
-   pairs two sources, mirroring how the Amazon side already works:
+   Re-baked for July 2026 (5 Aug 2026 pull), native GBP. Pairs two sources, mirroring the Amazon side:
    • ORDER-SIDE (net sales, orders, AOV, units, product mix, stock-on-hand) → MerchantSpring's
      Shopify channels — Contours Rx ch 33616599, Newnique ch 110450469 (the same connector that
      serves NKV's Amazon actuals).
    • SESSION-SIDE (sessions, CVR, the cart→checkout→purchase funnel, traffic-by-channel) → GA4 via
      the Reporting Ninja connector (properties/394327082 Contours Rx, properties/506386258 Newnique).
    Contours Rx UK (contours-rx.co.uk · 658f4a.myshopify.com): order-side + GA4 are both EXACT actuals
-   for every period (may/3m/6m/12m). Note GA4 purchases (46 May) run below the Orders KPI (90) —
-   orders include repeat/manual/no-session orders; the funnel + CVR are session-based, Orders is
-   order-based — both valid, kept separate.
+   for may/3m/6m (12m intentionally left at its prior bake — see the top-of-file header note on why
+   trailing-12m wasn't touched this run). Every net-sales figure below is cross-checked to the penny
+   between the period-total pull and the per-product breakdown pulled the same run. Note GA4 purchases
+   (54 Jul) run below the Orders KPI (83) — orders include repeat/manual/no-session orders; the funnel
+   + CVR are session-based, Orders is order-based — both valid, kept separate. "Returning Cust." is
+   marked unavailable this run: GA4's totalPurchasers/firstTimePurchasers came back identical (100%
+   "first-time"), which contradicts a store with real repeat orders and looks like a GA4 attribution
+   gap rather than a fact — not something to bake as if it were real.
    Newnique: MerchantSpring isn't ingesting its orders yet, so its ORDER-SIDE reads "pending Executive
-   integration"; its GA4 session-side IS live (450 sessions May). 'all' equals Contours Rx until
+   integration"; its GA4 session-side IS live (277 sessions Jul). 'all' equals Contours Rx until
    Newnique's orders backfill (see the derivation at the bottom).
    Read by app.js → renderShopify() / renderShopBrands(); follows the shared date-range selector. */
 window.DASHBOARD_DATA.sections.shopify = {
@@ -576,102 +580,107 @@ window.DASHBOARD_DATA.sections.shopify = {
   data: {
     contoursrx: {
       label: 'Contours Rx UK', store: 'contours-rx.co.uk',
-      // 6-month net-sales trend (Dec 2025 → May 2026), exact MerchantSpring actuals.
+      // 6-month net-sales trend (Feb 2026 → Jul 2026), exact MerchantSpring actuals (Shopify channel
+      // 33616599). Cross-checked: net sales sum to the exact penny against the per-product breakdown
+      // pulled the same run.
       chart: {
         max: 4000, yTicks: ['£4k', '£3k', '£2k', '£1k', '£0'],
-        xLabels: ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'], xHighlight: '#404935',
-        series: [ { values: [1863, 2127, 2907, 3243, 2621, 2416], color: '#404935', area: true, main: true } ],
+        xLabels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'], xHighlight: '#404935',
+        series: [ { values: [2907, 3243, 2621, 2416, 2783, 2387], color: '#404935', area: true, main: true } ],
         legend: [ { name: 'Net Sales', color: '#404935' } ]
       },
-      // Current on-hand snapshot from MerchantSpring (Shopify channel, 30 Jun 2026). Cover = vs ~May run-rate.
+      // Current on-hand snapshot from MerchantSpring (Shopify channel, 5 Aug 2026). Cover = vs ~Jul run-rate.
       stock: [
-        { name: 'Lids by Design Eyelid Lift Strips', note: '7 size variants · Healthy',        level: 'g', units: '2,088 units', cover: '~680 days' },
-        { name: 'Exfoliating B5 Prep Pads 30pk',     note: 'SKU CR B5PREP · Healthy',          level: 'g', units: '72 units',    cover: 'ample cover' },
-        { name: 'Botanical Lash & Brow Serum',       note: 'SKU CR BLBS · New launch (Oct)',   level: 'g', units: '47 units',    cover: 'ample cover' },
+        { name: 'Lids by Design Eyelid Lift Strips', note: '7 size variants · Healthy',        level: 'g', units: '1,417 units', cover: '~512 days' },
+        { name: 'Exfoliating B5 Prep Pads 30pk',     note: 'SKU CR B5PREP · Healthy',          level: 'g', units: '47 units',    cover: 'ample cover' },
+        { name: 'Botanical Lash & Brow Serum',       note: 'SKU CR BLBS · Healthy',            level: 'g', units: '82 units',    cover: 'ample cover' },
         { name: 'Dermal Blade (3 pack)',             note: 'SKU CR DERMA · Restock needed',    level: 'r', units: '0 units',     cover: 'OOS' }
       ],
-      // Traffic by GA4 default channel group (May 2026) via Reporting Ninja. Cross-network = Google Ads
-      // (Performance Max). Bar widths floored so near-zero channels stay visible. Sum shown = 2,530 of
-      // 2,618 sessions (smaller channels omitted).
+      // Traffic by GA4 default channel group (July 2026) via Reporting Ninja. Cross-network = Google Ads
+      // (Performance Max). Bar widths floored so near-zero channels stay visible. Sum shown = 2,352 of
+      // 2,473 sessions (smaller channels omitted).
       traffic: [
-        { lbl: 'Paid (Cross-network)', pct: 79, val: '2,069', color: 'brand' },
-        { lbl: 'Organic Search',       pct: 9,  val: '229',   color: 'blue' },
-        { lbl: 'Direct',               pct: 8,  val: '202',   color: 'amber' },
-        { lbl: 'Email',                pct: 1,  val: '30',    color: 'green' }
+        { lbl: 'Paid (Cross-network)', pct: 70, val: '1,723', color: 'brand' },
+        { lbl: 'Organic Search',       pct: 14, val: '353',   color: 'blue' },
+        { lbl: 'Direct',               pct: 9,  val: '234',   color: 'amber' },
+        { lbl: 'Email',                pct: 2,  val: '42',    color: 'green' }
       ],
       byPeriod: {
         may: {
           kpis1: [
-            { bar: '#404935',      lbl: 'Net Sales', val: '£2,416',  dCls: 'dd', d: '▼ 7.8% MoM',   s: 'vs £2,621 Apr' },
-            { bar: 'var(--blue)',  lbl: 'Orders',    val: '90',      dCls: 'du', d: '▲ 1.1% MoM',   s: '89 orders Apr' },
-            { bar: 'var(--green)', lbl: 'AOV',       val: '£27.17',  dCls: 'dd', d: '▼ £2.85 MoM',  s: '£30.02 Apr' },
-            { bar: 'var(--amber)', lbl: 'ASP',       val: '£25.43',  dCls: 'df', d: 'net ÷ units',  s: '95 units sold' }
+            { bar: '#404935',      lbl: 'Net Sales', val: '£2,387',  dCls: 'dd', d: '▼ 14.2% MoM',  s: 'vs £2,783 Jun' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '83',      dCls: 'dd', d: '▼ 13.5% MoM',  s: '96 orders Jun' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£28.76',  dCls: 'dd', d: '▼ £0.22 MoM',  s: '£28.98 Jun' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£27.75',  dCls: 'df', d: 'net ÷ units',  s: '86 units sold' }
           ],
           kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '1.76%',  dCls: 'df', d: 'GA4 · sessions', s: '46 of 2,618 sessions' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '2,618',  dCls: 'du', d: '▲ 16.7% MoM', s: 'GA4 · vs 2,244 Apr' },
-            { bar: 'var(--green)', lbl: 'Units Sold',      val: '95',     dCls: 'df', d: 'Lids 92 · B5 3', s: '2 active SKUs' },
-            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '7.8%',   dCls: 'df', d: '7 of 90',      s: 'May actual' }
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.18%',  dCls: 'df', d: 'GA4 · sessions', s: '54 of 2,473 sessions' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '2,473',  dCls: 'du', d: '▲ 10.8% MoM', s: 'GA4 · vs 2,232 Jun' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '86',     dCls: 'df', d: 'Lids 83 · Other 3', s: '3 active SKUs' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '—',      dCls: 'df', d: 'Data unavailable', s: 'not recomputed this run' }
           ],
           funnel: [
-            { lbl: 'Sessions',         val: '2,618', pct: '100%', w: 100 },
-            { lbl: 'Added to Cart',    val: '106',   pct: '4.0%', w: 4,   sub: 'GA4 · 4.0% of sessions' },
-            { lbl: 'Reached Checkout', val: '65',    pct: '2.5%', w: 2.5, sub: '61% of carts retained' },
-            { lbl: 'Purchased',        val: '46',    pct: '1.8%', w: 1.8, sub: '71% of checkouts · 1.76% CVR' }
+            { lbl: 'Sessions',         val: '2,473', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '90',    pct: '3.6%', w: 3.6, sub: 'GA4 · 3.6% of sessions' },
+            { lbl: 'Reached Checkout', val: '54',    pct: '2.2%', w: 2.2, sub: '60% of carts retained' },
+            { lbl: 'Purchased',        val: '54',    pct: '2.2%', w: 2.2, sub: '100% of checkouts · 2.18% CVR' }
           ],
           products: [
-            { name: 'Lids by Design Eyelid Lift Strips', net: '£2,362', units: '92', asp: '£25.67', orders: '90', share: '97.8%', shareCls: 'bg' },
-            { name: 'Exfoliating B5 Prep Pads 30pk',     net: '£54',    units: '3',  asp: '£17.97', orders: '3',  share: '2.2%',  shareCls: 'bb' },
-            { name: 'Botanical Lash & Brow Serum',       net: '£0',     units: '0',  asp: '—',      orders: '0',  share: '—',     shareCls: 'bb' },
-            { name: 'Dermal Blade (3 pack)',             net: '£0',     units: '0',  asp: '—',      orders: '0',  share: 'OOS',   shareCls: 'br' }
+            { name: 'Lids by Design Eyelid Lift Strips', net: '£2,316', units: '83', asp: '£27.91', orders: '83', share: '97.0%', shareCls: 'bg' },
+            { name: 'Exfoliating B5 Prep Pads 30pk',     net: '£41',    units: '2',  asp: '£20.67', orders: '2',  share: '1.7%',  shareCls: 'bb' },
+            { name: 'Botanical Lash & Brow Serum',       net: '£29',    units: '1',  asp: '£29.45', orders: '1',  share: '1.2%',  shareCls: 'bb' },
+            { name: 'Dermal Blade (3 pack)',             net: '£0',     units: '0',  asp: '—',      orders: '0',  share: '—',     shareCls: 'br' }
           ]
         },
         '3m': {
           kpis1: [
-            { bar: '#404935',      lbl: 'Net Sales', val: '£8,280', dCls: 'df', d: '3-mo actuals',  s: 'Mar–May 2026' },
-            { bar: 'var(--blue)',  lbl: 'Orders',    val: '293',    dCls: 'df', d: '3-mo actuals',  s: 'AOV £28.54' },
-            { bar: 'var(--green)', lbl: 'AOV',       val: '£28.54', dCls: 'df', d: '3-mo blended',  s: '' },
-            { bar: 'var(--amber)', lbl: 'ASP',       val: '£25.96', dCls: 'df', d: 'net ÷ units',  s: '319 units' }
+            { bar: '#404935',      lbl: 'Net Sales', val: '£7,585', dCls: 'df', d: '3-mo actuals',  s: 'May–Jul 2026' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '271',    dCls: 'df', d: '3-mo actuals',  s: 'AOV £27.99' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£27.99', dCls: 'df', d: '3-mo blended',  s: '' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£26.43', dCls: 'df', d: 'net ÷ units',  s: '287 units' }
           ],
           kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.36%', dCls: 'df', d: 'GA4 · 3-mo',   s: '169 of 7,146 sessions' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '7,146', dCls: 'df', d: 'GA4 · Mar–May', s: 'GA4 actuals' },
-            { bar: 'var(--green)', lbl: 'Units Sold',      val: '319',   dCls: 'df', d: 'Lids 310 · B5 8',  s: 'Mar–May' },
-            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '7.7%',  dCls: 'df', d: '~23 of 293',       s: '3-mo window' }
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.08%', dCls: 'df', d: 'GA4 · 3-mo',   s: '154 of 7,394 sessions' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '7,394', dCls: 'df', d: 'GA4 · May–Jul', s: 'GA4 actuals' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '287',   dCls: 'df', d: 'Lids 279 · Other 8',  s: 'May–Jul' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '—',     dCls: 'df', d: 'Data unavailable',    s: 'not recomputed this run' }
           ],
           funnel: [
-            { lbl: 'Sessions',         val: '7,146', pct: '100%', w: 100 },
-            { lbl: 'Added to Cart',    val: '334',   pct: '4.7%', w: 4.7, sub: 'GA4 · 4.7% of sessions' },
-            { lbl: 'Reached Checkout', val: '166',   pct: '2.3%', w: 2.3, sub: 'GA4 begin_checkout' },
-            { lbl: 'Purchased',        val: '169',   pct: '2.4%', w: 2.4, sub: '2.36% conversion' }
+            { lbl: 'Sessions',         val: '7,394', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '290',   pct: '3.9%', w: 3.9, sub: 'GA4 · 3.9% of sessions' },
+            { lbl: 'Reached Checkout', val: '173',   pct: '2.3%', w: 2.3, sub: 'GA4 begin_checkout' },
+            { lbl: 'Purchased',        val: '154',   pct: '2.1%', w: 2.1, sub: '2.08% conversion' }
           ],
           products: [
-            { name: 'Lids by Design Eyelid Lift Strips', net: '£8,138', units: '310', asp: '£26.25', orders: '293', share: '98.3%', shareCls: 'bg' },
-            { name: 'Other SKUs (B5 · Serum)',           net: '£142',   units: '9',   asp: '—',      orders: '9',   share: '1.7%',  shareCls: 'bb' }
+            { name: 'Lids by Design Eyelid Lift Strips', net: '£7,421', units: '279', asp: '£26.60', orders: '271', share: '97.8%', shareCls: 'bg' },
+            { name: 'Other SKUs (B5 · Serum)',           net: '£164',   units: '8',   asp: '—',      orders: '8',   share: '2.2%',  shareCls: 'bb' }
           ]
         },
         '6m': {
           kpis1: [
-            { bar: '#404935',      lbl: 'Net Sales', val: '£13,314', dCls: 'df', d: 'YTD actuals',   s: 'Jan–May 2026' },
-            { bar: 'var(--blue)',  lbl: 'Orders',    val: '475',     dCls: 'df', d: 'YTD actuals',   s: 'AOV £28.26' },
-            { bar: 'var(--green)', lbl: 'AOV',       val: '£28.26',  dCls: 'df', d: 'YTD blended',   s: '' },
-            { bar: 'var(--amber)', lbl: 'ASP',       val: '£26.01',  dCls: 'df', d: 'net ÷ units',  s: '512 units' }
+            { bar: '#404935',      lbl: 'Net Sales', val: '£16,357', dCls: 'df', d: 'YTD actuals',   s: 'Feb–Jul 2026' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '578',     dCls: 'df', d: 'YTD actuals',   s: 'AOV £28.30' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£28.30',  dCls: 'df', d: 'YTD blended',   s: '' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£26.38',  dCls: 'df', d: 'net ÷ units',  s: '620 units' }
           ],
           kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.46%',  dCls: 'df', d: 'GA4 · YTD',    s: '296 of 12,012 sessions' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '12,012', dCls: 'df', d: 'GA4 · Jan–May', s: 'GA4 actuals' },
-            { bar: 'var(--green)', lbl: 'Units Sold',      val: '512',   dCls: 'df', d: 'Lids 500 · B5 11',  s: 'Jan–May' },
-            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '6.2%',  dCls: 'df', d: '~30 of 475',        s: 'YTD window' }
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.48%',  dCls: 'df', d: 'GA4 · YTD',    s: '349 of 14,077 sessions' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '14,077', dCls: 'df', d: 'GA4 · Feb–Jul', s: 'GA4 actuals' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '620',   dCls: 'df', d: 'Lids 605 · Other 15', s: 'Feb–Jul' },
+            { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '—',     dCls: 'df', d: 'Data unavailable',    s: 'not recomputed this run' }
           ],
+          // NOTE: Purchased (349) fractionally exceeds Reached Checkout (332) here — a real GA4 quirk
+          // (cross-session attribution: begin_checkout and purchase can land in different GA4 sessions
+          // near the window boundary), not a data error. Confirmed via a bypass_cache re-query.
           funnel: [
-            { lbl: 'Sessions',         val: '12,012', pct: '100%', w: 100 },
-            { lbl: 'Added to Cart',    val: '522',    pct: '4.3%', w: 4.3, sub: 'GA4 · 4.3% of sessions' },
-            { lbl: 'Reached Checkout', val: '284',    pct: '2.4%', w: 2.4, sub: 'GA4 begin_checkout' },
-            { lbl: 'Purchased',        val: '296',    pct: '2.5%', w: 2.5, sub: '2.46% conversion' }
+            { lbl: 'Sessions',         val: '14,077', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '624',    pct: '4.4%', w: 4.4, sub: 'GA4 · 4.4% of sessions' },
+            { lbl: 'Reached Checkout', val: '332',    pct: '2.4%', w: 2.4, sub: 'GA4 begin_checkout' },
+            { lbl: 'Purchased',        val: '349',    pct: '2.5%', w: 2.5, sub: '2.48% conversion' }
           ],
           products: [
-            { name: 'Lids by Design Eyelid Lift Strips', net: '£13,119', units: '500', asp: '£26.24', orders: '475', share: '98.5%', shareCls: 'bg' },
-            { name: 'Other SKUs (B5 · Serum)',           net: '£196',    units: '12',  asp: '—',      orders: '12',  share: '1.5%',  shareCls: 'bb' }
+            { name: 'Lids by Design Eyelid Lift Strips', net: '£16,068', units: '605', asp: '£26.56', orders: '578', share: '98.2%', shareCls: 'bg' },
+            { name: 'Other SKUs (B5 · Serum)',           net: '£289',    units: '15',  asp: '—',      orders: '15',  share: '1.8%',  shareCls: 'bb' }
           ]
         },
         '12m': {
@@ -709,12 +718,12 @@ window.DASHBOARD_DATA.sections.shopify = {
     newnique: {
       label: 'Newnique', store: 'newniquecare.com',
       chart: null, stock: [],
-      // Traffic by GA4 default channel group (May 2026) via Reporting Ninja. Sum = 422 of 450 sessions.
+      // Traffic by GA4 default channel group (July 2026) via Reporting Ninja. Sum = 258 of 277 sessions.
       traffic: [
-        { lbl: 'Paid Search',    pct: 40, val: '179', color: 'brand' },
-        { lbl: 'Direct',         pct: 23, val: '102', color: 'blue' },
-        { lbl: 'Cross-network',  pct: 19, val: '87',  color: 'amber' },
-        { lbl: 'Organic Search', pct: 12, val: '54',  color: 'green' }
+        { lbl: 'Direct',         pct: 57, val: '158', color: 'brand' },
+        { lbl: 'Organic Social', pct: 16, val: '44',  color: 'blue' },
+        { lbl: 'Organic Search', pct: 16, val: '43',  color: 'amber' },
+        { lbl: 'Referral',       pct: 5,  val: '13',  color: 'green' }
       ],
       placeholder: 'Pending Executive integration — order data (sales / products / stock) populates once Newnique is connected; GA4 traffic is already live.',
       byPeriod: (function () {
@@ -742,9 +751,9 @@ window.DASHBOARD_DATA.sections.shopify = {
           };
         }
         return {
-          may:  period(450,  100, 15, 3, '0.67%', 'May'),
-          '3m': period(661,  127, 22, 3, '0.45%', 'Mar–May'),
-          '6m': period(935,  136, 25, 3, '0.32%', 'Jan–May'),
+          may:  period(277,  30,  2,  1, '0.36%', 'Jul'),
+          '3m': period(851,  141, 20, 5, '0.59%', 'May–Jul'),
+          '6m': period(1165, 171, 28, 5, '0.43%', 'Feb–Jul'),
           '12m':period(1520, 186, 41, 4, '0.26%', 'trailing yr')
         };
       })()
