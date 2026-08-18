@@ -8,216 +8,219 @@ window.DASHBOARD_DATA = {
   // Minimal date-range entry so the shell's switchDateRange paints the topbar + sidebar chips.
   // Founder KPIs are rendered from sections.founder, not from these fields.
   dateRanges: {
-    // Amazon ACTUALS lenses (MerchantSpring snapshot to 2026-06-25). Per-period sales/products from
-    // getSalesByChannels. Ad figures = last ACTIVE UK campaign (Mar–Apr 2026, now paused); ad/P&L
-    // endpoints are 30-day capped so are NOT period-summed here (the baker handles via monthly arrays).
-    // Chip totals (mktRows col 6) = per-period ACTUAL sales (UK £, US $). 'all' chip (rev) = UK £ total
-    // (US is a separate currency, not summed). Forecast is NOT here — it lives on the P&L Detail page.
-    // Per-period sec.products overrides the top-level (May) Products section.
+    // Amazon ACTUALS lenses (MerchantSpring pulled 2026-08-18). Sales/units/AOV are per-month native-
+    // currency sums (getSalesByPeriod, single-month calls — the multi-month 'M'-interval variant mislabels
+    // buckets and is not used). Ad spend/sales/ACOS/TACOS/ROAS are from getAdvertisingByChannels (the
+    // Ads-page lens) — NOT the same figure as the P&L card's own "Advertising" line (getStoreProfitAndLoss,
+    // accrual view — a different, cash/earn-basis lens; the two are intentionally not reconciled, per the
+    // AMACX/Harvaza convention that ordered vs net P&L revenue are separate valid views). Chip totals
+    // (mktRows col 6) = per-period ACTUAL sales (UK £, US $). 'all' chip (rev) = UK £ total (US is a
+        // separate currency, not summed). Forecast is NOT here — it lives on the P&L Detail page.
+    // Per-period sec.products overrides the top-level (last-month) Products section.
     may: {
-      label: 'Last Month · May 2026', shortLabel: 'May 2026',
-      rev: '£3,832', revD: '▲ vs £3,238 Apr', revC: 'du', revS: 'Amazon UK actual',
-      spend: '£201', spendD: 'May 2026', spendC: 'df', spendS: 'ACOS 32%',
-      tacosAd: '5.2%', tacosAdD: 'May', tacosAdC: 'df', tacosAdS: '£201 spend',
-      roasAd: '3.09×', roasAdD: 'May', roasAdC: 'df', roasAdS: '£621 ad sales',
-      aov: '£36.49', aovD: '▲ vs £30.84 Apr', aovC: 'du', aovS: 'UK · 105 orders',
+      label: 'Last Month · July 2026', shortLabel: 'July 2026',
+      rev: '£624', revD: '▼ vs £836 Jun', revC: 'dd', revS: 'Amazon UK actual',
+      spend: '£110', spendD: 'July 2026', spendC: 'df', spendS: 'ACOS 64%',
+      tacosAd: '17.6%', tacosAdD: 'July', tacosAdC: 'df', tacosAdS: '£110 spend',
+      roasAd: '1.56×', roasAdD: 'July', roasAdC: 'df', roasAdS: '£171 ad sales',
+      aov: '£44.56', aovD: '▲ vs £26.11 Jun', aovC: 'du', aovS: 'UK · 14 orders',
       mktRows: [
-        ['UK', 'gb', '£0', '£201', 'br', '▲ no budget', '£3,832', 'ba', '5.2%'],
-        ['US', 'us', '$0', '$0',   'bg', '—',            '$866',   'bg', '—'],
-        ['Total', '', '£0', '£201', 'br', '▲ over', '£3,832', 'ba', '5.2%']
+        ['UK', 'gb', '£0', '£110', 'br', '▲ no budget', '£624', 'ba', '17.6%'],
+        ['US', 'us', '$0', '$0',   'bg', '—',            '$551', 'bg', '—'],
+        ['Total', '', '£0', '£110', 'br', '▲ over', '£624', 'ba', '17.6%']
       ],
-      adChart: { max: 250, yTicks: ['£250','£188','£125','£63','£0'], xLabels: ['Jan','Feb','Mar','Apr','May','Jun'], xHighlight: '#2C3420', series: [{ values: [0,0,90,132,201,0], color: '#2C3420', area: true, main: true }], legend: [{ name: 'Ad Spend', color: '#2C3420' }] },
-      // Revenue Breakdown — stacked monthly bars (Ad sales vs Organic), like the demo. Segments sum to
-      // the settlement gross revenue; per-period totals reconcile to the P&L margin card (£1,690 + £205).
-      revBreakChart: { max: 4000, yTicks: ['£4k','£3k','£2k','£1k','£0'], xLabels: ['May'], series: [{ color: '#2C3420', values: [205] }, { color: '#a7ab90', values: [1690] }], legend: [{ name: 'Ad sales', color: '#2C3420' }, { name: 'Organic', color: '#a7ab90' }] }
+      adChart: { max: 300, yTicks: ['£300','£225','£150','£75','£0'], xLabels: ['Feb','Mar','Apr','May','Jun','Jul'], xHighlight: '#2C3420', series: [{ values: [0,207,281,0,0,110], color: '#2C3420', area: true, main: true }], legend: [{ name: 'Ad Spend', color: '#2C3420' }] },
+      // Revenue Breakdown — stacked monthly bars (Ad sales vs Organic). Segments sum to the P&L
+      // (accrual) gross revenue; Σad reconciles to the Advertising-page ad sales figure.
+      revBreakChart: { max: 600, yTicks: ['£600','£450','£300','£150','£0'], xLabels: ['Jul'], series: [{ color: '#2C3420', values: [171] }, { color: '#a7ab90', values: [321] }], legend: [{ name: 'Ad sales', color: '#2C3420' }, { name: 'Organic', color: '#a7ab90' }] }
     },
     '3m': {
-      label: 'Last 3 Months · Mar–May 2026', shortLabel: 'Mar–May 2026',
-      rev: '£9,691', revD: '3-month actuals', revC: 'df', revS: 'Amazon UK actual',
-      spend: '£423', spendD: 'Mar–May', spendC: 'df', spendS: 'ACOS 33%',
-      tacosAd: '4.4%', tacosAdD: 'Mar–May', tacosAdC: 'df', tacosAdS: '£423 spend',
-      roasAd: '3.07×', roasAdD: 'Mar–May', roasAdC: 'df', roasAdS: '£1,298 ad sales',
-      aov: '£31.36', aovD: '3-month avg', aovC: 'df', aovS: 'UK · 309 orders',
+      label: 'Last 3 Months · May–Jul 2026', shortLabel: 'May–Jul 2026',
+      rev: '£4,370', revD: '3-month actuals', revC: 'df', revS: 'Amazon UK actual',
+      spend: '£110', spendD: 'May–Jul', spendC: 'df', spendS: 'ACOS 64%',
+      tacosAd: '2.5%', tacosAdD: 'May–Jul', tacosAdC: 'df', tacosAdS: '£110 spend',
+      roasAd: '1.56×', roasAdD: 'May–Jul', roasAdC: 'df', roasAdS: '£171 ad sales',
+      aov: '£28.75', aovD: '3-month avg', aovC: 'df', aovS: 'UK · 152 orders',
       mktRows: [
-        ['UK', 'gb', '£0', '£423', 'br', '▲ no budget', '£9,691', 'ba', '4.4%'],
-        ['US', 'us', '$0', '$0',   'bg', '—',            '$1,543', 'bg', '—'],
-        ['Total', '', '£0', '£423', 'br', '▲ over', '£9,691', 'ba', '4.4%']
+        ['UK', 'gb', '£0', '£110', 'br', '▲ no budget', '£4,370', 'ba', '2.5%'],
+        ['US', 'us', '$0', '$0',   'bg', '—',            '$1,851', 'bg', '—'],
+        ['Total', '', '£0', '£110', 'br', '▲ over', '£4,370', 'ba', '2.5%']
       ],
-      adChart: { max: 250, yTicks: ['£250','£188','£125','£63','£0'], xLabels: ['Jan','Feb','Mar','Apr','May','Jun'], xHighlight: '#2C3420', series: [{ values: [0,0,90,132,201,0], color: '#2C3420', area: true, main: true }], legend: [{ name: 'Ad Spend', color: '#2C3420' }] },
-      // Mar–May: Ad sales split by campaign month (Mar/Apr/May), Organic = gross − ad. Sums to £4,623 organic + £1,298 ad.
-      revBreakChart: { max: 4000, yTicks: ['£4k','£3k','£2k','£1k','£0'], xLabels: ['Mar','Apr','May'], series: [{ color: '#2C3420', values: [443,650,205] }, { color: '#a7ab90', values: [488,1999,2136] }], legend: [{ name: 'Ad sales', color: '#2C3420' }, { name: 'Organic', color: '#a7ab90' }] },
+      adChart: { max: 300, yTicks: ['£300','£225','£150','£75','£0'], xLabels: ['Feb','Mar','Apr','May','Jun','Jul'], xHighlight: '#2C3420', series: [{ values: [0,207,281,0,0,110], color: '#2C3420', area: true, main: true }], legend: [{ name: 'Ad Spend', color: '#2C3420' }] },
+      // May–Jun: no ads. Jul: ad sales £171, organic £321. Sums to £4,341 organic + £171 ad.
+      revBreakChart: { max: 3000, yTicks: ['£3k','£2.25k','£1.5k','£0.75k','£0'], xLabels: ['May','Jun','Jul'], series: [{ color: '#2C3420', values: [0,0,171] }, { color: '#a7ab90', values: [2904,1116,321] }], legend: [{ name: 'Ad sales', color: '#2C3420' }, { name: 'Organic', color: '#a7ab90' }] },
       sec: {
         overviewActuals: {
           kpis: [
-            { bar: '#2C3420', lbl: 'UK Sales', val: '£9,691', dCls: 'df', d: '3-month actuals', s: 'Amazon UK' },
-            { bar: '#1e4fa0', lbl: 'US Sales', val: '$1,543', dCls: 'df', d: '3-month actuals', s: 'Amazon US' },
-            { bar: '#3B6D11', lbl: 'Orders',   val: '377',    dCls: 'df', d: 'UK 309 · US 68',  s: 'Mar–May' },
-            { bar: '#C8A84B', lbl: 'Units',    val: '418',    dCls: 'df', d: 'UK 339 · US 79',  s: 'Mar–May' }
+            { bar: '#2C3420', lbl: 'UK Sales', val: '£4,370', dCls: 'df', d: '3-month actuals', s: 'Amazon UK' },
+            { bar: '#1e4fa0', lbl: 'US Sales', val: '$1,851', dCls: 'df', d: '3-month actuals', s: 'Amazon US' },
+            { bar: '#3B6D11', lbl: 'Orders',   val: '230',    dCls: 'df', d: 'UK 152 · US 78',  s: 'May–Jul' },
+            { bar: '#C8A84B', lbl: 'Units',    val: '263',    dCls: 'df', d: 'UK 168 · US 95',  s: 'May–Jul' }
           ],
           cvr: [
-            { label: 'Amazon UK', flag: 'gb', pct: 15, valText: '14.5%', color: 'green' },
-            { label: 'Amazon US', flag: 'us', pct: 4,  valText: '1.9%',  color: 'amber' }
+            { label: 'Amazon UK', flag: 'gb', pct: 16, valText: '15.8%', color: 'green' },
+            { label: 'Amazon US', flag: 'us', pct: 3,  valText: '3.1%',  color: 'amber' }
           ]
         },
         products: {
           kpis: [
-            { bar: '#2C3420', lbl: 'UK Sales', val: '£9,691', dCls: 'df', d: '3-month actuals', s: 'Mar–May' },
-            { bar: '#3B6D11', lbl: 'Orders',   val: '377',    dCls: 'df', d: 'UK 309 · US 68',  s: 'Mar–May' },
-            { bar: '#1e4fa0', lbl: 'Units',    val: '418',    dCls: 'df', d: 'UK 339 · US 79',  s: 'Mar–May' },
-            { bar: '#C8A84B', lbl: 'AOV (UK)', val: '£31.36', dCls: 'df', d: '3-month avg',     s: 'US $22.69' }
+            { bar: '#2C3420', lbl: 'UK Sales', val: '£4,370', dCls: 'df', d: '3-month actuals', s: 'May–Jul' },
+            { bar: '#3B6D11', lbl: 'Orders',   val: '230',    dCls: 'df', d: 'UK 152 · US 78',  s: 'May–Jul' },
+            { bar: '#1e4fa0', lbl: 'Units',    val: '263',    dCls: 'df', d: 'UK 168 · US 95',  s: 'May–Jul' },
+            { bar: '#C8A84B', lbl: 'AOV (UK)', val: '£28.75', dCls: 'df', d: '3-month avg',     s: 'US $23.73' }
           ],
           table: [
-            { flag: 'gb', name: 'Amazon UK', revenue: '£9,691', units: '339', orders: '309', cvr: '14.5%', cvrCls: 'bg', aov: '£31.36' },
-            { flag: 'us', name: 'Amazon US', revenue: '$1,543', units: '79',  orders: '68',  cvr: '1.9%',  cvrCls: 'br', aov: '$22.69' }
+            { flag: 'gb', name: 'Amazon UK', revenue: '£4,370', units: '168', orders: '152', cvr: '15.8%', cvrCls: 'bg', aov: '£28.75' },
+            { flag: 'us', name: 'Amazon US', revenue: '$1,851', units: '95',  orders: '78',  cvr: '3.1%',  cvrCls: 'br', aov: '$23.73' }
           ]
         },
         pnl: {
           margin: {
-            pct: '17.2%', pctColor: 'amber', note: 'Amazon UK · Mar–May 2026',
+            pct: '28.6%', pctColor: 'green', note: 'Amazon UK · May–Jul 2026',
             rows: [
-              { lbl: 'Gross Revenue', val: '£5,921' },
-              { lbl: 'Selling Fees',  val: '−£1,051', color: 'red' },
-              { lbl: 'Fulfilment',    val: '−£1,250', color: 'red' },
-              { lbl: 'Ad Spend',      val: '−£423',   color: 'red' },
-              { lbl: 'COGS',          val: '−£2,177', color: 'red' },
-              { lbl: 'Net Profit',    val: '£1,020',  color: 'green', strong: true }
+              { lbl: 'Gross Revenue', val: '£4,186' },
+              { lbl: 'Selling Fees',  val: '−£745',   color: 'red' },
+              { lbl: 'Fulfilment',    val: '−£777',   color: 'red' },
+              { lbl: 'Ad Spend',      val: '−£116',   color: 'red' },
+              { lbl: 'COGS',          val: '−£1,351', color: 'red' },
+              { lbl: 'Net Profit',    val: '£1,196',  color: 'green', strong: true }
             ]
           },
           statement: {
-            fixedLabel: 'Amazon UK · Mar–May 2026',
+            fixedLabel: 'Amazon UK · May–Jul 2026',
             groups: [
               { header: 'Income', rows: [
-                { lbl: 'Shipped product sales', amount: '£6,378', pct: '107.7%', unit: '£18.81' },
-                { lbl: 'Promotions', amount: '−£189', pct: '−3.2%', unit: '−£0.56' },
-                { lbl: 'Refunds', amount: '−£25', pct: '−0.4%', unit: '−£0.07' },
-                { lbl: 'Other income', amount: '£118', pct: '2.0%', unit: '£0.35' },
-                { lbl: 'Net revenue', amount: '£5,921', pct: '100.0%', unit: '£17.47', total: true }
+                { lbl: 'Shipped product sales', amount: '£4,512', pct: '107.8%', unit: '£26.86' },
+                { lbl: 'Promotions', amount: '−£99', pct: '−2.4%', unit: '−£0.59' },
+                { lbl: 'Other income', amount: '£51', pct: '1.2%', unit: '£0.30' },
+                { lbl: 'Net revenue', amount: '£4,186', pct: '100.0%', unit: '£24.92', total: true }
               ] },
               { header: 'Expenses', rows: [
-                { lbl: 'Advertising', amount: '£423', pct: '7.1%', unit: '£1.25' },
-                { lbl: 'Selling fees', amount: '£1,051', pct: '17.8%', unit: '£3.10' },
-                { lbl: 'Fulfilment and shipping', amount: '£1,250', pct: '21.1%', unit: '£3.69' },
-                { lbl: 'Cost of goods', amount: '£2,177', pct: '36.8%', unit: '£6.42' },
-                { lbl: 'Total expenses', amount: '£4,901', pct: '82.8%', unit: '£14.46', total: true }
+                { lbl: 'Advertising', amount: '£116', pct: '2.8%', unit: '£0.69' },
+                { lbl: 'Selling fees', amount: '£745', pct: '17.8%', unit: '£4.44' },
+                { lbl: 'Fulfilment and shipping', amount: '£777', pct: '18.6%', unit: '£4.63' },
+                { lbl: 'Cost of goods', amount: '£1,351', pct: '32.3%', unit: '£8.04' },
+                { lbl: 'Total expenses', amount: '£2,990', pct: '71.4%', unit: '£17.80', total: true }
               ] },
               { header: 'Profit', rows: [
-                { lbl: 'PROFIT', amount: '£1,020', pct: '17.2%', unit: '£3.01', total: true, profit: true },
-                { lbl: 'Profit %', amount: '17.2%', accent: 'green' }
+                { lbl: 'PROFIT', amount: '£1,196', pct: '28.6%', unit: '£7.12', total: true, profit: true },
+                { lbl: 'Profit %', amount: '28.6%', accent: 'green' }
               ] },
               { header: 'Metrics', rows: [
-                { lbl: 'Units sold', amount: '339' },
-                { lbl: 'Orders', amount: '309' }
+                { lbl: 'Units sold', amount: '168' },
+                { lbl: 'Orders', amount: '152' }
               ] }
             ]
           },
           mkt: [
-            { name: 'Amazon UK', flag: 'gb', revenue: '£5,921', adspend: '£423', net: '£1,020', netColor: 'green', margin: '17.2%', marginCls: 'ba' },
-            { name: 'Amazon US', flag: 'us', revenue: '$1,164', adspend: '$0',   net: '$193',   netColor: 'green', margin: '16.6%', marginCls: 'ba' }
+            { name: 'Amazon UK', flag: 'gb', revenue: '£4,186', adspend: '£116', net: '£1,196', netColor: 'green', margin: '28.6%', marginCls: 'bg' },
+            { name: 'Amazon US', flag: 'us', revenue: '$1,693', adspend: '$0',   net: '$587',   netColor: 'green', margin: '34.7%', marginCls: 'bg' }
           ]
         },
         advertising: {
           metrics: [
-            { lbl: 'Total Spend', val: '£423', id: 'a-spend' },
-            { lbl: 'Ad Sales',    val: '£1,298' },
-            { lbl: 'ACOS',        val: '32.6%', color: 'amber' },
-            { lbl: 'TACOS',       val: '4.4%', id: 'a-tacos' },
-            { lbl: 'ROAS',        val: '3.07×', id: 'a-roas' },
+            { lbl: 'Total Spend', val: '£110', id: 'a-spend' },
+            { lbl: 'Ad Sales',    val: '£171' },
+            { lbl: 'ACOS',        val: '64.1%', color: 'amber' },
+            { lbl: 'TACOS',       val: '2.5%', id: 'a-tacos' },
+            { lbl: 'ROAS',        val: '1.56×', id: 'a-roas' },
             { lbl: 'Avg. CPC',    val: '—' }
           ]
         }
       }
     },
     '6m': {
-      label: 'Year to Date · Jan–Jun 2026', shortLabel: 'Jan–Jun 2026',
-      rev: '£11,107', revD: 'YTD actuals', revC: 'df', revS: 'Amazon UK actual',
-      spend: '£423', spendD: 'Jan–Jun', spendC: 'df', spendS: 'ACOS 33%',
-      tacosAd: '3.8%', tacosAdD: 'Jan–Jun', tacosAdC: 'df', tacosAdS: '£423 spend',
-      roasAd: '3.07×', roasAdD: 'Jan–Jun', roasAdC: 'df', roasAdS: '£1,298 ad sales',
-      aov: '£31.03', aovD: 'YTD avg', aovC: 'df', aovS: 'UK · 358 orders',
+      label: 'Year to Date · Jan–Jul 2026', shortLabel: 'Jan–Jul 2026',
+      rev: '£9,062', revD: 'YTD actuals', revC: 'df', revS: 'Amazon UK actual',
+      spend: '£597', spendD: 'Jan–Jul', spendC: 'df', spendS: 'ACOS 37%',
+      tacosAd: '6.6%', tacosAdD: 'Jan–Jul', tacosAdC: 'df', tacosAdS: '£597 spend',
+      roasAd: '2.67×', roasAdD: 'Jan–Jul', roasAdC: 'df', roasAdS: '£1,596 ad sales',
+      aov: '£24.36', aovD: 'YTD avg', aovC: 'df', aovS: 'UK · 372 orders',
       mktRows: [
-        ['UK', 'gb', '£0', '£423', 'br', '▲ no budget', '£11,107', 'ba', '3.8%'],
-        ['US', 'us', '$0', '$0',   'bg', '—',            '$1,894', 'bg', '—'],
-        ['Total', '', '£0', '£423', 'br', '▲ over', '£11,107', 'ba', '3.8%']
+        ['UK', 'gb', '£0', '£597', 'br', '▲ no budget', '£9,062', 'ba', '6.6%'],
+        ['US', 'us', '$0', '$0',   'bg', '—',            '$2,528', 'bg', '—'],
+        ['Total', '', '£0', '£597', 'br', '▲ over', '£9,062', 'ba', '6.6%']
       ],
-      adChart: { max: 250, yTicks: ['£250','£188','£125','£63','£0'], xLabels: ['Jan','Feb','Mar','Apr','May','Jun'], xHighlight: '#2C3420', series: [{ values: [0,0,90,132,201,0], color: '#2C3420', area: true, main: true }], legend: [{ name: 'Ad Spend', color: '#2C3420' }] },
-      // Jan–Jun: Ad sales only in the campaign months (Mar–May); Organic tracks monthly UK revenue. Sums to £6,539 organic + £1,298 ad.
-      revBreakChart: { max: 4000, yTicks: ['£4k','£3k','£2k','£1k','£0'], xLabels: ['Jan','Feb','Mar','Apr','May','Jun'], series: [{ color: '#2C3420', values: [0,0,443,650,205,0] }, { color: '#a7ab90', values: [0,169,632,2409,2499,830] }], legend: [{ name: 'Ad sales', color: '#2C3420' }, { name: 'Organic', color: '#a7ab90' }] },
+      adChart: { max: 300, yTicks: ['£300','£225','£150','£75','£0'], xLabels: ['Jan','Feb','Mar','Apr','May','Jun','Jul'], xHighlight: '#2C3420', series: [{ values: [0,0,207,281,0,0,110], color: '#2C3420', area: true, main: true }], legend: [{ name: 'Ad Spend', color: '#2C3420' }] },
+      // Jan–Jul: ad sales only in the active campaign months (Mar/Apr/Jul); organic tracks monthly UK
+      // gross revenue net of ad-attributed sales. Sums to £7,335 organic + £1,596 ad.
+      revBreakChart: { max: 3000, yTicks: ['£3k','£2.25k','£1.5k','£0.75k','£0'], xLabels: ['Jan','Feb','Mar','Apr','May','Jun','Jul'], series: [{ color: '#2C3420', values: [0,0,638,787,0,0,171] }, { color: '#a7ab90', values: [0,216,1104,1674,2904,1116,321] }], legend: [{ name: 'Ad sales', color: '#2C3420' }, { name: 'Organic', color: '#a7ab90' }] },
       sec: {
         overviewActuals: {
           kpis: [
-            { bar: '#2C3420', lbl: 'UK Sales', val: '£11,107', dCls: 'df', d: 'YTD actuals',    s: 'Amazon UK' },
-            { bar: '#1e4fa0', lbl: 'US Sales', val: '$1,894',  dCls: 'df', d: 'YTD actuals',    s: 'Amazon US' },
-            { bar: '#3B6D11', lbl: 'Orders',   val: '445',     dCls: 'df', d: 'UK 358 · US 87', s: 'Jan–Jun' },
-            { bar: '#C8A84B', lbl: 'Units',    val: '493',     dCls: 'df', d: 'UK 395 · US 98', s: 'Jan–Jun' }
+            { bar: '#2C3420', lbl: 'UK Sales', val: '£9,062', dCls: 'df', d: 'YTD actuals',    s: 'Amazon UK' },
+            { bar: '#1e4fa0', lbl: 'US Sales', val: '$2,528', dCls: 'df', d: 'YTD actuals',    s: 'Amazon US' },
+            { bar: '#3B6D11', lbl: 'Orders',   val: '483',    dCls: 'df', d: 'UK 372 · US 111', s: 'Jan–Jul' },
+            { bar: '#C8A84B', lbl: 'Units',    val: '543',    dCls: 'df', d: 'UK 413 · US 130', s: 'Jan–Jul' }
           ],
           cvr: [
-            { label: 'Amazon UK', flag: 'gb', pct: 14, valText: '13.5%', color: 'green' },
-            { label: 'Amazon US', flag: 'us', pct: 4,  valText: '2.0%',  color: 'amber' }
+            { label: 'Amazon UK', flag: 'gb', pct: 13, valText: '13.1%', color: 'green' },
+            { label: 'Amazon US', flag: 'us', pct: 2,  valText: '2.2%',  color: 'amber' }
           ]
         },
         products: {
           kpis: [
-            { bar: '#2C3420', lbl: 'UK Sales', val: '£11,107', dCls: 'df', d: 'YTD actuals',    s: 'Jan–Jun' },
-            { bar: '#3B6D11', lbl: 'Orders',   val: '445',     dCls: 'df', d: 'UK 358 · US 87', s: 'Jan–Jun' },
-            { bar: '#1e4fa0', lbl: 'Units',    val: '493',     dCls: 'df', d: 'UK 395 · US 98', s: 'Jan–Jun' },
-            { bar: '#C8A84B', lbl: 'AOV (UK)', val: '£31.03',  dCls: 'df', d: 'YTD avg',        s: 'US $21.77' }
+            { bar: '#2C3420', lbl: 'UK Sales', val: '£9,062', dCls: 'df', d: 'YTD actuals',    s: 'Jan–Jul' },
+            { bar: '#3B6D11', lbl: 'Orders',   val: '483',    dCls: 'df', d: 'UK 372 · US 111', s: 'Jan–Jul' },
+            { bar: '#1e4fa0', lbl: 'Units',    val: '543',    dCls: 'df', d: 'UK 413 · US 130', s: 'Jan–Jul' },
+            { bar: '#C8A84B', lbl: 'AOV (UK)', val: '£24.36', dCls: 'df', d: 'YTD avg',        s: 'US $22.77' }
           ],
           table: [
-            { flag: 'gb', name: 'Amazon UK', revenue: '£11,107', units: '395', orders: '358', cvr: '13.5%', cvrCls: 'bg', aov: '£31.03' },
-            { flag: 'us', name: 'Amazon US', revenue: '$1,894',  units: '98',  orders: '87',  cvr: '2.0%',  cvrCls: 'br', aov: '$21.77' }
+            { flag: 'gb', name: 'Amazon UK', revenue: '£9,062', units: '413', orders: '372', cvr: '13.1%', cvrCls: 'bg', aov: '£24.36' },
+            { flag: 'us', name: 'Amazon US', revenue: '$2,528', units: '130', orders: '111', cvr: '2.2%',  cvrCls: 'br', aov: '$22.77' }
           ]
         },
         pnl: {
           margin: {
-            pct: '20.4%', pctColor: 'green', note: 'Amazon UK · Jan–Jun 2026',
+            pct: '18.5%', pctColor: 'amber', note: 'Amazon UK · Jan–Jul 2026',
             rows: [
-              { lbl: 'Gross Revenue', val: '£7,837' },
-              { lbl: 'Selling Fees',  val: '−£1,380', color: 'red' },
-              { lbl: 'Fulfilment',    val: '−£1,654', color: 'red' },
-              { lbl: 'Ad Spend',      val: '−£423',   color: 'red' },
-              { lbl: 'COGS',          val: '−£2,784', color: 'red' },
-              { lbl: 'Net Profit',    val: '£1,596',  color: 'green', strong: true }
+              { lbl: 'Gross Revenue', val: '£8,488' },
+              { lbl: 'Selling Fees',  val: '−£1,506', color: 'red' },
+              { lbl: 'Fulfilment',    val: '−£1,938', color: 'red' },
+              { lbl: 'Ad Spend',      val: '−£604',   color: 'red' },
+              { lbl: 'COGS',          val: '−£2,867', color: 'red' },
+              { lbl: 'Net Profit',    val: '£1,572',  color: 'green', strong: true }
             ]
           },
           statement: {
-            fixedLabel: 'Amazon UK · Jan–Jun 2026 (all-time)',
+            fixedLabel: 'Amazon UK · Jan–Jul 2026 (all-time)',
             groups: [
               { header: 'Income', rows: [
-                { lbl: 'Shipped product sales', amount: '£8,344', pct: '106.5%', unit: '£21.12' },
-                { lbl: 'Promotions', amount: '−£228', pct: '−2.9%', unit: '−£0.58' },
-                { lbl: 'Refunds', amount: '−£59', pct: '−0.8%', unit: '−£0.15' },
-                { lbl: 'Other income', amount: '£142', pct: '1.8%', unit: '£0.36' },
-                { lbl: 'Net revenue', amount: '£7,837', pct: '100.0%', unit: '£19.84', total: true }
+                { lbl: 'Shipped product sales', amount: '£8,930', pct: '105.2%', unit: '£21.62' },
+                { lbl: 'Promotions', amount: '−£221', pct: '−2.6%', unit: '−£0.54' },
+                { lbl: 'Refunds', amount: '−£13', pct: '−0.2%', unit: '−£0.03' },
+                { lbl: 'Other income', amount: '£145', pct: '1.7%', unit: '£0.35' },
+                { lbl: 'Net revenue', amount: '£8,488', pct: '100.0%', unit: '£20.55', total: true }
               ] },
               { header: 'Expenses', rows: [
-                { lbl: 'Advertising', amount: '£423', pct: '5.4%', unit: '£1.07' },
-                { lbl: 'Selling fees', amount: '£1,380', pct: '17.6%', unit: '£3.49' },
-                { lbl: 'Fulfilment and shipping', amount: '£1,654', pct: '21.1%', unit: '£4.19' },
-                { lbl: 'Cost of goods', amount: '£2,784', pct: '35.5%', unit: '£7.05' },
-                { lbl: 'Total expenses', amount: '£6,242', pct: '79.6%', unit: '£15.80', total: true }
+                { lbl: 'Advertising', amount: '£604', pct: '7.1%', unit: '£1.46' },
+                { lbl: 'Selling fees', amount: '£1,506', pct: '17.7%', unit: '£3.65' },
+                { lbl: 'Fulfilment and shipping', amount: '£1,938', pct: '22.8%', unit: '£4.69' },
+                { lbl: 'Cost of goods', amount: '£2,867', pct: '33.8%', unit: '£6.94' },
+                { lbl: 'Total expenses', amount: '£6,916', pct: '81.5%', unit: '£16.75', total: true }
               ] },
               { header: 'Profit', rows: [
-                { lbl: 'PROFIT', amount: '£1,596', pct: '20.4%', unit: '£4.04', total: true, profit: true },
-                { lbl: 'Profit %', amount: '20.4%', accent: 'green' }
+                { lbl: 'PROFIT', amount: '£1,572', pct: '18.5%', unit: '£3.81', total: true, profit: true },
+                { lbl: 'Profit %', amount: '18.5%', accent: 'green' }
               ] },
               { header: 'Metrics', rows: [
-                { lbl: 'Units sold', amount: '395' },
-                { lbl: 'Orders', amount: '358' }
+                { lbl: 'Units sold', amount: '413' },
+                { lbl: 'Orders', amount: '372' }
               ] }
             ]
           },
           mkt: [
-            { name: 'Amazon UK', flag: 'gb', revenue: '£7,837', adspend: '£423', net: '£1,596', netColor: 'green', margin: '20.4%', marginCls: 'bg' },
-            { name: 'Amazon US', flag: 'us', revenue: '$1,531', adspend: '$0',   net: '$266',   netColor: 'green', margin: '17.4%', marginCls: 'ba' }
+            { name: 'Amazon UK', flag: 'gb', revenue: '£8,488', adspend: '£604', net: '£1,572', netColor: 'green', margin: '18.5%', marginCls: 'ba' },
+            { name: 'Amazon US', flag: 'us', revenue: '$1,833', adspend: '$0',   net: '$476',   netColor: 'green', margin: '26.0%', marginCls: 'bg' }
           ]
         },
         advertising: {
           metrics: [
-            { lbl: 'Total Spend', val: '£423', id: 'a-spend' },
-            { lbl: 'Ad Sales',    val: '£1,298' },
-            { lbl: 'ACOS',        val: '32.6%', color: 'amber' },
-            { lbl: 'TACOS',       val: '3.8%', id: 'a-tacos' },
-            { lbl: 'ROAS',        val: '3.07×', id: 'a-roas' },
+            { lbl: 'Total Spend', val: '£597', id: 'a-spend' },
+            { lbl: 'Ad Sales',    val: '£1,596' },
+            { lbl: 'ACOS',        val: '37.4%', color: 'amber' },
+            { lbl: 'TACOS',       val: '6.6%', id: 'a-tacos' },
+            { lbl: 'ROAS',        val: '2.67×', id: 'a-roas' },
             { lbl: 'Avg. CPC',    val: '—' }
           ]
         }
@@ -406,156 +409,164 @@ window.DASHBOARD_DATA = {
 
     },
 
-    // ===== AMAZON ANALYTICS — MerchantSpring snapshot (Harvaza Distribution UK + US) =====
+    // ===== AMAZON ANALYTICS — MerchantSpring pulled 2026-08-18 (Harvaza Distribution UK + US) =====
     // Top-level (period-independent) sections so the Amazon pages render under the founder 'fy'
-    // selector. Snapshot window: last 30 days to 2026-06-25. UK = GBP, US = USD (mixed-currency,
-    // shown per-market). TODO: replace with a build-harvaza-data.ps1 baker for repeatable refresh.
+    // selector. UK = GBP, US = USD (mixed-currency, shown per-market). TODO: replace with a
+    // build-harvaza-data.ps1 baker for repeatable refresh.
     // Founder Overview "Amazon actuals" widgets. kpis + cvr are period-aware (sec.overviewActuals on
-    // 3m/6m); revTrend + buyBox are top-level (don't vary by period). Default here = Last Month (May).
+    // 3m/6m); revTrend + buyBox are top-level (don't vary by period). Default here = Last Month (July).
     overviewActuals: {
       kpis: [
-        { bar: '#2C3420', lbl: 'UK Sales', val: '£3,832', dCls: 'du', d: '▲ vs £3,238 Apr', s: 'Amazon UK' },
-        { bar: '#1e4fa0', lbl: 'US Sales', val: '$866',   dCls: 'du', d: '▲ vs $539 Apr',   s: 'Amazon US' },
-        { bar: '#3B6D11', lbl: 'Orders',   val: '140',    dCls: 'du', d: 'UK 105 · US 35',   s: 'May 2026' },
-        { bar: '#C8A84B', lbl: 'Units',    val: '158',    dCls: 'df', d: 'UK 114 · US 44',   s: 'May 2026' }
+        { bar: '#2C3420', lbl: 'UK Sales', val: '£624', dCls: 'dd', d: '▼ vs £836 Jun', s: 'Amazon UK' },
+        { bar: '#1e4fa0', lbl: 'US Sales', val: '$551', dCls: 'du', d: '▲ vs $434 Jun', s: 'Amazon US' },
+        { bar: '#3B6D11', lbl: 'Orders',   val: '35',   dCls: 'df', d: 'UK 14 · US 21', s: 'Jul 2026' },
+        { bar: '#C8A84B', lbl: 'Units',    val: '46',   dCls: 'df', d: 'UK 18 · US 28', s: 'Jul 2026' }
       ],
       revTrend: {
-        max: 5000, yTicks: ['£5k', '£3.75k', '£2.5k', '£1.25k', '£0'],
-        xLabels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], xHighlight: '#2C3420',
-        series: [{ values: [0, 240, 1524, 4335, 3832, 1176], color: '#2C3420', area: true, main: true }],
+        max: 3000, yTicks: ['£3k', '£2.25k', '£1.5k', '£0.75k', '£0'],
+        xLabels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'], xHighlight: '#2C3420',
+        series: [{ values: [240, 1992, 2460, 2911, 836, 624], color: '#2C3420', area: true, main: true }],
         legend: [{ name: 'Amazon UK revenue (ordered)', color: '#2C3420' }]
       },
       buyBox: [
-        { label: 'Amazon UK', flag: 'gb', pct: 99,  valText: '99%',  color: 'green' },
+        { label: 'Amazon UK', flag: 'gb', pct: 50,  valText: '50%',  color: 'amber' },
         { label: 'Amazon US', flag: 'us', pct: 100, valText: '100%', color: 'green' }
       ],
       cvr: [
-        { label: 'Amazon UK', flag: 'gb', pct: 20, valText: '19.5%', color: 'green' },
-        { label: 'Amazon US', flag: 'us', pct: 6,  valText: '3.1%',  color: 'amber' }
+        { label: 'Amazon UK', flag: 'gb', pct: 8, valText: '8.0%', color: 'green' },
+        { label: 'Amazon US', flag: 'us', pct: 3, valText: '3.2%', color: 'amber' }
       ]
     },
 
-    // Default = Last Month (May 2026). 3m/6m override via dateRanges[p].sec.products.
+    // Default = Last Month (July 2026). 3m/6m override via dateRanges[p].sec.products.
     products: {
       kpis: [
-        { bar: '#2C3420', lbl: 'UK Sales', val: '£3,832', dCls: 'du', d: '▲ vs £3,238 Apr', s: 'May 2026' },
-        { bar: '#3B6D11', lbl: 'Orders',   val: '140',    dCls: 'du', d: 'UK 105 · US 35',  s: 'May 2026' },
-        { bar: '#1e4fa0', lbl: 'Units',    val: '158',    dCls: 'df', d: 'UK 114 · US 44',  s: 'May 2026' },
-        { bar: '#C8A84B', lbl: 'AOV (UK)', val: '£36.49', dCls: 'du', d: '▲ vs £30.84 Apr', s: 'US $24.74' }
+        { bar: '#2C3420', lbl: 'UK Sales', val: '£624',   dCls: 'dd', d: '▼ vs £836 Jun',  s: 'Jul 2026' },
+        { bar: '#3B6D11', lbl: 'Orders',   val: '35',     dCls: 'df', d: 'UK 14 · US 21',  s: 'Jul 2026' },
+        { bar: '#1e4fa0', lbl: 'Units',    val: '46',     dCls: 'df', d: 'UK 18 · US 28',  s: 'Jul 2026' },
+        { bar: '#C8A84B', lbl: 'AOV (UK)', val: '£44.56', dCls: 'du', d: '▲ vs £26.11 Jun', s: 'US $26.22' }
       ],
       table: [
-        { flag: 'gb', name: 'Amazon UK', revenue: '£3,832', units: '114', orders: '105', cvr: '19.5%', cvrCls: 'bg', aov: '£36.49' },
-        { flag: 'us', name: 'Amazon US', revenue: '$866',   units: '44',  orders: '35',  cvr: '3.1%',  cvrCls: 'br', aov: '$24.74' }
+        { flag: 'gb', name: 'Amazon UK', revenue: '£624', units: '18', orders: '14', cvr: '8.0%', cvrCls: 'bg', aov: '£44.56' },
+        { flag: 'us', name: 'Amazon US', revenue: '$551', units: '28', orders: '21', cvr: '3.2%', cvrCls: 'br', aov: '$26.22' }
       ]
     },
 
+    // Current stock snapshot (period-independent) — getSalesByProduct includeNoInventory, both channels.
     inventory: {
       kpis: [
-        { bar: 'green', lbl: 'In Stock',  val: '2',   dCls: 'du', d: 'ASINs healthy',  s: 'US bottles' },
-        { bar: 'amber', lbl: 'Low Stock', val: '2',   dCls: 'df', dColor: 'amber', d: 'Stock-up urgent', s: 'UK <3 days cover' },
+        { bar: 'green', lbl: 'In Stock',  val: '5',   dCls: 'du', d: 'ASINs healthy',  s: 'UK + US' },
+        { bar: 'amber', lbl: 'Low Stock', val: '1',   dCls: 'df', dColor: 'amber', d: 'Stock-up urgent', s: 'US <4 days cover' },
         { bar: 'red',   lbl: 'OOS',       val: '0',   dCls: 'du', d: 'None currently', s: '—' },
-        { bar: 'blue',  lbl: 'OOS %',     val: '33%', dCls: 'dd', d: 'UK channel',     s: 'US 25%' }
+        { bar: 'blue',  lbl: 'OOS %',     val: '40%', dCls: 'dd', d: 'UK channel',     s: 'US 25%' }
       ],
       stock: [
-        { dot: 'da', name: 'Bervera 24×200ml — UK',  note: 'B0CQRHMWFL · FBA · Low',      units: '2 units',  unitsColor: 'amber', days: '~2 days' },
-        { dot: 'dr', name: 'Bervera 6×200ml — UK',   note: 'B0D29PL6NJ · FBA · Critical', units: '1 unit',   unitsColor: 'red',   days: '<1 day', daysColor: 'red' },
-        { dot: 'dg', name: 'Hydrte Nero Black — US', note: 'B0B1N844DS · FBA · Healthy',  units: '53 units', days: '~145 days' },
-        { dot: 'dg', name: 'Hydrte Slate Grey — US', note: 'B0CHJNPWHV · FBA · Healthy',  units: '15 units', days: '~75 days' }
+        { dot: 'dg', name: 'Bervera 24×200ml — UK (FBM)', note: 'B0CQRHMWFL · FBM · Healthy', units: '235 units', days: '~783 days' },
+        { dot: 'dg', name: 'Bervera 24×200ml — UK (FBA)', note: 'B0CQRHMWFL · FBA · Healthy', units: '67 units',  days: '~69 days' },
+        { dot: 'dr', name: 'Hydrte 18oz — Slate (US)',    note: 'B0CHJNPWHV · FBA · Critical', units: '1 unit',   unitsColor: 'red', days: '~4 days', daysColor: 'red' },
+        { dot: 'dg', name: 'Hydrte 11.8oz — Nero (US)',   note: 'B0B1N844DS · FBA · Healthy', units: '41 units', days: '~205 days' },
+        { dot: 'dg', name: 'Hydrte 18oz — Nero (US)',     note: 'B0CRKS94F1 · FBA · Healthy', units: '52 units', days: '~260 days' },
+        { dot: 'dg', name: 'Hydrte 11.8oz — Champagne (US)', note: 'B0B1N7759K · FBA · Healthy · no sales this period', units: '90 units', days: '~450 days' }
       ],
       restock: [
-        { level: 'red',   title: 'Bervera 6×200ml — UK',  sub: '<1 day cover · Immediate restock' },
-        { level: 'amber', title: 'Bervera 24×200ml — UK', sub: '2 days cover · Stock-up now' }
+        { level: 'red', title: 'Hydrte 18oz — Slate (US)', sub: '~4 days cover · Immediate restock' }
       ]
     },
 
-    // Amazon settlement P&L (MerchantSpring snapshot, last 30 days). Renders on the 'pnl' page
-    // (relabelled "Amazon P&L"). UK = £ base; US shown $ in the per-market table. Ad spend £0.
+    // Amazon P&L — accrual basis (getStoreProfitAndLoss, profitabilityView:'accrual'; settled/cash-basis
+    // was tried first but the most recent months hadn't finished settling — accrual recognises revenue
+    // at order time so July isn't blank). Renders on the 'pnl' page ("Amazon P&L"). UK = £ base; US
+    // shown $ in the per-market table. This card's own "Advertising" line is the P&L tool's own figure —
+    // a different lens from the Advertising-page spend (dateRanges/sections.advertising, sourced from
+    // getAdvertisingByChannels); the two are not meant to reconcile (same convention as ordered vs net
+    // P&L revenue elsewhere in this file).
     pnl: {
-      // Product portfolio — REAL per-product P&L from MerchantSpring (May 2026, UK + US channels).
-      // Ranked by margin % (currency-neutral); profit shown in native currency (UK £, US $). All 5
-      // active SKUs were profitable in May. Refresh via MS getProductProfitAndLoss for both channels.
+      // Product portfolio — REAL per-product P&L from MerchantSpring (July 2026, accrual, UK + US
+      // channels). Ranked by margin % (currency-neutral); profit shown in native currency (UK £, US $).
+      // All 5 active SKUs were profitable in July. Refresh via MS getProductProfitAndLoss for both channels.
       portfolio: {
         total: 5, profitable: 5, breakeven: 0, unprofitable: 0,
         most: [
-          { name: 'Hydrte 18oz — Nero (US)',   profit: '$131', margin: '28%', marginCls: 'bg' },
-          { name: 'Bervera 6×200ml (UK)',      profit: '£174', margin: '27%', marginCls: 'bg' },
-          { name: 'Hydrte 18oz — Slate (US)',  profit: '$39',  margin: '26%', marginCls: 'bg' }
+          { name: 'Bervera 24×200ml (UK, FBM)', profit: '£305', margin: '85%', marginCls: 'bg' },
+          { name: 'Hydrte 11.8oz — Nero (US)',   profit: '$58',  margin: '32%', marginCls: 'bg' },
+          { name: 'Bervera 24×200ml (UK, FBA)',  profit: '£42',  margin: '32%', marginCls: 'bg' }
         ],
         least: [
-          { name: 'Hydrte 11.8oz — Nero (US)', profit: '$75',  margin: '25%', marginCls: 'ba', color: 'var(--amber)' },
-          { name: 'Bervera 24×200ml (UK)',     profit: '£326', margin: '20%', marginCls: 'ba', color: 'var(--amber)' }
+          { name: 'Hydrte 18oz — Nero (US)',  profit: '$42', margin: '28%', marginCls: 'ba', color: 'var(--amber)' },
+          { name: 'Hydrte 18oz — Slate (US)', profit: '$75', margin: '27%', marginCls: 'ba', color: 'var(--amber)' }
         ]
       },
       margin: {
-        pct: '13.4%', pctColor: 'amber', note: 'Amazon UK · May 2026',
+        pct: '34.8%', pctColor: 'green', note: 'Amazon UK · July 2026',
         rows: [
-          { lbl: 'Gross Revenue', val: '£1,895' },
-          { lbl: 'Selling Fees',  val: '−£330', color: 'red' },
-          { lbl: 'Fulfilment',    val: '−£341', color: 'red' },
-          { lbl: 'Ad Spend',      val: '−£201', color: 'red' },
-          { lbl: 'COGS',          val: '−£768', color: 'red' },
-          { lbl: 'Net Profit',    val: '£255',  color: 'green', strong: true }
+          { lbl: 'Gross Revenue', val: '£492' },
+          { lbl: 'Selling Fees',  val: '−£76',  color: 'red' },
+          { lbl: 'Fulfilment',    val: '−£79',  color: 'red' },
+          { lbl: 'Ad Spend',      val: '−£116', color: 'red' },
+          { lbl: 'COGS',          val: '−£50',  color: 'red' },
+          { lbl: 'Net Profit',    val: '£171',  color: 'green', strong: true }
         ]
       },
       statement: {
-        fixedLabel: 'Amazon UK · May 2026',
+        fixedLabel: 'Amazon UK · July 2026',
         groups: [
           { header: 'Income', rows: [
-            { lbl: 'Shipped product sales', amount: '£2,285', pct: '120.6%', unit: '£20.04' },
-            { lbl: 'Promotions', amount: '−£87', pct: '−4.6%', unit: '−£0.76' },
-            { lbl: 'Other income', amount: '£35', pct: '1.8%', unit: '£0.31' },
-            { lbl: 'Net revenue', amount: '£1,895', pct: '100.0%', unit: '£16.62', total: true }
+            { lbl: 'Shipped product sales', amount: '£492', pct: '100.0%', unit: '£27.33' },
+            { lbl: 'Promotions', amount: '−£0.25', pct: '−0.1%', unit: '−£0.01' },
+            { lbl: 'Other income', amount: '£0.25', pct: '0.1%', unit: '£0.01' },
+            { lbl: 'Net revenue', amount: '£492', pct: '100.0%', unit: '£27.33', total: true }
           ] },
           { header: 'Expenses', rows: [
-            { lbl: 'Advertising', amount: '£201', pct: '10.6%', unit: '£1.76' },
-            { lbl: 'Selling fees', amount: '£330', pct: '17.4%', unit: '£2.90' },
-            { lbl: 'Fulfilment and shipping', amount: '£341', pct: '18.0%', unit: '£2.99' },
-            { lbl: 'Cost of goods', amount: '£768', pct: '40.5%', unit: '£6.74' },
-            { lbl: 'Total expenses', amount: '£1,640', pct: '86.6%', unit: '£14.39', total: true }
+            { lbl: 'Advertising', amount: '£116', pct: '23.7%', unit: '£6.47' },
+            { lbl: 'Selling fees', amount: '£76', pct: '15.4%', unit: '£4.21' },
+            { lbl: 'Fulfilment and shipping', amount: '£79', pct: '16.0%', unit: '£4.38' },
+            { lbl: 'Cost of goods', amount: '£50', pct: '10.2%', unit: '£2.78' },
+            { lbl: 'Total expenses', amount: '£321', pct: '65.3%', unit: '£17.83', total: true }
           ] },
           { header: 'Profit', rows: [
-            { lbl: 'PROFIT', amount: '£255', pct: '13.4%', unit: '£2.24', total: true, profit: true },
-            { lbl: 'Profit %', amount: '13.4%', accent: 'green' }
+            { lbl: 'PROFIT', amount: '£171', pct: '34.8%', unit: '£9.50', total: true, profit: true },
+            { lbl: 'Profit %', amount: '34.8%', accent: 'green' }
           ] },
           { header: 'Metrics', rows: [
-            { lbl: 'Units sold', amount: '114' },
-            { lbl: 'Orders', amount: '105' }
+            { lbl: 'Units sold', amount: '18' },
+            { lbl: 'Orders', amount: '14' }
           ] }
         ]
       },
       mkt: [
-        { name: 'Amazon UK', flag: 'gb', revenue: '£1,895', adspend: '£201', net: '£255', netColor: 'green', margin: '13.4%', marginCls: 'ba' },
-        { name: 'Amazon US', flag: 'us', revenue: '$758',   adspend: '$0',   net: '$214', netColor: 'green', margin: '28.2%', marginCls: 'bg' }
+        { name: 'Amazon UK', flag: 'gb', revenue: '£492', adspend: '£116', net: '£171', netColor: 'green', margin: '34.8%', marginCls: 'bg' },
+        { name: 'Amazon US', flag: 'us', revenue: '$497', adspend: '$0',   net: '$148', netColor: 'green', margin: '29.7%', marginCls: 'bg' }
       ]
     },
 
-    // Advertising — UK ads currently PAUSED (£0 last 30 days). Figures below = last active campaign
-    // month (Mar 28–Apr 26). No campaign-level / CPC data from MerchantSpring (endpoint offline).
-    // KPI row + chart come from dateRanges (above); these cards fill the rest of the page.
+    // Advertising — UK ads resumed in July after being paused May–Jun (were also active Mar–Apr).
+    // No campaign-level / CPC breakdown from MerchantSpring (endpoint offline) — figures are account-
+    // level (getAdvertisingByChannels). KPI row + chart come from dateRanges (above); these cards fill
+    // the rest of the page.
     advertising: {
       metrics: [
-        { lbl: 'Total Spend', val: '£201', id: 'a-spend' },
-        { lbl: 'Ad Sales',    val: '£621' },
-        { lbl: 'ACOS',        val: '32.4%', color: 'amber' },
-        { lbl: 'TACOS',       val: '5.2%', id: 'a-tacos' },
-        { lbl: 'ROAS',        val: '3.09×', id: 'a-roas' },
+        { lbl: 'Total Spend', val: '£110', id: 'a-spend' },
+        { lbl: 'Ad Sales',    val: '£171' },
+        { lbl: 'ACOS',        val: '64.1%', color: 'amber' },
+        { lbl: 'TACOS',       val: '17.6%', id: 'a-tacos' },
+        { lbl: 'ROAS',        val: '1.56×', id: 'a-roas' },
         { lbl: 'Avg. CPC',    val: '—' }
       ],
       budgets: {
-        headers: ['Spend Mar–Apr', 'May', 'Jun', 'Plan'],
-        subLabel: 'Last active Mar–Apr 2026 · ads paused',
+        headers: ['May', 'Jun', 'Spend Jul', 'Plan'],
+        subLabel: 'Active Jul 2026 · paused May–Jun, active again after a Mar–Apr run',
         rows: [
-          { name: 'Amazon UK', flag: 'gb', cells: ['£329', '£0', '£0', 'TBC'] },
+          { name: 'Amazon UK', flag: 'gb', cells: ['£0', '£0', '£110', 'TBC'] },
           { name: 'Amazon US', flag: 'us', cells: ['$0', '$0', '$0', 'TBC'] },
-          { name: 'Total', total: true, cells: ['£329', '£0', '£0', '—'] }
+          { name: 'Total', total: true, cells: ['£0', '£0', '£110', '—'] }
         ]
       },
       forecast: [
-        { month: 'Jun', budget: '£0 · paused', pct: 3, opacity: 0.5, tacos: '—', tacosColor: 'muted', roas: '—' },
-        { month: 'Jul', budget: 'TBC',         pct: 3, opacity: 0.4, tacos: '—', tacosColor: 'muted', roas: '—' }
+        { month: 'Aug', budget: 'TBC', pct: 3, opacity: 0.5, tacos: '—', tacosColor: 'muted', roas: '—' },
+        { month: 'Sep', budget: 'TBC', pct: 3, opacity: 0.4, tacos: '—', tacosColor: 'muted', roas: '—' }
       ],
       campaigns: [
-        { name: 'No active campaigns', type: 'Ads paused · last active Mar–Apr 2026', spend: '£0', sales: '£0', acos: '—', acosCls: 'bb', roas: '—', cpc: '—', status: 'Paused', statusCls: 'ba' }
+        { name: 'All active campaigns', type: 'Amazon UK · July 2026', spend: '£110', sales: '£171', acos: '64.1%', acosCls: 'ba', roas: '1.56×', cpc: '—', status: 'Active', statusCls: 'bg' }
       ]
     }
   }
