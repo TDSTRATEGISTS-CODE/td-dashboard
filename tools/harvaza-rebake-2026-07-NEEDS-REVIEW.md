@@ -54,3 +54,13 @@ checking whether this is Harvaza-specific or account-wide, and whether it's a tr
 sync issue vs. a permanent API change) — or re-bake by hand, picking one tool as the
 source of truth per field and documenting that choice in the runbook (README →
 "Re-baking Harvaza's Amazon data") rather than leaving it implicit.
+
+## Re-run confirmation (2026-08-18, on user request)
+
+Re-ran after rebasing onto latest `main` (which had since picked up July 2026 re-bakes for
+AMACX/NKV/Abimax — so the connector itself is working fine for other accounts). Re-pulled
+the same three tools for the same UK channel/April-2026 window used as the diagnostic case
+above: `getStoreProfitAndLoss.advertisingSpend` (£131.96), `getSalesByPeriod` (£536.82),
+`getAdvertisingByChannels` (£280.69) — all **identical, to the penny**, to the first run.
+This rules out a transient sync blip; the inconsistency is stable and reproducible. Still
+not publishing — no change to the recommended next step above.
