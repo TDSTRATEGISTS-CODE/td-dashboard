@@ -10,7 +10,7 @@ window.DASHBOARD_CONFIG = {
     name: 'Harvaza Ltd',                          // sidebar client name
     title: 'Harvaza Ltd — TD Strategists',        // browser tab <title>
     portalLabel: 'CLIENT PORTAL',                 // small label under the logo
-    reportPeriodLabel: 'Jun 2026 · Year 1 Forecast',
+    reportPeriodLabel: 'Aug 2026 · Year 1 Forecast',
     logo: 'logo.svg',                             // per-client fallback (unused while logoSrc is set)
     logoSrc: 'td-logo.png',                       // shared TD logo for now (dashboard/td-logo.png)
     logoAlt: 'TD Strategists',
