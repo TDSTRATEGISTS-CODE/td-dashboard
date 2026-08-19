@@ -223,7 +223,8 @@ sections.shopify = {
 }
 ```
 
-**Data source.** This is the **post-Porter** bake (30 Jun 2026). The Shopify-via-Porter feed is gone;
+**Data source.** This is the **post-Porter** architecture (switched over 30 Jun 2026, re-baked monthly since —
+see the "Monthly re-bake routine" step 8 for the current process). The Shopify-via-Porter feed is gone;
 the page now pairs two sources, mirroring the Amazon side:
 - **Order-side** (net sales, orders, AOV, units, product mix, stock-on-hand) → **MerchantSpring's
   Shopify channels** — Contours Rx `33616599`, Newnique `110450469` (the same connector that already
@@ -542,31 +543,44 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
 
 ## Refreshing NKV (hand-baked — no generator)
 
-NKV's `data.js` has **no `.ps1`** — it's hand-baked from MerchantSpring in a Claude session, with the
-sheet-driven parts overlaid **live** by `nkv-sheet-proxy.gs`. To refresh: re-pull the blocks below via the
-MCP, hand-edit `clients/nkv/data.js`, bump **`APP_VER`**, and upload `data.js` + `index.html` (no proxy
-redeploy for a data-only refresh). Channels — **UK `71662311`** (`A1SNRD9T28Z9ZM @ A1F83G8C2ARO7P`),
-**IE `86715690`** (`… @ A28R8C7NBKEWEA`), **US `109142957`** (`A18Z9VPWTLGIMA @ ATVPDKIKX0DER`, a separate
-Newnique-only seller).
+NKV's `data.js` has **no `.ps1`** — it's hand-baked in a Claude session from **two separate live sources**
+(MerchantSpring for both Amazon and Shopify order-side, GA4 via Reporting Ninja for Shopify session-side),
+with the sheet-driven parts overlaid **live** by `nkv-sheet-proxy.gs`. To refresh: re-pull the blocks below
+via MCP, hand-edit `clients/nkv/data.js`, bump **`APP_VER`**, and push (no proxy redeploy for a data-only
+refresh). Amazon channels — **UK `71662311`** (`A1SNRD9T28Z9ZM @ A1F83G8C2ARO7P`), **IE `86715690`**
+(`… @ A28R8C7NBKEWEA`), **US `109142957`** (`A18Z9VPWTLGIMA @ ATVPDKIKX0DER`, a separate Newnique-only
+seller). Shopify + GA4 channels are in their own table further down.
 
 **Live via the proxy (never re-baked):** Overview project board (In Progress / Upcoming / Completed),
 `sections.shopifypnl`, `sections.inventory.supplierPOs`.
 
-**Baked from MerchantSpring (refresh in-session):**
+**Baked from MerchantSpring (refresh in-session) — the Amazon side:**
 
 | Block | Source | Notes |
 |---|---|---|
 | `dateRanges` KPIs + `marketKpis` (uk/irl/usa) | `getSalesByPeriod` (single-month, `includeTax:true`) + `getAdvertisingByChannels` | period-aware; `all` = UK top-level, per-market overlays |
+| `sections.charts` (Overview/Advertising trend charts) | `getSalesByPeriod` monthly buckets (UK) | rolling trailing-6-month window — shift forward + append the new month, drop the oldest. **Easy to miss**: this is a separate block from `dateRanges`, with its own runbook step (2) below |
 | `sections.advertising.metrics` (+ per-period `sec`) & `campaigns` | `getAdvertisingByChannels` / `getSalesByProduct` (UK) | Ad Metrics card (TACOS/ROAS intentionally dropped from the list) + Active Campaigns |
 | `campaignMix` (per period) | campaign sales-share by `ad_type` (UK) | pie — colours **#404935 / #9caf78 / #e8a87c** (SP / SB / SD) |
 | `sections.inventory.{kpisByMarket,stockByMarket,restockByMarket}` (irl/usa) | `getSalesByProduct` `includeNoInventory:true` per channel (current snapshot) | IE ships FBA from UK; US Supplier-PO card hidden via `supplierPOsByMarket:{usa:[]}` |
 | `stockWarn` (Overview FBA card) | `getSalesByProduct` `includeNoInventory:true` (UK) | `quantity==0` ⇒ out of stock / suppressed (currently 26 of 77 UK listings) |
 | `sections.products.groupsByPeriod` (Ad Spend + TACOS, per market) | `getSalesByProduct` per window × brand | UK real (TACOS = ad spend ÷ brand sales); **IE allocated from its real 12-mo brand mix** (no ads → TACOS n/a); **US £0** (recently launched) |
 
+**Baked from MerchantSpring + GA4 (refresh in-session) — the Shopify (D2C) side, `sections.shopify`:** see
+"Shopify (D2C) page — `sections.shopify`" above for the full data shape. **This is a completely separate
+pipeline from the Amazon side above and is easy to forget** — it has its own channels, its own chart, and
+doesn't get touched by any of the Amazon steps.
+
+| Block | Source | Notes |
+|---|---|---|
+| Order-side: net sales, orders, AOV, product mix, stock (`byPeriod`, top-level `stock`) | MerchantSpring `getSalesByPeriod` + `getSalesByProduct` `includeNoInventory:true` — Shopify channel **Contours Rx `33616599`** (`658f4a.myshopify.com`) | Newnique (`110450469`) order-side is **not yet ingested** — leave its order-side cards reading "pending Executive integration" |
+| Session-side: sessions, CVR, funnel, traffic (`byPeriod`, top-level `traffic`) | GA4 via the **Reporting Ninja** connector — `properties/394327082` (Contours Rx), `properties/506386258` (Newnique) | both stores' session-side is live |
+| Trend chart (top-level `chart`) | same MerchantSpring Shopify pull as order-side, monthly buckets | rolling trailing-6-month window, same shift-and-append pattern as `sections.charts` |
+
 **Sheet-baked (re-read the NKV Beauty Account Tracker, not MS):** `sections.advertising.budgets` + `forecast`
-(Marketing Metrics row — currently a flat forward budget), and the `sections.shopify` blocks. Per-client
-structure (Buy Box/Account-Health removed, pie moved, Ad-Budgets section hidden, IE/US Advertising gated)
-lives in `config.layout` / `config.marketMaintenance` — see "Per-client layout & market gating".
+(Marketing Metrics row — currently a flat forward budget). Per-client structure (Buy Box/Account-Health
+removed, pie moved, Ad-Budgets section hidden, IE/US Advertising gated) lives in `config.layout` /
+`config.marketMaintenance` — see "Per-client layout & market gating".
 
 ### Monthly re-bake routine (agent runbook)
 
@@ -575,13 +589,20 @@ unattended as a **Routine** (see "Automating it" below) or by hand any time. Fol
 each ends with a ✅ confirmation. **"This month" = the latest fully-closed calendar month** (e.g. run in early
 Aug → target July). Everything is repo-relative (repo root *is* the dashboard folder).
 
-**Channels** (pass `channelId` + `merchantId`):
+**Channels — Amazon (MerchantSpring, pass `channelId` + `merchantId`):**
 
 | Market | channelId | merchantId | Notes |
 |---|---|---|---|
 | UK  | `71662311`  | `A1SNRD9T28Z9ZM @ A1F83G8C2ARO7P` | the live market — real data, ad-managed |
 | IE  | `86715690`  | `… @ A28R8C7NBKEWEA`              | early-stage, EUR-native, **no ads**; ships FBA from UK |
 | US  | `109142957` | `A18Z9VPWTLGIMA @ ATVPDKIKX0DER`  | separate Newnique-only seller; **placeholder (zeros)** until it trades |
+
+**Channels — Shopify (D2C):**
+
+| Store | MerchantSpring channelId | merchantId | GA4 property (Reporting Ninja) | Notes |
+|---|---|---|---|---|
+| Contours Rx UK | `33616599` | `658f4a.myshopify.com` | `properties/394327082` | order-side + session-side both live |
+| Newnique | `110450469` | (Shopify domain) | `properties/506386258` | order-side **not yet ingested** (pending Executive integration); session-side live |
 
 **Periods** (recompute epochs each run with `calculateDateEpoch`, tz **`Europe/London`**): the object key **`may`
 is the "Last Month" slot — keep the key literally `may`; only update its `label`/`shortLabel`** to the new month.
@@ -593,53 +614,107 @@ is the "Last Month" slot — keep the key literally `may`; only update its `labe
    roas/spend/aov), their **MoM deltas** (`revD`, `spendD`, …) and colour codes (`revC` `du`/`df`), and the
    `mktRows` table. Top-level `all` = **UK** figures; `marketKpis.{uk,irl,usa}` are the per-market overlays.
    ✅ Confirm the `may` headline (rev / spend / TACOS / ROAS) matches Seller Central for the target month.
-2. **Ad Metrics + campaigns → `sections.advertising.metrics` (+ per-period `sec`) & `campaigns`.** UK
-   `getAdvertisingByChannels` / `getSalesByProduct`. (TACOS/ROAS are intentionally **omitted** from the metrics list.)
+
+   ⚠️ **`getSalesByPeriod` doubling bug:** when a month lands as the *first* bucket of a multi-month
+   `interval:'M'` pull, its `adSpend`/`adSales`/`tacos`/`acos` fields come back **exactly doubled** (`sales`/
+   `unitsSold`/`lineItemCount` are unaffected). Cross-check any ad figure against a pull where that month is
+   *not* first (or against `getAdvertisingByChannels`, which is capped at 30 days so doesn't have this bug)
+   before trusting it — don't just take the first response at face value.
+2. **Trend charts → `sections.charts`.** Separate from `dateRanges` — **easy to forget, and the #1 thing this
+   runbook has missed in practice.** Shift the rolling `months` window forward one month and append the new
+   month's UK/IE/US `rev`/`adSpend`/`adTacos` (drop the oldest month). Same `getSalesByPeriod` monthly-bucket
+   pull as step 1. ✅ Confirm `months[months.length-1]` is the new target month and the last value matches step 1's
+   headline rev/spend.
+3. **Ad Metrics + campaigns → `sections.advertising.metrics` (+ per-period `sec`) & `campaigns`.** UK
+   `getAdvertisingByChannels` / `getSalesByProduct`, or a generated **`campaigns` report** (`generateReport` →
+   `getReportStatus` → download the CSV) for a per-campaign breakdown and totals that sidestep the doubling bug
+   above. (TACOS/ROAS are intentionally **omitted** from the metrics list.)
    ✅ Confirm `metrics` totals reconcile with step 1's UK spend/ad-sales.
-3. **Campaign-type pie → `campaignMix` (per period).** UK campaign sales-share by `ad_type` — colours
+4. **Campaign-type pie → `campaignMix` (per period).** UK campaign sales-share by `ad_type` — colours
    **SP `#404935` / SB `#9caf78` / SD `#e8a87c`**. ✅ Confirm each period's pcts sum to ~100%.
-4. **Inventory → `sections.inventory.{kpisByMarket,stockByMarket,restockByMarket}` (irl/usa).**
+5. **Inventory → `sections.inventory.{kpisByMarket,stockByMarket,restockByMarket}` (irl/usa).**
    `getSalesByProduct` `includeNoInventory:true` per channel (current snapshot). IE ships FBA from UK; the US
    Supplier-PO card stays hidden via `supplierPOsByMarket:{usa:[]}`. ✅ Confirm per-market SKU counts are sane.
-5. **Overview FBA stock warning → `stockWarn`.** UK `getSalesByProduct` `includeNoInventory:true`; `quantity==0`
+6. **Overview FBA stock warning → `stockWarn`.** UK `getSalesByProduct` `includeNoInventory:true`; `quantity==0`
    ⇒ out-of-stock/suppressed. ✅ Confirm the "N of M UK listings" count.
-6. **Product groups → `sections.products.groupsByPeriod` (per market).** `getSalesByProduct` per window × brand.
+7. **Product groups → `sections.products.groupsByPeriod` (per market).** `getSalesByProduct` per window × brand.
    **UK real** (TACOS = ad spend ÷ brand sales); **IE allocated from its real 12-mo brand mix** (no ads → TACOS
-   `n/a`); **US £0**. ✅ Confirm 4 periods present per live market.
-7. **Sheet-baked → `sections.advertising.{budgets,forecast}` + `sections.shopify`.** Re-read the **NKV Beauty
-   Account Tracker** (Marketing Metrics row + Shopify block) — *not* MerchantSpring. **Do NOT touch the live-proxy
-   blocks** (Overview project board, `sections.shopifypnl`, `sections.inventory.supplierPOs` — served live by
-   `nkv-sheet-proxy.gs`). ✅ Confirm budgets/forecast reflect the current sheet.
-8. **Labels & metadata.** Update the `data.js` header comment (`pulled <date>`), each period's `label`/`shortLabel`,
-   and `config.js` `reportPeriodLabel` → `'<Mon YYYY> · Monthly Report'`. `defaultPeriod` stays `may`.
-9. **Validate.** Run the shape/syntax check (throws on any JS error, prints the keys):
-   ```bash
-   node -e "global.window={}; require('./clients/nkv/data.js'); const d=window.DASHBOARD_DATA; \
-     ['may','3m','6m','12m'].forEach(p=>{if(!d.dateRanges[p]) throw new Error('missing period '+p)}); \
-     console.log('shape OK →', d.dateRanges.may.label, d.dateRanges.may.rev)"
-   ```
-   Then eyeball sanity: TACOS never >100%, ROAS plausible (~2–3×), no negative/blank rev, every MoM delta present.
-   ✅ Confirm the check prints `shape OK` and the sanity pass is clean.
-10. **Bump the cache-buster.** Increment **`APP_VER`** in `index.html` (e.g. `2026-07-01e` → the new bake date+letter)
-    so browsers fetch the fresh `data.js`. A pure data refresh needs **no proxy redeploy**.
-11. **Publish + notify.** If **every** self-check passes (see the gate below), commit `clients/nkv/data.js` +
+   `n/a`); **US £0**. ✅ Confirm 4 periods present per live market. Watch for **new brand lines** launching
+   mid-year (e.g. a new product line showing up in the product report that isn't in the existing groups table
+   yet) — add them rather than silently dropping their sales into an existing line.
+8. **Shopify (D2C) → `sections.shopify`.** A **completely separate pipeline** from everything above — its own
+   channels, its own chart, its own connector (GA4/Reporting Ninja). See "Shopify (D2C) page —
+   `sections.shopify`" for the data shape and the Shopify channels table above for IDs.
+   - **Order-side** (net sales, orders, AOV, product mix, top-level `stock`): MerchantSpring `getSalesByPeriod`
+     + `getSalesByProduct` `includeNoInventory:true` on the **Contours Rx Shopify channel** (`33616599`).
+     Newnique's order-side stays "pending Executive integration" — leave those cards as-is.
+   - **Session-side** (sessions, CVR, cart→checkout→purchase funnel, top-level `traffic`): GA4 via **Reporting
+     Ninja** (`query_data`, fields `sessions`/`addToCarts`/`checkouts`/`ecommercePurchases`/
+     `sessionDefaultChannelGroup`) for **both** Contours Rx and Newnique properties.
+   - **Chart**: same shift-and-append pattern as step 2, using the Shopify channel's monthly net-sales buckets.
+   - Cross-check: per-product sales should sum to the period total to the penny (both pulls come from the same
+     MerchantSpring backend, so a mismatch means a filter/date-range mistake, not real variance).
+   - If a metric looks internally inconsistent (e.g. `totalPurchasers == firstTimePurchasers` for a store with
+     known repeat customers), don't bake it — mark that one field `'—'`/unavailable rather than publish a
+     number you don't trust. Don't let one bad field block the whole page.
+   - ✅ Confirm `sections.shopify.data.contoursrx.chart.months` ends on the target month and the net-sales
+     figures reconcile between the trend chart, the KPI card, and the product table.
+9. **Sheet-baked → `sections.advertising.{budgets,forecast}`.** Re-read the **NKV Beauty Account Tracker**
+   (Marketing Metrics row) — *not* MerchantSpring. **Do NOT touch the live-proxy blocks** (Overview project
+   board, `sections.shopifypnl`, `sections.inventory.supplierPOs` — served live by `nkv-sheet-proxy.gs`).
+   ✅ Confirm budgets/forecast reflect the current sheet.
+10. **Labels & metadata.** Update the `data.js` header comment (`pulled <date>`), each period's
+    `label`/`shortLabel`, and `config.js` `reportPeriodLabel` → `'<Mon YYYY> · Monthly Report'`. `defaultPeriod`
+    stays `may`. ✅ **Currency check**: confirm `config.js` has `client.currencyIcon: '£'` set (NKV is GBP-only;
+    without it, `app.js`'s shared chart-rendering helper (`moneyK`) silently defaults to `€` on the two trend
+    charts even though every other figure on the page is correctly `£` — this bit us once already).
+11. **Validate.** Run the shape/syntax check (throws on any JS error, prints the keys) — covers **both**
+    pipelines, not just `dateRanges`:
+    ```bash
+    node -e "global.window={}; require('./clients/nkv/data.js'); const d=window.DASHBOARD_DATA; \
+      ['may','3m','6m','12m'].forEach(p=>{if(!d.dateRanges[p]) throw new Error('missing period '+p)}); \
+      console.log('shape OK →', d.dateRanges.may.label, d.dateRanges.may.rev); \
+      console.log('chart last month →', d.sections.charts.months[d.sections.charts.months.length-1]); \
+      console.log('shopify chart last month →', d.sections.shopify.data.contoursrx.chart.xLabels.slice(-1)[0]);"
+    node -e "global.window={}; require('./clients/nkv/config.js'); \
+      if (!window.DASHBOARD_CONFIG.client.currencyIcon) throw new Error('currencyIcon not set');"
+    ```
+    Then eyeball sanity: TACOS never >100%, ROAS plausible (~2–3×), no negative/blank rev, every MoM delta present.
+    ✅ Confirm both commands succeed and the sanity pass is clean.
+
+    **If you have browser tooling available (Playwright/Chromium), use it.** Several of the bugs this runbook now
+    guards against (the trend chart silently not updating, charts defaulting to `€`) were only ever caught by
+    actually rendering the page and looking — the `node` shape checks above pass even when these are broken,
+    because they check that data *exists*, not that the right *page* reads it. A quick render of Overview,
+    Advertising, and Shopify (screenshot or DOM text-check for stray `€`) is worth more than another unit check.
+12. **Bump the cache-buster.** Increment **`APP_VER`** in `index.html` (e.g. `2026-07-01e` → the new bake
+    date+letter) so browsers fetch the fresh `data.js`. A pure data refresh needs **no proxy redeploy**. Use
+    **today's actual date**, not the date you started pulling data — a multi-hour session can cross midnight,
+    and other clients' same-day rebakes will bump this too (see the merge note below).
+13. **Publish + notify.** If **every** self-check passes (see the gate below), commit `clients/nkv/data.js` +
     `index.html` + `clients/nkv/config.js` and **push straight to `main`** — that host mirrors the repo, so it's
-    live (no proxy redeploy for a data-only refresh). Then log the run in GitHub issue
-    [**#4 "NKV monthly re-bake — run log"**](../../issues/4) with the headline figures (rev / ad spend / TACOS /
-    ROAS **vs prior month**) + `✅ validations passed`. **On any failure, do NOT touch `main`** — open a **draft PR**
-    (`… (NEEDS REVIEW)`) explaining what failed and drop a `⚠️` note on issue #4.
+    live (no proxy redeploy for a data-only refresh). **Before pushing, `git fetch origin main` and check for
+    new commits** — AMACX/Abimax/Harvaza rebakes running the same day also bump `APP_VER` in `index.html`, so a
+    same-day collision is normal and expected, not a sign something's wrong; merge, resolve the (usually
+    trivial) `APP_VER` conflict by picking today's date, re-run the validate step, then push. Then log the run
+    in GitHub issue [**#4 "NKV monthly re-bake — run log"**](../../issues/4) with the headline figures
+    (rev / ad spend / TACOS / ROAS **vs prior month**) + `✅ validations passed`. **On any failure, do NOT touch
+    `main`** — open a **draft PR** (`… (NEEDS REVIEW)`) explaining what failed and drop a `⚠️` note on issue #4.
 
     **Self-check gate (auto-publish only when all pass):** MerchantSpring connector present · every expected pull
-    returned data · `node` shape/syntax check prints `shape OK` · sanity clean (TACOS ≤100%, ROAS ~2–3×, no
-    negative/blank rev, all MoM deltas present, **no headline metric swinging >60% MoM** without cause — that's the
-    "plausible-but-wrong" case, so it routes to human review instead of publishing).
+    returned data (**Amazon and Shopify/GA4 both**) · `node` shape/syntax checks pass (dateRanges, `sections.charts`,
+    `sections.shopify`, `config.js` currencyIcon) · sanity clean (TACOS ≤100%, ROAS ~2–3×, no negative/blank rev,
+    all MoM deltas present, **no headline metric swinging >60% MoM** without cause — that's the "plausible-but-wrong"
+    case, so it routes to human review instead of publishing).
 
 **Automating it (monthly Routine).** This runbook runs unattended as a Claude Code **Routine**
 (`claude.ai/code/routines`) whose prompt lives at [`tools/nkv-monthly-rebake.prompt.md`](tools/nkv-monthly-rebake.prompt.md).
 Wire it with a **schedule trigger on the 5th of each month** (cron `20 9 5 * *` via `/schedule update` — 09:20,
 staggered between AMACX 09:00 and Harvaza 09:40 so the bakes don't collide; times are UTC, +1h UK during BST; min
-interval is 1h), the **MerchantSpring connector** attached, and **"Allow unrestricted branch pushes" enabled** so it
-can publish to `main`. It's **auto-publish + notify**: green runs go live and log to issue #4 (watch it for the email);
+interval is 1h), the **MerchantSpring connector** AND the **Reporting Ninja connector** (for Shopify/GA4 — step 8
+needs it; without it the Shopify page silently stays on last month's bake) attached, and **"Allow unrestricted
+branch pushes" enabled** so it can publish to `main`. It's **auto-publish + notify**: green runs go live and log to
+issue #4 (watch it for the email);
 only a failed self-check falls back to a draft PR + review. Flip it back to a pure review gate by turning off
 unrestricted pushes — then every run just opens a PR.
 
