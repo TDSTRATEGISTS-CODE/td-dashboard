@@ -295,18 +295,54 @@ window.DASHBOARD_DATA = {
       restock: []
     },
     products: {
-      // KPIs + by-market table = August 2026 (page period). Groups card = Aug sales by product,
-      // combining FBA + FBM listings per ASIN (7 distinct products; several also carry a near-
-      // identical FBM backup listing with no distinct sales history).
+      // KPIs + by-market table + groups below are the static (May-period) fallback — same reason and
+      // same fix as sections.advertising.campaignsByPeriod above: without a *ByPeriod variant these
+      // stayed pinned to August's numbers even under "Last 12 Months" (revenue would have shown
+      // £1,032/53 units instead of the real £12,472/358). kpisByPeriod/tableByPeriod/groupsByPeriod
+      // below are the fields app.js already checks first for every client (AMACX uses them) — Balance
+      // 8 just hadn't populated them yet.
       kpis: [
         {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in Aug',s:'7 live · 3 Electrolytes flavours no Aug sales'},
         {bar:'var(--green)',lbl:'Top Product Rev.',val:'£675',dCls:'du',d:'WIRED Creatine',s:'65% of Aug sales'},
         {bar:'var(--blue)',lbl:'Units (Aug)',val:'53',dCls:'du',d:'▲ from 0 (Jun/Jul)',s:'relaunch month'},
         {bar:'var(--amber)',lbl:'ASP',val:'£19.47',dCls:'df',d:'per unit',s:'no order-count field exposed for Aug'}
       ],
+      kpisByPeriod: {
+        may: { all: [
+          {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in Aug',s:'7 live · 3 Electrolytes flavours no Aug sales'},
+          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£675',dCls:'du',d:'WIRED Creatine',s:'65% of Aug sales'},
+          {bar:'var(--blue)',lbl:'Units (Aug)',val:'53',dCls:'du',d:'▲ from 0 (Jun/Jul)',s:'relaunch month'},
+          {bar:'var(--amber)',lbl:'ASP',val:'£19.47',dCls:'df',d:'per unit',s:'no order-count field exposed for Aug'}
+        ] },
+        '3m': { all: [
+          {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in Jun–Aug',s:'7 live · all Aug, Jun/Jul £0'},
+          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£675',dCls:'du',d:'WIRED Creatine',s:'65% of 3-month sales'},
+          {bar:'var(--blue)',lbl:'Units (3m)',val:'53',dCls:'du',d:'3-month total',s:'Jun £0 · Jul £0 · Aug 53'},
+          {bar:'var(--amber)',lbl:'ASP',val:'£19.47',dCls:'df',d:'3-month ASP',s:'per unit'}
+        ] },
+        // 12-month figures are real (see dateRanges.12m + top-of-file monthly actuals) but only
+        // reconcile at PRODUCT-FAMILY level, not per-SKU: MerchantSpring wasn't pulled at per-SKU
+        // granularity for Nov 25–Feb 26 (only channel totals), and WIRED didn't exist before Aug 2026,
+        // so "BrainMatter combined" for the 12-month total is exact (12m total minus WIRED's Aug
+        // total), while a Cognitive-vs-Calm split for Nov–Feb would be invented.
+        '12m': { all: [
+          {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in last 12mo',s:'7 live · 3 Electrolytes flavours never sold'},
+          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£11,607',dCls:'du',d:'BrainMatter (combined)',s:'93% of 12-month sales'},
+          {bar:'var(--blue)',lbl:'Units (12m)',val:'358',dCls:'df',d:'12-month total',s:'Jan 26 peak month'},
+          {bar:'var(--amber)',lbl:'ASP',val:'£34.84',dCls:'df',d:'12-month ASP',s:'358 units total'}
+        ] }
+      },
       table: [
         {name:'United Kingdom',flag:'gb',revenue:'£1,032',units:'53',orders:'~53*',cvr:'11.8%',cvrCls:'bg',aov:'£19.47'}
       ],
+      tableByPeriod: {
+        may: [ {name:'United Kingdom',flag:'gb',revenue:'£1,032',units:'53',orders:'~53*',cvr:'11.8%',cvrCls:'bg',aov:'£19.47'} ],
+        '3m': [ {name:'United Kingdom',flag:'gb',revenue:'£1,032',units:'53',orders:'~53*',cvr:'11.8%',cvrCls:'bg',aov:'£19.47'} ],
+        // Sessions summed across all 12 months (222 Sep–Oct + 881 Nov + 1,105 Dec + 1,543 Jan + 286
+        // Feb + 0 Mar–Jul + 448 Aug = 4,485); CVR = units/sessions (358/4,485), the same relationship
+        // MerchantSpring's own sessionConversions field showed for August (53/448 = 11.8%, matches).
+        '12m': [ {name:'United Kingdom',flag:'gb',revenue:'£12,472',units:'358',orders:'~358*',cvr:'8.0%',cvrCls:'ba',aov:'£34.84'} ]
+      },
       // August 2026 sales by product (real MerchantSpring product report, UK channel, FBA+FBM
       // combined per ASIN). % = share of Aug product sales. OOS Rate = share of the SKU currently
       // out of stock (all in stock, all 0%).
@@ -318,7 +354,36 @@ window.DASHBOARD_DATA = {
         {name:'WIRED Electrolytes — Melon Ice',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
         {name:'WIRED Electrolytes — Berry Fusion',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
         {name:'WIRED Electrolytes — Citrus Lime',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'}
-      ]
+      ],
+      groupsByPeriod: {
+        may: { all: [
+          {name:'WIRED Pure Creatine Monohydrate',sales:'£675',units:30,pct:'65%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes Discovery Pack',sales:'£190',units:19,pct:'18%',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Calm',sales:'£129',units:3,pct:'12%',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Cognitive',sales:'£39',units:1,pct:'4%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Melon Ice',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Berry Fusion',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Citrus Lime',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'}
+        ] },
+        '3m': { all: [
+          {name:'WIRED Pure Creatine Monohydrate',sales:'£675',units:30,pct:'65%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes Discovery Pack',sales:'£190',units:19,pct:'18%',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Calm',sales:'£129',units:3,pct:'12%',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Cognitive',sales:'£39',units:1,pct:'4%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Melon Ice',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Berry Fusion',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Citrus Lime',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'}
+        ] },
+        // Product-family level (see kpisByPeriod.12m comment for why): BrainMatter = 12m total minus
+        // WIRED's Aug total (£12,471.99 − £864.51 = £11,607.48, 309 units = 358 − 49). WIRED =
+        // Creatine + Discovery Pack, Aug only (the only month either existed). Electrolytes flavours
+        // have never sold.
+        '12m': { all: [
+          {name:'BrainMatter (Cognitive + Calm combined)',sales:'£11,607',units:309,pct:'93%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED (Creatine + Discovery Pack)',sales:'£865',units:49,pct:'7%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes (3 flavours, never sold)',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'}
+        ] }
+      }
     }
   }
 };
