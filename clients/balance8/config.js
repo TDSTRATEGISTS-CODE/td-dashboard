@@ -88,12 +88,15 @@ window.DASHBOARD_CONFIG = {
   },
 
   // ---- Live data source ----
-  // LIVE OVERLAY — PENDING DEPLOY. No project-tracker Google Sheet has been supplied for Balance 8
-  // yet, so this stays 'static' — the baked Overview (tasks/flags/completed) below is the complete,
-  // shippable fallback. Once the client's tracker sheet is shared: write
-  // tools/balance8-sheet-proxy.gs (model on tools/abimax-sheet-proxy.gs), have it deployed, then flip
-  // this to { type:'appsScript', overlay:'sections', url:'<exec URL>' } and bump APP_VER.
+  // LIVE — tools/balance8-sheet-proxy.gs deployed against the "Project Scope" tab of the tracker
+  // (https://docs.google.com/spreadsheets/d/1iaOHJ-LilSL7geqUxy07u7V_J7rvG1ez49zg6nRDLU8). overlay:
+  // 'sections' merges ONLY the live sheet-controlled Overview scope board (tasksSpec/flagsSpec/
+  // completedSpec) onto the baked data.js — the MerchantSpring-derived dateRanges/pnl/advertising/
+  // inventory/products sections are untouched. If the proxy is unreachable, app.js keeps the baked
+  // Overview fallback in data.js.
   dataSource: {
-    type: 'static'
+    type: 'appsScript',
+    overlay: 'sections',
+    url: 'https://script.google.com/macros/s/AKfycbxl3wvaelUU2AB5brjUpbdUh-g6F084ZNR2zJ-DSl3quQuE-79yr5D-DXX7msB3PjY2/exec'
   }
 };
