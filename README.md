@@ -641,6 +641,18 @@ is the "Last Month" slot — keep the key literally `may`; only update its `labe
    `unitsSold`/`lineItemCount` are unaffected). Cross-check any ad figure against a pull where that month is
    *not* first (or against `getAdvertisingByChannels`, which is capped at 30 days so doesn't have this bug)
    before trusting it — don't just take the first response at face value.
+
+   **Also refresh `dateRanges.may.yoy`** (the Prior Period / Same Period Last Year toggle — see the AMACX section
+   above for the full method). UK `getSalesByPeriod`, `interval:'w'` summed (not `'M'` — same zero-sales bug as
+   AMACX), `comparisonType:'sameMonthLastYear'`. **NKV's ROAS is `adSales ÷ adSpend`, not `revenue ÷ adSpend`
+   (different from AMACX)** — reconciled cleanly against this pull as of the 2026-09-03 bake (baked £5,681 vs a
+   re-pulled £5,672), so Ad Sales YoY is safe to bake here even though it wasn't for AMACX. Only add a
+   `marketKpis.<mkt>.yoy` entry for a market whose Jul-2025-equivalent base is both present and not trivially thin
+   (as of 2026-09-03: UK yes; **IRL's base was real but only ~€146 for the whole month — too thin to trust, skip
+   it**; **USA had zero Amazon sales a year prior — it hadn't launched real ads yet, skip it**) — Total already
+   folds a skipped market's small/zero prior-year contribution in via the weighted currency conversion, so it
+   stays representative even without a per-market breakdown for IRL/USA. Re-check IRL/USA next time; they'll
+   likely have a valid base once they've traded a full year.
 2. **Trend charts → `sections.charts`.** Separate from `dateRanges` — **easy to forget, and the #1 thing this
    runbook has missed in practice.** Shift the rolling `months` window forward one month and append the new
    month's UK/IE/US `rev`/`adSpend`/`adTacos` (drop the oldest month). Same `getSalesByPeriod` monthly-bucket

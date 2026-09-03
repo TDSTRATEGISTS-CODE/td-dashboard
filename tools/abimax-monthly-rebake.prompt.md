@@ -45,6 +45,11 @@ last month; launch-to-date — keep the key `6m` and the "Since Launch" label). 
   revenue − ad sales; series `#404935` (Ad) / `#a7ab90` (Organic).
 - **Currency note:** all figures are `$`, but the shared trend-chart axis formatter (`moneyK`) hardcodes `€` — a
   known template limit; do not "fix" it in data.js.
+- **No lookback-basis toggle (Prior Period / Same Period Last Year — see AMACX/NKV) for Abimax.** The store launched
+  on Amazon US in **March 2026**, so there is no Same-Month-Last-Year baseline at all until this rebake is refreshing
+  **April 2027** (May 2027 for `may`="Last Month" specifically). Don't add `config.lookbackOptions` / a `dateRanges.may.yoy`
+  block before then — there's nothing valid to compare against. Re-check once the "Since Launch" (`6m`) window has run
+  a full 12 months.
 - **Validate before committing** (throws on any JS error):
   ```bash
   node -e "global.window={}; require('./clients/abimax/config.js'); require('./clients/abimax/data.js'); \
