@@ -40,6 +40,26 @@ window.DASHBOARD_DATA = {
     // Campaign-type mix — real ad-type sales share + ACOS from the MerchantSpring campaigns report.
     // Every period (may/3m/6m) is pulled from its own campaigns-report window — no estimates. (12m unchanged.)
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.3,sales:'£4.9k',acos:'48.3%'}, {name:'Sponsored Brands',color:'#9caf78',pct:13.1,sales:'£0.7k',acos:'25.3%'}, {name:'Sponsored Display',color:'#e8a87c',pct:0.6,sales:'£0.0k',acos:'97.7%'} ] },
+    // Same-Period-Last-Year comparison (Jul 2026 vs Jul 2025), MerchantSpring actuals (getSalesByPeriod,
+    // interval:'w' summed — see the AMACX yoy{} note for why not interval:'M'). UK + Total (UK converted
+    // £ + IRL €→£ + USA $→£ at the same static rates as the rest of this file) only: unlike AMACX, NKV's
+    // ROAS is adSales÷adSpend (not revenue÷adSpend) — reconciled against the baked 'may' adSales (£5,681
+    // vs a re-pulled £5,672, well within normal attribution drift) and used here for roasD/roasAdD. IRL
+    // has a real but very thin Jul-2025 base (€146 total) and USA had zero Amazon sales in Jul 2025 (it
+    // hadn't launched real ad spend yet) — neither gets a per-market yoy entry; Total below already folds
+    // their small/zero prior-year contribution in, so it stays representative.
+    yoy: {
+      revD: '▲ 3.7% YoY', revC: 'du', revS: 'vs £13,681 Jul 2025',
+      spendD: '▲ 28.3% YoY', spendC: 'df', spendS: 'vs £2,060 Jul 2025',
+      adSalesD: '▼ 8.3% YoY', adSalesC: 'dd', adSalesS: 'vs £6,247 Jul 2025',
+      tacosD: '▲ 3.6pp vs Jul 2025', tacosC: 'dd',
+      tacosAdD: '▲ 3.6pp vs Jul 2025', tacosAdC: 'dd',
+      roasD: '▼ 0.87× vs Jul 2025', roasC: 'dd',
+      roasAdD: '▼ 0.87× vs Jul 2025', roasAdC: 'dd',
+      marketKpis: {
+        uk: { revD:'▼ 3.2% YoY', revC:'dd', revS:'vs £13,556 Jul 2025', spendD:'▲ 24.7% YoY', spendC:'df', spendS:'vs £2,060 Jul 2025', adSalesD:'▼ 9.2% YoY', adSalesC:'dd', adSalesS:'vs £6,247 Jul 2025', tacosD:'▲ 4.4pp vs Jul 2025', tacosC:'dd', tacosAdD:'▲ 4.4pp vs Jul 2025', tacosAdC:'dd', roasD:'▼ 0.82× vs Jul 2025', roasC:'dd', roasAdD:'▼ 0.82× vs Jul 2025', roasAdC:'dd' }
+      }
+    },
   },
   '3m': {
     label: 'May–Jul 2026', shortLabel: 'May–Jul 2026',

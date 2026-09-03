@@ -348,6 +348,11 @@ in MerchantSpring, so 3m/6m figures are **summed from per-month pulls**.
    `sec.products.{kpis,table}` (`cvr` = units ÷ page-views; `cvrCls` ≥8 `bg`/≥4 `ba`/else `br`), and
    `sections.overviewActuals.revTrend` (last ~6 months UK ordered). ✅ Confirm the `may` UK £ + US $ sales match
    Seller Central.
+   **No `dateRanges.may.yoy` (Same-Period-Last-Year lookback, see AMACX) yet** — checked 2026-09-03: UK
+   `getSalesByPeriod` for July 2025 returns £0 sales/spend across every week, i.e. Harvaza has no Amazon
+   actuals that far back (consistent with the "Year 1 Forecast" framing — the Amazon channel is younger than
+   a year). Don't bake a YoY comparison against a zero baseline. Revisit once `may` has a full 12 months of
+   real actuals behind it (~mid-2027) — re-check with the same weekly-bucket method documented under AMACX.
 2. **Amazon P&L → `sections.pnl.{margin,statement,mkt}` (+ per-period `sec.pnl`).** `getStoreProfitAndLoss` per
    channel, **one call per calendar month, summed**. `margin`/`statement` = UK (net/settlement revenue — *not* the
    ordered figure from step 1); `mkt` = UK + US. Top-level `sections.pnl` = the `may` default; `3m`/`6m` overrides
