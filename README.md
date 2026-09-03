@@ -348,6 +348,11 @@ in MerchantSpring, so 3m/6m figures are **summed from per-month pulls**.
    `sec.products.{kpis,table}` (`cvr` = units ÷ page-views; `cvrCls` ≥8 `bg`/≥4 `ba`/else `br`), and
    `sections.overviewActuals.revTrend` (last ~6 months UK ordered). ✅ Confirm the `may` UK £ + US $ sales match
    Seller Central.
+   **No `dateRanges.may.yoy` (Same-Period-Last-Year lookback, see AMACX) yet** — checked 2026-09-03: UK
+   `getSalesByPeriod` for July 2025 returns £0 sales/spend across every week, i.e. Harvaza has no Amazon
+   actuals that far back (consistent with the "Year 1 Forecast" framing — the Amazon channel is younger than
+   a year). Don't bake a YoY comparison against a zero baseline. Revisit once `may` has a full 12 months of
+   real actuals behind it (~mid-2027) — re-check with the same weekly-bucket method documented under AMACX.
 2. **Amazon P&L → `sections.pnl.{margin,statement,mkt}` (+ per-period `sec.pnl`).** `getStoreProfitAndLoss` per
    channel, **one call per calendar month, summed**. `margin`/`statement` = UK (net/settlement revenue — *not* the
    ordered figure from step 1); `mkt` = UK + US. Top-level `sections.pnl` = the `may` default; `3m`/`6m` overrides
@@ -451,6 +456,10 @@ Notes:
   (the Performance-by-Campaign-Type pie, `period → market`) is a **baked literal** aggregated from
   `generateCampaignsReport` per period × channel (SP/SB/SD by `ad_type`) — like `groupsByPeriod`, editing `$M` won't
   refresh it; you must re-run the campaign pulls.
+- **Lookback toggle (Prior Period / Same Period Last Year):** `dateRanges.may.yoy` (EU + `marketKpis.{de,fr,es,it}`,
+  Revenue/Ad Spend/TACOS/ROAS only) is a **separate MerchantSpring pull** (this month vs same month last year) —
+  refreshing `$M` does NOT update it. See the monthly re-bake Step 1 below for the pull method and its gotchas
+  (`interval:'M'` is broken for this account; only Revenue/Spend/TACOS/ROAS currently reconcile).
 - **Buy Box (Overview):** `sections.overview.buyBoxByPeriod` (official featured-offer %, `period → market`, with MoM delta)
   is a baked literal from `generateTrafficAndConversionReport` per period × channel (page-view-weighted `buyboxWinPercentage`);
   `sections.overview.buyBoxLosses` (loss list) is from `generateBuyBoxReport` `filter:'losing'` per channel (current snapshot).
@@ -487,6 +496,18 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
    `$M[mkt].impr` + `$M[mkt].clicks` (monthly; the ad report caps windows at **30 days**, so pull **month-by-month** with
    `searchText:'AMACX'` to filter to seller `A1O4H4W8GP4BN2`). These feed the Ad Metrics card's Impressions / CTR / Avg-CPC
    and the Overview Conversion-Rate KPI. ✅ Confirm: the script's printed per-period summary matches Seller Central for `may`.
+   **Also refresh `dateRanges.may.yoy`** (the Prior Period / Same Period Last Year toggle — see CLAUDE.md): per market,
+   pull `getSalesByPeriod` for `may`'s calendar month vs the same month last year (`calculateDateEpoch`
+   `comparisonType:'sameMonthLastYear'`). **`interval:'M'` returns `sales:"0.00"` for this account (a live bug, not a
+   config error) — use `interval:'w'` and sum the weekly buckets' `sales`/`priorSales`/`adSpend`/`priorAdSpend` instead;
+   this reconciles exactly against `$M`.** Compute Revenue/Ad Spend/TACOS/ROAS deltas (EU + per market) from those sums —
+   these are the only metrics validated to reconcile. Do **not** bake `yoy` entries for Ad Sales/Impressions/CTR/CPC from
+   this call's embedded `adSales`/`impressions` fields — they diverge materially (~40%+) from the baked figures sourced
+   via `getAdvertisingByChannels`, and that tool was returning a `troas`/`priorTroas` schema error as of this writing, so
+   there's no reconciled source for them yet. Leave those fields out of `yoy` entirely (`app.js` shows "YoY data pending"
+   for anything missing) rather than bake a number that doesn't reconcile. NLD has no 2025 actuals (early launch) — no
+   `yoy` entry for it. ✅ Confirm: `yoy.revD`/`spendD`/`tacosD`/`roasD` (EU + each market) are present and the weekly-sum
+   revenue matches `$M`'s current-month total within rounding.
 2. **Budgets → `$BUD`** and **revenue target → `$REVTGT`.** Re-read the Google Sheet (`read_file_content`): per-market ad
    budgets and **row 8 "Revenue Target (past vs future)"**. **APPEND** this month's target to `$REVTGT` (don't replace the
    history — the chart window `$cidx` slices it, and the generator throws if `$REVTGT` is shorter than `$M`). The trailing-6
@@ -620,6 +641,18 @@ is the "Last Month" slot — keep the key literally `may`; only update its `labe
    `unitsSold`/`lineItemCount` are unaffected). Cross-check any ad figure against a pull where that month is
    *not* first (or against `getAdvertisingByChannels`, which is capped at 30 days so doesn't have this bug)
    before trusting it — don't just take the first response at face value.
+
+   **Also refresh `dateRanges.may.yoy`** (the Prior Period / Same Period Last Year toggle — see the AMACX section
+   above for the full method). UK `getSalesByPeriod`, `interval:'w'` summed (not `'M'` — same zero-sales bug as
+   AMACX), `comparisonType:'sameMonthLastYear'`. **NKV's ROAS is `adSales ÷ adSpend`, not `revenue ÷ adSpend`
+   (different from AMACX)** — reconciled cleanly against this pull as of the 2026-09-03 bake (baked £5,681 vs a
+   re-pulled £5,672), so Ad Sales YoY is safe to bake here even though it wasn't for AMACX. Only add a
+   `marketKpis.<mkt>.yoy` entry for a market whose Jul-2025-equivalent base is both present and not trivially thin
+   (as of 2026-09-03: UK yes; **IRL's base was real but only ~€146 for the whole month — too thin to trust, skip
+   it**; **USA had zero Amazon sales a year prior — it hadn't launched real ads yet, skip it**) — Total already
+   folds a skipped market's small/zero prior-year contribution in via the weighted currency conversion, so it
+   stays representative even without a per-market breakdown for IRL/USA. Re-check IRL/USA next time; they'll
+   likely have a valid base once they've traded a full year.
 2. **Trend charts → `sections.charts`.** Separate from `dateRanges` — **easy to forget, and the #1 thing this
    runbook has missed in practice.** Shift the rolling `months` window forward one month and append the new
    month's UK/IE/US `rev`/`adSpend`/`adTacos` (drop the oldest month). Same `getSalesByPeriod` monthly-bucket

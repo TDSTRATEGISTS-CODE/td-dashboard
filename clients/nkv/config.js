@@ -59,6 +59,15 @@ window.DASHBOARD_CONFIG = {
     { value: '12m', label: 'Last 12 Months' }
   ],
 
+  // ---- Lookback-basis toggle (drives the segmented control next to the date-range dropdown) ----
+  // Shown only for a period whose dateRanges[period] carries a baked `yoy` comparison block — currently
+  // just 'may' (Last Month), UK + Total only (IRL/USA have no reliable Jul-2025 baseline yet — early
+  // stage / not yet launched a year ago).
+  lookbackOptions: [
+    { value: 'pop', label: 'Prior Period' },
+    { value: 'yoy', label: 'Same Period Last Year' }
+  ],
+
   // ---- Markets (sidebar chips, market switching, topbar labels) ----
   // key   : internal id used by switchMarket + matched against dateRanges
   // flag  : flagcdn.com code (emoji fails inside the Wix iframe)

@@ -84,10 +84,35 @@ CONFIG.markets.forEach(function (m) { MKT[m.key] = { t: m.t, m: m.m }; });
 
 var currentMarket = CONFIG.defaultMarket || 'all';
 var currentPeriod = CONFIG.defaultPeriod || 'may';
+// Comparison basis for KPI deltas: 'pop' (prior period, the historical default) or 'yoy' (same
+// period last year). Only periods with a baked d.yoy block support 'yoy' — see lb() below.
+var currentLookback = 'pop';
 
 // ---------- small DOM helpers ----------
 function set(id, v) { var el = document.getElementById(id); if (el && v != null) el.textContent = v; }
 function cls(id, c) { var el = document.getElementById(id); if (el) el.className = 'kpi-d ' + c; }
+
+// Resolve a KPI's delta/color/subtext for the current lookback basis. `scope` is the object carrying
+// the base xD/xC/xS fields (a dateRanges[period] entry for EU KPIs, or a marketKpis[mkt] entry for
+// per-market KPIs); `base` is the metric's field prefix (e.g. 'rev' → revD/revC/revS). `yoyOverride`
+// is needed for marketKpis entries, which don't carry their own .yoy — applyMarketKpis passes
+// d.yoy.marketKpis[mkt] explicitly; EU-level callers omit it and scope.yoy is used.
+// - 'pop' (default): reads the base fields directly, unchanged from today's behaviour.
+// - 'yoy': reads the matching yoy[base+'D'/'C'/'S']; yoy[base+'S'] falls back to the base S text when
+//   the bake only overrides D/C (e.g. TACOS/ROAS, whose S text is a static target/units line, not a
+//   comparison). switchDateRange only lets currentLookback stay 'yoy' for a period that baked a yoy
+//   block, so a metric with nothing baked for it shows a blank delta + "YoY data pending" rather than
+//   silently reusing the prior-period figure under a YoY label.
+function lb(scope, base, yoyOverride) {
+  if (currentLookback === 'yoy') {
+    var y = (yoyOverride !== undefined) ? yoyOverride : (scope && scope.yoy);
+    if (y && y[base + 'D'] != null) {
+      return { d: y[base + 'D'], c: y[base + 'C'] || 'df', s: (y[base + 'S'] != null) ? y[base + 'S'] : (scope ? scope[base + 'S'] : null) };
+    }
+    return { d: '', c: 'df', s: 'YoY data pending' };
+  }
+  return { d: scope ? scope[base + 'D'] : null, c: scope ? scope[base + 'C'] : null, s: scope ? scope[base + 'S'] : null };
+}
 
 // ---------- navigation (markup uses these via onclick) ----------
 window.switchPage = function (key, sideNavEl, tabEl) {
@@ -106,6 +131,12 @@ window.switchPage = function (key, sideNavEl, tabEl) {
   if (tabEl) tabEl.classList.add('active');
   closeSidebar();
   syncEmbedHeight();   // page changed → re-report height to the embedding host (Wix iframe)
+};
+
+window.switchLookback = function (mode) {
+  currentLookback = mode;
+  document.querySelectorAll('.lb-btn').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-lb') === mode); });
+  switchDateRange(currentPeriod);   // repaint every KPI against the new comparison basis
 };
 
 window.switchMarket = function (k, el) {
@@ -127,24 +158,29 @@ function applyMarketKpis(d) {
   var _adm = el('sec-ad-metrics');   // Ad Metrics detail card: scope label follows the market chip
   if (_adm && _adm.closest) { var _asc = _adm.closest('.card').querySelector('.cfg-scope'); if (_asc) _asc.textContent = (currentMarket && currentMarket !== 'all' && MKT[currentMarket]) ? MKT[currentMarket].t : ((CONFIG.client && CONFIG.client.scopeLabel) || 'All EU'); }
   if (!mk) return;
-  set('k-rev', mk.rev);    set('k-rev-d', mk.revD);    cls('k-rev-d', mk.revC);    set('k-rev-s', mk.revS);
-  set('k-ad', mk.adSales); set('k-ad-d', mk.adSalesD); cls('k-ad-d', mk.adSalesC); set('k-ad-s', mk.adSalesS);
-  if (mk.spend != null) { set('k-spend', mk.spend); set('k-spend-d', mk.spendD); cls('k-spend-d', mk.spendC); set('k-spend-s', mk.spendS); }
-  set('k-tacos', mk.tacos); set('k-tacos-d', mk.tacosD); cls('k-tacos-d', mk.tacosC); set('k-tacos-s', mk.tacosS);
+  // marketKpis entries don't carry their own .yoy — the generator nests per-market YoY comparisons
+  // under d.yoy.marketKpis[mkt] instead (see clients/amacx/data.js), so look it up explicitly.
+  var mkYoy = (d.yoy && d.yoy.marketKpis && d.yoy.marketKpis[currentMarket]) || null;
+  var mkRev = lb(mk, 'rev', mkYoy), mkAd = lb(mk, 'adSales', mkYoy), mkSpend = lb(mk, 'spend', mkYoy), mkTacos = lb(mk, 'tacos', mkYoy);
+  var mkTacosAd = lb(mk, 'tacosAd', mkYoy), mkRoasAd = lb(mk, 'roasAd', mkYoy), mkImpr = lb(mk, 'impr', mkYoy), mkCpc = lb(mk, 'cpc', mkYoy), mkCtr = lb(mk, 'ctr', mkYoy);
+  set('k-rev', mk.rev);    set('k-rev-d', mkRev.d);    cls('k-rev-d', mkRev.c);    set('k-rev-s', mkRev.s);
+  set('k-ad', mk.adSales); set('k-ad-d', mkAd.d);       cls('k-ad-d', mkAd.c);      set('k-ad-s', mkAd.s);
+  if (mk.spend != null) { set('k-spend', mk.spend); set('k-spend-d', mkSpend.d); cls('k-spend-d', mkSpend.c); set('k-spend-s', mkSpend.s); }
+  set('k-tacos', mk.tacos); set('k-tacos-d', mkTacos.d); cls('k-tacos-d', mkTacos.c); set('k-tacos-s', mkTacos.s);
   set('k-margin', mk.aov); set('k-margin-d', mk.aovD); cls('k-margin-d', mk.aovC); set('k-margin-s', mk.aovS);
   if (mk.cvr != null) { set('k-cvr', mk.cvr); set('k-cvr-s', mk.cvrS || ''); }
   set('a-spend', mk.spend); set('a-tacos', mk.tacosAd); set('a-roas', mk.roasAd);
   if (mk.adBudget != null) set('a-budget', mk.adBudget);
   if (mk.util != null) set('a-util', mk.util);
-  if (mk.impr != null) { set('ak-impr', mk.impr); set('ak-impr-d', mk.imprD); cls('ak-impr-d', mk.imprC); set('ak-impr-s', mk.imprS); }
-  if (mk.cpc != null) { set('ak-cpc', mk.cpc); set('ak-cpc-d', mk.cpcD); cls('ak-cpc-d', mk.cpcC); set('ak-cpc-s', mk.cpcS); }
-  if (mk.ctr != null) { set('ak-ctr', mk.ctr); set('ak-ctr-d', mk.ctrD); cls('ak-ctr-d', mk.ctrC); set('ak-ctr-s', mk.ctrS); }
+  if (mk.impr != null) { set('ak-impr', mk.impr); set('ak-impr-d', mkImpr.d); cls('ak-impr-d', mkImpr.c); set('ak-impr-s', mkImpr.s); }
+  if (mk.cpc != null) { set('ak-cpc', mk.cpc); set('ak-cpc-d', mkCpc.d); cls('ak-cpc-d', mkCpc.c); set('ak-cpc-s', mkCpc.s); }
+  if (mk.ctr != null) { set('ak-ctr', mk.ctr); set('ak-ctr-d', mkCtr.d); cls('ak-ctr-d', mkCtr.c); set('ak-ctr-s', mkCtr.s); }
   var adKpis = document.querySelectorAll('#page-advertising .kpi');
   if (adKpis.length >= 4) {
     var kd = [
-      [mk.spend, mk.spendD, mk.spendC, mk.spendS],
-      [mk.tacosAd, mk.tacosAdD, mk.tacosAdC, mk.tacosAdS],
-      [mk.roasAd, mk.roasAdD, mk.roasAdC, mk.roasAdS],
+      [mk.spend, mkSpend.d, mkSpend.c, mkSpend.s],
+      [mk.tacosAd, mkTacosAd.d, mkTacosAd.c, mkTacosAd.s],
+      [mk.roasAd, mkRoasAd.d, mkRoasAd.c, mkRoasAd.s],
       [mk.aov, mk.aovD, mk.aovC, mk.aovS]
     ];
     adKpis.forEach(function (kpi, i) {
@@ -305,20 +341,33 @@ window.switchDateRange = function (val) {
   var d = dateRanges[val];
   if (!d) return;
   currentPeriod = val;
+
+  // Lookback toggle (Prior Period / Same Period Last Year): only shown for a period the generator
+  // has baked a yoy{} comparison block for. Switching to a period without one silently falls back
+  // to 'pop' so a stale 'yoy' selection can't linger unseen behind a hidden toggle.
+  var lbWrap = document.getElementById('lookback-wrap');
+  if (lbWrap) {
+    if (d.yoy && CONFIG.lookbackOptions) { lbWrap.style.display = ''; }
+    else { lbWrap.style.display = 'none'; currentLookback = 'pop'; }
+    document.querySelectorAll('.lb-btn').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-lb') === currentLookback); });
+  }
+
   var mktSub = (MKT[currentMarket] ? MKT[currentMarket].m : '') + ' · ' + d.label;
   var tbMkt = document.getElementById('tb-mkt'); if (tbMkt) tbMkt.textContent = mktSub;
   document.querySelectorAll('.dr-period').forEach(function (el) { el.textContent = d.shortLabel; });
   document.querySelectorAll('.dr-chart-sub').forEach(function (el) { el.textContent = d.shortLabel; });
   [1, 2, 3, 4, 5, 6, 7].forEach(function (n) { var el = document.getElementById('sec-period-' + n); if (el) el.textContent = d.shortLabel; });
 
-  set('k-rev', d.rev);     set('k-rev-d', d.revD);     cls('k-rev-d', d.revC);     set('k-rev-s', d.revS);
-  set('k-ad', d.adSales);  set('k-ad-d', d.adSalesD);  cls('k-ad-d', d.adSalesC);  set('k-ad-s', d.adSalesS);
-  set('k-tacos', d.tacos); set('k-tacos-d', d.tacosD); cls('k-tacos-d', d.tacosC); set('k-tacos-s', d.tacosS);
+  var euRev = lb(d, 'rev'), euAd = lb(d, 'adSales'), euSpend = lb(d, 'spend'), euTacos = lb(d, 'tacos');
+  var euTacosAd = lb(d, 'tacosAd'), euRoasAd = lb(d, 'roasAd');
+  set('k-rev', d.rev);     set('k-rev-d', euRev.d);     cls('k-rev-d', euRev.c);     set('k-rev-s', euRev.s);
+  set('k-ad', d.adSales);  set('k-ad-d', euAd.d);       cls('k-ad-d', euAd.c);       set('k-ad-s', euAd.s);
+  set('k-tacos', d.tacos); set('k-tacos-d', euTacos.d); cls('k-tacos-d', euTacos.c); set('k-tacos-s', euTacos.s);
   // 4th overview KPI = AOV (the headline focus); ROAS remains on the Advertising page.
   set('k-margin', d.aov); set('k-margin-d', d.aovD); cls('k-margin-d', d.aovC); set('k-margin-s', d.aovS);
   // Conversion Rate KPI (now in the Top-Level row) — period values; applyMarketKpis overlays per market.
   set('k-cvr', d.cvr); set('k-cvr-s', d.cvrS);
-  set('k-spend', d.spend); set('k-spend-d', d.spendD); cls('k-spend-d', d.spendC); set('k-spend-s', d.spendS);
+  set('k-spend', d.spend); set('k-spend-d', euSpend.d); cls('k-spend-d', euSpend.c); set('k-spend-s', euSpend.s);
   // Ad Spend (3rd) + Conversion Rate are OPTIONAL Top-Level cards — shown only when the client supplies them.
   // Size the row to the visible count (g4 → g6) so clients without them aren't left with empty tracks.
   var _cvrCard = el('k-cvr') ? el('k-cvr').closest('.kpi') : null;
@@ -335,9 +384,9 @@ window.switchDateRange = function (val) {
   var adKpis = document.querySelectorAll('#page-advertising .kpi');
   if (adKpis.length >= 4) {
     var kpiData = [
-      [d.spend, d.spendD, d.spendC, d.spendS],
-      [d.tacosAd, d.tacosAdD, d.tacosAdC, d.tacosAdS],
-      [d.roasAd, d.roasAdD, d.roasAdC, d.roasAdS],
+      [d.spend, euSpend.d, euSpend.c, euSpend.s],
+      [d.tacosAd, euTacosAd.d, euTacosAd.c, euTacosAd.s],
+      [d.roasAd, euRoasAd.d, euRoasAd.c, euRoasAd.s],
       [d.aov, d.aovD, d.aovC, d.aovS]
     ];
     adKpis.forEach(function (kpi, i) {
@@ -525,6 +574,15 @@ function applyConfig() {
   if (sel && C.dateRangeOptions) {
     sel.innerHTML = C.dateRangeOptions.map(function (o) { return '<option value="' + o.value + '">' + o.label + '</option>'; }).join('');
     sel.value = currentPeriod;
+  }
+
+  // Lookback-basis toggle (Prior Period / Same Period Last Year). Built once from config; per-period
+  // visibility (only periods with a baked yoy{} block) is handled in switchDateRange.
+  var lbWrap = document.getElementById('lookback-wrap');
+  if (lbWrap && C.lookbackOptions) {
+    lbWrap.innerHTML = C.lookbackOptions.map(function (o) {
+      return '<button type="button" class="lb-btn" data-lb="' + o.value + '" onclick="switchLookback(\'' + o.value + '\')">' + o.label + '</button>';
+    }).join('');
   }
 
   // Hide any pages this client doesn't use (e.g. AMACX keywords — no MerchantSpring source yet).

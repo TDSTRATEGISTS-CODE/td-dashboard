@@ -36,6 +36,27 @@ window.DASHBOARD_DATA = {
       it: { rev:'€2,713', adSales:'€869', tacos:'10.3%', roas:'9.68×', spend:'€280', aov:'€47.60', tacosAd:'10.3%', roasAd:'9.68×', cvr:'4.2%', cvrS:'', orders:'57', ordersS:'63 units', impr:'169k', imprS:'vs 704k May', cpc:'€0.74', ctr:'0.25%', adBudget:'€650', util:'43%', revC:'du', adSalesC:'df', tacosC:'du', roasC:'du', spendC:'df', aovC:'df', tacosAdC:'du', roasAdC:'du', tacosS:'Target <20%', roasS:'63 units · AOV €47.60', roasAdS:'€2,713 revenue', aovD:'', aovS:'57 orders Jul', adSalesS:'35.5% of revenue', revD:'▲ 10.7% MoM', revS:'vs €2,451 Jun', spendD:'▼ 10.1% MoM', spendS:'vs €312 Jun', tacosD:'▼ 2.4pp vs Jun', tacosAdD:'▼ 2.4pp vs Jun', roasD:'▲ 1.82× vs Jun', roasAdD:'▲ 1.82× vs Jun', adSalesD:'▼ 32.7% MoM', imprD:'▼ 76.0% MoM', imprC:'dd', cpcD:'▲ €0.34 MoM', cpcC:'dd', cpcS:'vs €0.40 May', ctrD:'▲ 0.03pp vs May', ctrC:'du', ctrS:'' }
     },
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:82.5,sales:'€28.7k',acos:'45.1%'}, {name:'Sponsored Brands',color:'#9caf78',pct:9.3,sales:'€4.5k',acos:'32.6%'}, {name:'Sponsored Display',color:'#e8a87c',pct:8.3,sales:'€0.0k',acos:'n/a'} ] },
+    // Same-Period-Last-Year comparison (Jul 2026 vs Jul 2025), MerchantSpring actuals — pulled fresh for
+    // this bake. Covers Revenue/Ad Spend/TACOS/ROAS only: these reconcile exactly against the baked
+    // "Last Month" (prior-period) figures above. Ad Sales/Impressions/CTR/CPC deliberately have NO yoy
+    // entry here — getAdvertisingByChannels (their documented source) didn't reconcile on this pull, so
+    // app.js's lb() shows "YoY data pending" for them rather than a number that can't be trusted.
+    // NLD has no 2025 actuals (early launch) so it's excluded — the market chip keeps its "Early launch"
+    // state in YoY mode same as it does in prior-period mode.
+    yoy: {
+      revD: '▲ 19.3% YoY', revC: 'du', revS: 'vs €7,353 Jul 2025',
+      spendD: '▼ 42.3% YoY', spendC: 'df', spendS: 'vs €2,361 Jul 2025',
+      tacosD: '▼ 16.6pp vs Jul 2025', tacosC: 'du',
+      tacosAdD: '▼ 16.6pp vs Jul 2025', tacosAdC: 'du',
+      roasD: '▲ 3.32× vs Jul 2025', roasC: 'du',
+      roasAdD: '▲ 3.32× vs Jul 2025', roasAdC: 'du',
+      marketKpis: {
+        de: { revD:'▼ 57.4% YoY', revC:'dd', revS:'vs €4,835 Jul 2025', spendD:'▼ 64.6% YoY', spendC:'df', spendS:'vs €1,505 Jul 2025', tacosD:'▼ 5.3pp vs Jul 2025', tacosC:'du', tacosAdD:'▼ 5.3pp vs Jul 2025', tacosAdC:'du', roasD:'▲ 0.65× vs Jul 2025', roasC:'du', roasAdD:'▲ 0.65× vs Jul 2025', roasAdC:'du' },
+        fr: { revD:'▲ 190.0% YoY', revC:'du', revS:'vs €874 Jul 2025', spendD:'▼ 15.0% YoY', spendC:'df', spendS:'vs €375 Jul 2025', tacosD:'▼ 30.4pp vs Jul 2025', tacosC:'du', tacosAdD:'▼ 30.4pp vs Jul 2025', tacosAdC:'du', roasD:'▲ 5.62× vs Jul 2025', roasC:'du', roasAdD:'▲ 5.62× vs Jul 2025', roasAdC:'du' },
+        es: { revD:'▲ 125.3% YoY', revC:'du', revS:'vs €649 Jul 2025', spendD:'▲ 53.2% YoY', spendC:'df', spendS:'vs €151 Jul 2025', tacosD:'▼ 7.4pp vs Jul 2025', tacosC:'du', tacosAdD:'▼ 7.4pp vs Jul 2025', tacosAdC:'du', roasD:'▲ 2.02× vs Jul 2025', roasC:'du', roasAdD:'▲ 2.02× vs Jul 2025', roasAdC:'du' },
+        it: { revD:'▲ 172.5% YoY', revC:'du', revS:'vs €995 Jul 2025', spendD:'▼ 15.1% YoY', spendC:'df', spendS:'vs €330 Jul 2025', tacosD:'▼ 22.8pp vs Jul 2025', tacosC:'du', tacosAdD:'▼ 22.8pp vs Jul 2025', tacosAdC:'du', roasD:'▲ 6.66× vs Jul 2025', roasC:'du', roasAdD:'▲ 6.66× vs Jul 2025', roasAdC:'du' }
+      }
+    },
   },
   '3m': {
     label: 'May–Jul 2026', shortLabel: 'May–Jul 2026',
