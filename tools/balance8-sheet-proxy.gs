@@ -152,7 +152,12 @@ function scanScopeBoard_(values) {
       if (cell === CONFIG.SCOPE_HEADERS.flags)      idx.flags = c;
       if (CONFIG.COMPLETED_ALIASES.indexOf(cell.toLowerCase()) !== -1) idx.completed = c;
     }
-    if (idx.upcoming != null || idx.inProgress != null || idx.completed != null) { cols = idx; headerRow = r; }
+    // Require one of the DISTINCTIVE board headers (In Progress / Upcoming / Flags & Warnings) to lock
+    // onto a header row — idx.completed alone is NOT enough. "Complete"/"Completed"/"Done" are common
+    // status words that show up as ordinary cell VALUES elsewhere in this tracker (e.g. the older
+    // "3-6 Month Optimisation & Ad Strategy" tab has a plain "Sign off 6 month re-launch | Complete"
+    // row) — matching on that alone locked the board onto the wrong tab/row during testing.
+    if (idx.upcoming != null || idx.inProgress != null || idx.flags != null) { cols = idx; headerRow = r; }
   }
   if (!cols) return null;
 
