@@ -1958,7 +1958,12 @@ function renderPeriodSections(d) {
   var am = pick(sad.metrics, ad.metrics);
   if (am && adHasSpend) renderMetrics(am);
   else if (am) { var amw = el('sec-ad-metrics'); if (amw) amw.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:16px;text-align:center;">No ad activity in ' + ((MKT[adMkt] && MKT[adMkt].t) || adMkt || 'this market') + ' this period.</div>'; }
-  var ac = pick(sad.campaigns, ad.campaigns); if (ac) renderCampaigns(ac);
+  // Active Campaigns table: campaignsByPeriod[period] (real per-campaign rows for that window) if the
+  // client bakes it, else the static `campaigns` array shown regardless of period (existing behaviour
+  // for clients that only have one month's worth of per-campaign detail). Same idiom as
+  // kpisByPeriod/tableByPeriod/groupsByPeriod above and campaignMixByPeriod below.
+  var acp = ad.campaignsByPeriod && ad.campaignsByPeriod[currentPeriod];
+  var ac = pick(sad.campaigns, acp || ad.campaigns); if (ac) renderCampaigns(ac);
 
   // Inventory follows the market chip — KPIs, Stock-by-ASIN, Restock Priority, Supplier POs and the
   // scope label each take a per-market override (…ByMarket[mkt]), else the default (UK/EU pool). Ireland

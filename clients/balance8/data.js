@@ -240,10 +240,35 @@ window.DASHBOARD_DATA = {
       // allocated — MerchantSpring exposed genuine per-product ad-sales this pull, unlike the
       // channel-only attribution noted in Abimax's data.js). Creatine + Discovery Pack carried no ad
       // spend this month (0 shown = no ads run, not zero performance).
+      //
+      // campaignsByPeriod: the Active Campaigns table used to be a single static array shown under
+      // every date-range selection — so picking "Last 12 Months" showed August's 2 rows (£66+£29
+      // spend) sitting right below a pie chart correctly reading the real 12-month total (£3,031
+      // spend / £5,843 sales). Fixed by making this table period-aware (app.js now checks
+      // campaignsByPeriod[currentPeriod] first, same idiom as kpisByPeriod/groupsByPeriod elsewhere).
+      //   may / 3m: real per-SKU breakdown (Jun+Jul had £0 ad spend, so the 3-month total IS August's).
+      //   12m: MerchantSpring wasn't pulled at per-SKU granularity for Nov 25–Feb 26 (only channel-
+      //   level spend/sales for those months) — a per-SKU split for the full 12 months would be
+      //   invented, so this is one aggregate "All Sponsored Products" row using the real 12-month
+      //   totals (reconciles exactly with the campaignMix pie above it: £5.8k sales, 51.9% ACOS). CPC
+      //   is left '—' rather than backed into from a rounded CTR.
       campaigns: [
         {name:'UK · BrainMatter Calm — SP',type:'Sponsored Products',spend:'£66',sales:'£72',acos:'92.5%',acosCls:'br',roas:'1.08×',cpc:'£1.35',status:'Active',statusCls:'bg'},
         {name:'UK · BrainMatter Cognitive — SP',type:'Sponsored Products',spend:'£29',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£0.95',status:'Active',statusCls:'bg'}
-      ]
+      ],
+      campaignsByPeriod: {
+        may: [
+          {name:'UK · BrainMatter Calm — SP',type:'Sponsored Products',spend:'£66',sales:'£72',acos:'92.5%',acosCls:'br',roas:'1.08×',cpc:'£1.35',status:'Active',statusCls:'bg'},
+          {name:'UK · BrainMatter Cognitive — SP',type:'Sponsored Products',spend:'£29',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£0.95',status:'Active',statusCls:'bg'}
+        ],
+        '3m': [
+          {name:'UK · BrainMatter Calm — SP',type:'Sponsored Products',spend:'£66',sales:'£72',acos:'92.5%',acosCls:'br',roas:'1.08×',cpc:'£1.35',status:'Active',statusCls:'bg'},
+          {name:'UK · BrainMatter Cognitive — SP',type:'Sponsored Products',spend:'£29',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£0.95',status:'Active',statusCls:'bg'}
+        ],
+        '12m': [
+          {name:'UK · All Sponsored Products (12-month)',type:'Sponsored Products',spend:'£3,031',sales:'£5,843',acos:'51.9%',acosCls:'ba',roas:'1.93×',cpc:'—',status:'Active',statusCls:'bg'}
+        ]
+      }
     },
     inventory: {
       // Real FBA stock snapshot from the MerchantSpring product report (qty + days-cover per ASIN,
