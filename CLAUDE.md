@@ -23,3 +23,20 @@ step 10 for the full agent runbook this codifies.
 
 Without both of these, "commit the new data.js" is an incomplete, silently-broken rebake: the
 data changes in the repo but nothing changes on screen for the client.
+
+## AMACX "Last Month" lookback toggle — the yoy{} block needs its own pull every rebake
+
+`clients/amacx/data.js` → `dateRanges.may.yoy` bakes the Same-Period-Last-Year comparison shown by
+the Prior Period / Same Period Last Year toggle (see README.md → "Re-baking AMACX" → step 1). It is
+**not derived from `$M`** — it comes from a *separate* MerchantSpring pull (this month vs the same
+calendar month last year) and does not advance on its own when `$M` is refreshed for the new month.
+
+**Every AMACX rebake that updates `may` must also refresh `dateRanges.may.yoy`** (top-level EU +
+`marketKpis.{de,fr,es,it}`), or the YoY comparison silently goes stale — showing last month's
+YoY delta as if it were this month's, with no visual sign anything is wrong. Only bake fields that
+reconcile against MerchantSpring's other reports (currently Revenue/Ad Spend/TACOS/ROAS); leave a
+metric's `yoy` fields out entirely rather than baking an unreconciled number — `app.js`'s `lb()`
+helper shows "YoY data pending" for anything missing, which is honest, whereas a wrong number isn't.
+
+This is the same category of mistake as skipping the `APP_VER` bump above: the rebake looks
+complete (data.js changed, commit pushed) but the client-visible feature is quietly wrong.

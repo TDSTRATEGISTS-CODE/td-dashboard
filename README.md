@@ -451,6 +451,10 @@ Notes:
   (the Performance-by-Campaign-Type pie, `period → market`) is a **baked literal** aggregated from
   `generateCampaignsReport` per period × channel (SP/SB/SD by `ad_type`) — like `groupsByPeriod`, editing `$M` won't
   refresh it; you must re-run the campaign pulls.
+- **Lookback toggle (Prior Period / Same Period Last Year):** `dateRanges.may.yoy` (EU + `marketKpis.{de,fr,es,it}`,
+  Revenue/Ad Spend/TACOS/ROAS only) is a **separate MerchantSpring pull** (this month vs same month last year) —
+  refreshing `$M` does NOT update it. See the monthly re-bake Step 1 below for the pull method and its gotchas
+  (`interval:'M'` is broken for this account; only Revenue/Spend/TACOS/ROAS currently reconcile).
 - **Buy Box (Overview):** `sections.overview.buyBoxByPeriod` (official featured-offer %, `period → market`, with MoM delta)
   is a baked literal from `generateTrafficAndConversionReport` per period × channel (page-view-weighted `buyboxWinPercentage`);
   `sections.overview.buyBoxLosses` (loss list) is from `generateBuyBoxReport` `filter:'losing'` per channel (current snapshot).
@@ -487,6 +491,18 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
    `$M[mkt].impr` + `$M[mkt].clicks` (monthly; the ad report caps windows at **30 days**, so pull **month-by-month** with
    `searchText:'AMACX'` to filter to seller `A1O4H4W8GP4BN2`). These feed the Ad Metrics card's Impressions / CTR / Avg-CPC
    and the Overview Conversion-Rate KPI. ✅ Confirm: the script's printed per-period summary matches Seller Central for `may`.
+   **Also refresh `dateRanges.may.yoy`** (the Prior Period / Same Period Last Year toggle — see CLAUDE.md): per market,
+   pull `getSalesByPeriod` for `may`'s calendar month vs the same month last year (`calculateDateEpoch`
+   `comparisonType:'sameMonthLastYear'`). **`interval:'M'` returns `sales:"0.00"` for this account (a live bug, not a
+   config error) — use `interval:'w'` and sum the weekly buckets' `sales`/`priorSales`/`adSpend`/`priorAdSpend` instead;
+   this reconciles exactly against `$M`.** Compute Revenue/Ad Spend/TACOS/ROAS deltas (EU + per market) from those sums —
+   these are the only metrics validated to reconcile. Do **not** bake `yoy` entries for Ad Sales/Impressions/CTR/CPC from
+   this call's embedded `adSales`/`impressions` fields — they diverge materially (~40%+) from the baked figures sourced
+   via `getAdvertisingByChannels`, and that tool was returning a `troas`/`priorTroas` schema error as of this writing, so
+   there's no reconciled source for them yet. Leave those fields out of `yoy` entirely (`app.js` shows "YoY data pending"
+   for anything missing) rather than bake a number that doesn't reconcile. NLD has no 2025 actuals (early launch) — no
+   `yoy` entry for it. ✅ Confirm: `yoy.revD`/`spendD`/`tacosD`/`roasD` (EU + each market) are present and the weekly-sum
+   revenue matches `$M`'s current-month total within rounding.
 2. **Budgets → `$BUD`** and **revenue target → `$REVTGT`.** Re-read the Google Sheet (`read_file_content`): per-market ad
    budgets and **row 8 "Revenue Target (past vs future)"**. **APPEND** this month's target to `$REVTGT` (don't replace the
    history — the chart window `$cidx` slices it, and the generator throws if `$REVTGT` is shorter than `$M`). The trailing-6
