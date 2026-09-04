@@ -223,7 +223,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
      cached page (GitHub Pages caps index.html at a 10-min browser cache) by reloading once with a
      cache-bust param; and if it changes mid-session it shows the "please refresh" overlay. One bump,
      all jobs. */
-  var APP_VER = '2026-09-04a';
+  var APP_VER = '2026-09-04b';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -867,7 +867,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       <div class="card">
         <div class="card-hdr"><div><div class="card-ttl">Sales by Product Group</div><div class="card-sub"><span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
         <div class="tscroll"><table class="dtable">
-          <thead><tr><th>Group</th><th>Sales</th><th>Ad Spend</th><th>TACOS</th><th>Units</th><th>% Sales</th><th>OOS Rate</th></tr></thead>
+          <thead><tr><th>Group</th><th>Sales</th><th>Ad Spend</th><th>TACOS</th><th>Units</th><th>CVR</th><th>% Sales</th><th>OOS Rate</th></tr></thead>
           <tbody id="sec-prod-groups"></tbody>
         </table></div>
       </div>

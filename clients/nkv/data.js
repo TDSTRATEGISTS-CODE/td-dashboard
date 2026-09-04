@@ -502,15 +502,22 @@ window.DASHBOARD_DATA = {
     '12m':{ rev:'£3,078', units:109, orders:102, aov:'£30.18', cvr:'5.0%' }
   };
   var GROUPS = {
-    // [name, sales, units, %share, adSpend, TACOS, tacosCls] — 'may'/3m/6m are exact (MerchantSpring
-    // generated salesByProduct report, UK channel, grouped by brand, ad spend ÷ brand sales); 12m is
-    // unchanged this run (still May's per-brand mix applied to the 12m real total — see header note).
-    // A new brand line (HYDRTE — Travel Bottles) launched in July with real ad spend/sales.
-    // bg <20% · ba 20–40% · br >40%.
-    may:  [['Contours Rx — Eyelid Strips','£9,000',270,'70%','£990','11.0%','bg'],['White Luxe — Teeth Whitening','£1,324',42,'10%','£495','37.4%','ba'],['Newnique — Hair Growth','£828',70,'7%','£366','44.2%','br'],['Lilibeth — Brow & Dermaplaning','£939',97,'7%','£174','18.5%','bg'],['Girlactik — Eyeliner','£138',8,'1%','£0','0.0%','bg'],['HYDRTE — Travel Bottles','£603',28,'5%','£279','46.2%','br']],
-    '3m': [['Contours Rx — Eyelid Strips','£29,559',880,'70%','£3,141','10.6%','bg'],['White Luxe — Teeth Whitening','£5,296',174,'12%','£2,217','41.9%','br'],['Newnique — Hair Growth','£3,087',187,'7%','£1,534','49.7%','br'],['Lilibeth — Brow & Dermaplaning','£2,949',323,'7%','£538','18.2%','bg'],['Girlactik — Eyeliner','£1,037',66,'2%','£239','23.0%','ba'],['HYDRTE — Travel Bottles','£603',28,'1%','£279','46.2%','br']],
-    '6m': [['Contours Rx — Eyelid Strips','£62,155',1850,'73%','£7,163','11.5%','bg'],['White Luxe — Teeth Whitening','£9,962',313,'12%','£3,804','38.2%','ba'],['Newnique — Hair Growth','£4,756',243,'6%','£2,445','51.4%','br'],['Lilibeth — Brow & Dermaplaning','£5,328',575,'6%','£949','17.8%','bg'],['Girlactik — Eyeliner','£2,241',138,'3%','£769','34.3%','ba'],['HYDRTE — Travel Bottles','£603',28,'1%','£279','46.2%','br']],
-    '12m':[['Contours Rx — Eyelid Strips','£116,013',3343,'69%','£12,094','10.4%','bg'],['White Luxe — Teeth Whitening','£22,293',704,'13%','£9,435','42.3%','br'],['Newnique — Hair Growth','£13,971',821,'8%','£6,799','48.7%','br'],['Lilibeth — Brow & Dermaplaning','£11,963',1314,'7%','£1,554','13.0%','bg'],['Girlactik — Eyeliner','£4,925',328,'3%','£1,312','26.6%','ba']]
+    // [name, sales, units, %share, adSpend, TACOS, tacosCls, CVR, cvrCls] — all four periods re-baked
+    // 4 Sep 2026 from a fresh MerchantSpring pull (getSalesByProduct grouped by brand for sales/units/
+    // ad spend/TACOS; the generated trafficAndConversion (view:'skus') report, summed by brand, for
+    // sessions → CVR = ordered units ÷ sessions, since MerchantSpring's product-level endpoints don't
+    // expose an order-count-based session CVR the way the market-level pull does — same definition as
+    // the "unitsPerSession" field that report already surfaces). Real 12m figures too: this single-window
+    // product pull doesn't hit the getSalesByPeriod monthly-bucket bug that has been blocking a 12m
+    // refresh (see the top-of-file header note) — this is a genuine improvement over the prior carried-
+    // forward estimate, not just a relabel. pct = share of these 6 mapped brands' own sales total, which
+    // runs a few % under each period's full UK channel revenue (a handful of unbranded/delisted SKUs
+    // aren't captured by this pull) — same caveat as the existing IRL/USA allocation methodology below.
+    // bg <20% · ba 20–40% · br >40% (TACOS); CVR bg ≥8% · ba 3–8% · br <3%.
+    may:  [['Contours Rx — Eyelid Strips','£13,005',365,'74%','£1,061','8.2%','bg','10.0%','bg'],['White Luxe — Teeth Whitening','£1,115',40,'6%','£449','40.3%','br','5.9%','ba'],['Newnique — Hair Growth','£1,462',64,'8%','£495','33.8%','ba','5.3%','ba'],['Lilibeth — Brow & Dermaplaning','£983',111,'6%','£124','12.6%','bg','23.2%','bg'],['Girlactik — Eyeliner','£136',8,'1%','£2','1.3%','bg','38.1%','bg'],['HYDRTE — Travel Bottles','£924',42,'5%','£315','34.1%','ba','3.3%','ba']],
+    '3m': [['Contours Rx — Eyelid Strips','£28,614',824,'69%','£3,011','10.5%','bg','10.4%','bg'],['White Luxe — Teeth Whitening','£4,299',142,'10%','£1,745','40.6%','br','5.7%','ba'],['Newnique — Hair Growth','£3,412',200,'8%','£1,444','42.3%','br','6.1%','ba'],['Lilibeth — Brow & Dermaplaning','£2,878',316,'7%','£446','15.5%','bg','20.6%','bg'],['Girlactik — Eyeliner','£684',44,'2%','£111','16.3%','bg','26.2%','bg'],['HYDRTE — Travel Bottles','£1,527',70,'4%','£581','38.1%','ba','3.2%','ba']],
+    '6m': [['Contours Rx — Eyelid Strips','£54,337',1573,'69%','£6,307','11.6%','bg','9.3%','bg'],['White Luxe — Teeth Whitening','£9,876',315,'13%','£3,895','39.4%','ba','5.2%','ba'],['Newnique — Hair Growth','£5,553',282,'7%','£2,625','47.3%','br','5.1%','ba'],['Lilibeth — Brow & Dermaplaning','£5,481',591,'7%','£902','16.5%','bg','18.4%','bg'],['Girlactik — Eyeliner','£1,988',123,'3%','£633','31.9%','ba','13.5%','bg'],['HYDRTE — Travel Bottles','£1,527',70,'2%','£581','38.1%','ba','3.2%','ba']],
+    '12m':[['Contours Rx — Eyelid Strips','£99,365',2909,'67%','£12,684','12.8%','bg','8.3%','bg'],['White Luxe — Teeth Whitening','£21,650',633,'15%','£6,803','31.4%','ba','5.3%','ba'],['Newnique — Hair Growth','£12,318',536,'8%','£4,730','38.4%','ba','5.3%','ba'],['Lilibeth — Brow & Dermaplaning','£9,776',1051,'7%','£1,988','20.3%','ba','16.2%','bg'],['Girlactik — Eyeliner','£4,064',254,'3%','£1,186','29.2%','ba','9.8%','bg'],['HYDRTE — Travel Bottles','£1,527',70,'1%','£581','38.1%','ba','3.2%','ba']]
   };
   function num(x) { return x.toLocaleString('en-GB'); }
   function gbp(s) { return Number(String(s).replace(/[^0-9.]/g, '')); }
@@ -555,7 +562,7 @@ window.DASHBOARD_DATA = {
     { name:'Ireland',        flag:'ie', revenue:r.rev, units:num(r.units), orders:num(r.orders), cvr:r.cvr, cvrCls:'ba', aov:r.aov },
     { name:'United States',  flag:'us', revenue:a.rev, units:num(a.units), orders:num(a.orders), cvr:'—',   cvrCls:'bb', aov:a.aov }
   ]; }
-  function grp(g) { return g.map(function (x) { return { name:x[0], sales:x[1], units:num(x[2]), pct:x[3], adSpend:x[4], tacos:x[5], tacosCls:x[6], oosRate:'0%', oosCls:'bg' }; }); }
+  function grp(g) { return g.map(function (x) { return { name:x[0], sales:x[1], units:num(x[2]), pct:x[3], adSpend:x[4], tacos:x[5], tacosCls:x[6], cvr:x[7], cvrCls:x[8], oosRate:'0%', oosCls:'bg' }; }); }
   // Ireland — early-stage, NO ads (so Ad Spend £0 / TACOS n/a). Only three brands sell there; the split
   // is allocated from the real trailing-12mo IE brand mix (MerchantSpring product report: Contours Rx 82%
   // / White Luxe 10% / Newnique 8% by sales, 74/12/14 by units) applied to each period's IE actuals.

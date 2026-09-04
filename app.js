@@ -1384,7 +1384,9 @@ function renderProdGroups(arr) {
     return '<tr><td>' + g.name + '</td><td>' + g.sales +
       '</td><td>' + (g.adSpend != null ? g.adSpend : '—') +
       '</td><td>' + (g.tacos != null ? '<span class="badge ' + (g.tacosCls || 'bb') + '">' + g.tacos + '</span>' : '—') +
-      '</td><td>' + g.units + '</td><td>' + g.pct +
+      '</td><td>' + g.units +
+      '</td><td>' + (g.cvr != null ? '<span class="badge ' + (g.cvrCls || 'bb') + '">' + g.cvr + '</span>' : '—') +
+      '</td><td>' + g.pct +
       '</td><td><span class="badge ' + (g.oosCls || 'bg') + '">' + g.oosRate + '</span></td></tr>';
   }));
   if (card) card.style.display = '';
