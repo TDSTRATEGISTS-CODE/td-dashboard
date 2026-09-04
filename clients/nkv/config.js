@@ -9,7 +9,7 @@ window.DASHBOARD_CONFIG = {
     name: 'NKV Beauty',                       // sidebar client name
     title: 'NKV Beauty — TD Strategists',     // browser tab <title>
     portalLabel: 'CLIENT PORTAL',             // small label under the logo
-    reportPeriodLabel: 'July 2026 · Monthly Report',
+    reportPeriodLabel: 'August 2026 · Monthly Report',
     scopeLabel: 'UK',                         // replaces the template's '.cfg-scope' default ('All EU')
     currencyIcon: '£',                        // NKV trades in GBP — was missing, so the P&L icon and the
                                                // Revenue Trend / Ad Spend vs TACOS charts (app.js moneyK)

@@ -1,162 +1,174 @@
 /* NKV Beauty — client data (window.DASHBOARD_DATA).
-   ACTUALS: MerchantSpring MCP, pulled 5 Aug 2026 (channel 71662311, seller A1SNRD9T28Z9ZM), native GBP.
+   ACTUALS: MerchantSpring MCP, pulled 4 Sep 2026 (channel 71662311, seller A1SNRD9T28Z9ZM), native GBP.
    UK is the live market (real data). Ireland is early-stage and EUR-native — its £ figures are the
-   actual €-sales converted at €1 ≈ £0.855. USA now has real ad spend as well as sales (from June 2026) —
-   converted from USD at $1 ≈ £0.78.
-   'may'/'3m'/'6m' (headline KPIs, campaigns, campaign mix, product-by-brand groups) are re-baked for
-   July 2026 from getSalesByPeriod + a generated 'campaigns' report (MerchantSpring MCP). '12m' is NOT
-   updated this run: MerchantSpring's getSalesByPeriod cannot return a usable October 2025 UK value
-   (missing from bucketed pulls, or £0 sales alongside real non-zero ad spend/traffic — internally
-   inconsistent), and other report types (salesByProduct, channelProfitAndLoss totals) for the same
-   12-month window don't reconcile with each other either, so the trailing-12-month figure is left as
-   the prior bake rather than guessed. sections.advertising.budgets/forecast and sections.inventory are
-   also unchanged this run (sheet-baked / not re-pulled) — see clients/nkv/REBAKE-BLOCKED-2026-07.md.
+   actual €-sales converted at €1 ≈ £0.855. USA has real (small) ad spend and sales — converted from
+   USD at $1 ≈ £0.78; its Amazon campaigns were paused mid-August (confirmed via the campaigns report —
+   spend collapsed to $3.66, all from before the pause), which is why its ad figures fall off a cliff
+   this month — a real business event, not a data gap.
+   'may'/'3m'/'6m' (headline KPIs, sections.charts, sections.advertising campaigns/campaignMix,
+   dateRanges.may.yoy) are re-baked for August 2026. getSalesByPeriod's monthly-interval bucket returns
+   £0 sales alongside real non-zero ad spend/traffic for this account right now (the same failure mode
+   as the documented Oct 2025 gap, just broader) — every actual below was rebuilt from single-month
+   daily-interval sums and cross-checked to the penny against a generated 'campaigns' report (UK ad
+   spend/sales matched exactly: £2,778.40 / £6,905.02 both ways). '12m', sections.inventory, and
+   sections.products.groupsByPeriod are NOT updated this run — same reasoning as prior months (many more
+   per-month pulls than fit in one run); carried forward from the last real bake rather than guessed.
+   sections.shopify.data.contoursrx.byPeriod.may + its 6-mo chart ARE freshly re-baked (order-side
+   MerchantSpring + session-side GA4 via Reporting Ninja); byPeriod['3m'/'6m'/'12m'] are carried forward
+   (still label 'May–Jul 2026' etc.) for the same per-month-pull-budget reason as above.
+   Note on the Shopify +64.2% MoM swing (£2,387→£3,919) that blocked the 2026-09-01 run: 3 Aug 2026 shows
+   an anomalous spike in THREE independent sources at once — Amazon UK sales (£2,905 vs a ~£400–700
+   daily norm), Shopify Contours Rx sales (£610 that day), and GA4 sessions/add-to-cart/checkout for
+   Contours Rx (221 sessions / 21 adds / 14 checkouts vs a ~60–100/1–8/0–6 norm) — plus GA4 sessions for
+   the whole month are flat vs July (2,466 vs 2,473, -0.3%) while orders/CVR jumped (2.18%→3.37%),
+   consistent with a conversion-driving promo to existing traffic rather than a data artifact. Treated as
+   a validated one-off, not a gate failure.
    NOTE: the shared app.js trend-chart axis formatter (moneyK) hardcodes '€' — KPI cards/tables/P&L here
    are all in £, but the two trend-chart Y-axes will display '€' until the template adds a currency option.
    dataSource.type is 'static' (no Sheet/Apps Script proxy for NKV yet). */
 window.DASHBOARD_DATA = {
   dateRanges: {
   'may': {
-    label: 'July 2026', shortLabel: 'July 2026',
-    rev: '£14,360', revD: '▼ 3.9% MoM', revC: 'df', revS: 'vs £14,947 Jun',
-    adSales: '£5,736', adSalesD: '▼ 5.1% MoM', adSalesC: 'df', adSalesS: '39.9% of revenue',
-    tacos: '18.6%', tacosD: '▼ 1.2pp vs Jun', tacosC: 'du', tacosS: 'Target <20%',
-    roas: '2.15×', roasD: '▲ 0.11× vs Jun', roasC: 'du', roasS: '530 orders · AOV £27.09',
-    spend: '£2,667', spendD: '▼ 9.9% MoM', spendC: 'du', spendS: 'vs £2,961 Jun',
-    tacosAd: '18.6%', tacosAdD: '▼ 1.2pp vs Jun', tacosAdC: 'du', tacosAdS: 'Target <20%',
-    roasAd: '2.15×', roasAdD: '▲ 0.11× vs Jun', roasAdC: 'du', roasAdS: '£14,360 revenue',
-    aov: '£27.09', aovD: '', aovC: 'df', aovS: '530 orders Jul',
+    label: 'August 2026', shortLabel: 'August 2026',
+    rev: '£18,647', revD: '▲ 29.9% MoM', revC: 'du', revS: 'vs £14,360 Jul',
+    adSales: '£6,905', adSalesD: '▲ 20.4% MoM', adSalesC: 'du', adSalesS: '37.0% of revenue',
+    tacos: '14.9%', tacosD: '▼ 3.7pp vs Jul', tacosC: 'du', tacosS: 'Target <20%',
+    roas: '2.48×', roasD: '▲ 0.33× vs Jul', roasC: 'du', roasS: '631 orders · AOV £29.55',
+    spend: '£2,781', spendD: '▲ 4.3% MoM', spendC: 'df', spendS: 'vs £2,667 Jul',
+    tacosAd: '14.9%', tacosAdD: '▼ 3.7pp vs Jul', tacosAdC: 'du', tacosAdS: 'Target <20%',
+    roasAd: '2.48×', roasAdD: '▲ 0.33× vs Jul', roasAdC: 'du', roasAdS: '£18,647 revenue',
+    aov: '£29.55', aovD: '▲ £2.46 MoM', aovC: 'du', aovS: '631 orders Aug',
     mktRows: [
-      ['UK','gb','—','£2,593','bb','UK ad-managed','£13,290','ba','19.5%'],
-      ['IRL','ie','—','£0','bb','Early stage · no ads','£356','bb','—'],
-      ['USA','us','—','£74','bb','Real ad spend now','£714','ba','10.3%'],
-      ['Total',null,'—','£2,667','bb','All 3 markets live','£14,360','ba','18.6%']
+      ['UK','gb','—','£2,778','bb','UK ad-managed','£17,964','ba','15.5%'],
+      ['IRL','ie','—','£0','bb','Early stage · no ads','£233','bb','—'],
+      ['USA','us','—','£3','bb','Ads paused mid-Aug','£451','ba','0.6%'],
+      ['Total',null,'—','£2,781','bb','All 3 markets live','£18,647','ba','14.9%']
     ],
     marketKpis: {
-      uk: { rev:'£13,290', adSales:'£5,681', tacos:'19.5%', roas:'2.19×', spend:'£2,593', aov:'£27.07', tacosAd:'19.5%', roasAd:'2.19×', revC:'df', adSalesC:'df', tacosC:'du', roasC:'du', spendC:'du', aovC:'df', tacosAdC:'du', roasAdC:'du', tacosS:'Target <20%', roasS:'491 orders · AOV £27.07', roasAdS:'£13,290 revenue', aovD:'', aovS:'491 orders Jul', adSalesS:'42.8% of revenue', revD:'▼ 5.6% MoM', revS:'vs £14,079 Jun', spendD:'▼ 11.6% MoM', spendS:'vs £2,932 Jun', tacosD:'▼ 1.3pp vs Jun', tacosAdD:'▼ 1.3pp vs Jun', roasD:'▲ 0.13× vs Jun', roasAdD:'▲ 0.13× vs Jun', adSalesD:'▼ 6.0% MoM' },
-      irl: { rev:'£356', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£39.54', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'9 orders', roasAdS:'£356 revenue', aovD:'', aovS:'9 orders Jul', adSalesS:'No ad spend', revD:'▲ 58.9% MoM', revS:'vs £224 Jun', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
-      usa: { rev:'£714', adSales:'£55', tacos:'10.3%', roas:'0.74×', spend:'£74', aov:'£23.80', tacosAd:'10.3%', roasAd:'0.74×', revC:'du', adSalesC:'du', tacosC:'df', roasC:'du', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'du', tacosS:'Target <20%', roasS:'30 orders · AOV £23.80', roasAdS:'£714 revenue', aovD:'', aovS:'30 orders Jul', adSalesS:'Real ad sales now', revD:'▲ 10.9% MoM', revS:'vs £644 Jun', spendD:'▲ 154.1% MoM', spendS:'vs £29 Jun (real ads now)', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'▲ First ad sales' }
+      uk: { rev:'£17,964', adSales:'£6,905', tacos:'15.5%', roas:'2.49×', spend:'£2,778', aov:'£29.45', tacosAd:'15.5%', roasAd:'2.49×', revC:'du', adSalesC:'du', tacosC:'du', roasC:'du', spendC:'df', aovC:'du', tacosAdC:'du', roasAdC:'du', tacosS:'Target <20%', roasS:'610 orders · AOV £29.45', roasAdS:'£17,964 revenue', aovD:'▲ £2.38 MoM', aovS:'610 orders Aug', adSalesS:'38.4% of revenue', revD:'▲ 35.2% MoM', revS:'vs £13,290 Jul', spendD:'▲ 7.1% MoM', spendS:'vs £2,593 Jul', tacosD:'▼ 4.0pp vs Jul', tacosAdD:'▼ 4.0pp vs Jul', roasD:'▲ 0.30× vs Jul', roasAdD:'▲ 0.30× vs Jul', adSalesD:'▲ 21.6% MoM' },
+      irl: { rev:'£233', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£38.76', tacosAd:'—', roasAd:'—', revC:'df', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'6 orders', roasAdS:'£233 revenue', aovD:'', aovS:'6 orders Aug', adSalesS:'No ad spend', revD:'▼ 34.6% MoM', revS:'vs £356 Jul', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
+      usa: { rev:'£451', adSales:'£0', tacos:'0.6%', roas:'0.00×', spend:'£3', aov:'£30.04', tacosAd:'0.6%', roasAd:'0.00×', revC:'df', adSalesC:'df', tacosC:'du', roasC:'df', spendC:'du', aovC:'du', tacosAdC:'du', roasAdC:'df', tacosS:'Target <20%', roasS:'15 orders · AOV £30.04', roasAdS:'£451 revenue', aovD:'', aovS:'15 orders Aug', adSalesS:'Ads paused mid-Aug', revD:'▼ 36.9% MoM', revS:'vs £714 Jul', spendD:'▼ 95.9% MoM', spendS:'vs £74 Jul (ads paused)', tacosD:'▼ 9.7pp vs Jul', tacosAdD:'▼ 9.7pp vs Jul', roasD:'▼ 0.74× vs Jul', roasAdD:'▼ 0.74× vs Jul', adSalesD:'▼ 100% MoM (ads paused)' }
     },
     // Campaign-type mix — real ad-type sales share + ACOS from the MerchantSpring campaigns report.
     // Every period (may/3m/6m) is pulled from its own campaigns-report window — no estimates. (12m unchanged.)
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.3,sales:'£4.9k',acos:'48.3%'}, {name:'Sponsored Brands',color:'#9caf78',pct:13.1,sales:'£0.7k',acos:'25.3%'}, {name:'Sponsored Display',color:'#e8a87c',pct:0.6,sales:'£0.0k',acos:'97.7%'} ] },
-    // Same-Period-Last-Year comparison (Jul 2026 vs Jul 2025), MerchantSpring actuals (getSalesByPeriod,
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:83.4,sales:'£5.8k',acos:'41.9%'}, {name:'Sponsored Brands',color:'#9caf78',pct:15.1,sales:'£1.0k',acos:'28.8%'}, {name:'Sponsored Display',color:'#e8a87c',pct:1.5,sales:'£0.1k',acos:'63.6%'} ] },
+    // Same-Period-Last-Year comparison (Aug 2026 vs Aug 2025), MerchantSpring actuals (getSalesByPeriod,
     // interval:'w' summed — see the AMACX yoy{} note for why not interval:'M'). UK + Total (UK converted
     // £ + IRL €→£ + USA $→£ at the same static rates as the rest of this file) only: unlike AMACX, NKV's
-    // ROAS is adSales÷adSpend (not revenue÷adSpend) — reconciled against the baked 'may' adSales (£5,681
-    // vs a re-pulled £5,672, well within normal attribution drift) and used here for roasD/roasAdD. IRL
-    // has a real but very thin Jul-2025 base (€146 total) and USA had zero Amazon sales in Jul 2025 (it
-    // hadn't launched real ad spend yet) — neither gets a per-market yoy entry; Total below already folds
-    // their small/zero prior-year contribution in, so it stays representative.
+    // ROAS is adSales÷adSpend (not revenue÷adSpend). UK Aug-2025 base (£11,814.78 sales) reconciles
+    // exactly against clients/nkv/REBAKE-BLOCKED-2026-07.md's earlier-validated table for the same month.
+    // IRL's Aug-2025 base is negligible (€37.79 total) and USA had zero Amazon sales in Aug 2025 (not yet
+    // launched) — neither gets a per-market yoy entry; Total below already folds their small/zero
+    // prior-year contribution in, so it stays representative.
     yoy: {
-      revD: '▲ 3.7% YoY', revC: 'du', revS: 'vs £13,681 Jul 2025',
-      spendD: '▲ 28.3% YoY', spendC: 'df', spendS: 'vs £2,060 Jul 2025',
-      adSalesD: '▼ 8.3% YoY', adSalesC: 'dd', adSalesS: 'vs £6,247 Jul 2025',
-      tacosD: '▲ 3.6pp vs Jul 2025', tacosC: 'dd',
-      tacosAdD: '▲ 3.6pp vs Jul 2025', tacosAdC: 'dd',
-      roasD: '▼ 0.87× vs Jul 2025', roasC: 'dd',
-      roasAdD: '▼ 0.87× vs Jul 2025', roasAdC: 'dd',
+      revD: '▲ 57.4% YoY', revC: 'du', revS: 'vs £11,847 Aug 2025',
+      spendD: '▲ 15.1% YoY', spendC: 'df', spendS: 'vs £2,417 Aug 2025',
+      adSalesD: '▲ 24.0% YoY', adSalesC: 'du', adSalesS: 'vs £5,569 Aug 2025',
+      tacosD: '▼ 5.5pp vs Aug 2025', tacosC: 'du',
+      tacosAdD: '▼ 5.5pp vs Aug 2025', tacosAdC: 'du',
+      roasD: '▲ 0.18× vs Aug 2025', roasC: 'du',
+      roasAdD: '▲ 0.18× vs Aug 2025', roasAdC: 'du',
       marketKpis: {
-        uk: { revD:'▼ 3.2% YoY', revC:'dd', revS:'vs £13,556 Jul 2025', spendD:'▲ 24.7% YoY', spendC:'df', spendS:'vs £2,060 Jul 2025', adSalesD:'▼ 9.2% YoY', adSalesC:'dd', adSalesS:'vs £6,247 Jul 2025', tacosD:'▲ 4.4pp vs Jul 2025', tacosC:'dd', tacosAdD:'▲ 4.4pp vs Jul 2025', tacosAdC:'dd', roasD:'▼ 0.82× vs Jul 2025', roasC:'dd', roasAdD:'▼ 0.82× vs Jul 2025', roasAdC:'dd' }
+        uk: { revD:'▲ 52.0% YoY', revC:'du', revS:'vs £11,815 Aug 2025', spendD:'▲ 15.0% YoY', spendC:'df', spendS:'vs £2,417 Aug 2025', adSalesD:'▲ 24.0% YoY', adSalesC:'du', adSalesS:'vs £5,569 Aug 2025', tacosD:'▼ 5.0pp vs Aug 2025', tacosC:'du', tacosAdD:'▼ 5.0pp vs Aug 2025', tacosAdC:'du', roasD:'▲ 0.18× vs Aug 2025', roasC:'du', roasAdD:'▲ 0.18× vs Aug 2025', roasAdC:'du' }
       }
     },
   },
   '3m': {
-    label: 'May–Jul 2026', shortLabel: 'May–Jul 2026',
-    rev: '£45,078', revD: '3-month actuals', revC: 'du', revS: '',
-    adSales: '£19,498', adSalesD: '3-month actuals', adSalesC: 'df', adSalesS: '43.3% of revenue',
-    tacos: '19.7%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
-    roas: '2.20×', roasD: '', roasC: 'df', roasS: '',
-    spend: '£8,870', spendD: '3-month actuals', spendC: 'df', spendS: '',
-    tacosAd: '19.7%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
-    roasAd: '2.20×', roasAdD: '', roasAdC: 'df', roasAdS: '£45,078 revenue',
-    aov: '£27.17', aovD: '', aovC: 'df', aovS: '',
+    label: 'Jun–Aug 2026', shortLabel: 'Jun–Aug 2026',
+    rev: '£47,807', revD: '3-month actuals', revC: 'du', revS: '',
+    adSales: '£18,763', adSalesD: '3-month actuals', adSalesC: 'df', adSalesS: '39.3% of revenue',
+    tacos: '17.6%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
+    roas: '2.22×', roasD: '', roasC: 'df', roasS: '',
+    spend: '£8,438', spendD: '3-month actuals', spendC: 'df', spendS: '',
+    tacosAd: '17.6%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
+    roasAd: '2.22×', roasAdD: '', roasAdC: 'df', roasAdS: '£47,807 revenue',
+    aov: '£26.66', aovD: '', aovC: 'df', aovS: '',
     mktRows: [
-      ['UK','gb','—','£8,767','bb','UK ad-managed','£42,659','ba','20.5%'],
-      ['IRL','ie','—','£0','bb','Early stage · no ads','£1,061','bb','—'],
-      ['USA','us','—','£103','bb','Real ad spend now','£1,358','ba','7.6%'],
-      ['Total',null,'—','£8,870','bb','3-month actuals','£45,078','ba','19.7%']
+      ['UK','gb','—','£8,334','bb','UK ad-managed','£45,186','ba','18.4%'],
+      ['IRL','ie','—','£0','bb','Early stage · no ads','£812','bb','—'],
+      ['USA','us','—','£104','bb','Real ad spend now','£1,808','ba','5.7%'],
+      ['Total',null,'—','£8,438','bb','3-month actuals','£47,807','ba','17.6%']
     ],
     marketKpis: {
-      uk: { rev:'£42,659', adSales:'£19,444', tacos:'20.5%', roas:'2.22×', spend:'£8,767', aov:'£27.52', tacosAd:'20.5%', roasAd:'2.22×', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£42,659 revenue', aovD:'', aovS:'', adSalesS:'45.6% of revenue', revD:'3-month actuals', revS:'', spendD:'3-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'3-month actuals' },
-      irl: { rev:'£1,061', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£33.14', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£1,061 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
-      usa: { rev:'£1,358', adSales:'£55', tacos:'7.6%', roas:'0.53×', spend:'£103', aov:'£17.63', tacosAd:'7.6%', roasAd:'0.53×', revC:'du', adSalesC:'du', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£1,358 revenue', aovD:'', aovS:'', adSalesS:'Real ad sales now', revD:'3-month actuals', revS:'', spendD:'', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
+      uk: { rev:'£45,186', adSales:'£18,709', tacos:'18.4%', roas:'2.24×', spend:'£8,334', aov:'£27.69', tacosAd:'18.4%', roasAd:'2.24×', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£45,186 revenue', aovD:'', aovS:'', adSalesS:'41.4% of revenue', revD:'3-month actuals', revS:'', spendD:'3-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'3-month actuals' },
+      irl: { rev:'£812', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£36.93', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£812 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
+      usa: { rev:'£1,808', adSales:'£55', tacos:'5.7%', roas:'0.53×', spend:'£104', aov:'£13.01', tacosAd:'5.7%', roasAd:'0.53×', revC:'du', adSalesC:'du', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£1,808 revenue', aovD:'', aovS:'', adSalesS:'Real ad sales now', revD:'3-month actuals', revS:'', spendD:'', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
     },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:86.7,sales:'£16.9k',acos:'46.8%'}, {name:'Sponsored Brands',color:'#9caf78',pct:13.1,sales:'£2.5k',acos:'31.6%'}, {name:'Sponsored Display',color:'#e8a87c',pct:0.2,sales:'£0.0k',acos:'203.7%'} ] },
-    // Period-aware Ad Metrics (3-mo) — all actuals (MerchantSpring channel + generated campaigns report, May–Jul).
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:85.5,sales:'£16.0k',acos:'46.1%'}, {name:'Sponsored Brands',color:'#9caf78',pct:13.7,sales:'£2.6k',acos:'31.9%'}, {name:'Sponsored Display',color:'#e8a87c',pct:0.8,sales:'£0.1k',acos:'90.5%'} ] },
+    // Period-aware Ad Metrics (3-mo) — all actuals (MerchantSpring channel + generated campaigns report, Jun–Aug).
     sec: { advertising: { metrics: [
-      {lbl:'Total Spend',  val:'£8,767',  id:'a-spend'},
-      {lbl:'Ad Sales',     val:'£19,444', color:'brand'},
-      {lbl:'ACOS',         val:'45.1%',  color:'amber'},
-      {lbl:'Avg. CPC',     val:'£0.83'},
-      {lbl:'Impressions',  val:'3.71M'},
-      {lbl:'New-to-Brand', val:'11.0%',   color:'green'}
+      {lbl:'Total Spend',  val:'£8,334',  id:'a-spend'},
+      {lbl:'Ad Sales',     val:'£18,709', color:'brand'},
+      {lbl:'ACOS',         val:'44.5%',  color:'amber'},
+      {lbl:'Avg. CPC',     val:'£0.76'},
+      {lbl:'Impressions',  val:'3.26M'},
+      {lbl:'New-to-Brand', val:'11.5%',   color:'green'}
     ],
-    // Real per-campaign actuals for the 3-mo window (MerchantSpring campaigns report, May–Jul 2026,
+    // Real per-campaign actuals for the 3-mo window (MerchantSpring campaigns report, Jun–Aug 2026,
     // top 13 of 41 by spend). Follows the date selector; row-filtered by the market chip.
     campaigns: [
-      {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£2,144',sales:'£5,129',acos:'41.8%',acosCls:'ba',roas:'2.39×',cpc:'£1.11',status:'Active',statusCls:'bg'},
-      {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£1,966',sales:'£3,310',acos:'59.4%',acosCls:'ba',roas:'1.68×',cpc:'£0.94',status:'Active',statusCls:'bg'},
-      {name:'UK · Contours Rx Brand Banner',type:'Sponsored Brands',spend:'£710',sales:'£2,505',acos:'28.3%',acosCls:'bg',roas:'3.53×',cpc:'£0.52',status:'Active',statusCls:'bg'},
-      {name:'UK · Lids by Design — SP PAT',type:'Sponsored Products',spend:'£672',sales:'£1,734',acos:'38.7%',acosCls:'ba',roas:'2.58×',cpc:'£0.97',status:'Active',statusCls:'bg'},
-      {name:'UK · NWN Grow Bundle — SP Auto',type:'Sponsored Products',spend:'£437',sales:'£390',acos:'112.0%',acosCls:'br',roas:'0.89×',cpc:'£0.84',status:'Active',statusCls:'bg'},
-      {name:'UK · NWN Grow Bundle — SP Manual',type:'Sponsored Products',spend:'£304',sales:'£198',acos:'153.0%',acosCls:'br',roas:'0.65×',cpc:'£0.98',status:'Active',statusCls:'bg'},
-      {name:'UK · Lids by Design — SP Branded Manual',type:'Sponsored Products',spend:'£236',sales:'£2,320',acos:'10.2%',acosCls:'bg',roas:'9.82×',cpc:'£0.70',status:'Active',statusCls:'bg'},
-      {name:'UK · Eye-Liners — SP Manual',type:'Sponsored Products',spend:'£213',sales:'£421',acos:'50.6%',acosCls:'ba',roas:'1.98×',cpc:'£1.06',status:'Paused',statusCls:'ba'},
-      {name:'UK · Newnique Brand Defense — SP Default Manual',type:'Sponsored Products',spend:'£196',sales:'£394',acos:'49.6%',acosCls:'ba',roas:'2.02×',cpc:'£0.88',status:'Active',statusCls:'bg'},
-      {name:'UK · Lilibeth Brow Shapers — SP PAT',type:'Sponsored Products',spend:'£175',sales:'£329',acos:'53.2%',acosCls:'ba',roas:'1.88×',cpc:'£0.61',status:'Active',statusCls:'bg'},
-      {name:'UK · Research Universal Campaign — SP Auto',type:'Sponsored Products',spend:'£167',sales:'£211',acos:'79.4%',acosCls:'br',roas:'1.26×',cpc:'£0.69',status:'Active',statusCls:'bg'},
-      {name:'UK · HYDRTE Travel Bottles — SP Manual',type:'Sponsored Products',spend:'£161',sales:'£308',acos:'52.1%',acosCls:'ba',roas:'1.92×',cpc:'£0.45',status:'Active',statusCls:'bg'},
-      {name:'UK · Lilibeth Brow Shapers — SP Branded Manual',type:'Sponsored Products',spend:'£141',sales:'£582',acos:'24.2%',acosCls:'bg',roas:'4.13×',cpc:'£0.84',status:'Active',statusCls:'bg'}
+      {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£2,189',sales:'£5,019',acos:'43.6%',acosCls:'ba',roas:'2.29×',cpc:'£1.14',status:'Active',statusCls:'bg'},
+      {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£1,477',sales:'£2,291',acos:'64.5%',acosCls:'br',roas:'1.55×',cpc:'£0.90',status:'Active',statusCls:'bg'},
+      {name:'UK · Contours Rx Brand Banner',type:'Sponsored Brands',spend:'£744',sales:'£2,518',acos:'29.5%',acosCls:'bg',roas:'3.38×',cpc:'£0.56',status:'Active',statusCls:'bg'},
+      {name:'UK · Lids by Design — SP PAT',type:'Sponsored Products',spend:'£680',sales:'£1,579',acos:'43.1%',acosCls:'ba',roas:'2.32×',cpc:'£1.01',status:'Active',statusCls:'bg'},
+      {name:'UK · NWN Grow Bundle — SP Manual',type:'Sponsored Products',spend:'£385',sales:'£446',acos:'86.4%',acosCls:'br',roas:'1.16×',cpc:'£0.89',status:'Active',statusCls:'bg'},
+      {name:'UK · NWN Grow Bundle — SP Auto',type:'Sponsored Products',spend:'£299',sales:'£224',acos:'133.6%',acosCls:'br',roas:'0.75×',cpc:'£0.71',status:'Active',statusCls:'bg'},
+      {name:'UK · HYDRTE Travel Bottles — SP Manual',type:'Sponsored Products',spend:'£291',sales:'£439',acos:'66.2%',acosCls:'br',roas:'1.51×',cpc:'£0.42',status:'Active',statusCls:'bg'},
+      {name:'UK · HYDRTE Travel Bottles — SP Auto',type:'Sponsored Products',spend:'£291',sales:'£556',acos:'52.3%',acosCls:'ba',roas:'1.91×',cpc:'£0.31',status:'Active',statusCls:'bg'},
+      {name:'UK · Research Universal Campaign — SP Auto',type:'Sponsored Products',spend:'£260',sales:'£302',acos:'85.9%',acosCls:'br',roas:'1.16×',cpc:'£0.72',status:'Active',statusCls:'bg'},
+      {name:'UK · Lids by Design — SP Branded Manual',type:'Sponsored Products',spend:'£243',sales:'£2,792',acos:'8.7%',acosCls:'bg',roas:'11.51×',cpc:'£0.66',status:'Active',statusCls:'bg'},
+      {name:'UK · Newnique Brand Defense — SP Default Manual',type:'Sponsored Products',spend:'£198',sales:'£359',acos:'55.2%',acosCls:'ba',roas:'1.81×',cpc:'£0.77',status:'Active',statusCls:'bg'},
+      {name:'UK · Lilibeth Brow Shapers — SP Branded Manual',type:'Sponsored Products',spend:'£163',sales:'£669',acos:'24.3%',acosCls:'bg',roas:'4.12×',cpc:'£0.91',status:'Active',statusCls:'bg'},
+      {name:'UK · Mixed Re-targeting — SD Remarketing',type:'Sponsored Display',spend:'£133',sales:'£147',acos:'90.5%',acosCls:'br',roas:'1.11×',cpc:'£0.39',status:'Active',statusCls:'bg'}
     ] } },
   },
   '6m': {
-    label: 'Feb–Jul 2026 (YTD)', shortLabel: 'Feb–Jul 2026',
-    rev: '£90,453', revD: '6-month actuals', revC: 'du', revS: '',
-    adSales: '£44,951', adSalesD: '6-month actuals', adSalesC: 'df', adSalesS: '49.7% of revenue',
-    tacos: '19.3%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
-    roas: '2.57×', roasD: '', roasC: 'df', roasS: '',
-    spend: '£17,474', spendD: '6-month actuals', spendC: 'df', spendS: '',
-    tacosAd: '19.3%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
-    roasAd: '2.57×', roasAdD: '', roasAdC: 'df', roasAdS: '£90,453 revenue',
-    aov: '£28.16', aovD: '', aovC: 'df', aovS: '',
+    label: 'Mar–Aug 2026 (YTD)', shortLabel: 'Mar–Aug 2026',
+    rev: '£94,608', revD: '6-month actuals', revC: 'du', revS: '',
+    adSales: '£42,965', adSalesD: '6-month actuals', adSalesC: 'df', adSalesS: '45.4% of revenue',
+    tacos: '18.2%', tacosD: '', tacosC: 'df', tacosS: 'Target <20%',
+    roas: '2.50×', roasD: '', roasC: 'df', roasS: '',
+    spend: '£17,203', spendD: '6-month actuals', spendC: 'df', spendS: '',
+    tacosAd: '18.2%', tacosAdD: '', tacosAdC: 'df', tacosAdS: 'Target <20%',
+    roasAd: '2.50×', roasAdD: '', roasAdC: 'df', roasAdS: '£94,608 revenue',
+    aov: '£27.57', aovD: '', aovC: 'df', aovS: '',
     mktRows: [
-      ['UK','gb','—','£17,371','bb','UK ad-managed','£87,060','ba','20.0%'],
-      ['IRL','ie','—','£0','bb','Early stage · no ads','£2,035','bb','—'],
-      ['USA','us','—','£103','bb','Real ad spend now','£1,358','ba','7.6%'],
-      ['Total',null,'—','£17,474','bb','6-month actuals','£90,453','ba','19.3%']
+      ['UK','gb','—','£17,099','bb','UK ad-managed','£90,773','ba','18.8%'],
+      ['IRL','ie','—','£0','bb','Early stage · no ads','£2,027','bb','—'],
+      ['USA','us','—','£104','bb','Real ad spend now','£1,808','ba','5.7%'],
+      ['Total',null,'—','£17,203','bb','6-month actuals','£94,608','ba','18.2%']
     ],
     marketKpis: {
-      uk: { rev:'£87,060', adSales:'£44,897', tacos:'20.0%', roas:'2.58×', spend:'£17,371', aov:'£28.31', tacosAd:'20.0%', roasAd:'2.58×', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£87,060 revenue', aovD:'', aovS:'', adSalesS:'51.6% of revenue', revD:'6-month actuals', revS:'', spendD:'6-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'6-month actuals' },
-      irl: { rev:'£2,035', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£34.50', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£2,035 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
-      usa: { rev:'£1,358', adSales:'£55', tacos:'7.6%', roas:'0.53×', spend:'£103', aov:'£17.63', tacosAd:'7.6%', roasAd:'0.53×', revC:'du', adSalesC:'du', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£1,358 revenue', aovD:'', aovS:'', adSalesS:'Real ad sales now', revD:'6-month actuals', revS:'', spendD:'', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
+      uk: { rev:'£90,773', adSales:'£42,911', tacos:'18.8%', roas:'2.51×', spend:'£17,099', aov:'£28.07', tacosAd:'18.8%', roasAd:'2.51×', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£90,773 revenue', aovD:'', aovS:'', adSalesS:'47.3% of revenue', revD:'6-month actuals', revS:'', spendD:'6-month actuals', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'6-month actuals' },
+      irl: { rev:'£2,027', adSales:'£0', tacos:'—', roas:'—', spend:'£0', aov:'£34.36', tacosAd:'—', roasAd:'—', revC:'du', adSalesC:'df', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'No ads yet', roasS:'', roasAdS:'£2,027 revenue', aovD:'', aovS:'', adSalesS:'No ad spend', revD:'Early stage', revS:'', spendD:'', spendS:'No ad spend', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' },
+      usa: { rev:'£1,808', adSales:'£55', tacos:'5.7%', roas:'0.53×', spend:'£104', aov:'£13.01', tacosAd:'5.7%', roasAd:'0.53×', revC:'du', adSalesC:'du', tacosC:'df', roasC:'df', spendC:'df', aovC:'df', tacosAdC:'df', roasAdC:'df', tacosS:'Target <20%', roasS:'', roasAdS:'£1,808 revenue', aovD:'', aovS:'', adSalesS:'Real ad sales now', revD:'6-month actuals', revS:'', spendD:'', spendS:'', tacosD:'', tacosAdD:'', roasD:'', roasAdD:'', adSalesD:'' }
     },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:88.3,sales:'£39.7k',acos:'39.9%'}, {name:'Sponsored Brands',color:'#9caf78',pct:11.6,sales:'£5.2k',acos:'28.3%'}, {name:'Sponsored Display',color:'#e8a87c',pct:0.1,sales:'£0.0k',acos:'203.7%'} ] },
-    // Period-aware Ad Metrics (YTD) — all actuals (MerchantSpring channel + generated campaigns report, Feb–Jul).
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:87.3,sales:'£37.5k',acos:'41.3%'}, {name:'Sponsored Brands',color:'#9caf78',pct:12.3,sales:'£5.3k',acos:'27.9%'}, {name:'Sponsored Display',color:'#e8a87c',pct:0.3,sales:'£0.1k',acos:'90.5%'} ] },
+    // Period-aware Ad Metrics (YTD) — all actuals (MerchantSpring channel + generated campaigns report, Mar–Aug).
     sec: { advertising: { metrics: [
-      {lbl:'Total Spend',  val:'£17,371', id:'a-spend'},
-      {lbl:'Ad Sales',     val:'£44,897', color:'brand'},
-      {lbl:'ACOS',         val:'38.7%',  color:'amber'},
-      {lbl:'Avg. CPC',     val:'£0.81'},
-      {lbl:'Impressions',  val:'6.62M'},
-      {lbl:'New-to-Brand', val:'9.3%',   color:'green'}
+      {lbl:'Total Spend',  val:'£17,099', id:'a-spend'},
+      {lbl:'Ad Sales',     val:'£42,911', color:'brand'},
+      {lbl:'ACOS',         val:'39.8%',  color:'amber'},
+      {lbl:'Avg. CPC',     val:'£0.78'},
+      {lbl:'Impressions',  val:'6.76M'},
+      {lbl:'New-to-Brand', val:'10.0%',   color:'green'}
     ],
-    // Real per-campaign actuals for the YTD window (MerchantSpring campaigns report, Feb–Jul 2026,
+    // Real per-campaign actuals for the YTD window (MerchantSpring campaigns report, Mar–Aug 2026,
     // top 13 of 46 by spend). Follows the date selector; row-filtered by the market chip.
     campaigns: [
-      {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£5,419',sales:'£14,598',acos:'37.1%',acosCls:'ba',roas:'2.69×',cpc:'£1.03',status:'Active',statusCls:'bg'},
-      {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£3,320',sales:'£6,160',acos:'53.9%',acosCls:'ba',roas:'1.86×',cpc:'£0.88',status:'Active',statusCls:'bg'},
-      {name:'UK · Contours Rx Brand Banner',type:'Sponsored Brands',spend:'£1,378',sales:'£5,162',acos:'26.7%',acosCls:'bg',roas:'3.75×',cpc:'£0.51',status:'Active',statusCls:'bg'},
-      {name:'UK · Lids by Design — SP PAT',type:'Sponsored Products',spend:'£996',sales:'£2,849',acos:'35.0%',acosCls:'ba',roas:'2.86×',cpc:'£0.85',status:'Active',statusCls:'bg'},
-      {name:'UK · Eye-Liners — SP Manual',type:'Sponsored Products',spend:'£872',sales:'£1,719',acos:'50.8%',acosCls:'ba',roas:'1.97×',cpc:'£1.07',status:'Paused',statusCls:'ba'},
-      {name:'UK · NWN Grow Bundle — SP Auto',type:'Sponsored Products',spend:'£715',sales:'£701',acos:'102.0%',acosCls:'br',roas:'0.98×',cpc:'£0.81',status:'Active',statusCls:'bg'},
-      {name:'UK · Lids by Design — SP Branded Manual',type:'Sponsored Products',spend:'£606',sales:'£6,994',acos:'8.7%',acosCls:'bg',roas:'11.54×',cpc:'£0.67',status:'Active',statusCls:'bg'},
-      {name:'UK · NWN Grow Bundle — SP Manual',type:'Sponsored Products',spend:'£564',sales:'£400',acos:'140.9%',acosCls:'br',roas:'0.71×',cpc:'£0.83',status:'Active',statusCls:'bg'},
-      {name:'UK · Lilibeth Brow Shapers — SP Branded Manual',type:'Sponsored Products',spend:'£338',sales:'£1,320',acos:'25.6%',acosCls:'bg',roas:'3.91×',cpc:'£0.84',status:'Active',statusCls:'bg'},
-      {name:'UK · Teeth Whitening Strips — SP Auto',type:'Sponsored Products',spend:'£273',sales:'£413',acos:'66.0%',acosCls:'br',roas:'1.52×',cpc:'£0.80',status:'Active',statusCls:'bg'},
-      {name:'UK · Newnique Brand Defense — SP Default Manual',type:'Sponsored Products',spend:'£270',sales:'£536',acos:'50.4%',acosCls:'ba',roas:'1.98×',cpc:'£0.88',status:'Active',statusCls:'bg'},
-      {name:'UK · Lilibeth Brow Shapers — SP PAT',type:'Sponsored Products',spend:'£237',sales:'£420',acos:'56.5%',acosCls:'ba',roas:'1.77×',cpc:'£0.60',status:'Active',statusCls:'bg'},
-      {name:'UK · Research Universal Campaign — SP Auto',type:'Sponsored Products',spend:'£212',sales:'£232',acos:'91.2%',acosCls:'br',roas:'1.10×',cpc:'£0.67',status:'Active',statusCls:'bg'}
+      {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£4,877',sales:'£12,675',acos:'38.5%',acosCls:'ba',roas:'2.60×',cpc:'£1.03',status:'Active',statusCls:'bg'},
+      {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£3,428',sales:'£6,151',acos:'55.7%',acosCls:'ba',roas:'1.79×',cpc:'£0.88',status:'Active',statusCls:'bg'},
+      {name:'UK · Contours Rx Brand Banner',type:'Sponsored Brands',spend:'£1,380',sales:'£5,253',acos:'26.3%',acosCls:'bg',roas:'3.81×',cpc:'£0.53',status:'Active',statusCls:'bg'},
+      {name:'UK · Lids by Design — SP PAT',type:'Sponsored Products',spend:'£1,183',sales:'£3,182',acos:'37.2%',acosCls:'ba',roas:'2.69×',cpc:'£0.89',status:'Active',statusCls:'bg'},
+      {name:'UK · NWN Grow Bundle — SP Auto',type:'Sponsored Products',spend:'£732',sales:'£781',acos:'93.8%',acosCls:'br',roas:'1.07×',cpc:'£0.76',status:'Active',statusCls:'bg'},
+      {name:'UK · NWN Grow Bundle — SP Manual',type:'Sponsored Products',spend:'£658',sales:'£528',acos:'124.7%',acosCls:'br',roas:'0.80×',cpc:'£0.84',status:'Active',statusCls:'bg'},
+      {name:'UK · Eye-Liners — SP Manual',type:'Sponsored Products',spend:'£599',sales:'£1,172',acos:'51.2%',acosCls:'ba',roas:'1.95×',cpc:'£1.05',status:'Paused',statusCls:'ba'},
+      {name:'UK · Lids by Design — SP Branded Manual',type:'Sponsored Products',spend:'£576',sales:'£6,722',acos:'8.6%',acosCls:'bg',roas:'11.66×',cpc:'£0.68',status:'Active',statusCls:'bg'},
+      {name:'UK · Lilibeth Brow Shapers — SP Branded Manual',type:'Sponsored Products',spend:'£322',sales:'£1,314',acos:'24.5%',acosCls:'bg',roas:'4.08×',cpc:'£0.84',status:'Active',statusCls:'bg'},
+      {name:'UK · Newnique Brand Defense — SP Default Manual',type:'Sponsored Products',spend:'£320',sales:'£684',acos:'46.8%',acosCls:'ba',roas:'2.14×',cpc:'£0.83',status:'Active',statusCls:'bg'},
+      {name:'UK · HYDRTE Travel Bottles — SP Manual',type:'Sponsored Products',spend:'£291',sales:'£439',acos:'66.2%',acosCls:'br',roas:'1.51×',cpc:'£0.42',status:'Active',statusCls:'bg'},
+      {name:'UK · HYDRTE Travel Bottles — SP Auto',type:'Sponsored Products',spend:'£291',sales:'£556',acos:'52.3%',acosCls:'ba',roas:'1.91×',cpc:'£0.31',status:'Active',statusCls:'bg'},
+      {name:'UK · Research Universal Campaign — SP Auto',type:'Sponsored Products',spend:'£273',sales:'£311',acos:'87.9%',acosCls:'br',roas:'1.14×',cpc:'£0.71',status:'Active',statusCls:'bg'}
     ] } },
   },
   '12m': {
@@ -292,19 +304,20 @@ window.DASHBOARD_DATA = {
       }
     },
     advertising: {
-      // Real July 2026 ad totals (MerchantSpring generated 'campaigns' report, UK channel, GBP).
+      // Real August 2026 ad totals (MerchantSpring generated 'campaigns' report, UK channel, GBP) —
+      // matches the daily-interval reconstruction to the penny (£2,778.40 spend / £6,905.02 ad sales).
       metrics: [
-        {lbl:'Total Spend',  val:'£2,593', id:'a-spend'},
-        {lbl:'Ad Sales',     val:'£5,681', color:'brand'},
-        {lbl:'ACOS',         val:'45.6%',  color:'amber'},
-        {lbl:'Avg. CPC',     val:'£0.74'},
-        {lbl:'Impressions',  val:'0.98M'},
-        {lbl:'New-to-Brand', val:'11.2%',   color:'green'}
+        {lbl:'Total Spend',  val:'£2,778', id:'a-spend'},
+        {lbl:'Ad Sales',     val:'£6,905', color:'brand'},
+        {lbl:'ACOS',         val:'40.2%',  color:'amber'},
+        {lbl:'Avg. CPC',     val:'£0.68'},
+        {lbl:'Impressions',  val:'1.13M'},
+        {lbl:'New-to-Brand', val:'11.5%',   color:'green'}
       ],
       // Ad budget = £3,000/mo (NKV tracker · Marketing Activity sheet) vs real actual spend. NOT
-      // re-pulled this run (sheet-baked, see clients/nkv/REBAKE-BLOCKED-2026-07.md) — subLabel/rows
-      // still reflect the June close from the last sheet read; only the spend figure elsewhere in the
-      // dashboard (KPI cards) is from the July MerchantSpring pull.
+      // re-pulled this run (no Google Sheet connector attached to this routine) — subLabel/rows still
+      // reflect the June close from the last sheet read; only the spend figure elsewhere in the
+      // dashboard (KPI cards) is from the August MerchantSpring pull.
       budgets: {
         subLabel: 'June 2026 · budget vs actual',
         headers: ['Monthly Budget','June Actual','Variance','Utilisation'],
@@ -320,23 +333,23 @@ window.DASHBOARD_DATA = {
         {month:'Jul', budget:'£3,500', pct:100, tacos:'<20%', tacosColor:'amber', roas:'—', opacity:0.7},
         {month:'Aug', budget:'£3,500', pct:100, tacos:'<20%', tacosColor:'amber', roas:'—', opacity:0.6}
       ],
-      // Real per-campaign actuals (MerchantSpring generated campaigns report, UK channel, July 2026 ·
-      // 35 campaigns, top 13 by spend). This is the 'may' default; 3m/6m/12m each override it via their
+      // Real per-campaign actuals (MerchantSpring generated campaigns report, UK channel, August 2026 ·
+      // 32 campaigns, top 13 by spend). This is the 'may' default; 3m/6m/12m each override it via their
       // own sec.advertising.campaigns, so Active Campaigns now follows the date selector (and market chip).
       campaigns: [
-        {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£631',sales:'£1,514',acos:'41.6%',acosCls:'ba',roas:'2.40×',cpc:'£1.17',status:'Active',statusCls:'bg'},
-        {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£437',sales:'£648',acos:'67.4%',acosCls:'br',roas:'1.48×',cpc:'£0.84',status:'Active',statusCls:'bg'},
-        {name:'UK · Lids by Design — SP PAT',type:'Sponsored Products',spend:'£373',sales:'£897',acos:'41.7%',acosCls:'ba',roas:'2.40×',cpc:'£1.10',status:'Active',statusCls:'bg'},
-        {name:'UK · Contours Rx Brand Banner',type:'Sponsored Brands',spend:'£188',sales:'£742',acos:'25.3%',acosCls:'bg',roas:'3.95×',cpc:'£0.52',status:'Active',statusCls:'bg'},
-        {name:'UK · HYDRTE Travel Bottles — SP Manual',type:'Sponsored Products',spend:'£161',sales:'£308',acos:'52.1%',acosCls:'ba',roas:'1.92×',cpc:'£0.45',status:'Active',statusCls:'bg'},
-        {name:'UK · HYDRTE Travel Bottles — SP Auto',type:'Sponsored Products',spend:'£118',sales:'£213',acos:'55.3%',acosCls:'ba',roas:'1.81×',cpc:'£0.34',status:'Active',statusCls:'bg'},
-        {name:'UK · NWN Grow Bundle — SP Manual',type:'Sponsored Products',spend:'£103',sales:'£73',acos:'140.2%',acosCls:'br',roas:'0.71×',cpc:'£1.05',status:'Active',statusCls:'bg'},
-        {name:'UK · Newnique Brand Defense — SP Default Manual',type:'Sponsored Products',spend:'£72',sales:'£108',acos:'66.5%',acosCls:'br',roas:'1.50×',cpc:'£0.78',status:'Active',statusCls:'bg'},
-        {name:'UK · Research Universal Campaign — SP Auto',type:'Sponsored Products',spend:'£72',sales:'£111',acos:'64.6%',acosCls:'br',roas:'1.55×',cpc:'£0.62',status:'Active',statusCls:'bg'},
-        {name:'UK · Lilibeth Brow Shapers — SP Branded Manual',type:'Sponsored Products',spend:'£53',sales:'£181',acos:'29.5%',acosCls:'bg',roas:'3.39×',cpc:'£0.92',status:'Active',statusCls:'bg'},
-        {name:'UK · Lids by Design — SP Branded Manual',type:'Sponsored Products',spend:'£52',sales:'£415',acos:'12.4%',acosCls:'bg',roas:'8.04×',cpc:'£0.59',status:'Active',statusCls:'bg'},
-        {name:'UK · NWN Grow Bundle — SP Auto',type:'Sponsored Products',spend:'£35',sales:'£0',acos:'0.0%',acosCls:'bg',roas:'0.00×',cpc:'£0.58',status:'Active',statusCls:'bg'},
-        {name:'UK · Lilibeth Brow Shapers — SP PAT',type:'Sponsored Products',spend:'£35',sales:'£33',acos:'105.5%',acosCls:'br',roas:'0.95×',cpc:'£0.57',status:'Active',statusCls:'bg'}
+        {name:'UK · Lids by Design — SP Manual',type:'Sponsored Products',spend:'£702',sales:'£1,578',acos:'44.5%',acosCls:'ba',roas:'2.25×',cpc:'£1.13',status:'Active',statusCls:'bg'},
+        {name:'UK · Whitening Kits — SP Manual',type:'Sponsored Products',spend:'£373',sales:'£559',acos:'66.7%',acosCls:'br',roas:'1.50×',cpc:'£0.87',status:'Active',statusCls:'bg'},
+        {name:'UK · Contours Rx Brand Banner',type:'Sponsored Brands',spend:'£301',sales:'£1,044',acos:'28.8%',acosCls:'bg',roas:'3.47×',cpc:'£0.68',status:'Active',statusCls:'bg'},
+        {name:'UK · Lids by Design — SP PAT',type:'Sponsored Products',spend:'£251',sales:'£498',acos:'50.5%',acosCls:'ba',roas:'1.98×',cpc:'£0.93',status:'Active',statusCls:'bg'},
+        {name:'UK · NWN Grow Bundle — SP Manual',type:'Sponsored Products',spend:'£203',sales:'£329',acos:'61.6%',acosCls:'br',roas:'1.62×',cpc:'£0.81',status:'Active',statusCls:'bg'},
+        {name:'UK · HYDRTE Travel Bottles — SP Auto',type:'Sponsored Products',spend:'£176',sales:'£381',acos:'46.2%',acosCls:'ba',roas:'2.17×',cpc:'£0.29',status:'Active',statusCls:'bg'},
+        {name:'UK · HYDRTE Travel Bottles — SP Manual',type:'Sponsored Products',spend:'£139',sales:'£187',acos:'74.5%',acosCls:'br',roas:'1.34×',cpc:'£0.39',status:'Active',statusCls:'bg'},
+        {name:'UK · NWN Grow Bundle — SP Auto',type:'Sponsored Products',spend:'£106',sales:'£157',acos:'67.6%',acosCls:'br',roas:'1.48×',cpc:'£0.57',status:'Active',statusCls:'bg'},
+        {name:'UK · Research Universal Campaign — SP Auto',type:'Sponsored Products',spend:'£96',sales:'£125',acos:'77.3%',acosCls:'br',roas:'1.29×',cpc:'£0.75',status:'Active',statusCls:'bg'},
+        {name:'UK · Lids by Design — SP Branded Manual',type:'Sponsored Products',spend:'£96',sales:'£1,327',acos:'7.3%',acosCls:'bg',roas:'13.79×',cpc:'£0.63',status:'Active',statusCls:'bg'},
+        {name:'UK · Newnique Brand Defense — SP Default Manual',type:'Sponsored Products',spend:'£73',sales:'£185',acos:'39.7%',acosCls:'ba',roas:'2.52×',cpc:'£0.66',status:'Active',statusCls:'bg'},
+        {name:'UK · Lilibeth Brow Shapers — SP Branded Manual',type:'Sponsored Products',spend:'£69',sales:'£268',acos:'25.8%',acosCls:'bg',roas:'3.88×',cpc:'£1.06',status:'Active',statusCls:'bg'},
+        {name:'UK · Mixed Re-targeting — SD Remarketing',type:'Sponsored Display',spend:'£64',sales:'£101',acos:'63.6%',acosCls:'br',roas:'1.57×',cpc:'£0.29',status:'Active',statusCls:'bg'}
       ]
     },
     inventory: {
@@ -454,10 +467,13 @@ window.DASHBOARD_DATA = {
       // Rolling trailing-6-month window — shift forward one month + append the new month on every
       // re-bake (drop the oldest). Values are MerchantSpring actuals (uk == top-level 'all'; irl/usa
       // are the per-market overlays), same convention as dateRanges.
-      months: ['Feb','Mar','Apr','May','Jun','Jul'],
-      rev: { all:[14104,17458,12839,15290,14079,13290], uk:[14104,17458,12839,15290,14079,13290], irl:[241,385,349,481,224,356], usa:[0,0,0,0,644,714] },
-      adSpend: { all:[2960,3250,2394,3241,2932,2506], uk:[2960,3250,2394,3241,2932,2506], irl:[0,0,0,0,0,0], usa:[0,0,0,0,29,74] },
-      adTacos: { all:[21.0,18.6,18.6,21.2,20.8,18.9], uk:[21.0,18.6,18.6,21.2,20.8,18.9], irl:[0,0,0,0,0,0], usa:[0,0,0,0,4.5,10.4] }
+      // Aug appended via fresh daily-interval sums (cross-checked to the penny against the generated
+      // campaigns report); Mar–Jul carried forward unchanged from the last bake per the shift-and-append
+      // rule (Feb dropped).
+      months: ['Mar','Apr','May','Jun','Jul','Aug'],
+      rev: { all:[17458,12839,15290,14079,13290,17964], uk:[17458,12839,15290,14079,13290,17964], irl:[385,349,481,224,356,233], usa:[0,0,0,644,714,451] },
+      adSpend: { all:[3250,2394,3241,2932,2593,2778], uk:[3250,2394,3241,2932,2593,2778], irl:[0,0,0,0,0,0], usa:[0,0,0,29,74,3] },
+      adTacos: { all:[18.6,18.6,21.2,20.8,19.5,15.5], uk:[18.6,18.6,21.2,20.8,19.5,15.5], irl:[0,0,0,0,0,0], usa:[0,0,0,4.5,10.3,0.6] }
     }
   }
 };
@@ -572,23 +588,29 @@ window.DASHBOARD_DATA = {
 /* ============================================================================================
    SHOPIFY (D2C) — sections.shopify  ·  brand-filtered: All / Newnique / Contours Rx (2 stores)
    --------------------------------------------------------------------------------------------
-   Re-baked for July 2026 (5 Aug 2026 pull), native GBP. Pairs two sources, mirroring the Amazon side:
+   'may' (August 2026) re-baked 4 Sep 2026, native GBP. Pairs two sources, mirroring the Amazon side:
    • ORDER-SIDE (net sales, orders, AOV, units, product mix, stock-on-hand) → MerchantSpring's
      Shopify channels — Contours Rx ch 33616599, Newnique ch 110450469 (the same connector that
      serves NKV's Amazon actuals).
    • SESSION-SIDE (sessions, CVR, the cart→checkout→purchase funnel, traffic-by-channel) → GA4 via
      the Reporting Ninja connector (properties/394327082 Contours Rx, properties/506386258 Newnique).
-   Contours Rx UK (contours-rx.co.uk · 658f4a.myshopify.com): order-side + GA4 are both EXACT actuals
-   for may/3m/6m (12m intentionally left at its prior bake — see the top-of-file header note on why
-   trailing-12m wasn't touched this run). Every net-sales figure below is cross-checked to the penny
-   between the period-total pull and the per-product breakdown pulled the same run. Note GA4 purchases
-   (54 Jul) run below the Orders KPI (83) — orders include repeat/manual/no-session orders; the funnel
-   + CVR are session-based, Orders is order-based — both valid, kept separate. "Returning Cust." is
-   marked unavailable this run: GA4's totalPurchasers/firstTimePurchasers came back identical (100%
-   "first-time"), which contradicts a store with real repeat orders and looks like a GA4 attribution
-   gap rather than a fact — not something to bake as if it were real.
+   Contours Rx UK (contours-rx.co.uk · 658f4a.myshopify.com): order-side + GA4 are EXACT August actuals
+   for 'may' only this run — 3m/6m/12m are carried forward from the last bake (still label 'May–Jul
+   2026' etc.) since a full re-pull of those windows didn't fit this run's budget on top of everything
+   else; not guessed, just stale by one month. Net sales (£3,919) is cross-checked to the penny between
+   the period-total daily-interval pull and the per-product breakdown pulled the same run. Net Sales
+   swung +64.2% MoM (£2,387→£3,919) — this blocked the 2026-09-01 run's publish, but this run corroborated
+   it across three independent sources (Amazon UK sales, Shopify sales, and GA4 sessions/cart/checkout
+   all show the same 3 Aug 2026 spike) plus flat GA4 sessions with a much higher CVR for the month —
+   treated as a validated one-off promo, not a data error (see the top-of-file header note for the full
+   writeup). GA4 purchases (83 Aug) run below the Orders KPI (139) — orders include repeat/manual/
+   no-session orders; the funnel + CVR are session-based, Orders is order-based — both valid, kept
+   separate. "Returning Cust." is marked unavailable again this run: GA4's totalPurchasers/
+   firstTimePurchasers still come back identical (100% "first-time"), which contradicts a store with
+   real repeat orders and looks like a GA4 attribution gap rather than a fact — not something to bake as
+   if it were real.
    Newnique: MerchantSpring isn't ingesting its orders yet, so its ORDER-SIDE reads "pending Executive
-   integration"; its GA4 session-side IS live (277 sessions Jul). 'all' equals Contours Rx until
+   integration"; its GA4 session-side IS live (221 sessions Aug). 'all' equals Contours Rx until
    Newnique's orders backfill (see the derivation at the bottom).
    Read by app.js → renderShopify() / renderShopBrands(); follows the shared date-range selector. */
 window.DASHBOARD_DATA.sections.shopify = {
@@ -600,56 +622,54 @@ window.DASHBOARD_DATA.sections.shopify = {
   data: {
     contoursrx: {
       label: 'Contours Rx UK', store: 'contours-rx.co.uk',
-      // 6-month net-sales trend (Feb 2026 → Jul 2026), exact MerchantSpring actuals (Shopify channel
-      // 33616599). Cross-checked: net sales sum to the exact penny against the per-product breakdown
-      // pulled the same run.
+      // 6-month net-sales trend (Mar 2026 → Aug 2026), exact MerchantSpring actuals (Shopify channel
+      // 33616599). Aug cross-checked: net sales sum to the exact penny (£3,919.25) against the
+      // per-product breakdown pulled the same run; Mar–Jul carried forward unchanged (Feb dropped).
       chart: {
         max: 4000, yTicks: ['£4k', '£3k', '£2k', '£1k', '£0'],
-        xLabels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'], xHighlight: '#404935',
-        series: [ { values: [2907, 3243, 2621, 2416, 2783, 2387], color: '#404935', area: true, main: true } ],
+        xLabels: ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'], xHighlight: '#404935',
+        series: [ { values: [3243, 2621, 2416, 2783, 2387, 3919], color: '#404935', area: true, main: true } ],
         legend: [ { name: 'Net Sales', color: '#404935' } ]
       },
-      // Current on-hand snapshot from MerchantSpring (Shopify channel, 5 Aug 2026). Cover = vs ~Jul run-rate.
+      // Current on-hand snapshot from MerchantSpring (Shopify channel, 4 Sep 2026). Cover = vs ~Aug run-rate.
       stock: [
-        { name: 'Lids by Design Eyelid Lift Strips', note: '7 size variants · Healthy',        level: 'g', units: '1,417 units', cover: '~512 days' },
-        { name: 'Exfoliating B5 Prep Pads 30pk',     note: 'SKU CR B5PREP · Healthy',          level: 'g', units: '47 units',    cover: 'ample cover' },
+        { name: 'Lids by Design Eyelid Lift Strips', note: '7 size variants · Healthy',        level: 'g', units: '1,371 units', cover: '~350 days' },
         { name: 'Botanical Lash & Brow Serum',       note: 'SKU CR BLBS · Healthy',            level: 'g', units: '82 units',    cover: 'ample cover' },
+        { name: 'Exfoliating B5 Prep Pads 30pk',     note: 'SKU CR B5PREP · Healthy',          level: 'g', units: '47 units',    cover: 'ample cover' },
         { name: 'Dermal Blade (3 pack)',             note: 'SKU CR DERMA · Restock needed',    level: 'r', units: '0 units',     cover: 'OOS' }
       ],
-      // Traffic by GA4 default channel group (July 2026) via Reporting Ninja. Cross-network = Google Ads
-      // (Performance Max). Bar widths floored so near-zero channels stay visible. Sum shown = 2,352 of
-      // 2,473 sessions (smaller channels omitted).
+      // Traffic by GA4 default channel group (August 2026) via Reporting Ninja. Cross-network = Google
+      // Ads (Performance Max). Sum shown = 2,153 of 2,466 sessions (smaller channels omitted).
       traffic: [
-        { lbl: 'Paid (Cross-network)', pct: 70, val: '1,723', color: 'brand' },
-        { lbl: 'Organic Search',       pct: 14, val: '353',   color: 'blue' },
-        { lbl: 'Direct',               pct: 9,  val: '234',   color: 'amber' },
-        { lbl: 'Email',                pct: 2,  val: '42',    color: 'green' }
+        { lbl: 'Paid (Cross-network)', pct: 56, val: '1,385', color: 'brand' },
+        { lbl: 'Organic Search',       pct: 20, val: '483',   color: 'blue' },
+        { lbl: 'Direct',               pct: 12, val: '285',   color: 'amber' }
       ],
       byPeriod: {
         may: {
           kpis1: [
-            { bar: '#404935',      lbl: 'Net Sales', val: '£2,387',  dCls: 'dd', d: '▼ 14.2% MoM',  s: 'vs £2,783 Jun' },
-            { bar: 'var(--blue)',  lbl: 'Orders',    val: '83',      dCls: 'dd', d: '▼ 13.5% MoM',  s: '96 orders Jun' },
-            { bar: 'var(--green)', lbl: 'AOV',       val: '£28.76',  dCls: 'dd', d: '▼ £0.22 MoM',  s: '£28.98 Jun' },
-            { bar: 'var(--amber)', lbl: 'ASP',       val: '£27.75',  dCls: 'df', d: 'net ÷ units',  s: '86 units sold' }
+            { bar: '#404935',      lbl: 'Net Sales', val: '£3,919',  dCls: 'du', d: '▲ 64.2% MoM',  s: 'vs £2,387 Jul' },
+            { bar: 'var(--blue)',  lbl: 'Orders',    val: '139',     dCls: 'du', d: '▲ 65.5% MoM',  s: '84 orders Jul' },
+            { bar: 'var(--green)', lbl: 'AOV',       val: '£28.20',  dCls: 'dd', d: '▼ £0.56 MoM',  s: '£28.76 Jul' },
+            { bar: 'var(--amber)', lbl: 'ASP',       val: '£27.60',  dCls: 'df', d: 'net ÷ units',  s: '142 units sold' }
           ],
           kpis2: [
-            { bar: '#404935',      lbl: 'Conversion Rate', val: '2.18%',  dCls: 'df', d: 'GA4 · sessions', s: '54 of 2,473 sessions' },
-            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '2,473',  dCls: 'du', d: '▲ 10.8% MoM', s: 'GA4 · vs 2,232 Jun' },
-            { bar: 'var(--green)', lbl: 'Units Sold',      val: '86',     dCls: 'df', d: 'Lids 83 · Other 3', s: '3 active SKUs' },
+            { bar: '#404935',      lbl: 'Conversion Rate', val: '3.37%',  dCls: 'df', d: 'GA4 · sessions', s: '83 of 2,466 sessions' },
+            { bar: 'var(--blue)',  lbl: 'Sessions',        val: '2,466',  dCls: 'df', d: '▼ 0.3% MoM', s: 'GA4 · vs 2,473 Jul' },
+            { bar: 'var(--green)', lbl: 'Units Sold',      val: '142',    dCls: 'df', d: 'Lids 138 · Other 4', s: '3 active SKUs' },
             { bar: 'var(--amber)', lbl: 'Returning Cust.', val: '—',      dCls: 'df', d: 'Data unavailable', s: 'not recomputed this run' }
           ],
           funnel: [
-            { lbl: 'Sessions',         val: '2,473', pct: '100%', w: 100 },
-            { lbl: 'Added to Cart',    val: '90',    pct: '3.6%', w: 3.6, sub: 'GA4 · 3.6% of sessions' },
-            { lbl: 'Reached Checkout', val: '54',    pct: '2.2%', w: 2.2, sub: '60% of carts retained' },
-            { lbl: 'Purchased',        val: '54',    pct: '2.2%', w: 2.2, sub: '100% of checkouts · 2.18% CVR' }
+            { lbl: 'Sessions',         val: '2,466', pct: '100%', w: 100 },
+            { lbl: 'Added to Cart',    val: '133',   pct: '5.4%', w: 5.4, sub: 'GA4 · 5.4% of sessions' },
+            { lbl: 'Reached Checkout', val: '99',    pct: '4.0%', w: 4.0, sub: '74% of carts retained' },
+            { lbl: 'Purchased',        val: '83',    pct: '3.4%', w: 3.4, sub: '84% of checkouts · 3.37% CVR' }
           ],
           products: [
-            { name: 'Lids by Design Eyelid Lift Strips', net: '£2,316', units: '83', asp: '£27.91', orders: '83', share: '97.0%', shareCls: 'bg' },
-            { name: 'Exfoliating B5 Prep Pads 30pk',     net: '£41',    units: '2',  asp: '£20.67', orders: '2',  share: '1.7%',  shareCls: 'bb' },
-            { name: 'Botanical Lash & Brow Serum',       net: '£29',    units: '1',  asp: '£29.45', orders: '1',  share: '1.2%',  shareCls: 'bb' },
-            { name: 'Dermal Blade (3 pack)',             net: '£0',     units: '0',  asp: '—',      orders: '0',  share: '—',     shareCls: 'br' }
+            { name: 'Lids by Design Eyelid Lift Strips', net: '£3,814', units: '138', asp: '£27.64', orders: '135', share: '97.3%', shareCls: 'bg' },
+            { name: 'Botanical Lash & Brow Serum',       net: '£82',    units: '3',   asp: '£27.48', orders: '3',   share: '2.1%',  shareCls: 'bb' },
+            { name: 'Exfoliating B5 Prep Pads 30pk',     net: '£23',    units: '1',   asp: '£22.97', orders: '1',   share: '0.6%',  shareCls: 'bb' },
+            { name: 'Dermal Blade (3 pack)',             net: '£0',     units: '0',   asp: '—',      orders: '0',   share: '—',     shareCls: 'br' }
           ]
         },
         '3m': {
@@ -771,7 +791,7 @@ window.DASHBOARD_DATA.sections.shopify = {
           };
         }
         return {
-          may:  period(277,  30,  2,  1, '0.36%', 'Jul'),
+          may:  period(221,  5,   4,  2, '0.90%', 'Aug'),
           '3m': period(851,  141, 20, 5, '0.59%', 'May–Jul'),
           '6m': period(1165, 171, 28, 5, '0.43%', 'Feb–Jul'),
           '12m':period(1520, 186, 41, 4, '0.26%', 'trailing yr')
