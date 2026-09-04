@@ -40,3 +40,21 @@ helper shows "YoY data pending" for anything missing, which is honest, whereas a
 
 This is the same category of mistake as skipping the `APP_VER` bump above: the rebake looks
 complete (data.js changed, commit pushed) but the client-visible feature is quietly wrong.
+
+## AMACX Netherlands (NLD) is not live — do not pull it in the monthly rebake
+
+NLD is **not a live market** for AMACX. Do not call MerchantSpring for the NLD channel
+(`75880695` / `A1O4H4W8GP4BN2 @ A1805IZSGTT6HS`) as part of the routine monthly pull —
+not sales, not ads, not inventory, not Buy Box. `README.md`'s channel table still lists it;
+treat that row as informational only, not an instruction to include it every month.
+
+As of the July 2026 rebake, MerchantSpring has **zero product rows** registered for this
+channel for any month since February 2026 — this isn't "early-launch, zero sales," it's an
+empty/stalled feed, so a monthly pull for it wastes a report cycle and returns nothing usable.
+`data.js` already treats NLD as excluded from live actuals (`€0` row in `mktRows`, absent from
+`marketKpis`, absent from `sections.inventory.kpisByMarket`) — keep it that way rather than
+re-adding pulls for it out of habit because the channel table names it alongside DE/FR/ES/IT.
+
+If NLD ever goes live again, that's a deliberate decision someone will need to make explicitly
+(and update this note + the README table accordingly) — don't infer it from the data changing.
+
