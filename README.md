@@ -471,7 +471,7 @@ Notes:
 A monthly AMACX refresh is a **Claude-session task** (the browser can't reach the MerchantSpring MCP). Follow these
 steps in order; each ends with a confirmation. "This month" = the latest closed month.
 
-**Channels** (AMACX seller `A1O4H4W8GP4BN2`; pass `channelId` + `merchantId`):
+**Channels** (AMACX seller `A1O4H4W8GP4BN2`; pass `channelId` + `merchantId`) — **pull these 4 only**:
 
 | Market | channelId | merchantId | Ads |
 |---|---|---|---|
@@ -479,7 +479,14 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
 | FR | `75877496` | `A1O4H4W8GP4BN2 @ A13V1IB3VIYZZH` | yes |
 | ES | `75880638` | `A1O4H4W8GP4BN2 @ A1RKKUPIHCS9HS` | yes |
 | IT | `75880666` | `A1O4H4W8GP4BN2 @ APJ6JRA9NG5V4` | yes |
-| NLD | `75880695` | `A1O4H4W8GP4BN2 @ A1805IZSGTT6HS` | **no — skip ads** (pre-launch) |
+
+> **NLD (`75880695` / `A1O4H4W8GP4BN2 @ A1805IZSGTT6HS`) is not a live market — do not include it
+> in the monthly pull at all** (not sales, not ads, not inventory, not Buy Box). It's listed here
+> only so the channelId is on record if NLD ever goes live. As of the July 2026 rebake,
+> MerchantSpring returns zero product rows for this channel for any month since Feb 2026 — the
+> feed is stalled, not just "pre-launch quiet" — so a monthly pull for it is a wasted report cycle.
+> `data.js` keeps NLD as a `€0` / excluded row (see CLAUDE.md for the full rule); don't re-add
+> pulls for it because this table still names it.
 
 **Periods** (recompute epochs each month with `calculateDateEpoch`, `dateRange`, tz `Europe/Berlin`):
 `may` = this month · `3m` = trailing 3 · `6m` = trailing 6 · `12m` = trailing 12 · `2025` = FY2025 **(FROZEN — pull once ever; SKIP on monthly refreshes)**. So recurring monthly = **4 windows × 4 ad channels** per per-period feature, not 5×4.
