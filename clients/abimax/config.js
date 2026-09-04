@@ -10,7 +10,7 @@ window.DASHBOARD_CONFIG = {
     name: 'Abimax',                           // sidebar client name
     title: 'Abimax — TD Strategists',         // browser tab <title>
     portalLabel: 'CLIENT PORTAL',             // small label under the logo
-    reportPeriodLabel: 'July 2026 · Monthly Report',
+    reportPeriodLabel: 'August 2026 · Monthly Report',
     scopeLabel: 'US',                         // replaces the template's '.cfg-scope' default ('All EU')
     currencyIcon: '&#36;',                    // $ — used for the P&L nav icon (currency:true pages)
     logo: 'td-logo.png',                      // per-client fallback (unused while logoSrc is set)
