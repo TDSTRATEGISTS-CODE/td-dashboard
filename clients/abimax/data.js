@@ -240,15 +240,24 @@ window.DASHBOARD_DATA = {
         {month:'Sep', budget:'$1,400', pct:100, tacos:'<15%', tacosColor:'amber', roas:'—', opacity:0.7},
         {month:'Oct', budget:'$1,600', pct:100, tacos:'<15%', tacosColor:'amber', roas:'—', opacity:0.6}
       ],
-      // Per-ASIN Sponsored Products campaigns (August 2026). Spend + CPC are REAL per-SKU actuals from
-      // the MerchantSpring product report; ad-sales are allocated from the channel-attributed total
-      // ($2,572) by spend share, so the table foots to the headline (MerchantSpring's MCP exposes
-      // channel-level attribution, not per-campaign, without the heavier async campaigns report).
+      // Per-ASIN Sponsored Products campaigns (August 2026). Spend, CPC, sales, ACOS and ROAS are ALL
+      // REAL per-SKU actuals from the MerchantSpring product report (getSalesByProduct) — NOT allocated
+      // from the channel total this month. Reason for the change from the spend-share-allocation
+      // convention used in prior bakes: allocating channel ad-sales by spend share is mathematically
+      // guaranteed to produce the SAME ACOS/ROAS on every row (acos_i = spend_i/(spend_i×totalAdSales/
+      // totalSpend) = totalSpend/totalAdSales for all i), which would have shown all 4 campaigns at an
+      // identical 44.6%/2.2× — hiding that Magnostream Pro is actually badly inefficient (78.8% ACOS)
+      // while Pack of 2/3 generated ZERO ad-attributed sales despite real spend (0% ACOS/ROAS = wasted
+      // spend, not efficiency). NOTE: because these are real unallocated per-SKU figures, Σ sales here
+      // ($1,520) does NOT foot to the channel-attributed headline Ad Sales ($2,572) — MerchantSpring's
+      // per-product and channel ad-attribution reports disagree this month (a real data discrepancy,
+      // not a rounding artefact); the headline metrics above remain the channel-attributed, internally
+      // self-consistent figures per the runbook (getSalesByPeriod).
       campaigns: [
-        {name:'US · Magnostream Pro — SP',type:'Sponsored Products',spend:'$674',sales:'$1,512',acos:'44.6%',acosCls:'br',roas:'2.2×',cpc:'$1.08',status:'Active',statusCls:'bg'},
-        {name:'US · Magnostream Single — SP',type:'Sponsored Products',spend:'$410',sales:'$920',acos:'44.6%',acosCls:'br',roas:'2.2×',cpc:'$0.94',status:'Active',statusCls:'bg'},
-        {name:'US · Magnostream Pack of 2 — SP',type:'Sponsored Products',spend:'$32',sales:'$72',acos:'44.6%',acosCls:'br',roas:'2.2×',cpc:'$0.94',status:'Active',statusCls:'bg'},
-        {name:'US · Magnostream Pack of 3 — SP',type:'Sponsored Products',spend:'$30',sales:'$68',acos:'44.6%',acosCls:'br',roas:'2.2×',cpc:'$0.95',status:'Active',statusCls:'bg'}
+        {name:'US · Magnostream Pro — SP',type:'Sponsored Products',spend:'$674',sales:'$855',acos:'78.8%',acosCls:'br',roas:'1.3×',cpc:'$1.08',status:'Active',statusCls:'bg'},
+        {name:'US · Magnostream Single — SP',type:'Sponsored Products',spend:'$410',sales:'$665',acos:'61.7%',acosCls:'br',roas:'1.6×',cpc:'$0.94',status:'Active',statusCls:'bg'},
+        {name:'US · Magnostream Pack of 2 — SP',type:'Sponsored Products',spend:'$32',sales:'$0',acos:'0.0%',acosCls:'br',roas:'0.0×',cpc:'$0.94',status:'Active',statusCls:'bg'},
+        {name:'US · Magnostream Pack of 3 — SP',type:'Sponsored Products',spend:'$30',sales:'$0',acos:'0.0%',acosCls:'br',roas:'0.0×',cpc:'$0.95',status:'Active',statusCls:'bg'}
       ]
     },
     inventory: {
