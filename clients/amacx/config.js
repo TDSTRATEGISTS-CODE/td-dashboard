@@ -7,7 +7,7 @@ window.DASHBOARD_CONFIG = {
     name: 'AMACX EU',                       // sidebar client name
     title: 'AMACX EU — TD Strategists',     // browser tab <title>
     portalLabel: 'CLIENT PORTAL',           // small label under the logo
-    reportPeriodLabel: 'July 2026 · Monthly Report',
+    reportPeriodLabel: 'August 2026 · Monthly Report',
     logo: 'logo.jpg',                       // per-client fallback (unused while logoSrc is set)
     logoSrc: 'td-logo.png',                 // shared TD logo for now (all clients) — dashboard/td-logo.png
     logoAlt: 'TD Strategists',
