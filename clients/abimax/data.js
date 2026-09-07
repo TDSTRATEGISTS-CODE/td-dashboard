@@ -139,14 +139,20 @@ window.DASHBOARD_DATA = {
         {text:'Sponsored Products campaigns active', sub:'Completed · Apr 2026'},
         {text:'Buy Box 99% featured-offer rate', sub:'Completed'}
       ] },
-      // Featured-offer (Buy Box) — real account August rate 99.4%; no per-ASIN buybox field exposed by
-      // the MerchantSpring product report, so each SKU is shown at ~the channel rate (same limitation
-      // as the prior bake).
+      // Featured-offer (Buy Box) — real per-listing rates from MerchantSpring's trafficAndConversion
+      // report (view:'parents', Aug 2026 vs Jul), pulled 07 Sep 2026 — NOT the account-level channel
+      // rate copy-pasted across SKUs (that placeholder is what was here before). Amazon computes Buy
+      // Box at the parent-listing level, and this account only has 2 live parents: Single/Pack of
+      // 2/Pack of 3 share one parent ASIN (B0GLTLW6L3 — the "5 ASINs under one listing" variation
+      // family noted in flagsSpec above), and Magnostream Pro is its own parent (B0GLP399NJ) — so all
+      // 3 Single/Pack-2/Pack-3 rows below are genuinely the SAME real number (their shared parent's
+      // rate), not 3 independent measurements; MerchantSpring exposes nothing more granular than that.
+      // Dormant Bundle (B0GH7YKPZJ, 14 page views, no sales) omitted — not shown as its own row.
       buyBox: [
-        {label:'Magnostream Single', pct:99, color:'green'},
-        {label:'Magnostream Pro', pct:99, color:'green'},
-        {label:'Magnostream Pack of 3', pct:99, color:'green'},
-        {label:'Magnostream Pack of 2', pct:99, color:'green'}
+        {label:'Magnostream Single', pct:99.5, valText:'99.5%', color:'green'},
+        {label:'Magnostream Pro', pct:99.5, valText:'99.5%', color:'green'},
+        {label:'Magnostream Pack of 3', pct:99.5, valText:'99.5%', color:'green'},
+        {label:'Magnostream Pack of 2', pct:99.5, valText:'99.5%', color:'green'}
       ],
       cvr: { val:'2.3%', note:'August 2026 · 1,522 sessions', sub:'US · session conversion' },
       // FBA stock warnings = real MerchantSpring product report (qty + days-cover per ASIN, 04 Sep
