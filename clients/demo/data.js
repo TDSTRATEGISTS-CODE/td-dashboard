@@ -270,6 +270,10 @@ window.DASHBOARD_DATA = {
         { label: 'Recovery Powder', pct: 95, color: 'green' },
         { label: 'Isotonic Mix 1kg', pct: 91, color: 'amber' }
       ],
+      // Headline above the bars was dead placeholder HTML (AMACX's own "82% ▼1.5pp" hardcoded in
+      // index.html) — jarring next to bars that are all 90%+. Set to the simple average of the bars
+      // above, vs the same average for the 3-month bars in `sec.overview.buyBox` below.
+      buyBoxHeadline: { pctTxt:'95.0%', delta:'▲ 0.5pp vs 3-mo avg', deltaCls:'du' },
       cvr: { val: '11.2%', note: '▲ 0.6pp vs Apr · 41,800 sessions', sub: 'All UK — May' },
       earlyLaunch: null   // UK-only: no early-launch market → section hidden
     },

@@ -154,6 +154,12 @@ window.DASHBOARD_DATA = {
         {label:'Magnostream Pack of 3', pct:99.5, valText:'99.5%', color:'green'},
         {label:'Magnostream Pack of 2', pct:99.5, valText:'99.5%', color:'green'}
       ],
+      // Headline above the bars (app.js renderBuyBox's static-buyBox fallback previously left this as
+      // dead placeholder HTML in index.html — literally AMACX's own "82% ▼1.5pp" — since only
+      // buyBoxByPeriod clients had it wired up). Real page-view-weighted account average across all 3
+      // live parent ASINs, Aug vs Jul (1066+1021+14 page views / 99.50%+99.50%+100.00%): 99.5%, up
+      // from a same-methodology 98.9% in July.
+      buyBoxHeadline: { pctTxt:'99.5%', delta:'▲ 0.6pp vs July', deltaCls:'du' },
       cvr: { val:'2.3%', note:'August 2026 · 1,522 sessions', sub:'US · session conversion' },
       // FBA stock warnings = real MerchantSpring product report (qty + days-cover per ASIN, 04 Sep
       // 2026). Two SKUs have dropped below the ~180-day comfort band used in prior bakes — Magnostream

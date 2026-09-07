@@ -159,6 +159,11 @@ window.DASHBOARD_DATA = {
         {label:'WIRED Creatine', pct:92, color:'green'},
         {label:'WIRED Discovery Pack', pct:92, color:'green'}
       ],
+      // Headline above the bars was dead placeholder HTML (index.html hardcodes AMACX's own "82%
+      // ▼1.5pp" — app.js only overwrites it for clients with the fuller buyBoxByPeriod structure).
+      // No MoM delta shown: the prior comparable month is Feb 2026 (97.4%) — Mar–Jul was a £0 sales
+      // gap (see flagsSpec above), so a "vs last month" delta across that gap would be misleading.
+      buyBoxHeadline: { pctTxt:'92.0%', delta:'', deltaCls:'df' },
       cvr: { val:'11.8%', note:'August 2026 · 448 sessions', sub:'UK · session conversion' },
       // Real FBA stock snapshot (MerchantSpring product report, qty + days-cover per ASIN, 03 Sep
       // 2026). 1 SKU on stock-up watch — WIRED Creatine sold 30 of its 41 on-hand units in its first
