@@ -1111,6 +1111,10 @@ function renderBuyBox(o) {
     renderProgress('sec-buybox', bars);
     var sc = el('bb-scope'); if (sc) sc.textContent = (scope === 'all') ? 'All EU' : ((MKT[scope] && MKT[scope].t) || scope);
   } else if (o.buyBox) {
+    if (o.buyBoxHeadline) {
+      set('bb-pct', o.buyBoxHeadline.pctTxt || 'n/a');
+      var dlf = el('bb-delta'); if (dlf) { dlf.textContent = o.buyBoxHeadline.delta || ''; dlf.className = o.buyBoxHeadline.deltaCls || 'df'; }
+    }
     renderProgress('sec-buybox', o.buyBox);
   }
 }
