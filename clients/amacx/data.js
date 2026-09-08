@@ -227,13 +227,10 @@ window.DASHBOARD_DATA = {
         {name:'Turbo Ice Gel 12x77ml – Cola Lime',asin:'B0F331SKR5',ean:'8714411002929',market:'it',reason:'No Winner',rc:'ba',your:'€79.95',winner:'n/a',gap:''}
       ],
       cvr: { val:'5.0%', note:'recent month · 4,281 sessions', sub:'All EU · session conversion' },
-      stockWarn: { badge:'6 OOS SKUs', items:[
+      stockWarn: { badge:'3 OOS SKUs', items:[
         {level:'red',title:'Fast Bar Lemon — OOS all markets',sub:'B086XB1N46 · since 14 May'},
         {level:'red',title:'Energy Drink Powder 320g Forest Fruit — OOS all markets',sub:'B0GZ469Z98 · since 17 Jul'},
-        {level:'red',title:'Energy Drink Powder 320g Lemon — OOS all markets',sub:'B0GZ43HK1F · since 29 Jul'},
-        {level:'amber',title:'Hydro Tabs Orange — DE/ES/FR',sub:'B0CCJW62HZ · since 3 Jun'},
-        {level:'amber',title:'Hydro Tabs Forest Fruit — DE/ES/FR',sub:'B0CCJWLKTM · since 13 Jul'},
-        {level:'amber',title:'Hydro Tabs Lime — DE/ES/FR',sub:'B0CCJWBX6W · since 13 Jul'}
+        {level:'red',title:'Energy Drink Powder 320g Lemon — OOS all markets',sub:'B0GZ43HK1F · since 29 Jul'}
       ] }
     },
     pnl: {
@@ -344,26 +341,23 @@ window.DASHBOARD_DATA = {
     },
     inventory: {
       kpis: [
-        {bar:'green',lbl:'In Stock',val:'42',dCls:'du',d:'SKUs',s:'of 48 products'},
-        {bar:'red',lbl:'Out of Stock',val:'6',dCls:'dd',d:'SKUs suppressed',s:'21 listings · unique count'},
-        {bar:'#404935',lbl:'Active SKUs',val:'48',dCls:'df',d:'unique products',s:'186 EU listings'},
-        {bar:'amber',lbl:'Restock 30d+',val:'2',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'see priority list'}
+        {bar:'green',lbl:'In Stock',val:'42',dCls:'du',d:'SKUs',s:'of 45 products'},
+        {bar:'red',lbl:'Out of Stock',val:'3',dCls:'dd',d:'SKUs suppressed',s:'12 listings · unique count'},
+        {bar:'#404935',lbl:'Active SKUs',val:'45',dCls:'df',d:'unique products',s:'177 EU listings'},
+        {bar:'amber',lbl:'Restock 30d+',val:'1',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'see priority list'}
       ],
       // Per-market KPI cards — counts are that marketplace's own listings (unique-SKU basis, getSalesByProduct
       // quantity==0 = OOS, EXCLUDING PARENT-* aggregator rows — those are non-buyable variation groupers that
       // always report quantity 0 and are not real stockouts; counting them had inflated OOS by ~2x). app.js
       // swaps these in when a market chip is selected; EU 'kpis' above = unique products (deduped by ASIN).
       kpisByMarket: {
-        de: [ {bar:'green',lbl:'In Stock',val:'42',dCls:'du',d:'SKUs',s:'Germany'}, {bar:'red',lbl:'Out of Stock',val:'6',dCls:'dd',d:'SKUs suppressed',s:'Germany'}, {bar:'#404935',lbl:'Active SKUs',val:'48',dCls:'df',d:'DE listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'2',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Germany'} ],
-        fr: [ {bar:'green',lbl:'In Stock',val:'41',dCls:'du',d:'SKUs',s:'France'}, {bar:'red',lbl:'Out of Stock',val:'6',dCls:'dd',d:'SKUs suppressed',s:'France'}, {bar:'#404935',lbl:'Active SKUs',val:'47',dCls:'df',d:'FR listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'2',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'France'} ],
-        es: [ {bar:'green',lbl:'In Stock',val:'41',dCls:'du',d:'SKUs',s:'Spain'}, {bar:'red',lbl:'Out of Stock',val:'6',dCls:'dd',d:'SKUs suppressed',s:'Spain'}, {bar:'#404935',lbl:'Active SKUs',val:'47',dCls:'df',d:'ES listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'2',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Spain'} ],
+        de: [ {bar:'green',lbl:'In Stock',val:'42',dCls:'du',d:'SKUs',s:'Germany'}, {bar:'red',lbl:'Out of Stock',val:'3',dCls:'dd',d:'SKUs suppressed',s:'Germany'}, {bar:'#404935',lbl:'Active SKUs',val:'45',dCls:'df',d:'DE listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'1',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Germany'} ],
+        fr: [ {bar:'green',lbl:'In Stock',val:'41',dCls:'du',d:'SKUs',s:'France'}, {bar:'red',lbl:'Out of Stock',val:'3',dCls:'dd',d:'SKUs suppressed',s:'France'}, {bar:'#404935',lbl:'Active SKUs',val:'44',dCls:'df',d:'FR listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'1',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'France'} ],
+        es: [ {bar:'green',lbl:'In Stock',val:'41',dCls:'du',d:'SKUs',s:'Spain'}, {bar:'red',lbl:'Out of Stock',val:'3',dCls:'dd',d:'SKUs suppressed',s:'Spain'}, {bar:'#404935',lbl:'Active SKUs',val:'44',dCls:'df',d:'ES listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'1',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Spain'} ],
         it: [ {bar:'green',lbl:'In Stock',val:'41',dCls:'du',d:'SKUs',s:'Italy'}, {bar:'red',lbl:'Out of Stock',val:'3',dCls:'dd',d:'SKUs suppressed',s:'Italy'}, {bar:'#404935',lbl:'Active SKUs',val:'44',dCls:'df',d:'IT listings',s:'live'}, {bar:'amber',lbl:'Restock 30d+',val:'1',dCls:'df',dColor:'amber',d:'OOS over 30 days',s:'Italy'} ]
       },
       stock: [
         {dot:'dr',name:'Fast Bar Lemon',note:'B086XB1N46 · DE FR ES IT (14 May 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Hydro Tabs Orange',note:'B0CCJW62HZ · DE FR ES (3 Jun 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Hydro Tabs Forest Fruit',note:'B0CCJWLKTM · DE FR ES (13 Jul 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
-        {dot:'dr',name:'Hydro Tabs Lime',note:'B0CCJWBX6W · DE FR ES (13 Jul 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Energy Drink Powder 320g Forest Fruit',note:'B0GZ469Z98 · DE FR ES IT (17 Jul 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dr',name:'Energy Drink Powder 320g Lemon',note:'B0GZ43HK1F · DE FR ES IT (29 Jul 2026)',units:'0 units',unitsColor:'red',days:'OOS',daysColor:'red'},
         {dot:'dg',name:'Cherry Juice+ 12x500ml',note:'B0GZW1BJ1C · EU · Healthy',units:'2,223 units',days:'>12 mo'},
@@ -373,9 +367,6 @@ window.DASHBOARD_DATA = {
       ],
       restock: [
         {level:'red',title:'Fast Bar Lemon — all 4 markets',sub:'B086XB1N46 · OOS since 14 May 2026 · longest outage'},
-        {level:'amber',title:'Hydro Tabs Orange — DE/FR/ES',sub:'B0CCJW62HZ · OOS since 3 Jun 2026'},
-        {level:'amber',title:'Hydro Tabs Forest Fruit — DE/FR/ES',sub:'B0CCJWLKTM · OOS since 13 Jul 2026'},
-        {level:'amber',title:'Hydro Tabs Lime — DE/FR/ES',sub:'B0CCJWBX6W · OOS since 13 Jul 2026'},
         {level:'red',title:'Energy Drink Powder 320g Forest Fruit — all 4 markets',sub:'B0GZ469Z98 · OOS since 17 Jul 2026'},
         {level:'red',title:'Energy Drink Powder 320g Lemon — all 4 markets',sub:'B0GZ43HK1F · OOS since 29 Jul 2026'}
       ]
