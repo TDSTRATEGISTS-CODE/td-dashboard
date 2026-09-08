@@ -460,7 +460,58 @@ window.DASHBOARD_DATA = {
       table: [
         { flag: 'gb', name: 'Amazon UK', revenue: '£1,347', units: '43', orders: '38', cvr: '9.1%', cvrCls: 'bg', aov: '£35.44' },
         { flag: 'us', name: 'Amazon US', revenue: '$568', units: '31', orders: '30', cvr: '4.0%', cvrCls: 'br', aov: '$18.94' }
-      ]
+      ],
+      // Sales by Product (per-ASIN, replaces the low-value 2-row "Performance by Market" table — see
+      // config.hideProductsMarketTable). getSalesByProduct per channel, keyed like AMACX's groupsByPeriod
+      // (period → market). US has no ad account (README) so adSpend/tacos/cvr are '—'/'n/a' there, not 0 —
+      // a true $0 would claim a measured-good TACOS that was never measured. '3m' omitted: getSalesByProduct's
+      // fresh per-SKU US total ($1,553/82u) no longer reconciles to the $1,460/77u baked into dateRanges['3m']
+      // (real order activity since the 2026-09-05 bake) — left out rather than shown alongside a stale
+      // headline figure, same convention as the AMACX YoY block. 'may' + '6m' both reconcile to the penny.
+      groupsByPeriod: {
+        'may': {
+          uk: [
+            { name: 'Bervera 24×200ml (FBA)', sales: '£1,320', units: '42', pct: '98%', adSpend: '£228', tacos: '17.3%', tacosCls: 'bg', cvr: '6.2%', cvrCls: 'ba', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Bervera 24×200ml (FBM)', sales: '£27', units: '1', pct: '2%', adSpend: '£0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' }
+          ],
+          us: [
+            { name: 'Hydrte 11.8oz — Champagne', sales: '$184', units: '11', pct: '32%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 11.8oz — Nero', sales: '$164', units: '9', pct: '29%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 18oz — Nero', sales: '$141', units: '7', pct: '25%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 18oz — Slate', sales: '$80', units: '4', pct: '14%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' }
+          ],
+          all: [
+            { name: 'Bervera 24×200ml (FBA)', sales: '£1,320', units: '42', pct: '98%', adSpend: '£228', tacos: '17.3%', tacosCls: 'bg', cvr: '6.2%', cvrCls: 'ba', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Bervera 24×200ml (FBM)', sales: '£27', units: '1', pct: '2%', adSpend: '£0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 11.8oz — Champagne', sales: '$184', units: '11', pct: '32%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 11.8oz — Nero', sales: '$164', units: '9', pct: '29%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 18oz — Nero', sales: '$141', units: '7', pct: '25%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 18oz — Slate', sales: '$80', units: '4', pct: '14%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' }
+          ]
+        },
+        '6m': {
+          uk: [
+            { name: 'Bervera 24×200ml (FBA)', sales: '£6,701', units: '204', pct: '64%', adSpend: '£440', tacos: '6.6%', tacosCls: 'bg', cvr: '6.9%', cvrCls: 'ba', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Bervera 6×200ml', sales: '£3,321', units: '241', pct: '32%', adSpend: '£349', tacos: '10.5%', tacosCls: 'bg', cvr: '8.9%', cvrCls: 'bg', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Bervera 24×200ml (FBM)', sales: '£387', units: '11', pct: '4%', adSpend: '£37', tacos: '9.6%', tacosCls: 'bg', cvr: '3.6%', cvrCls: 'br', oosRate: '0%', oosCls: 'bg' }
+          ],
+          us: [
+            { name: 'Hydrte 18oz — Nero', sales: '$1,170', units: '57', pct: '38%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 11.8oz — Nero', sales: '$923', units: '52', pct: '30%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 18oz — Slate', sales: '$706', units: '34', pct: '23%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 11.8oz — Champagne', sales: '$297', units: '18', pct: '10%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' }
+          ],
+          all: [
+            { name: 'Bervera 24×200ml (FBA)', sales: '£6,701', units: '204', pct: '64%', adSpend: '£440', tacos: '6.6%', tacosCls: 'bg', cvr: '6.9%', cvrCls: 'ba', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Bervera 6×200ml', sales: '£3,321', units: '241', pct: '32%', adSpend: '£349', tacos: '10.5%', tacosCls: 'bg', cvr: '8.9%', cvrCls: 'bg', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Bervera 24×200ml (FBM)', sales: '£387', units: '11', pct: '4%', adSpend: '£37', tacos: '9.6%', tacosCls: 'bg', cvr: '3.6%', cvrCls: 'br', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 18oz — Nero', sales: '$1,170', units: '57', pct: '38%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 11.8oz — Nero', sales: '$923', units: '52', pct: '30%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 18oz — Slate', sales: '$706', units: '34', pct: '23%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 11.8oz — Champagne', sales: '$297', units: '18', pct: '10%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' }
+          ]
+        }
+      }
     },
 
     // Current stock snapshot (period-independent) — getSalesByProduct includeNoInventory, both channels.

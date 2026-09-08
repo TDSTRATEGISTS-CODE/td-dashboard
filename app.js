@@ -1930,6 +1930,11 @@ function renderPeriodSections(d) {
 
   // Products page is market-aware: KPIs, the per-market table, and product groups all follow the
   // sidebar market selector. NLD has no MerchantSpring data yet → show the integration placeholder.
+  // hideProductsMarketTable (config-level, e.g. Harvaza) drops the "Performance by Market" table in
+  // favour of "Sales by Product" as the page's primary table — set only for clients where the market
+  // breakdown just duplicates what's already on Overview/sidebar chips.
+  var prodMarketCard = el('sec-prod-market-card');
+  if (prodMarketCard) prodMarketCard.style.display = CONFIG.hideProductsMarketTable ? 'none' : '';
   var pmKey = (currentMarket && currentMarket !== 'all') ? currentMarket : null;
   var prodMain = el('sec-prod-main'), prodNld = el('sec-prod-nld');
   if (pmKey === 'nld') {

@@ -42,6 +42,10 @@ window.DASHBOARD_CONFIG = {
   hiddenPages: ['keywords'],
   pageLabels: { pnl: 'Amazon P&L' },
 
+  // Products page: UK/US "Performance by Market" is just the 2 currency rows already on Overview/sidebar —
+  // not useful here. Show "Sales by Product" (real per-ASIN breakdown, sections.products.groupsByPeriod) instead.
+  hideProductsMarketTable: true,
+
   // ---- Date-range selector ----
   // Single Year-1 forecast window for now. Add periods here once actuals start flowing.
   dateRangeOptions: [

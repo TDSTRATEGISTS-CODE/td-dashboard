@@ -223,7 +223,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
      cached page (GitHub Pages caps index.html at a 10-min browser cache) by reloading once with a
      cache-bust param; and if it changes mid-session it shows the "please refresh" overlay. One bump,
      all jobs. */
-  var APP_VER = '2026-09-08';
+  var APP_VER = '2026-09-08b';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -848,7 +848,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         <div class="kpi fade"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">ASP</div><div class="kpi-val">&#8364;32.92</div><div class="kpi-d du">&#9650; &#8364;0.24 MoM</div><div class="kpi-s">&#8364;32.68 Apr</div></div>
       </div>
     </div>
-    <div class="fade">
+    <div class="fade" id="sec-prod-market-card">
       <div class="card">
         <div class="card-hdr"><div><div class="card-ttl">Performance by Market</div><div class="card-sub"><span class="dr-period">May 2026</span></div></div></div>
         <div class="tscroll"><table class="dtable">
@@ -865,9 +865,9 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
     </div>
     <div class="fade" id="sec-prod-groups-card" style="display:none;">
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">Sales by Product Group</div><div class="card-sub"><span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
+        <div class="card-hdr"><div><div class="card-ttl">Sales by Product</div><div class="card-sub"><span class="dr-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
         <div class="tscroll"><table class="dtable">
-          <thead><tr><th>Group</th><th>Sales</th><th>Ad Spend</th><th>TACOS</th><th>Units</th><th>CVR</th><th>% Sales</th><th>OOS Rate</th></tr></thead>
+          <thead><tr><th>Product</th><th>Sales</th><th>Ad Spend</th><th>TACOS</th><th>Units</th><th>CVR</th><th>% Sales</th><th>OOS Rate</th></tr></thead>
           <tbody id="sec-prod-groups"></tbody>
         </table></div>
       </div>
