@@ -53,7 +53,7 @@ window.DASHBOARD_DATA = {
       aov: '£33.01', aovD: '3-month avg', aovC: 'df', aovS: 'UK · 85 orders',
       mktRows: [
         ['UK', 'gb', '£0', '£338', 'br', '▲ no budget', '£2,806', 'ba', '12.0%'],
-        ['US', 'us', '$0', '$0',   'bg', '—',            '$1,460', 'bg', '—'],
+        ['US', 'us', '$0', '$0',   'bg', '—',            '$1,553', 'bg', '—'],
         ['Total', '', '£0', '£338', 'br', '▲ over', '£2,806', 'ba', '12.0%']
       ],
       adChart: { max: 300, yTicks: ['£300','£225','£150','£75','£0'], xLabels: ['Mar','Apr','May','Jun','Jul','Aug'], xHighlight: '#2C3420', series: [{ values: [207,281,0,0,110,228], color: '#2C3420', area: true, main: true }], legend: [{ name: 'Ad Spend', color: '#2C3420' }] },
@@ -63,25 +63,30 @@ window.DASHBOARD_DATA = {
         overviewActuals: {
           kpis: [
             { bar: '#2C3420', lbl: 'UK Sales', val: '£2,806', dCls: 'df', d: '3-month actuals', s: 'Amazon UK' },
-            { bar: '#1e4fa0', lbl: 'US Sales', val: '$1,460', dCls: 'df', d: '3-month actuals', s: 'Amazon US' },
-            { bar: '#3B6D11', lbl: 'Orders',   val: '155',    dCls: 'df', d: 'UK 85 · US 70',   s: 'Jun–Aug' },
-            { bar: '#C8A84B', lbl: 'Units',    val: '174',    dCls: 'df', d: 'UK 97 · US 77',   s: 'Jun–Aug' }
+            { bar: '#1e4fa0', lbl: 'US Sales', val: '$1,553', dCls: 'df', d: '3-month actuals', s: 'Amazon US' },
+            { bar: '#3B6D11', lbl: 'Orders',   val: '159',    dCls: 'df', d: 'UK 85 · US 74',   s: 'Jun–Aug' },
+            { bar: '#C8A84B', lbl: 'Units',    val: '179',    dCls: 'df', d: 'UK 97 · US 82',   s: 'Jun–Aug' }
           ],
           cvr: [
             { label: 'Amazon UK', flag: 'gb', pct: 10, valText: '9.9%', color: 'green' },
-            { label: 'Amazon US', flag: 'us', pct: 3,  valText: '3.1%',  color: 'amber' }
+            { label: 'Amazon US', flag: 'us', pct: 3,  valText: '3.3%',  color: 'amber' }
           ]
         },
+        // US sales/units re-baked 2026-09-11 ($1,460/77u -> $1,553/82u): the 5 Sept bake's US 3m figure had
+        // already drifted stale by 11 Sept — getSalesByProduct's per-SKU sum (which the Sales-by-Product
+        // table below also uses) reconciles to the penny; the old figure doesn't. Orders/CVR from a
+        // daily-interval getSalesByPeriod sum over the same window (getSalesByChannels still throws its
+        // buyBoxSnapshot schema error on every call, unchanged since the last bake).
         products: {
           kpis: [
             { bar: '#2C3420', lbl: 'UK Sales', val: '£2,806', dCls: 'df', d: '3-month actuals', s: 'Jun–Aug' },
-            { bar: '#3B6D11', lbl: 'Orders',   val: '155',    dCls: 'df', d: 'UK 85 · US 70',   s: 'Jun–Aug' },
-            { bar: '#1e4fa0', lbl: 'Units',    val: '174',    dCls: 'df', d: 'UK 97 · US 77',   s: 'Jun–Aug' },
-            { bar: '#C8A84B', lbl: 'AOV (UK)', val: '£33.01', dCls: 'df', d: '3-month avg',     s: 'US $20.85' }
+            { bar: '#3B6D11', lbl: 'Orders',   val: '159',    dCls: 'df', d: 'UK 85 · US 74',   s: 'Jun–Aug' },
+            { bar: '#1e4fa0', lbl: 'Units',    val: '179',    dCls: 'df', d: 'UK 97 · US 82',   s: 'Jun–Aug' },
+            { bar: '#C8A84B', lbl: 'AOV (UK)', val: '£33.01', dCls: 'df', d: '3-month avg',     s: 'US $20.99' }
           ],
           table: [
             { flag: 'gb', name: 'Amazon UK', revenue: '£2,806', units: '97', orders: '85', cvr: '9.9%', cvrCls: 'bg', aov: '£33.01' },
-            { flag: 'us', name: 'Amazon US', revenue: '$1,460', units: '77',  orders: '70',  cvr: '3.1%',  cvrCls: 'br', aov: '$20.85' }
+            { flag: 'us', name: 'Amazon US', revenue: '$1,553', units: '82',  orders: '74',  cvr: '3.3%',  cvrCls: 'br', aov: '$20.99' }
           ]
         },
         pnl: {
@@ -243,52 +248,56 @@ window.DASHBOARD_DATA = {
     founder: {
 
       // ---------- OVERVIEW ----------
-      // SOURCES (future live overlays): the context cards below — alert, tasks, stockWarn,
-      // milestones — TRACK THE BRAND-ACQUISITION NOTION SHEET (not the Google Sheet). The financial
-      // bits (kpis, revChart) come from the Google Sheet via the Apps Script proxy (overlay:'founder',
-      // which deep-merges only kpis + revChart, leaving the Notion-sourced cards untouched).
-      // Values below are static placeholders — to be updated later; keep the structure + comments.
+      // SOURCES: kpis/revChart/tasks/milestones are ALL live-overlaid (overlay:'founder' deep-merges
+      // whatever keys the Apps Script proxy sends — tasks + milestones come from Notion via the same
+      // proxy call, kpis/revChart from the Sheet). Only alert/stockWarn/loanCard/waterfall are NOT part
+      // of the payload the proxy currently sends, so those stay genuinely static and need a manual
+      // refresh each time the underlying facts change (the proxy can't touch them). Values below were
+      // re-baked 2026-09-11 from a live pull of both sources so the proxy-down fallback is current
+      // rather than the June-era numbers this used to fall back to — re-check next Harvaza rebake.
       overview: {
-        alert: 'June revenue revised to £2,500 — 200ml 24-pack OOS on arrival · 750ml 6-pack not live until August.',
-        tasks: {
-          badge: 'June 2026',
-          items: [
-            { dot: 'amber', title: 'Apply for Harvaza EORI number', sub: 'GOV.UK · Before 18 Jun shipment' },
-            { dot: 'amber', title: "Sign director's loan agreement", sub: 'Before releasing payment to Arjun' },
-            { dot: 'amber', title: '750ml 6-pack stock-up via Arjun', sub: 'Sserenee · Target net-30 terms' },
-            { dot: 'muted', title: 'Amazon brand registry transfer', sub: 'Listing · Upcoming' }
-          ]
-        },
         stockWarn: {
-          badge: '2 OOS SKUs',
+          badge: '2 SKUs pending',
           items: [
-            { dot: 'red',   tint: true, title: '200ml 24-pack — OOS · 1–2 weeks', sub: '360 cartons arriving 18 Jun' },
-            { dot: 'red',   tint: true, title: '750ml 6-pack — OOS · 2–3 months', sub: 'Stock-up required · Labels on order' },
-            { dot: 'amber', tint: true, title: 'Label MOQ cost pending', sub: '£1,000 · 5-week lead time' },
+            { dot: 'green', tint: true, title: '200ml 24-pack — In Stock', sub: '190 units at Storfil · Amazon FBA healthy' },
+            { dot: 'amber', tint: true, title: '200ml 6-pack — Scheduled for FBA', sub: 'Sold out on Amazon since Jun; 0 Storfil stock' },
+            { dot: 'amber', tint: true, title: '750ml 6-pack — Arriving in the UK soon', sub: 'Not yet listed on Amazon · 0 Storfil stock' },
             { dot: 'green', tint: true, title: 'DCTS/REX preference confirmed', sub: '0% duty on India imports · Sep 2025' }
           ]
         },
         milestones: {
-          badge: 'On track',
+          badge: 'Timeline',
           items: [
-            { dot: 'green', title: 'Contract signed · Payment 1 released', sub: 'June 2026' },
-            { dot: 'amber', title: '750ml 6-pack live on Amazon', sub: 'August 2026 (target)' },
-            { dot: 'amber', title: 'Peak season — Jul / Aug / Sep', sub: '200ml BSR recovery critical window' },
-            { dot: 'muted', title: 'Loan clear · Distributions open', sub: 'Est. December 2028' }
+            { dot: 'green', title: 'Contract signed', sub: 'June 2026' },
+            { dot: 'green', title: 'Payment 1 released', sub: 'June 2026' },
+            { dot: 'green', title: 'Due diligence complete', sub: 'June 2026' },
+            { dot: 'green', title: 'Handover begins', sub: 'June 2026' },
+            { dot: 'green', title: 'Peak season live', sub: 'July 2026' },
+            { dot: 'muted', title: 'Payment 2 released', sub: 'On full completion' }
+          ]
+        },
+        tasks: {
+          badge: '5 open',
+          items: [
+            { dot: 'amber', title: "Transfer Google Workspace to Harvaza's Payments Profile", sub: 'Website & Digital · postponed, Arjun required' },
+            { dot: 'amber', title: '£1,000 batch of labels (5-week lead time)', sub: 'Supplier & Warehouse (Mo to support) · paused' },
+            { dot: 'amber', title: 'Print labels, hold at supplier — MOQs 65,000/SKU', sub: 'Supplier & Warehouse (Mo to support) · postponed' },
+            { dot: 'amber', title: 'GS1 barcode licences transfer', sub: 'Compliance & Documentation · @Ryan to action' },
+            { dot: 'amber', title: 'UK Trademark hand-over — TM16 (last step)', sub: 'Compliance & Documentation' }
           ]
         },
         kpis: [
-          { bar: '#2C3420', lbl: 'Total revenue',          val: '£65,300', dCls: 'df', d: '12-month forecast' },
-          { bar: '#C8A84B', lbl: 'Gross profit',           val: '£39,514', dCls: 'df', d: 'After COGS + labels' },
-          { bar: '#3B6D11', lbl: 'Profit before debt',     val: '£30,855', dCls: 'du', d: 'After all operating costs' },
+          { bar: '#2C3420', lbl: 'Total revenue',          val: '£58,300', dCls: 'df', d: '12-month forecast' },
+          { bar: '#C8A84B', lbl: 'Gross profit',           val: '£36,222', dCls: 'df', d: 'After COGS' },
+          { bar: '#3B6D11', lbl: 'Profit before debt',     val: '£24,578', dCls: 'du', d: 'After all operating costs' },
           { bar: '#A32D2D', lbl: 'Total capital required', val: '£27,676', dCls: 'dd', d: 'Acq. + stock + labels + reorder' }
         ],
         revChart: {
-          max: 10000, yTicks: ['£10k', '£7.5k', '£5k', '£2.5k', '£0'],
+          max: 8000, yTicks: ['£8k', '£6k', '£4k', '£2k', '£0'],
           xLabels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'], xHighlight: '#2C3420',
           series: [
-            { values: [2500, 6000, 8500, 7000, 3600, 3600, 3600, 4200, 5300, 7000, 7000, 7000], color: '#2C3420', area: true, main: true },
-            { values: [890, 1863, 4703, 3783, 1425, 1675, 1675, 1693, 2629, 3683, 3433, 3183], color: '#C8A84B', dash: true }
+            { values: [3000, 3600, 3400, 7000, 3600, 3600, 3600, 4200, 5300, 7000, 7000, 7000], color: '#2C3420', area: true, main: true },
+            { values: [1163, 1281, 1465, 3673, 1375, 1125, 1375, 1643, 2079, 3383, 3383, 2633], color: '#C8A84B', dash: true }
           ],
           legend: [{ name: 'Revenue', color: '#2C3420' }, { name: 'Profit before debt', color: '#C8A84B' }]
         },
@@ -298,29 +307,31 @@ window.DASHBOARD_DATA = {
           fillPct: 40, meta: ['£0', '40% Yr 1', '£22,500']
         },
         waterfall: [
-          { lbl: 'Revenue',      pct: 100, val: '£65.3k', color: '#2C3420' },
-          { lbl: 'Gross profit', pct: 60,  val: '£39.5k', color: '#C8A84B' },
-          { lbl: 'Before debt',  pct: 47,  val: '£30.9k', color: 'green' },
-          { lbl: 'Net profit',   pct: 30,  val: '£19.6k', color: 'muted' },
-          { lbl: 'Free cash',    pct: 13,  val: '£8.4k',  color: 'muted2' }
+          { lbl: 'Revenue',      pct: 100, val: '£58.3k', color: '#2C3420' },
+          { lbl: 'Gross profit', pct: 62,  val: '£36.2k', color: '#C8A84B' },
+          { lbl: 'Before debt',  pct: 42,  val: '£24.6k', color: 'green' },
+          { lbl: 'Net profit',   pct: 23,  val: '£13.3k', color: 'muted' }
+          // Prior "Free cash £8.4k (13%)" row dropped in the 2026-09-11 re-bake — the live sheet's own
+          // 12-month table has no line item it maps to; better left out than guessed (see the "leave a
+          // metric out rather than bake an unreconciled number" convention used elsewhere in this file).
         ]
       },
 
       // ---------- P&L DETAIL ----------
       pnl: {
         kpis: [
-          { bar: '#2C3420', lbl: 'Total revenue', val: '£65,300', dCls: 'df', d: 'Jun 26 – May 27' },
-          { bar: '#C8A84B', lbl: 'Total COGS',    val: '£25,786', dCls: 'dd', d: 'Inc. £1k label MOQ' },
-          { bar: '#3B6D11', lbl: 'Total opex',    val: '£8,659',  dCls: 'df', d: 'Excl. debt service' },
-          { bar: '#A32D2D', lbl: 'Debt service',  val: '£11,250', dCls: 'dd', d: 'Repayment + interest' }
+          { bar: '#2C3420', lbl: 'Total revenue', val: '£58,300', dCls: 'df', d: 'Jun 26 – May 27' },
+          { bar: '#C8A84B', lbl: 'Total COGS',    val: '£22,078', dCls: 'dd', d: 'From cost sheet' },
+          { bar: '#3B6D11', lbl: 'Total opex',    val: '£11,644', dCls: 'df', d: 'Excl. debt service' },
+          { bar: '#A32D2D', lbl: 'Debt service',  val: '£11,255', dCls: 'dd', d: 'Repayment + interest' }
         ],
         chart: {
-          max: 10000, yTicks: ['£10k', '£7.5k', '£5k', '£2.5k', '£0'],
+          max: 8000, yTicks: ['£8k', '£6k', '£4k', '£2k', '£0'],
           xLabels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'], xHighlight: '#2C3420',
           series: [
-            { values: [2500, 6000, 8500, 7000, 3600, 3600, 3600, 4200, 5300, 7000, 7000, 7000], color: '#2C3420', main: true },
-            { values: [1532, 2680, 5270, 4350, 2242, 2242, 2242, 2610, 3296, 4350, 4350, 4350], color: '#C8A84B' },
-            { values: [-48, 925, 3765, 2845, 487, 737, 737, 755, 1691, 2745, 2495, 2246], color: '#3B6D11' }
+            { values: [3000, 3600, 3400, 7000, 3600, 3600, 3600, 4200, 5300, 7000, 7000, 7000], color: '#2C3420', main: true },
+            { values: [1840, 2208, 2142, 4350, 2242, 2242, 2242, 2610, 3296, 4350, 4350, 4350], color: '#C8A84B' },
+            { values: [225, 343, 527, 2735, 437, 187, 437, 705, 1141, 2445, 2445, 1696], color: '#3B6D11' }
           ],
           legend: [{ name: 'Revenue', color: '#2C3420' }, { name: 'Gross profit', color: '#C8A84B' }, { name: 'Net after debt', color: '#3B6D11' }]
         },
@@ -328,35 +339,36 @@ window.DASHBOARD_DATA = {
           cols: ['Line item', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Total'],
           rows: [
             { section: 'Revenue & COGS' },
-            { cells: ['Revenue', '£2,500', '£6,000', '£8,500', '£7,000', '£3,600', '£3,600', '£3,600', '£4,200', '£5,300', '£7,000', '£7,000', '£7,000', '£65,300'] },
-            { cls: 'red', cells: ['COGS', '£968', '£2,320', '£3,230', '£2,650', '£1,358', '£1,358', '£1,358', '£1,590', '£2,004', '£2,650', '£2,650', '£2,650', '£24,786'] },
-            { cls: 'red', cells: ['Label MOQ', '—', '£1,000', '—', '—', '—', '—', '—', '—', '—', '—', '—', '—', '£1,000'] },
-            { total: true, cls: 'green', cells: ['Gross profit', '£1,532', '£2,680', '£5,270', '£4,350', '£2,242', '£2,242', '£2,242', '£2,610', '£3,296', '£4,350', '£4,350', '£4,350', '£39,514'] },
+            { cells: ['Revenue', '£3,000', '£3,600', '£3,400', '£7,000', '£3,600', '£3,600', '£3,600', '£4,200', '£5,300', '£7,000', '£7,000', '£7,000', '£58,300'] },
+            { cls: 'red', cells: ['COGS', '£1,160', '£1,392', '£1,258', '£2,650', '£1,358', '£1,358', '£1,358', '£1,590', '£2,004', '£2,650', '£2,650', '£2,650', '£22,078'] },
+            { total: true, cls: 'green', cells: ['Gross profit', '£1,840', '£2,208', '£2,142', '£4,350', '£2,242', '£2,242', '£2,242', '£2,610', '£3,296', '£4,350', '£4,350', '£4,350', '£36,222'] },
             { section: 'Operating expenses' },
-            { cls: 'red', cells: ['Warehouse', '£275', '£200', '£200', '£200', '£200', '£200', '£200', '£200', '£200', '£200', '£200', '£200', '£2,475'] },
-            { cls: 'red', cells: ['Customs & imports', '—', '£250', '—', '—', '£250', '—', '—', '£250', '—', '—', '£250', '—', '£1,000'] },
-            { cls: 'red', cells: ['Shopify + software', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£720'] },
-            { cls: 'red', cells: ['Google + domain', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£480'] },
-            { cls: 'red', cells: ['Amazon general', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£720'] },
-            { cls: 'red', cells: ['Service fees (TDS)', '£190', '£190', '£190', '£190', '£190', '£190', '£190', '£290', '£290', '£290', '£290', '£290', '£2,780'] },
+            { cls: 'red', cells: ['Warehouse costs', '£500', '£500', '£500', '£500', '£500', '£500', '£500', '£500', '£500', '£500', '£500', '£500', '£6,000'] },
+            { cls: 'red', cells: ['Customs & imports', '—', '£250', '—', '—', '—', '£250', '—', '—', '£250', '—', '—', '£250', '£1,000'] },
+            { cls: 'red', cells: ['Software costs', '£10', '£10', '£10', '£10', '£10', '£10', '£10', '£10', '£10', '£10', '£10', '£10', '£120'] },
+            { cls: 'red', cells: ['Shopify', '£50', '£50', '£50', '£50', '£50', '£50', '£50', '£50', '£50', '£50', '£50', '£50', '£600'] },
+            { cls: 'red', cells: ['Google & domain', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£40', '£480'] },
             { cls: 'red', cells: ['Annual business costs', '£17', '£17', '£17', '£17', '£17', '£17', '£17', '£17', '£17', '£17', '£17', '£17', '£204'] },
+            { cls: 'red', cells: ['Amazon general expenses', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£60', '£720'] },
             { cls: 'red', cells: ['Accounting fees', '—', '—', '—', '—', '—', '—', '—', '—', '—', '—', '—', '£500', '£500'] },
-            { total: true, cls: 'green', cells: ['Profit before debt', '£890', '£1,863', '£4,703', '£3,783', '£1,425', '£1,675', '£1,675', '£1,693', '£2,629', '£3,683', '£3,433', '£3,183', '£30,855'] },
+            { cls: 'red', cells: ['Service fees', '—', '—', '—', '—', '£190', '£190', '£190', '£290', '£290', '£290', '£290', '£290', '£2,020'] },
+            { total: true, cls: 'green', cells: ['Profit before debt', '£1,163', '£1,281', '£1,465', '£3,673', '£1,375', '£1,125', '£1,375', '£1,643', '£2,079', '£3,383', '£3,383', '£2,633', '£24,578'] },
             { section: 'Debt service' },
             { cls: 'red', cells: ['Loan repayment', '£750', '£750', '£750', '£750', '£750', '£750', '£750', '£750', '£750', '£750', '£750', '£750', '£9,000'] },
-            { cls: 'red', cells: ['Loan interest (10%)', '£188', '£188', '£188', '£188', '£188', '£188', '£188', '£188', '£188', '£188', '£188', '£187', '£2,250'] },
-            { total: true, cls: 'green', cells: ['Net profit after debt', '−£48', '£925', '£3,765', '£2,845', '£487', '£737', '£737', '£755', '£1,691', '£2,745', '£2,495', '£2,246', '£19,605'] }
+            { cls: 'red', cells: ['Loan interest (10%)', '£188', '£188', '£188', '£188', '£188', '£188', '£188', '£188', '£188', '£188', '£188', '£187', '£2,255'] },
+            { total: true, cls: 'green', cells: ['Net profit after debt', '£225', '£343', '£527', '£2,735', '£437', '£187', '£437', '£705', '£1,141', '£2,445', '£2,445', '£1,696', '£13,323'] }
           ]
         }
       },
 
       // ---------- STOCK & COGS ----------
       // Driven LIVE by the Apps Script proxy (founder.stock) from the SKU master sheet — values below
-      // are the pre-load fallback. Current Breakdown = Storfil stock; Phase 2 = forecast monthly re-order.
+      // are the pre-load fallback, re-baked 2026-09-11 from a live pull (see the overview comment above).
+      // Current Breakdown = Storfil stock; Phase 2 = forecast monthly re-order.
       stock: {
         info: 'Bervera coconut-water SKUs — current Storfil stock plus the Year-1 re-launch forecast. Live from the SKU master sheet.',
         kpis: [
-          { bar: '#2C3420', lbl: 'Total COGS (year)',   val: '£25,558', dCls: 'df', d: 'From cost sheet' },
+          { bar: '#2C3420', lbl: 'Total COGS (year)',   val: '£22,078', dCls: 'df', d: 'From cost sheet' },
           { bar: '#C8A84B', lbl: 'Cost per 200ml unit', val: '£0.52',   dCls: 'df', d: '£12.50 per 24-pack' },
           { bar: '#1e4fa0', lbl: 'Cost per 750ml unit', val: '£1.10',   dCls: 'df', d: '£6.60 per 6-pack' }
         ],
@@ -366,10 +378,11 @@ window.DASHBOARD_DATA = {
             tag: { text: 'Live', cls: 'bg' },
             cols: ['SKU', 'Storfil Stock', 'Pack Size', 'Cost/SKU', 'Total Cost', 'Stock Status'],
             rows: [
-              { cells: ['200ml 24-pack', '372', '24', '£12.50', '£4,650', '<span class="badge ba">Arriving Soon</span>'] },
-              { cells: ['200ml 6-pack', '0', '6', '£3.20', '—', '<span class="badge ba">Arriving Soon</span>'] },
-              { cells: ['750ml 6-pack', '0', '6', '£6.60', '—', '<span class="badge br">Restock</span>'] },
-              { total: true, cells: ['Total stock value', '', '', '', '£4,650', ''] }
+              { cells: ['200ml 24-pack', '190', '24', '£12.50', '£2,375', '<span class="badge bg">In Stock</span>'] },
+              { cells: ['200ml 12-pack', '0', '12', '£0.00', '—', '<span class="badge bb">—</span>'] },
+              { cells: ['200ml 6-pack', '0', '6', '£3.20', '—', '<span class="badge ba">Scheduled for FBA</span>'] },
+              { cells: ['750ml 6-pack', '0', '6', '£6.60', '—', '<span class="badge ba">Arriving in the UK Soon</span>'] },
+              { total: true, cells: ['Total stock value', '', '', '', '£2,375', ''] }
             ]
           },
           {
@@ -377,10 +390,11 @@ window.DASHBOARD_DATA = {
             tag: { text: 'Forecast', cls: 'ba' },
             cols: ['SKU', 'Monthly Average', 'Pack Size', 'Cost/SKU', 'Monthly CF', 'Note'],
             rows: [
-              { cells: ['200ml 24-pack', '164', '24', '£12.50', '£2,050', 'Monthly re-order'] },
+              { cells: ['200ml 24-pack', '139', '24', '£12.50', '£1,738', 'Monthly re-order'] },
+              { cells: ['200ml 12-pack', '0', '12', '£0.00', '£0', 'Monthly re-order'] },
               { cells: ['200ml 6-pack', '0', '6', '£3.20', '£0', 'Monthly re-order'] },
               { cells: ['750ml 6-pack', '41', '6', '£6.60', '£271', 'Monthly re-order'] },
-              { total: true, cells: ['Monthly cashflow', '', '', '', '£2,321', ''] }
+              { total: true, cells: ['Monthly cashflow', '', '', '', '£2,008', ''] }
             ]
           }
         ]
@@ -464,11 +478,32 @@ window.DASHBOARD_DATA = {
       // Sales by Product (per-ASIN, replaces the low-value 2-row "Performance by Market" table — see
       // config.hideProductsMarketTable). getSalesByProduct per channel, keyed like AMACX's groupsByPeriod
       // (period → market). US has no ad account (README) so adSpend/tacos/cvr are '—'/'n/a' there, not 0 —
-      // a true $0 would claim a measured-good TACOS that was never measured. '3m' omitted: getSalesByProduct's
-      // fresh per-SKU US total ($1,553/82u) no longer reconciles to the $1,460/77u baked into dateRanges['3m']
-      // (real order activity since the 2026-09-05 bake) — left out rather than shown alongside a stale
-      // headline figure, same convention as the AMACX YoY block. 'may' + '6m' both reconcile to the penny.
+      // a true $0 would claim a measured-good TACOS that was never measured. '3m' re-baked 2026-09-11
+      // alongside the dateRanges['3m'] US headline fix above — both now reconcile to the same
+      // getSalesByProduct pull ($1,553/82u). 'may' + '6m' unchanged, still reconcile to the penny.
       groupsByPeriod: {
+        '3m': {
+          uk: [
+            { name: 'Bervera 24×200ml (FBA)', sales: '£2,051', units: '63', pct: '73%', adSpend: '£300', tacos: '14.6%', tacosCls: 'bg', cvr: '5.8%', cvrCls: 'ba', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Bervera 24×200ml (FBM)', sales: '£387', units: '11', pct: '14%', adSpend: '£37', tacos: '9.6%', tacosCls: 'bg', cvr: '3.6%', cvrCls: 'br', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Bervera 6×200ml', sales: '£368', units: '23', pct: '13%', adSpend: '£0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' }
+          ],
+          us: [
+            { name: 'Hydrte 18oz — Slate', sales: '$495', units: '24', pct: '32%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 11.8oz — Nero', sales: '$490', units: '27', pct: '32%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 18oz — Nero', sales: '$303', units: '15', pct: '20%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 11.8oz — Champagne', sales: '$265', units: '16', pct: '17%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' }
+          ],
+          all: [
+            { name: 'Bervera 24×200ml (FBA)', sales: '£2,051', units: '63', pct: '73%', adSpend: '£300', tacos: '14.6%', tacosCls: 'bg', cvr: '5.8%', cvrCls: 'ba', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Bervera 24×200ml (FBM)', sales: '£387', units: '11', pct: '14%', adSpend: '£37', tacos: '9.6%', tacosCls: 'bg', cvr: '3.6%', cvrCls: 'br', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Bervera 6×200ml', sales: '£368', units: '23', pct: '13%', adSpend: '£0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 18oz — Slate', sales: '$495', units: '24', pct: '32%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 11.8oz — Nero', sales: '$490', units: '27', pct: '32%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 18oz — Nero', sales: '$303', units: '15', pct: '20%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' },
+            { name: 'Hydrte 11.8oz — Champagne', sales: '$265', units: '16', pct: '17%', adSpend: '$0', tacos: '—', tacosCls: 'bb', cvr: 'n/a', cvrCls: 'bb', oosRate: '0%', oosCls: 'bg' }
+          ]
+        },
         'may': {
           uk: [
             { name: 'Bervera 24×200ml (FBA)', sales: '£1,320', units: '42', pct: '98%', adSpend: '£228', tacos: '17.3%', tacosCls: 'bg', cvr: '6.2%', cvrCls: 'ba', oosRate: '0%', oosCls: 'bg' },
@@ -515,23 +550,28 @@ window.DASHBOARD_DATA = {
     },
 
     // Current stock snapshot (period-independent) — getSalesByProduct includeNoInventory, both channels.
-    // The prior Slate 18oz (US) OOS-risk row has since restocked (30 units, ~225 days cover).
+    // Re-baked 2026-09-11 (was 2026-09-05): the UK FBA 24-pack has drawn down from 41→30 units /
+    // ~31→~18.75 days cover in less than a week — right at the start of the founder Overview's own
+    // "Peak season — Jul/Aug/Sep · 200ml BSR recovery critical window". Flagged for restock below
+    // rather than left as "Healthy", which the prior snapshot's slower-moving numbers no longer are.
     inventory: {
       kpis: [
-        { bar: 'green', lbl: 'In Stock',  val: '6',   dCls: 'du', d: 'ASINs healthy',  s: 'UK + US' },
-        { bar: 'amber', lbl: 'Low Stock', val: '0',   dCls: 'du', d: 'None currently', s: '—' },
+        { bar: 'green', lbl: 'In Stock',  val: '5',   dCls: 'du', d: 'ASINs healthy',  s: 'UK + US' },
+        { bar: 'amber', lbl: 'Low Stock', val: '1',   dCls: 'du', d: 'UK FBA 24-pack', s: '~19 days cover' },
         { bar: 'red',   lbl: 'OOS',       val: '0',   dCls: 'du', d: 'None currently', s: '—' },
         { bar: 'blue',  lbl: 'OOS %',     val: '0%', dCls: 'du', d: 'UK channel',     s: 'US 0%' }
       ],
       stock: [
-        { dot: 'dg', name: 'Bervera 24×200ml — UK (FBM)', note: 'B0CQRHMWFL · FBM · Healthy', units: '209 units', days: '~1461 days' },
-        { dot: 'dg', name: 'Bervera 24×200ml — UK (FBA)', note: 'B0CQRHMWFL · FBA · Healthy', units: '41 units',  days: '~31 days' },
-        { dot: 'dg', name: 'Hydrte 18oz — Slate (US)',    note: 'B0CHJNPWHV · FBA · Healthy', units: '30 units', days: '~225 days' },
-        { dot: 'dg', name: 'Hydrte 11.8oz — Nero (US)',   note: 'B0B1N844DS · FBA · Healthy', units: '33 units', days: '~110 days' },
-        { dot: 'dg', name: 'Hydrte 18oz — Nero (US)',     note: 'B0CRKS94F1 · FBA · Healthy', units: '48 units', days: '~180 days' },
-        { dot: 'dg', name: 'Hydrte 11.8oz — Champagne (US)', note: 'B0B1N7759K · FBA · Healthy', units: '83 units', days: '~311 days' }
+        { dot: 'da', name: 'Bervera 24×200ml — UK (FBA)', note: 'B0CQRHMWFL · FBA · Low — reorder', units: '30 units',  days: '~19 days' },
+        { dot: 'dg', name: 'Bervera 24×200ml — UK (FBM)', note: 'B0CQRHMWFL · FBM · Healthy', units: '193 units', days: '~1461 days' },
+        { dot: 'dg', name: 'Hydrte 18oz — Slate (US)',    note: 'B0CHJNPWHV · FBA · Healthy', units: '29 units', days: '~174 days' },
+        { dot: 'dg', name: 'Hydrte 11.8oz — Nero (US)',   note: 'B0B1N844DS · FBA · Healthy', units: '33 units', days: '~99 days' },
+        { dot: 'dg', name: 'Hydrte 18oz — Nero (US)',     note: 'B0CRKS94F1 · FBA · Healthy', units: '47 units', days: '~201 days' },
+        { dot: 'dg', name: 'Hydrte 11.8oz — Champagne (US)', note: 'B0B1N7759K · FBA · Healthy', units: '82 units', days: '~273 days' }
       ],
-      restock: []
+      restock: [
+        { level: 'amber', title: 'Bervera 24×200ml — UK (FBA) — reorder now', sub: '~19 days cover (30 units) and falling · heading into flagged peak season (Jul/Aug/Sep)' }
+      ]
     },
 
     // Amazon P&L — accrual basis (getStoreProfitAndLoss, profitabilityView:'accrual'; settled/cash-basis

@@ -901,9 +901,13 @@ function applyLive(j) {
   if (!j) return;
   var ds = CONFIG.dataSource || {};
 
-  // Founder-overlay mode (Harvaza): the Apps Script proxy supplies the sheet-derived financial
-  // sections (overview KPIs + revenue chart, P&L KPIs/chart/table). Deep-merge them onto the baked
-  // sections.founder so the STATIC parts (tasks, milestones, loan, stock phases) survive, then repaint.
+  // Founder-overlay mode (Harvaza): the Apps Script proxy supplies whatever founder.* keys it has —
+  // in practice overview.{kpis,revChart,tasks,milestones} (kpis/revChart from the Sheet, tasks/milestones
+  // from Notion via the same proxy call), pnl.{kpis,chart,table}, and stock.{kpis,phases}. deepMerge
+  // overwrites each of those the moment the proxy sends them — it does NOT special-case tasks/milestones/
+  // stock as "static"; only keys the proxy never sends (overview.alert/stockWarn/loanCard/waterfall, plus
+  // the whole `loan` section) stay on the baked data.js values, since nothing ever overlays them. Bake
+  // those by hand when the underlying facts change; deep-merge the rest, then repaint.
   if (ds.overlay === 'founder') {
     if (j.founder && DATA.sections) {
       var jf = j.founder;
@@ -972,8 +976,10 @@ function applyLive(j) {
 // Overlay add's keys onto base, one level deep (so e.g. advertising.budgets merges in without
 // dropping the baked advertising.campaigns). Used for the live sheet-controlled sections.
 // Recursive merge for the founder overlay: recurse into plain objects, REPLACE arrays + primitives.
-// So the proxy's founder.pnl.table (array) swaps in wholesale, while founder.overview keeps its
-// static tasks/milestones because only overview.kpis / overview.revChart are present in the payload.
+// So the proxy's founder.pnl.table (array) swaps in wholesale, and founder.overview.tasks/milestones
+// do too whenever the proxy sends them (which it currently does, from Notion) — deepMerge has no
+// notion of which keys are "meant" to stay static; a key only survives untouched if the proxy's
+// payload genuinely omits it (see the comment on the ds.overlay === 'founder' branch above).
 function deepMerge(base, add) {
   if (!base || !add) return base;
   Object.keys(add).forEach(function (k) {
