@@ -10,12 +10,13 @@ window.DASHBOARD_CONFIG = {
     name: 'Harvaza Ltd',                          // sidebar client name
     title: 'Harvaza Ltd — TD Strategists',        // browser tab <title>
     portalLabel: 'CLIENT PORTAL',                 // small label under the logo
-    // "· Year 1 Forecast" only makes sense on the three pages that actually show the forecast
-    // (Amazon P&L, Overview, Inventory etc. are real actuals) — forecastPages scopes the suffix to
-    // those; every other page shows reportPeriodLabelShort instead. See updateReportPeriodLabel in app.js.
+    // "· Year 1 Forecast" only makes sense on the pages that actually show the forecast (P&L Detail,
+    // Stock & COGS) — forecastPages scopes the suffix to those; every other page (Overview, Amazon
+    // P&L, Inventory, Advertising — all real actuals) shows reportPeriodLabelShort instead. See
+    // updateReportPeriodLabel in app.js. Director's Loan dropped from this list — see hiddenPages below.
     reportPeriodLabel: 'Aug 2026 · Year 1 Forecast',
     reportPeriodLabelShort: 'Aug 2026',
-    forecastPages: ['founder-pnl', 'founder-stock', 'founder-loan'],
+    forecastPages: ['founder-pnl', 'founder-stock'],
     logo: 'logo.svg',                             // per-client fallback (unused while logoSrc is set)
     logoSrc: 'td-logo.png',                       // shared TD logo for now (dashboard/td-logo.png)
     logoAlt: 'TD Strategists',
@@ -44,7 +45,11 @@ window.DASHBOARD_CONFIG = {
 
   // Keywords hidden — MerchantSpring exposes no keyword-level data. The shared 'pnl' page (real P&L
   // renderer) is relabelled "Amazon P&L" and shows the live Amazon settlement P&L (sections.pnl).
-  hiddenPages: ['keywords'],
+  // Director's Loan removed per client request (2026-09-12) — the loan summary card still shows on
+  // P&L Detail (sections.founder.pnl's own "Director's Loan" widget is unaffected by this), just not
+  // as its own page/tab. sections.founder.loan is left in data.js (harmless, unread) rather than
+  // deleted, in case the page comes back later.
+  hiddenPages: ['keywords', 'founder-loan'],
   pageLabels: { pnl: 'Amazon P&L' },
 
   // Products page: UK/US "Performance by Market" is just the 2 currency rows already on Overview/sidebar —
