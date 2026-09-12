@@ -10,7 +10,12 @@ window.DASHBOARD_CONFIG = {
     name: 'Harvaza Ltd',                          // sidebar client name
     title: 'Harvaza Ltd — TD Strategists',        // browser tab <title>
     portalLabel: 'CLIENT PORTAL',                 // small label under the logo
+    // "· Year 1 Forecast" only makes sense on the three pages that actually show the forecast
+    // (Amazon P&L, Overview, Inventory etc. are real actuals) — forecastPages scopes the suffix to
+    // those; every other page shows reportPeriodLabelShort instead. See updateReportPeriodLabel in app.js.
     reportPeriodLabel: 'Aug 2026 · Year 1 Forecast',
+    reportPeriodLabelShort: 'Aug 2026',
+    forecastPages: ['founder-pnl', 'founder-stock', 'founder-loan'],
     logo: 'logo.svg',                             // per-client fallback (unused while logoSrc is set)
     logoSrc: 'td-logo.png',                       // shared TD logo for now (dashboard/td-logo.png)
     logoAlt: 'TD Strategists',

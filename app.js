@@ -129,9 +129,23 @@ window.switchPage = function (key, sideNavEl, tabEl) {
   var tabs = document.querySelectorAll('.ptab'); if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active');
   if (sideNavEl) sideNavEl.classList.add('active');
   if (tabEl) tabEl.classList.add('active');
+  updateReportPeriodLabel(key);
   closeSidebar();
   syncEmbedHeight();   // page changed → re-report height to the embedding host (Wix iframe)
 };
+
+// The sidebar's client-period line (e.g. "Aug 2026 · Year 1 Forecast") is a single global element,
+// but "Forecast" is only true of the founder pages that actually show the forecast (P&L Detail,
+// Stock & COGS, Director's Loan) — everywhere else (Overview, Amazon P&L, Inventory, ...) it's real
+// actuals, so the suffix is misleading there. CONFIG.client.forecastPages opts a client into scoping
+// it; clients that don't set it (everyone but Harvaza today) keep the single label everywhere, same
+// as before. reportPeriodLabelShort is the non-forecast pages' text; falls back to the full label.
+function updateReportPeriodLabel(pageKey) {
+  var c = CONFIG.client || {};
+  if (!c.forecastPages) return;   // no-op unless a client opts in
+  var full = c.reportPeriodLabel, short = c.reportPeriodLabelShort || full;
+  set('cfg-client-period', c.forecastPages.indexOf(pageKey) !== -1 ? full : short);
+}
 
 window.switchLookback = function (mode) {
   currentLookback = mode;
@@ -1654,6 +1668,14 @@ function renderStatement(cur, cmp, curLabel, cmpLabel) {
 // unprofitable, most/least profitable product). spec counts are product counts.
 function renderPortfolio(spec) {
   if (!spec) return;
+  // Fixed snapshot label — deliberately NOT the shared .dr-period (see the index.html comment on
+  // #sec-portfolio-period): this card doesn't follow the date-range selector, so its label shouldn't
+  // either. spec.periodLabel is the actual month the snapshot covers; falls back to the current period's
+  // label only if a client hasn't set one (keeps existing clients' visual behaviour unchanged).
+  var pfPeriod = el('sec-portfolio-period');
+  if (pfPeriod) pfPeriod.textContent = spec.periodLabel || (dateRanges[currentPeriod] && dateRanges[currentPeriod].shortLabel) || '';
+  var pfScope = document.querySelector('#sec-portfolio-row .cfg-scope');
+  if (pfScope) pfScope.textContent = (currentMarket && currentMarket !== 'all' && MKT[currentMarket]) ? MKT[currentMarket].t : ((CONFIG.client && CONFIG.client.scopeLabel) || 'All EU');
   var total = spec.total != null ? spec.total : ((spec.profitable || 0) + (spec.breakeven || 0) + (spec.unprofitable || 0));
   function pct(n) { return total ? Math.round(n / total * 100) : 0; }
   var pp = pct(spec.profitable), bp = pct(spec.breakeven), up = Math.max(0, 100 - pp - bp);
@@ -1916,10 +1938,29 @@ function renderPeriodSections(d) {
   var cv = pick(so.cvr, o.cvr); if (cv) renderCvr(cv);
 
   var psum = pick(spl.summary, pl.summary); if (psum) renderPnlSummary(psum);   // legacy (element removed)
-  var pf = pick(spl.portfolio, pl.portfolio); if (pf) renderPortfolio(pf);
-  var pmar = pick(spl.margin, pl.margin); if (pmar) renderMargin(pmar);
+  // Portfolio/Margin/Statement are UK-only cards for clients that only ever baked one market's worth
+  // of data (AMACX etc. — unaffected, pnlMktKey lookups below are no-ops without a *ByMarket object).
+  // For a client with real per-market P&L (marginByMarket/statementByMarket/portfolioByMarket, keyed
+  // by market — period override in sec.pnl.*ByMarket wins over the top-level pl.*ByMarket), the market
+  // chip now actually swaps these cards instead of leaving them stuck on the blended/default view.
+  // pickMkt: prefer this period's own per-market split (spl.xxxByMarket); only reach into the
+  // top-level pl.xxxByMarket when this period has no blended override of its own either (own !=
+  // null means the period genuinely overrides the blended value, so pl's per-market split belongs
+  // to a DIFFERENT period and must not be used — e.g. 6m has its own blended `margin`, so US must
+  // fall back to that 6m UK figure, not silently show May's US margin mislabelled as "6m").
+  var pnlMktKey = (currentMarket && currentMarket !== 'all') ? currentMarket : null;
+  function pickMkt(byMktSpl, byMktTop, own) {
+    if (!pnlMktKey) return null;
+    if (byMktSpl && byMktSpl[pnlMktKey]) return byMktSpl[pnlMktKey];
+    if (own == null && byMktTop && byMktTop[pnlMktKey]) return byMktTop[pnlMktKey];
+    return null;
+  }
+  var pf = pickMkt(spl.portfolioByMarket, pl.portfolioByMarket, spl.portfolio) || pick(spl.portfolio, pl.portfolio);
+  if (pf) renderPortfolio(pf);
+  var pmar = pickMkt(spl.marginByMarket, pl.marginByMarket, spl.margin) || pick(spl.margin, pl.margin);
+  if (pmar) renderMargin(pmar);
   var pmkt = pick(spl.mkt, pl.mkt); if (pmkt) renderPnlMkt(pmkt);
-  var pst = pick(spl.statement, pl.statement);
+  var pst = pickMkt(spl.statementByMarket, pl.statementByMarket, spl.statement) || pick(spl.statement, pl.statement);
   if (pst) {
     if (pst.fixedLabel) {
       // Fixed view (e.g. AMACX trailing-12 P&L) — same regardless of the period selector, no comparison column.

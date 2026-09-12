@@ -101,6 +101,32 @@ window.DASHBOARD_DATA = {
               { lbl: 'Net Profit',    val: '£673',  color: 'green', strong: true }
             ]
           },
+          // marginByMarket.us: getStoreProfitAndLoss per calendar month (30-day cap), summed Jun+Jul+Aug —
+          // reconciles exactly to the already-baked `mkt` row below ($357 net / 29.0% margin).
+          marginByMarket: {
+            uk: {
+              pct: '23.1%', pctColor: 'amber', note: 'Amazon UK · Jun–Aug 2026',
+              rows: [
+                { lbl: 'Gross Revenue', val: '£2,912' },
+                { lbl: 'Selling Fees',  val: '−£455',   color: 'red' },
+                { lbl: 'Fulfilment',    val: '−£501',   color: 'red' },
+                { lbl: 'Ad Spend',      val: '−£338',   color: 'red' },
+                { lbl: 'COGS',          val: '−£943', color: 'red' },
+                { lbl: 'Net Profit',    val: '£673',  color: 'green', strong: true }
+              ]
+            },
+            us: {
+              pct: '29.0%', pctColor: 'green', note: 'Amazon US · Jun–Aug 2026',
+              rows: [
+                { lbl: 'Gross Revenue', val: '$1,234' },
+                { lbl: 'Selling Fees',  val: '−$272', color: 'red' },
+                { lbl: 'Fulfilment',    val: '−$434', color: 'red' },
+                { lbl: 'Ad Spend',      val: '$0',    color: 'red' },
+                { lbl: 'COGS',          val: '−$176', color: 'red' },
+                { lbl: 'Net Profit',    val: '$357',  color: 'green', strong: true }
+              ]
+            }
+          },
           statement: {
             fixedLabel: 'Amazon UK · Jun–Aug 2026',
             groups: [
@@ -127,6 +153,62 @@ window.DASHBOARD_DATA = {
                 { lbl: 'Orders', amount: '85' }
               ] }
             ]
+          },
+          statementByMarket: {
+            uk: {
+              fixedLabel: 'Amazon UK · Jun–Aug 2026',
+              groups: [
+                { header: 'Income', rows: [
+                  { lbl: 'Shipped product sales', amount: '£3,033', pct: '104.1%', unit: '£35.68' },
+                  { lbl: 'Promotions', amount: '−£85', pct: '−2.9%', unit: '−£1.00' },
+                  { lbl: 'Refunds', amount: '−£103', pct: '−3.5%', unit: '−£1.21' },
+                  { lbl: 'Other income', amount: '£70', pct: '2.4%', unit: '£0.83' },
+                  { lbl: 'Net revenue', amount: '£2,912', pct: '100.0%', unit: '£34.26', total: true }
+                ] },
+                { header: 'Expenses', rows: [
+                  { lbl: 'Advertising', amount: '£338', pct: '11.6%', unit: '£3.97' },
+                  { lbl: 'Selling fees', amount: '£455', pct: '15.6%', unit: '£5.35' },
+                  { lbl: 'Fulfilment and shipping', amount: '£501', pct: '17.2%', unit: '£5.90' },
+                  { lbl: 'Cost of goods', amount: '£943', pct: '32.4%', unit: '£11.08' },
+                  { lbl: 'Total expenses', amount: '£2,237', pct: '76.8%', unit: '£26.31', total: true }
+                ] },
+                { header: 'Profit', rows: [
+                  { lbl: 'PROFIT', amount: '£673', pct: '23.1%', unit: '£7.92', total: true, profit: true },
+                  { lbl: 'Profit %', amount: '23.1%', accent: 'green' }
+                ] },
+                { header: 'Metrics', rows: [
+                  { lbl: 'Units sold', amount: '97' },
+                  { lbl: 'Orders', amount: '85' }
+                ] }
+              ]
+            },
+            us: {
+              fixedLabel: 'Amazon US · Jun–Aug 2026',
+              groups: [
+                { header: 'Income', rows: [
+                  { lbl: 'Shipped product sales', amount: '$1,516', pct: '122.9%', unit: '$18.49' },
+                  { lbl: 'Promotions', amount: '−$22', pct: '−1.8%', unit: '−$0.27' },
+                  { lbl: 'Refunds', amount: '−$242', pct: '−19.6%', unit: '−$2.95' },
+                  { lbl: 'Other income', amount: '$56', pct: '4.6%', unit: '$0.69' },
+                  { lbl: 'Net revenue', amount: '$1,234', pct: '100.0%', unit: '$15.05', total: true }
+                ] },
+                { header: 'Expenses', rows: [
+                  { lbl: 'Advertising', amount: '$0', pct: '0.0%', unit: '$0.00' },
+                  { lbl: 'Selling fees', amount: '$272', pct: '22.1%', unit: '$3.32' },
+                  { lbl: 'Fulfilment and shipping', amount: '$434', pct: '35.2%', unit: '$5.30' },
+                  { lbl: 'Cost of goods', amount: '$176', pct: '14.2%', unit: '$2.14' },
+                  { lbl: 'Total expenses', amount: '$877', pct: '71.1%', unit: '$10.69', total: true }
+                ] },
+                { header: 'Profit', rows: [
+                  { lbl: 'PROFIT', amount: '$357', pct: '29.0%', unit: '$4.35', total: true, profit: true },
+                  { lbl: 'Profit %', amount: '29.0%', accent: 'green' }
+                ] },
+                { header: 'Metrics', rows: [
+                  { lbl: 'Units sold', amount: '82' },
+                  { lbl: 'Orders', amount: '74' }
+                ] }
+              ]
+            }
           },
           mkt: [
             { name: 'Amazon UK', flag: 'gb', revenue: '£2,912', adspend: '£338', net: '£673', netColor: 'green', margin: '23.1%', marginCls: 'ba' },
@@ -587,8 +669,15 @@ window.DASHBOARD_DATA = {
       // "totalRevenue" etc. required-field error, not a "no data" case) for both channels, so there is no
       // fresh reconciled per-SKU P&L to bake — left as-is per the "leave a metric out rather than bake an
       // unreconciled number" convention rather than guess at August's split. Re-run once the tool recovers.
+      // periodLabel is deliberately literal ("July 2026", not "August") — the numbers are July's, and the
+      // card doesn't follow the date-range selector (see app.js's renderPortfolio / index.html's
+      // #sec-portfolio-period comment), so its own label shouldn't imply otherwise either.
+      // portfolioByMarket splits the same July snapshot by channel (from each name's own UK/US tag) — no
+      // new pull needed. 'us' has no unprofitable SKU, just lower-margin ones; 'uk' has none in "least" at
+      // all this snapshot (both UK listings are comfortably profitable) — an empty least-profitable card
+      // for UK is correct, not a rendering bug.
       portfolio: {
-        total: 5, profitable: 5, breakeven: 0, unprofitable: 0,
+        total: 5, profitable: 5, breakeven: 0, unprofitable: 0, periodLabel: 'July 2026',
         most: [
           { name: 'Bervera 24×200ml (UK, FBM)', profit: '£305', margin: '85%', marginCls: 'bg' },
           { name: 'Hydrte 11.8oz — Nero (US)',   profit: '$58',  margin: '32%', marginCls: 'bg' },
@@ -598,6 +687,26 @@ window.DASHBOARD_DATA = {
           { name: 'Hydrte 18oz — Nero (US)',  profit: '$42', margin: '28%', marginCls: 'ba', color: 'var(--amber)' },
           { name: 'Hydrte 18oz — Slate (US)', profit: '$75', margin: '27%', marginCls: 'ba', color: 'var(--amber)' }
         ]
+      },
+      portfolioByMarket: {
+        uk: {
+          total: 2, profitable: 2, breakeven: 0, unprofitable: 0, periodLabel: 'July 2026',
+          most: [
+            { name: 'Bervera 24×200ml (FBM)', profit: '£305', margin: '85%', marginCls: 'bg' },
+            { name: 'Bervera 24×200ml (FBA)', profit: '£42', margin: '32%', marginCls: 'bg' }
+          ],
+          least: []
+        },
+        us: {
+          total: 3, profitable: 3, breakeven: 0, unprofitable: 0, periodLabel: 'July 2026',
+          most: [
+            { name: 'Hydrte 11.8oz — Nero', profit: '$58', margin: '32%', marginCls: 'bg' }
+          ],
+          least: [
+            { name: 'Hydrte 18oz — Nero', profit: '$42', margin: '28%', marginCls: 'ba', color: 'var(--amber)' },
+            { name: 'Hydrte 18oz — Slate', profit: '$75', margin: '27%', marginCls: 'ba', color: 'var(--amber)' }
+          ]
+        }
       },
       margin: {
         pct: '11.5%', pctColor: 'amber', note: 'Amazon UK · August 2026',
@@ -609,6 +718,35 @@ window.DASHBOARD_DATA = {
           { lbl: 'COGS',          val: '−£538',  color: 'red' },
           { lbl: 'Net Profit',    val: '£152',  color: 'green', strong: true }
         ]
+      },
+      // marginByMarket/statementByMarket: getStoreProfitAndLoss per channel (accrual, same method as the
+      // blended UK cards above — reconciles: US net £86/22.7% here matches the `mkt` row below to the
+      // penny). US has no ad account, so Ad Spend is a real $0 (measured, not "no data" — unlike the
+      // Sales-by-Product cards where US ad fields are 'n/a' for lack of any ad-click data at all; P&L
+      // has full non-ad revenue/cost visibility regardless of whether ads ran).
+      marginByMarket: {
+        uk: {
+          pct: '11.5%', pctColor: 'amber', note: 'Amazon UK · August 2026',
+          rows: [
+            { lbl: 'Gross Revenue', val: '£1,322' },
+            { lbl: 'Selling Fees',  val: '−£183',  color: 'red' },
+            { lbl: 'Fulfilment',    val: '−£219',  color: 'red' },
+            { lbl: 'Ad Spend',      val: '−£228', color: 'red' },
+            { lbl: 'COGS',          val: '−£538',  color: 'red' },
+            { lbl: 'Net Profit',    val: '£152',  color: 'green', strong: true }
+          ]
+        },
+        us: {
+          pct: '22.7%', pctColor: 'green', note: 'Amazon US · August 2026',
+          rows: [
+            { lbl: 'Gross Revenue', val: '$378' },
+            { lbl: 'Selling Fees',  val: '−$91',  color: 'red' },
+            { lbl: 'Fulfilment',    val: '−$152', color: 'red' },
+            { lbl: 'Ad Spend',      val: '$0',    color: 'red' },
+            { lbl: 'COGS',          val: '−$54',  color: 'red' },
+            { lbl: 'Net Profit',    val: '$86',   color: 'green', strong: true }
+          ]
+        }
       },
       statement: {
         fixedLabel: 'Amazon UK · August 2026',
@@ -636,6 +774,65 @@ window.DASHBOARD_DATA = {
             { lbl: 'Orders', amount: '38' }
           ] }
         ]
+      },
+      statementByMarket: {
+        uk: {
+          fixedLabel: 'Amazon UK · August 2026',
+          groups: [
+            { header: 'Income', rows: [
+              { lbl: 'Shipped product sales', amount: '£1,389', pct: '105.1%', unit: '£36.56' },
+              { lbl: 'Promotions', amount: '−£52', pct: '−3.9%', unit: '−£1.37' },
+              { lbl: 'Refunds', amount: '−£69', pct: '−5.2%', unit: '−£1.82' },
+              { lbl: 'Other income', amount: '£56', pct: '4.2%', unit: '£1.47' },
+              { lbl: 'Net revenue', amount: '£1,322', pct: '100.0%', unit: '£34.79', total: true }
+            ] },
+            { header: 'Expenses', rows: [
+              { lbl: 'Advertising', amount: '£228', pct: '17.3%', unit: '£6.01' },
+              { lbl: 'Selling fees', amount: '£183', pct: '13.8%', unit: '£4.80' },
+              { lbl: 'Fulfilment and shipping', amount: '£219', pct: '16.6%', unit: '£5.77' },
+              { lbl: 'Cost of goods', amount: '£538', pct: '40.7%', unit: '£14.14' },
+              { lbl: 'Total expenses', amount: '£1,169', pct: '88.4%', unit: '£30.77', total: true }
+            ] },
+            { header: 'Profit', rows: [
+              { lbl: 'PROFIT', amount: '£152', pct: '11.5%', unit: '£4.01', total: true, profit: true },
+              { lbl: 'Profit %', amount: '11.5%', accent: 'amber' }
+            ] },
+            { header: 'Metrics', rows: [
+              { lbl: 'Units sold', amount: '43' },
+              { lbl: 'Orders', amount: '38' }
+            ] }
+          ]
+        },
+        // US: refunds line folds in getStoreProfitAndLoss's small "refundsAndReturnsOverheads" field
+        // (−$4) — immaterial on its own, not worth a separate row (same simplification the UK card
+        // already makes; its own refundsAndReturnsOverheads of +£2 is likewise folded away, not shown).
+        us: {
+          fixedLabel: 'Amazon US · August 2026',
+          groups: [
+            { header: 'Income', rows: [
+              { lbl: 'Shipped product sales', amount: '$555', pct: '146.9%', unit: '$17.92' },
+              { lbl: 'Promotions', amount: '−$19', pct: '−5.0%', unit: '−$0.61' },
+              { lbl: 'Refunds', amount: '−$166', pct: '−43.9%', unit: '−$5.35' },
+              { lbl: 'Other income', amount: '$25', pct: '6.6%', unit: '$0.80' },
+              { lbl: 'Net revenue', amount: '$378', pct: '100.0%', unit: '$12.20', total: true }
+            ] },
+            { header: 'Expenses', rows: [
+              { lbl: 'Advertising', amount: '$0', pct: '0.0%', unit: '$0.00' },
+              { lbl: 'Selling fees', amount: '$91', pct: '24.0%', unit: '$2.93' },
+              { lbl: 'Fulfilment and shipping', amount: '$152', pct: '40.1%', unit: '$4.89' },
+              { lbl: 'Cost of goods', amount: '$54', pct: '14.3%', unit: '$1.74' },
+              { lbl: 'Total expenses', amount: '$292', pct: '77.3%', unit: '$9.43', total: true }
+            ] },
+            { header: 'Profit', rows: [
+              { lbl: 'PROFIT', amount: '$86', pct: '22.7%', unit: '$2.77', total: true, profit: true },
+              { lbl: 'Profit %', amount: '22.7%', accent: 'green' }
+            ] },
+            { header: 'Metrics', rows: [
+              { lbl: 'Units sold', amount: '31' },
+              { lbl: 'Orders', amount: '30' }
+            ] }
+          ]
+        }
       },
       mkt: [
         { name: 'Amazon UK', flag: 'gb', revenue: '£1,322', adspend: '£228', net: '£152', netColor: 'green', margin: '11.5%', marginCls: 'ba' },

@@ -223,7 +223,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
      cached page (GitHub Pages caps index.html at a 10-min browser cache) by reloading once with a
      cache-bust param; and if it changes mid-session it shows the "please refresh" overlay. One bump,
      all jobs. */
-  var APP_VER = '2026-09-11';
+  var APP_VER = '2026-09-12';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -493,7 +493,10 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       <div class="sec-lbl" id="sec-pnl">Product Profitability &mdash; <span id="sec-period-2">May 2026</span></div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:stretch;">
         <div class="card fade" style="flex:4 1 300px;min-width:280px;">
-          <div class="card-hdr"><div><div class="card-ttl">Portfolio Profitability</div><div class="card-sub">By product margin &middot; <span class="dr-period">May 2026</span></div></div></div>
+          <!-- id="sec-portfolio-period", NOT class="dr-period": this card is a fixed current-month snapshot
+               (see the app.js comment on the pf/portfolioByMarket resolution) — it must NOT be swept to
+               whatever period the date-range selector shows, or it falsely implies the data updates too. -->
+          <div class="card-hdr"><div><div class="card-ttl">Portfolio Profitability</div><div class="card-sub">By product margin &middot; <span id="sec-portfolio-period">May 2026</span> &middot; <span class="cfg-scope">All EU</span></div></div></div>
           <div class="card-body" style="display:flex;align-items:center;gap:22px;">
             <div id="chart-portfolio-pie" style="width:120px;height:120px;border-radius:50%;flex-shrink:0;background:conic-gradient(var(--green) 0 89%, var(--amber) 89% 95%, var(--red) 95% 100%);"></div>
             <div id="sec-portfolio" style="flex:1;min-width:130px;">
