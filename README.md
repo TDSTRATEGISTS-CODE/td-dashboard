@@ -48,6 +48,7 @@ dashboard/
     harvaza-monthly-rebake.prompt.md ← Routine trigger: monthly Harvaza Amazon re-bake (auto-publish + notify, issue #19)
     abimax-monthly-rebake.prompt.md ← Routine trigger: monthly Abimax Amazon re-bake (auto-publish + notify, issue #21)
     amacx-monthly-sync.routine.md ← Routine trigger: monthly AMACX sheet/data sync
+    amacx-monthly-rebake.prompt.md ← Routine trigger: monthly AMACX data.js re-bake (auto-publish + notify, Notion)
 ```
 
 > **Apps Script proxies** (`amacx-data-proxy.gs`, `harvaza-sheet-proxy.gs`, `nkv-sheet-proxy.gs`) are now
@@ -573,6 +574,18 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
 
 > **What does NOT need re-pulling monthly:** FY 2025 columns (frozen history), the live sheet sections (budgets/forecast/
 > Project-Scope — served by the proxy), and `index.html`/`app.js` (only when behaviour changes).
+
+**Automating it (monthly Routine).** This runbook — plus every AMACX-specific gotcha in CLAUDE.md (the "5 more
+spots" scope, the `yoy` pull, NLD exclusion, the MerchantSpring tool-bug workarounds) — is codified as a Claude
+Code **Routine** whose prompt lives at
+[`tools/amacx-monthly-rebake.prompt.md`](tools/amacx-monthly-rebake.prompt.md). The routine's *stored* prompt is
+just a one-line pointer at that file (see below) so there's a single source of truth to edit via git, the same
+pattern as `tools/amacx-monthly-sync.routine.md`. Wire it with a **schedule trigger on the 5th of each month**
+(cron `0 9 5 * *` — 09:00 UTC, 10:00 UK during BST; this is the same slot the sheet-sync routine already runs
+in — that's fine, they pull independently and write to different targets), the **MerchantSpring** connector
+attached, and **"Allow unrestricted branch pushes" enabled** so it can publish to `main`. It's **auto-publish +
+notify**: a clean self-check pass goes live and logs to the **Monthly Report Progress** Notion entry; a failed
+self-check falls back to a draft PR instead of touching `main`.
 
 ---
 
