@@ -58,3 +58,44 @@ re-adding pulls for it out of habit because the channel table names it alongside
 If NLD ever goes live again, that's a deliberate decision someone will need to make explicitly
 (and update this note + the README table accordingly) — don't infer it from the data changing.
 
+## AMACX rebake scope — `dateRanges` is NOT the whole file; five more spots key off the same month
+
+The August 2026 rebake updated `dateRanges` (headline KPIs, mktRows, Buy Box, the campaigns list)
+and shipped as if that were a complete rebake. It wasn't: the Products page, the campaign-type pie,
+and the trend chart all still showed July for two weeks before anyone noticed. **A scheduled rebake
+task prompt that only mentions "core actuals" or "headline KPIs" does not narrow this scope** — the
+prompt describes what to *pull*, not which baked sections are allowed to go stale. Every one of the
+spots below reads its own period key (`may`/`3m`/`6m`/`12m`) off the same underlying MerchantSpring
+actuals and **must be advanced in the same commit** as `dateRanges`, or the dashboard is internally
+inconsistent (headline card says August, everything below it still says July):
+
+1. **`sections.products.kpisByPeriod`** and **`.tableByPeriod`** — Orders/AOV/ASP and the per-market
+   revenue table, for `may`/`3m`/`6m`/`12m`. No new pull needed: every number here is already sitting
+   in `dateRanges[period].marketKpis` once that's rebaked (rev/units/orders/aov) — ASP is just
+   `revenue/units`. Propagate, don't skip because "it's the same data" — it lives in a separate
+   object and does not update itself.
+2. **`sections.products.groupsByPeriod`** (Sales-by-Product-Group, 15 groups × 5 scopes) — needs its
+   own `salesByProduct` pull **per rolling window** (not per month): request the report with
+   `fromDate`/`toDate` spanning the whole window directly (e.g. `2026-06-01`–`2026-08-31` for `3m`)
+   rather than trying to stitch monthly pulls together — one report per market per window (4×4=16
+   total across `may`/`3m`/`6m`/`12m`), joined to the sheet's SKU→Group map (product master table,
+   column B `PARENT-*` labels matched by ASIN). The group map is a static reference table and will
+   not have every ASIN (new launches, superseded variants) — check for unmatched rows with nonzero
+   `totalSales` each time and extend the map rather than silently dropping their revenue; a match
+   rate of "sum of groups ≈ the already-baked headline revenue for that window" is the sanity check.
+3. **`sections.advertising.campaignMixByPeriod`** (SP/SB/SD pie) — same shape as #2 but from the
+   `campaigns` report: one pull per market per rolling window (`fromDate`/`toDate` = the window),
+   aggregate `cost`/`attributed_sales` by `ad_type`.
+4. **`sections.charts`** (trailing-6-month trend) — drop the oldest month, append the new one, for
+   `months`, `revTarget` (sheet's Revenue Target row), `rev`, `adSpend` (all precise from the same
+   `$M`-equivalent monthly actuals used for `dateRanges`), and `adTacos` (recompute as
+   `adSpend/rev`, don't carry forward a stale value). `adSales` for the new month should come from
+   the same `campaigns` report totals already pulled for the headline card; the older 5 months can
+   stay as previously baked.
+5. The **`'2025'` key** in both `groupsByPeriod` and `campaignMixByPeriod` is frozen (matches
+   `dateRanges['2025']`) — never touch it on a monthly rebake, same rule as the FY2025 dateRanges block.
+
+✅ Before calling a rebake done, grep the whole `clients/<client>/data.js` for the *previous* month's
+name (e.g. `grep -c 'Jul 2026'` after an August rebake) — zero hits (aside from genuine historical
+"OOS since" / "as of" dates) is the actual finish line, not "dateRanges validates."
+

@@ -471,6 +471,13 @@ Notes:
 A monthly AMACX refresh is a **Claude-session task** (the browser can't reach the MerchantSpring MCP). Follow these
 steps in order; each ends with a confirmation. "This month" = the latest closed month.
 
+> **A scheduled trigger's stored task prompt is not the scope ceiling.** The August 2026 rebake
+> followed a condensed scheduled-task prompt that only mentioned "core actuals," shipped `dateRanges`
+> alone, and left the Products page / campaign-mix pie / trend chart on the prior month for two
+> weeks before anyone noticed. All 11 steps below — not just whichever subset a trigger's prompt
+> happens to list — are required every month. See CLAUDE.md → "AMACX rebake scope" for the specific
+> five spots that key off the same month and the grep-based finish-line check.
+
 **Channels** (AMACX seller `A1O4H4W8GP4BN2`; pass `channelId` + `merchantId`) — **pull these 4 only**:
 
 | Market | channelId | merchantId | Ads |
