@@ -1960,6 +1960,10 @@ function renderPeriodSections(d) {
   var pmar = pickMkt(spl.marginByMarket, pl.marginByMarket, spl.margin) || pick(spl.margin, pl.margin);
   if (pmar) renderMargin(pmar);
   var pmkt = pick(spl.mkt, pl.mkt); if (pmkt) renderPnlMkt(pmkt);
+  // Hide the "P&L by Marketplace" card for single-market clients (markets = only an 'all' entry) — a
+  // one-row marketplace table just duplicates the headline. Multi-market clients keep it.
+  var mktWrap = el('sec-pnl-mkt'); mktWrap = (mktWrap && mktWrap.closest) ? mktWrap.closest('.fade') : null;
+  if (mktWrap) mktWrap.style.display = (CONFIG.markets || []).some(function (m) { return m.key !== 'all'; }) ? '' : 'none';
   var pst = pickMkt(spl.statementByMarket, pl.statementByMarket, spl.statement) || pick(spl.statement, pl.statement);
   if (pst) {
     if (pst.fixedLabel) {

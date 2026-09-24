@@ -89,21 +89,21 @@ window.DASHBOARD_DATA = {
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'$10.2k',acos:'28.4%'} ] },
     // Amazon P&L for the 3-month window (Jun+Jul+Aug settled, summed — see sections.pnl note on basis).
     sec: { pnl: {
+      summary: [ {val:'$13,847',lbl:'Net Revenue',color:'brand'}, {val:'$7,490',lbl:'Total Costs',color:'red'}, {val:'$6,356',lbl:'Net Profit',color:'green'} ],
+      margin: { pct:'45.9%', pctColor:'green', note:'Jun–Aug 2026 (3-month) · financial basis (MerchantSpring, settled) · US channel', rows:[
+        {lbl:'Net Revenue', val:'$13,847'},
+        {lbl:'Advertising', val:'-$2,784', color:'red'},
+        {lbl:'Selling & Shipping Fees', val:'-$1,689', color:'red'},
+        {lbl:'COGS', val:'-$2,995', color:'red'},
+        {lbl:'Other adjustments', val:'-$23', color:'red'},
+        {lbl:'Net Profit', val:'$6,356', color:'green', strong:true}
+      ] },
+      mkt: [
+        {name:'United States',flag:'us',revenue:'$13,847',adspend:'$2,784',net:'$6,356',netColor:'green',margin:'45.9%',marginCls:'bg'}
+      ],
       statement: {
         fixedLabel: 'Jun–Aug 2026 (3-month) · financial basis (MerchantSpring, settled)',
         caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag, so the most recent ~2 weeks may be understated until settlement completes.',
-        summary: [ {val:'$13,847',lbl:'Net Revenue',color:'brand'}, {val:'$7,490',lbl:'Total Costs',color:'red'}, {val:'$6,356',lbl:'Net Profit',color:'green'} ],
-        margin: { pct:'45.9%', pctColor:'green', note:'Jun–Aug 2026 (3-month) · financial basis (MerchantSpring, settled) · US channel', rows:[
-          {lbl:'Net Revenue', val:'$13,847'},
-          {lbl:'Advertising', val:'-$2,784', color:'red'},
-          {lbl:'Selling & Shipping Fees', val:'-$1,689', color:'red'},
-          {lbl:'COGS', val:'-$2,995', color:'red'},
-          {lbl:'Other adjustments', val:'-$23', color:'red'},
-          {lbl:'Net Profit', val:'$6,356', color:'green', strong:true}
-        ] },
-        mkt: [
-          {name:'United States',flag:'us',revenue:'$13,847',adspend:'$2,784',net:'$6,356',netColor:'green',margin:'45.9%',marginCls:'bg'}
-        ],
         groups:[
           { header:'Income', rows:[
             {lbl:'Product sales', amount:'$15,823', pct:'114.3%', unit:'$126.59'},
@@ -160,21 +160,21 @@ window.DASHBOARD_DATA = {
     // Amazon P&L for the Since-Launch window (Mar–Aug settled, summed — see sections.pnl note on
     // basis). Settled captures the Mar–Apr launch months that accrual omits.
     sec: { pnl: {
+      summary: [ {val:'$21,225',lbl:'Net Revenue',color:'brand'}, {val:'$11,125',lbl:'Total Costs',color:'red'}, {val:'$10,100',lbl:'Net Profit',color:'green'} ],
+      margin: { pct:'47.6%', pctColor:'green', note:'Since Launch · Mar–Aug 2026 · financial basis (MerchantSpring, settled) · US channel', rows:[
+        {lbl:'Net Revenue', val:'$21,225'},
+        {lbl:'Advertising', val:'-$3,198', color:'red'},
+        {lbl:'Selling & Shipping Fees', val:'-$3,135', color:'red'},
+        {lbl:'COGS', val:'-$4,766', color:'red'},
+        {lbl:'Other adjustments', val:'-$26', color:'red'},
+        {lbl:'Net Profit', val:'$10,100', color:'green', strong:true}
+      ] },
+      mkt: [
+        {name:'United States',flag:'us',revenue:'$21,225',adspend:'$3,198',net:'$10,100',netColor:'green',margin:'47.6%',marginCls:'bg'}
+      ],
       statement: {
         fixedLabel: 'Since Launch · Mar–Aug 2026 · financial basis (MerchantSpring, settled)',
         caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag, so the most recent ~2 weeks may be understated until settlement completes.',
-        summary: [ {val:'$21,225',lbl:'Net Revenue',color:'brand'}, {val:'$11,125',lbl:'Total Costs',color:'red'}, {val:'$10,100',lbl:'Net Profit',color:'green'} ],
-        margin: { pct:'47.6%', pctColor:'green', note:'Since Launch · Mar–Aug 2026 · financial basis (MerchantSpring, settled) · US channel', rows:[
-          {lbl:'Net Revenue', val:'$21,225'},
-          {lbl:'Advertising', val:'-$3,198', color:'red'},
-          {lbl:'Selling & Shipping Fees', val:'-$3,135', color:'red'},
-          {lbl:'COGS', val:'-$4,766', color:'red'},
-          {lbl:'Other adjustments', val:'-$26', color:'red'},
-          {lbl:'Net Profit', val:'$10,100', color:'green', strong:true}
-        ] },
-        mkt: [
-          {name:'United States',flag:'us',revenue:'$21,225',adspend:'$3,198',net:'$10,100',netColor:'green',margin:'47.6%',marginCls:'bg'}
-        ],
         groups:[
           { header:'Income', rows:[
             {lbl:'Product sales', amount:'$24,962', pct:'117.6%', unit:'$100.25'},
@@ -275,20 +275,20 @@ window.DASHBOARD_DATA = {
     // sales $4,030 · net rev $4,058 · ad(settlement) $1,504 · selling $66 · shipping $270 · COGS $788
     // · net profit $1,431 (35.3%).
     pnl: {
+      summary: [ {val:'$4,058',lbl:'Net Revenue',color:'brand'}, {val:'$2,627',lbl:'Total Costs',color:'red'}, {val:'$1,431',lbl:'Net Profit',color:'green'} ],
+      margin: { pct:'35.3%', pctColor:'amber', note:'August 2026 (31-day) · financial basis (MerchantSpring, settled) · US channel', rows:[
+        {lbl:'Net Revenue', val:'$4,058'},
+        {lbl:'Advertising', val:'-$1,504', color:'red'},
+        {lbl:'Selling & Shipping Fees', val:'-$336', color:'red'},
+        {lbl:'COGS', val:'-$788', color:'red'},
+        {lbl:'Net Profit', val:'$1,431', color:'green', strong:true}
+      ] },
+      mkt: [
+        {name:'United States',flag:'us',revenue:'$4,058',adspend:'$1,504',net:'$1,431',netColor:'green',margin:'35.3%',marginCls:'ba'}
+      ],
       statement: {
         fixedLabel: 'August 2026 (1–31) · financial basis (MerchantSpring, settled)',
         caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag, so the most recent ~2 weeks may be understated until settlement completes.',
-        summary: [ {val:'$4,058',lbl:'Net Revenue',color:'brand'}, {val:'$2,627',lbl:'Total Costs',color:'red'}, {val:'$1,431',lbl:'Net Profit',color:'green'} ],
-        margin: { pct:'35.3%', pctColor:'amber', note:'August 2026 (31-day) · financial basis (MerchantSpring, settled) · US channel', rows:[
-          {lbl:'Net Revenue', val:'$4,058'},
-          {lbl:'Advertising', val:'-$1,504', color:'red'},
-          {lbl:'Selling & Shipping Fees', val:'-$336', color:'red'},
-          {lbl:'COGS', val:'-$788', color:'red'},
-          {lbl:'Net Profit', val:'$1,431', color:'green', strong:true}
-        ] },
-        mkt: [
-          {name:'United States',flag:'us',revenue:'$4,058',adspend:'$1,504',net:'$1,431',netColor:'green',margin:'35.3%',marginCls:'ba'}
-        ],
         groups:[
           { header:'Income', rows:[
             {lbl:'Product sales', amount:'$4,030', pct:'99.3%', unit:'$115.14'},
