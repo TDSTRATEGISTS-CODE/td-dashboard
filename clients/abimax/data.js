@@ -87,6 +87,49 @@ window.DASHBOARD_DATA = {
       series:[ {color:'#404935',values:[7394,4311,3793],main:true,area:true}, {color:'#a7ab90',values:[759,980,1146],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'$10.2k',acos:'28.4%'} ] },
+    // Amazon P&L for the 3-month window (Jun+Jul+Aug settled, summed — see sections.pnl note on basis).
+    sec: { pnl: {
+      statement: {
+        fixedLabel: 'Jun–Aug 2026 (3-month) · financial basis (MerchantSpring, settled)',
+        summary: [ {val:'$13,847',lbl:'Net Revenue',color:'brand'}, {val:'$7,490',lbl:'Total Costs',color:'red'}, {val:'$6,356',lbl:'Net Profit',color:'green'} ],
+        margin: { pct:'45.9%', pctColor:'green', note:'Jun–Aug 2026 (3-month) · financial basis (MerchantSpring, settled) · US channel', rows:[
+          {lbl:'Net Revenue', val:'$13,847'},
+          {lbl:'Advertising', val:'-$2,784', color:'red'},
+          {lbl:'Selling & Shipping Fees', val:'-$1,689', color:'red'},
+          {lbl:'COGS', val:'-$2,995', color:'red'},
+          {lbl:'Other adjustments', val:'-$23', color:'red'},
+          {lbl:'Net Profit', val:'$6,356', color:'green', strong:true}
+        ] },
+        mkt: [
+          {name:'United States',flag:'us',revenue:'$13,847',adspend:'$2,784',net:'$6,356',netColor:'green',margin:'45.9%',marginCls:'bg'}
+        ],
+        groups:[
+          { header:'Income', rows:[
+            {lbl:'Product sales', amount:'$15,823', pct:'114.3%', unit:'$126.59'},
+            {lbl:'Refunds & returns', amount:'-$1,437', pct:'-10.4%', unit:'-$11.50'},
+            {lbl:'Promotions & coupons', amount:'-$48', pct:'-0.4%', unit:'-$0.39'},
+            {lbl:'Reimbursements & other income', amount:'$406', pct:'2.9%', unit:'$3.25'},
+            {lbl:'Net revenue', amount:'$13,847', pct:'100.0%', unit:'$110.77', total:true}
+          ] },
+          { header:'Expenses', rows:[
+            {lbl:'Advertising (settlement)', amount:'$2,784', pct:'20.1%', unit:'$22.27'},
+            {lbl:'Selling fees', amount:'$840', pct:'6.1%', unit:'$6.72'},
+            {lbl:'Shipping & fulfilment fees', amount:'$849', pct:'6.1%', unit:'$6.79'},
+            {lbl:'Cost of goods', amount:'$2,995', pct:'21.6%', unit:'$23.96'},
+            {lbl:'Refund/return handling', amount:'$23', pct:'0.2%', unit:'$0.18'},
+            {lbl:'Total expenses', amount:'$7,490', pct:'54.1%', unit:'$59.92', total:true}
+          ] },
+          { header:'Profit', rows:[
+            {lbl:'PROFIT', amount:'$6,356', pct:'45.9%', unit:'$50.85', total:true, profit:true},
+            {lbl:'Profit %', amount:'45.9%', accent:'green'}
+          ] },
+          { header:'Metrics', rows:[
+            {lbl:'TACOS % (console)', amount:'18.6%'},
+            {lbl:'Ad spend (console)', amount:'$2,878'}
+          ] }
+        ]
+      }
+    } },
   },
   // ===== Since Launch = Mar–Aug 2026 (first sale Mar 2026) =====
   '6m': {
@@ -113,6 +156,50 @@ window.DASHBOARD_DATA = {
       series:[ {color:'#404935',values:[4191,1667,5366,7394,4311,3793],main:true,area:true}, {color:'#a7ab90',values:[0,197,404,759,980,1146],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'$13.3k',acos:'26.3%'} ] },
+    // Amazon P&L for the Since-Launch window (Mar–Aug settled, summed — see sections.pnl note on
+    // basis). Settled captures the Mar–Apr launch months that accrual omits.
+    sec: { pnl: {
+      statement: {
+        fixedLabel: 'Since Launch · Mar–Aug 2026 · financial basis (MerchantSpring, settled)',
+        summary: [ {val:'$21,225',lbl:'Net Revenue',color:'brand'}, {val:'$11,125',lbl:'Total Costs',color:'red'}, {val:'$10,100',lbl:'Net Profit',color:'green'} ],
+        margin: { pct:'47.6%', pctColor:'green', note:'Since Launch · Mar–Aug 2026 · financial basis (MerchantSpring, settled) · US channel', rows:[
+          {lbl:'Net Revenue', val:'$21,225'},
+          {lbl:'Advertising', val:'-$3,198', color:'red'},
+          {lbl:'Selling & Shipping Fees', val:'-$3,135', color:'red'},
+          {lbl:'COGS', val:'-$4,766', color:'red'},
+          {lbl:'Other adjustments', val:'-$26', color:'red'},
+          {lbl:'Net Profit', val:'$10,100', color:'green', strong:true}
+        ] },
+        mkt: [
+          {name:'United States',flag:'us',revenue:'$21,225',adspend:'$3,198',net:'$10,100',netColor:'green',margin:'47.6%',marginCls:'bg'}
+        ],
+        groups:[
+          { header:'Income', rows:[
+            {lbl:'Product sales', amount:'$24,962', pct:'117.6%', unit:'$100.25'},
+            {lbl:'Refunds & returns', amount:'-$1,545', pct:'-7.3%', unit:'-$6.20'},
+            {lbl:'Promotions & coupons', amount:'-$1,247', pct:'-5.9%', unit:'-$5.01'},
+            {lbl:'Reimbursements & other income', amount:'$509', pct:'2.4%', unit:'$2.04'},
+            {lbl:'Net revenue', amount:'$21,225', pct:'100.0%', unit:'$85.24', total:true}
+          ] },
+          { header:'Expenses', rows:[
+            {lbl:'Advertising (settlement)', amount:'$3,198', pct:'15.1%', unit:'$12.84'},
+            {lbl:'Selling fees', amount:'$1,656', pct:'7.8%', unit:'$6.65'},
+            {lbl:'Shipping & fulfilment fees', amount:'$1,478', pct:'7.0%', unit:'$5.94'},
+            {lbl:'Cost of goods', amount:'$4,766', pct:'22.5%', unit:'$19.14'},
+            {lbl:'Refund/return handling', amount:'$26', pct:'0.1%', unit:'$0.10'},
+            {lbl:'Total expenses', amount:'$11,125', pct:'52.4%', unit:'$44.68', total:true}
+          ] },
+          { header:'Profit', rows:[
+            {lbl:'PROFIT', amount:'$10,100', pct:'47.6%', unit:'$40.56', total:true, profit:true},
+            {lbl:'Profit %', amount:'47.6%', accent:'green'}
+          ] },
+          { header:'Metrics', rows:[
+            {lbl:'TACOS % (console)', amount:'13.0%'},
+            {lbl:'Ad spend (console)', amount:'$3,479'}
+          ] }
+        ]
+      }
+    } },
   },
   },
 
@@ -170,54 +257,57 @@ window.DASHBOARD_DATA = {
         {level:'amber', title:'Magnostream Pro — reorder soon', sub:'B0GGRJKS2D · ~140 days cover · down from 204d Jul'}
       ] }
     },
-    // P&L is GATED behind the Executive-Subscription paywall for Abimax (Digital Dash tier) — this
-    // real statement stays baked so it renders instantly the day the client upgrades. Financial basis
-    // from getStoreProfitAndLoss (August 2026, ACCRUAL basis — requested specifically so this ties to
-    // the order-date sales figures above): sales $3,793.27 · refunds $0 · reimbursements +$60.75 ·
-    // other income +$57.94 · promotions -$24.03 · selling fees $44.73 · shipping/fulfilment $248.32 ·
-    // COGS $753.92 · settlement ad spend $1,148.99 · other expenses -$142.83. MerchantSpring's own
-    // totalRevenue ($3,610.40) / totalExpenses ($2,053.13) are used for the summary + top margin row
-    // below, as they reflect additional settlement adjustments beyond the itemized rows shown (same
-    // known gap as the prior bake — MerchantSpring doesn't fully itemize its own top-line total).
-    // (Settlement ad spend $1,149 differs slightly from the $1,146 ad-console figure shown on the
-    // Advertising page — different basis, same known limitation as prior bakes.)
+    // P&L is ACTIVE for Abimax (Executive tier, Sep 2026) — full MerchantSpring financial P&L, built
+    // PER TIMELINE. This top-level sections.pnl is the "Last Month" (August) statement; the 3-month
+    // (Jun–Aug) and Since-Launch (Mar–Aug) statements live on dateRanges['3m'].sec.pnl /
+    // dateRanges['6m'].sec.pnl. Each carries its own fixedLabel so the page re-renders per period.
+    // Basis: getStoreProfitAndLoss, profitabilityView 'settled' (cash basis), includeTax, pulled per
+    // month then summed for the multi-month windows (the endpoint is 31-day-capped). SETTLED is used,
+    // not accrual/"deferred": MerchantSpring's accrual P&L has no data for the Mar–Apr launch months
+    // (returns ~$0), whereas settled has the complete launch-to-date history (Mar sales $4,186 ties to
+    // the $4,191 order-date figure). Settled is settlement-timed, so a month's P&L revenue won't tie
+    // exactly to that month's order-date sales KPI shown elsewhere — expected for a cash-basis P&L.
+    // MerchantSpring's own totalRevenue/totalExpenses drive the summary + totals; itemized rows don't
+    // always foot to the top-line (a known MerchantSpring gap). "Ad spend (console)" in Metrics is the
+    // order-date figure from the Advertising page, shown for cross-reference. Aug 2026 (settled):
+    // sales $4,030 · net rev $4,058 · ad(settlement) $1,504 · selling $66 · shipping $270 · COGS $788
+    // · net profit $1,431 (35.3%).
     pnl: {
       statement: {
-        fixedLabel: 'August 2026 (1–31) · financial basis (MerchantSpring, accrual)',
-        summary: [ {val:'$3,610',lbl:'Net Revenue',color:'brand'}, {val:'$2,053',lbl:'Total Costs',color:'red'}, {val:'$1,557',lbl:'Net Profit',color:'green'} ],
-        margin: { pct:'43.1%', pctColor:'amber', note:'August 2026 (31-day) · financial basis (MerchantSpring) · US channel', rows:[
-          {lbl:'Net Revenue', val:'$3,610'},
-          {lbl:'Advertising', val:'-$1,149', color:'red'},
-          {lbl:'Selling & Shipping Fees', val:'-$293', color:'red'},
-          {lbl:'COGS', val:'-$754', color:'red'},
-          {lbl:'Other adjustments (refunds/reimb./promo)', val:'-$48', color:'red'},
-          {lbl:'Net Profit', val:'$1,557', color:'green', strong:true}
+        fixedLabel: 'August 2026 (1–31) · financial basis (MerchantSpring, settled)',
+        summary: [ {val:'$4,058',lbl:'Net Revenue',color:'brand'}, {val:'$2,627',lbl:'Total Costs',color:'red'}, {val:'$1,431',lbl:'Net Profit',color:'green'} ],
+        margin: { pct:'35.3%', pctColor:'amber', note:'August 2026 (31-day) · financial basis (MerchantSpring, settled) · US channel', rows:[
+          {lbl:'Net Revenue', val:'$4,058'},
+          {lbl:'Advertising', val:'-$1,504', color:'red'},
+          {lbl:'Selling & Shipping Fees', val:'-$336', color:'red'},
+          {lbl:'COGS', val:'-$788', color:'red'},
+          {lbl:'Net Profit', val:'$1,431', color:'green', strong:true}
         ] },
         mkt: [
-          {name:'United States',flag:'us',revenue:'$3,610',adspend:'$1,146',net:'$1,557',netColor:'green',margin:'43.1%',marginCls:'ba'}
+          {name:'United States',flag:'us',revenue:'$4,058',adspend:'$1,504',net:'$1,431',netColor:'green',margin:'35.3%',marginCls:'ba'}
         ],
         groups:[
           { header:'Income', rows:[
-            {lbl:'Product sales', amount:'$3,793', pct:'105.1%', unit:'$111.57'},
-            {lbl:'Refunds', amount:'$0', pct:'0.0%', unit:'$0.00'},
-            {lbl:'Reimbursements + other income', amount:'$119', pct:'3.3%', unit:'$3.49'},
-            {lbl:'Net revenue', amount:'$3,610', pct:'100.0%', unit:'$106.19', total:true}
+            {lbl:'Product sales', amount:'$4,030', pct:'99.3%', unit:'$115.14'},
+            {lbl:'Refunds & returns', amount:'$0', pct:'0.0%', unit:'$0.00'},
+            {lbl:'Promotions & coupons', amount:'-$19', pct:'-0.5%', unit:'-$0.53'},
+            {lbl:'Reimbursements & other income', amount:'$328', pct:'8.1%', unit:'$9.37'},
+            {lbl:'Net revenue', amount:'$4,058', pct:'100.0%', unit:'$115.95', total:true}
           ] },
           { header:'Expenses', rows:[
-            {lbl:'Advertising (settlement)', amount:'$1,149', pct:'31.8%', unit:'$33.79'},
-            {lbl:'Selling fees', amount:'$45', pct:'1.2%', unit:'$1.32'},
-            {lbl:'Shipping & fulfilment fees', amount:'$248', pct:'6.9%', unit:'$7.30'},
-            {lbl:'Cost of goods', amount:'$754', pct:'20.9%', unit:'$22.18'},
-            {lbl:'Promotions + other expenses', amount:'-$167', pct:'-4.6%', unit:'-$4.91'},
-            {lbl:'Total expenses', amount:'$2,053', pct:'56.9%', unit:'$60.38', total:true}
+            {lbl:'Advertising (settlement)', amount:'$1,504', pct:'37.1%', unit:'$42.98'},
+            {lbl:'Selling fees', amount:'$66', pct:'1.6%', unit:'$1.89'},
+            {lbl:'Shipping & fulfilment fees', amount:'$270', pct:'6.6%', unit:'$7.70'},
+            {lbl:'Cost of goods', amount:'$788', pct:'19.4%', unit:'$22.50'},
+            {lbl:'Total expenses', amount:'$2,627', pct:'64.7%', unit:'$75.07', total:true}
           ] },
           { header:'Profit', rows:[
-            {lbl:'PROFIT', amount:'$1,557', pct:'43.1%', unit:'$45.79', total:true, profit:true},
-            {lbl:'Profit %', amount:'43.1%', accent:'amber'}
+            {lbl:'PROFIT', amount:'$1,431', pct:'35.3%', unit:'$40.88', total:true, profit:true},
+            {lbl:'Profit %', amount:'35.3%', accent:'amber'}
           ] },
           { header:'Metrics', rows:[
-            {lbl:'TACOS %', amount:'30.2%'},
-            {lbl:'Ad spend (console)', amount:'$1,146'}
+            {lbl:'TACOS % (console)', amount:'30.1%'},
+            {lbl:'Ad spend (console)', amount:'$1,141'}
           ] }
         ]
       }

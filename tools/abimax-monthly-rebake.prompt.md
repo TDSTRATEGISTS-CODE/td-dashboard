@@ -33,11 +33,21 @@ last month; launch-to-date — keep the key `6m` and the "Since Launch" label). 
   `abimax-sheet-proxy.gs` from the project tracker (`overlay:'sections'`). Refresh only the MerchantSpring-derived
   overview cards: **`overview.cvr`, `overview.stockWarn`, `overview.buyBox`** (the baked tasks/flags/completed are
   just the offline fallback — leave them).
-- **Digital Dash tier — P&L stays gated.** `sections.pnl` is baked (from `getStoreProfitAndLoss`) but hidden behind
-  the Executive paywall. Refresh its numbers so it stays current, but **never remove `'pnl'` from
-  `config.hiddenPages`** — the client is Digital Dash, so the Amazon P&L must remain the 🔒 locked gate.
+- **Executive tier — the Amazon P&L is ACTIVE and per-timeline (upgraded Sep 2026).** `config.hiddenPages` is
+  `['keywords','amazonpnl']` (the real `pnl` page renders; the paywall gate is hidden) — **never re-add `'pnl'`**, or
+  the client loses their P&L. Rebuild the P&L each run **per window** from `getStoreProfitAndLoss`
+  (`profitabilityView:'settled'`, `includeTax`, `America/Los_Angeles`):
+    - **Use `settled`, NOT accrual/"deferred"** — accrual returns ~$0 for the Mar–Apr launch months; settled has the
+      full launch-to-date history. The endpoint is **31-day-capped**, so pull each month and **sum** for 3m/6m.
+    - `sections.pnl.statement` = the latest month ("Last Month"); `dateRanges['3m'].sec.pnl` = trailing-3;
+      `dateRanges['6m'].sec.pnl` = Since-Launch (Mar → last month). Each statement keeps its own `fixedLabel` so the
+      page re-renders per period; keep the summary/margin/mkt/groups shape (see current data.js).
+    - Net revenue = MerchantSpring `totalRevenue`, Total expenses = `totalExpenses`, Profit = the difference.
+      Itemized rows won't always foot to the top-line (known gap) — fine. "Ad spend (console)" in Metrics is the
+      order-date `getSalesByPeriod` figure (cross-reference), not the settlement ad line.
 - **Sections to refresh:** `dateRanges` (may/3m/6m — headline KPIs, `mktRows`, `revChart`/`adChart`/`revBreakChart`,
-  `campaignMix`), and `sections.{advertising, inventory, products, pnl}` + the three MerchantSpring overview cards.
+  `campaignMix`, **plus the per-window `sec.pnl` on `3m`/`6m`**), and `sections.{advertising, inventory, products,
+  pnl}` + the three MerchantSpring overview cards.
 - **Advertising campaigns** are per-ASIN Sponsored Products: **spend + CPC are real** per-SKU (product report);
   **ad-sales are allocated** from the channel-attributed total by spend share (keep the existing comment). Headline
   `adSales`/`ACOS`/`ROAS`/`TACOS` come from `getSalesByPeriod` (channel-attributed, self-consistent).
@@ -53,10 +63,14 @@ last month; launch-to-date — keep the key `6m` and the "Since Launch" label). 
 - **Validate before committing** (throws on any JS error):
   ```bash
   node -e "global.window={}; require('./clients/abimax/config.js'); require('./clients/abimax/data.js'); \
-    const d=window.DASHBOARD_DATA.dateRanges, c=window.DASHBOARD_CONFIG; \
+    const d=window.DASHBOARD_DATA.dateRanges, S=window.DASHBOARD_DATA.sections, c=window.DASHBOARD_CONFIG; \
+    if((c.hiddenPages||[]).indexOf('pnl')!==-1) throw new Error('P&L is gated — remove pnl from hiddenPages (Executive)'); \
     (c.dateRangeOptions||[]).forEach(o=>{if(!d[o.value]) throw new Error('missing period '+o.value); \
       const b=d[o.value].revBreakChart; if(b){var a=b.series[0].values.reduce((x,y)=>x+y,0), \
-      org=b.series[1].values.reduce((x,y)=>x+y,0); console.log(o.value,'ad',a,'organic',org,'gross',a+org);}}); \
+      org=b.series[1].values.reduce((x,y)=>x+y,0); console.log(o.value,'ad',a,'organic',org,'gross',a+org);} \
+      const st=(d[o.value].sec&&d[o.value].sec.pnl&&d[o.value].sec.pnl.statement)||S.pnl.statement; \
+      if(!st||!st.fixedLabel) throw new Error('missing per-timeline P&L statement for '+o.value); \
+      console.log('  P&L',o.value,'→',st.fixedLabel.split(String.fromCharCode(183))[0].trim(),st.summary[2].val);}); \
     console.log('shape OK →', d[c.defaultPeriod].label, d[c.defaultPeriod].rev)"
   ```
   Sanity-check: TACOS never >100%, ROAS plausible (Abimax runs efficient — ~5–7×), no negative/blank revenue,

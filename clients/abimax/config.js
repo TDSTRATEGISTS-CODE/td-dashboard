@@ -1,7 +1,9 @@
 /* Abimax — client config. Loaded as window.DASHBOARD_CONFIG.
    Amazon-only, USA marketplace. Single brand (Magnostream magnetic water descalers), launched on
-   Amazon US in March 2026 and scaling. Digital Dash tier (NOT Executive yet) — the Amazon P&L page
-   is shown as the locked "Executive Subscription" paywall gate, exactly like NKV.
+   Amazon US in March 2026 and scaling. Executive tier (upgraded from Digital Dash, Sep 2026) — the
+   Amazon P&L page is now ACTIVE: the full MerchantSpring financial P&L (settled basis) renders per
+   timeline (Last Month / Last 3 Months / Since Launch); the locked "Executive Subscription" paywall
+   gate (amazonpnl) is hidden.
    Everything here is client-specific. To add a client, copy this folder and edit this file. */
 window.DASHBOARD_CONFIG = {
 
@@ -31,16 +33,19 @@ window.DASHBOARD_CONFIG = {
 
   // Uses the default 'amazon' template page set (no custom `pages` needed):
   //   overview · pnl · advertising · inventory · products · keywords · amazonpnl
-  // 'keywords' + the real 'pnl' page are hidden below; 'amazonpnl' stays as the locked P&L gate.
+  // 'keywords' + the paywall gate 'amazonpnl' are hidden below; the real 'pnl' page is now ACTIVE.
   template: 'amazon',
+
+  // Relabel the real P&L page "Amazon P&L" so the nav matches what the client saw on the paywall gate
+  // (the amazon template's default label for 'pnl' is "P&L & Expenses").
+  pageLabels: { pnl: 'Amazon P&L' },
 
   // Pages to hide for this client (nav item + tab + page).
   // 'keywords' dropped — MerchantSpring's MCP exposes no keyword-level data (matches AMACX/NKV).
-  // 'pnl' (the real P&L & Expenses page) hidden — Abimax is on the Digital Dash tier, so the Amazon
-  //   P&L is shown as the locked paywall blocker (page-amazonpnl) instead of the full renderer. The
-  //   real P&L data still lives baked in data.js (sections.pnl), ready to expose the day Abimax moves
-  //   to the Executive tier: drop 'pnl' from hiddenPages and repoint the nav at the real renderer.
-  hiddenPages: ['keywords', 'pnl'],
+  // 'amazonpnl' (the locked "Executive Subscription" paywall gate) hidden — Abimax upgraded to the
+  //   Executive tier (Sep 2026), so the real 'pnl' page (full MerchantSpring financial P&L, per
+  //   timeline) renders instead. To revert to Digital Dash: swap back to hiddenPages ['keywords','pnl'].
+  hiddenPages: ['keywords', 'amazonpnl'],
 
   // Nothing routes to the generic "under maintenance" stub. The Amazon P&L page (amazonpnl) routes to
   // its dedicated Executive-Subscription paywall gate in index.html, not this stub.
