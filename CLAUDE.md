@@ -99,3 +99,20 @@ inconsistent (headline card says August, everything below it still says July):
 name (e.g. `grep -c 'Jul 2026'` after an August rebake) — zero hits (aside from genuine historical
 "OOS since" / "as of" dates) is the actual finish line, not "dateRanges validates."
 
+## Inventory wording — "stock-up", never "order" / "reorder" (applies to EVERY client, every rebake)
+
+Client-facing restock and stock-warning text uses the house term **"stock-up"** — never "order" or
+"reorder". The client doesn't place the purchase orders, so "order this week" / "reorder soon" reads
+wrong. **You (the agent) write this copy on every rebake**, so it's on you to keep the wording — the
+monthly rebakes keep silently reintroducing "reorder" because it's the natural phrasing. Whenever you
+regenerate these, use "stock-up":
+
+- `sections.overview.stockWarn` items → **"stock-up soon" / "stock-up now"** (not "reorder soon")
+- `sections.inventory.restock` items + the restock-priority subs → **"stock-up this week / soon / within N weeks"** (not "order this week" / "reorder within N weeks")
+- inventory KPI tiles → **"Stock-up Watch"** (not "Reorder Watch"), **"Stock-up advised / urgent"** (not "Reorder …")
+
+Leave genuine non-restock uses of "order" alone: Supplier-PO **"Order By"** dates, order-date /
+"Orders" sales language, and capital-cost **"reorder"** nouns (e.g. Harvaza "Label MOQ + reorder").
+✅ After a rebake, `grep -niE 'order this week|order soon|order now|reorder' clients/<client>/data.js`
+should return only those legitimate cases — any "reorder soon"/"order this week" is a wording bug.
+

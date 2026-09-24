@@ -253,8 +253,8 @@ window.DASHBOARD_DATA = {
       // Single (111 days, down from 191 in Jul) and Magnostream Pro (140 days, down from 204 in Jul) —
       // flagged as stock-up watch (not OOS, still healthy runway, but trending down fast).
       stockWarn: { badge:'2 stock-up · 0 OOS', items:[
-        {level:'amber', title:'Magnostream Single — reorder soon', sub:'B0GLT2LYKY · ~111 days cover · down from 191d Jul'},
-        {level:'amber', title:'Magnostream Pro — reorder soon', sub:'B0GGRJKS2D · ~140 days cover · down from 204d Jul'}
+        {level:'amber', title:'Magnostream Single — stock-up soon', sub:'B0GLT2LYKY · ~111 days cover · down from 191d Jul'},
+        {level:'amber', title:'Magnostream Pro — stock-up soon', sub:'B0GGRJKS2D · ~140 days cover · down from 204d Jul'}
       ] }
     },
     // P&L is ACTIVE for Abimax (Executive tier, Sep 2026) — full MerchantSpring financial P&L, built
@@ -371,7 +371,7 @@ window.DASHBOARD_DATA = {
       kpis: [
         {bar:'green',lbl:'In Stock',val:'4',dCls:'df',d:'ASINs · 0 OOS',s:'Multi-Bundle missing from report — see review note'},
         {bar:'#404935',lbl:'Units on Hand',val:'169',dCls:'df',d:'FBA total',s:'across 4 SKUs'},
-        {bar:'amber',lbl:'Stock-up Watch',val:'2',dCls:'dd',d:'reorder soon',s:'2 SKUs <150d cover'},
+        {bar:'amber',lbl:'Stock-up Watch',val:'2',dCls:'dd',d:'stock-up soon',s:'2 SKUs <150d cover'},
         {bar:'green',lbl:'Buy Box (Aug)',val:'99.4%',dCls:'du',d:'featured-offer %',s:'vs 98.9% Jul'}
       ],
       stock: [
@@ -381,8 +381,8 @@ window.DASHBOARD_DATA = {
         {dot:'dg',name:'Magnostream Pack of 2',note:'B0GLPQ6YZ4 · US',units:'20 units',days:'~120 days'}
       ],
       restock: [
-        {level:'amber', title:'Magnostream Single — reorder soon', sub:'B0GLT2LYKY · ~111 days cover · best-seller by units'},
-        {level:'amber', title:'Magnostream Pro — reorder soon', sub:'B0GGRJKS2D · ~140 days cover · top revenue SKU'}
+        {level:'amber', title:'Magnostream Single — stock-up soon', sub:'B0GLT2LYKY · ~111 days cover · best-seller by units'},
+        {level:'amber', title:'Magnostream Pro — stock-up soon', sub:'B0GGRJKS2D · ~140 days cover · top revenue SKU'}
       ]
     },
     products: {

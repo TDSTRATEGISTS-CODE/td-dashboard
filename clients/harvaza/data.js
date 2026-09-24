@@ -644,7 +644,7 @@ window.DASHBOARD_DATA = {
         { bar: 'blue',  lbl: 'OOS %',     val: '0%', dCls: 'du', d: 'UK channel',     s: 'US 0%' }
       ],
       stock: [
-        { dot: 'da', name: 'Bervera 24×200ml — UK (FBA)', note: 'B0CQRHMWFL · FBA · Low — reorder', units: '30 units',  days: '~19 days' },
+        { dot: 'da', name: 'Bervera 24×200ml — UK (FBA)', note: 'B0CQRHMWFL · FBA · Low — stock-up', units: '30 units',  days: '~19 days' },
         { dot: 'dg', name: 'Bervera 24×200ml — UK (FBM)', note: 'B0CQRHMWFL · FBM · Healthy', units: '193 units', days: '~1461 days' },
         { dot: 'dg', name: 'Hydrte 18oz — Slate (US)',    note: 'B0CHJNPWHV · FBA · Healthy', units: '29 units', days: '~174 days' },
         { dot: 'dg', name: 'Hydrte 11.8oz — Nero (US)',   note: 'B0B1N844DS · FBA · Healthy', units: '33 units', days: '~99 days' },
@@ -652,7 +652,7 @@ window.DASHBOARD_DATA = {
         { dot: 'dg', name: 'Hydrte 11.8oz — Champagne (US)', note: 'B0B1N7759K · FBA · Healthy', units: '82 units', days: '~273 days' }
       ],
       restock: [
-        { level: 'amber', title: 'Bervera 24×200ml — UK (FBA) — reorder now', sub: '~19 days cover (30 units) and falling · heading into flagged peak season (Jul/Aug/Sep)' }
+        { level: 'amber', title: 'Bervera 24×200ml — UK (FBA) — stock-up now', sub: '~19 days cover (30 units) and falling · heading into flagged peak season (Jul/Aug/Sep)' }
       ]
     },
 
