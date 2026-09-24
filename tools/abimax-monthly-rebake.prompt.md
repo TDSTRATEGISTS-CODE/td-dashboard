@@ -44,7 +44,8 @@ last month; launch-to-date — keep the key `6m` and the "Since Launch" label). 
       full launch-to-date history. The endpoint is **31-day-capped**, so pull each month and **sum** for 3m/6m.
     - `sections.pnl.statement` = the latest month ("Last Month"); `dateRanges['3m'].sec.pnl` = trailing-3;
       `dateRanges['6m'].sec.pnl` = Since-Launch (Mar → last month). Each statement keeps its own `fixedLabel` so the
-      page re-renders per period; keep the summary/margin/mkt/groups shape (see current data.js).
+      page re-renders per period; keep the summary/margin/mkt/groups shape **and the `caveat` line**
+      (the settled-basis "recent ~2 weeks may be understated" note shown above the statement) on each.
     - Net revenue = MerchantSpring `totalRevenue`, Total expenses = `totalExpenses`, Profit = the difference.
       Itemized rows won't always foot to the top-line (known gap) — fine. "Ad spend (console)" in Metrics is the
       order-date `getSalesByPeriod` figure (cross-reference), not the settlement ad line.

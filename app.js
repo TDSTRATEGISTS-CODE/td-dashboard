@@ -1974,6 +1974,10 @@ function renderPeriodSections(d) {
       renderStatement(pst, cmpSt, d.shortLabel, cmpD ? cmpD.shortLabel : null);
     }
   }
+  // Optional P&L caveat line (e.g. settled-basis clients: the most recent weeks are still settling).
+  // Opt-in via the current statement's `caveat` — hidden for clients/periods that don't set one.
+  var pnlNote = el('sec-pnl-note');
+  if (pnlNote) { var cav = pst && pst.caveat; if (cav) { pnlNote.innerHTML = '&#9432; ' + cav; pnlNote.style.display = ''; } else { pnlNote.style.display = 'none'; } }
 
   // Products page is market-aware: KPIs, the per-market table, and product groups all follow the
   // sidebar market selector. NLD has no MerchantSpring data yet → show the integration placeholder.

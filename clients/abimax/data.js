@@ -91,6 +91,7 @@ window.DASHBOARD_DATA = {
     sec: { pnl: {
       statement: {
         fixedLabel: 'Jun–Aug 2026 (3-month) · financial basis (MerchantSpring, settled)',
+        caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag, so the most recent ~2 weeks may be understated until settlement completes.',
         summary: [ {val:'$13,847',lbl:'Net Revenue',color:'brand'}, {val:'$7,490',lbl:'Total Costs',color:'red'}, {val:'$6,356',lbl:'Net Profit',color:'green'} ],
         margin: { pct:'45.9%', pctColor:'green', note:'Jun–Aug 2026 (3-month) · financial basis (MerchantSpring, settled) · US channel', rows:[
           {lbl:'Net Revenue', val:'$13,847'},
@@ -161,6 +162,7 @@ window.DASHBOARD_DATA = {
     sec: { pnl: {
       statement: {
         fixedLabel: 'Since Launch · Mar–Aug 2026 · financial basis (MerchantSpring, settled)',
+        caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag, so the most recent ~2 weeks may be understated until settlement completes.',
         summary: [ {val:'$21,225',lbl:'Net Revenue',color:'brand'}, {val:'$11,125',lbl:'Total Costs',color:'red'}, {val:'$10,100',lbl:'Net Profit',color:'green'} ],
         margin: { pct:'47.6%', pctColor:'green', note:'Since Launch · Mar–Aug 2026 · financial basis (MerchantSpring, settled) · US channel', rows:[
           {lbl:'Net Revenue', val:'$21,225'},
@@ -275,6 +277,7 @@ window.DASHBOARD_DATA = {
     pnl: {
       statement: {
         fixedLabel: 'August 2026 (1–31) · financial basis (MerchantSpring, settled)',
+        caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag, so the most recent ~2 weeks may be understated until settlement completes.',
         summary: [ {val:'$4,058',lbl:'Net Revenue',color:'brand'}, {val:'$2,627',lbl:'Total Costs',color:'red'}, {val:'$1,431',lbl:'Net Profit',color:'green'} ],
         margin: { pct:'35.3%', pctColor:'amber', note:'August 2026 (31-day) · financial basis (MerchantSpring, settled) · US channel', rows:[
           {lbl:'Net Revenue', val:'$4,058'},

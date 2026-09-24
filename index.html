@@ -223,7 +223,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
      cached page (GitHub Pages caps index.html at a 10-min browser cache) by reloading once with a
      cache-bust param; and if it changes mid-session it shows the "please refresh" overlay. One bump,
      all jobs. */
-  var APP_VER = '2026-09-24b';
+  var APP_VER = '2026-09-24c';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -566,6 +566,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       <div class="sec-lbl">Profit &amp; Loss Statement</div>
       <div class="card">
         <div class="card-hdr"><div><div class="card-ttl">P&amp;L</div><div class="card-sub">Income, expenses &amp; metrics &middot; Amazon only</div></div></div>
+        <div id="sec-pnl-note" style="font-size:11px;line-height:1.5;color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber-b);border-radius:8px;padding:8px 11px;margin-bottom:12px;display:none;"></div>
         <div id="sec-pnl-statement" style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
           <div class="tscroll" style="flex:1 1 320px;min-width:300px;"><table class="dtable">
             <thead><tr><th style="font-size:14px;text-transform:none;color:var(--text);font-weight:700;font-family:var(--display);">May 2026</th><th>Amount</th><th>%</th><th>Unit</th></tr></thead>
