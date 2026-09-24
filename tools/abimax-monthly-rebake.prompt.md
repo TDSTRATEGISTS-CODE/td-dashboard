@@ -33,6 +33,9 @@ last month; launch-to-date — keep the key `6m` and the "Since Launch" label). 
   `abimax-sheet-proxy.gs` from the project tracker (`overlay:'sections'`). Refresh only the MerchantSpring-derived
   overview cards: **`overview.cvr`, `overview.stockWarn`, `overview.buyBox`** (the baked tasks/flags/completed are
   just the offline fallback — leave them).
+- **Wording:** in `stockWarn` / `restock` / inventory-KPI copy use **"stock-up"**, never "order"/"reorder"
+  (e.g. "stock-up soon", "Stock-up Watch") — see `CLAUDE.md` → "Inventory wording". After the rebake,
+  `grep -niE 'order this week|order soon|order now|reorder' clients/abimax/data.js` must be clean.
 - **Executive tier — the Amazon P&L is ACTIVE and per-timeline (upgraded Sep 2026).** `config.hiddenPages` is
   `['keywords','amazonpnl']` (the real `pnl` page renders; the paywall gate is hidden) — **never re-add `'pnl'`**, or
   the client loses their P&L. Rebuild the P&L each run **per window** from `getStoreProfitAndLoss`
