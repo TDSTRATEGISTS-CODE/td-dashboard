@@ -65,7 +65,7 @@ window.DASHBOARD_DATA = {
       ['Total UK',null,'—','£96','bb','No budget set','£1,032','bg','9.3%']
     ],
     revBreakChart: { max: 1200, yTicks: ['£1.2k','£900','£600','£300','£0'], xLabels: ['Aug'],
-      series: [ { color:'#404935', values:[72] }, { color:'#a7ab90', values:[961] } ],
+      series: [ { color:'#404935', values:[72] }, { color:'#a7ab90', values:[960] } ],
       legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
     revChart: { max:1200, yTicks:['£1.2k','£900','£600','£300','£0'], xLabels:['Mar','Apr','May','Jun','Jul','Aug'], xHighlight:'#404935',
       series:[ {color:'#404935',values:[0,0,0,0,0,1032],main:true,area:true}, {color:'#a7ab90',values:[0,0,0,0,0,96],dash:true} ],
@@ -91,7 +91,7 @@ window.DASHBOARD_DATA = {
       ['Total UK',null,'—','£96','bb','No budget set','£1,032','bg','9.3%']
     ],
     revBreakChart: { max: 1200, yTicks: ['£1.2k','£900','£600','£300','£0'], xLabels: ['Jun','Jul','Aug'],
-      series: [ { color:'#404935', values:[0,0,72] }, { color:'#a7ab90', values:[0,0,961] } ],
+      series: [ { color:'#404935', values:[0,0,72] }, { color:'#a7ab90', values:[0,0,960] } ],
       legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
     revChart: { max:1200, yTicks:['£1.2k','£900','£600','£300','£0'], xLabels:['Jun','Jul','Aug'], xHighlight:'#404935',
       series:[ {color:'#404935',values:[0,0,1032],main:true,area:true}, {color:'#a7ab90',values:[0,0,96],dash:true} ],
@@ -117,7 +117,7 @@ window.DASHBOARD_DATA = {
       ['Total UK',null,'—','£3,031','bb','No budget set','£12,472','ba','24.3%']
     ],
     revBreakChart: { max: 4000, yTicks: ['£4k','£3k','£2k','£1k','£0'], xLabels: ['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'],
-      series: [ { color:'#404935', values:[0,110,1305,1487,2438,432,0,0,0,0,0,72] }, { color:'#a7ab90', values:[147,637,1154,1775,1573,383,0,0,0,0,0,961] } ],
+      series: [ { color:'#404935', values:[0,110,1305,1487,2438,432,0,0,0,0,0,72] }, { color:'#a7ab90', values:[147,637,1154,1774,1573,383,0,0,0,0,0,960] } ],
       legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
     revChart: { max:4000, yTicks:['£4k','£3k','£2k','£1k','£0'], xLabels:['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'], xHighlight:'#404935',
       series:[ {color:'#404935',values:[147,747,2459,3261,4011,815,0,0,0,0,0,1032],main:true,area:true}, {color:'#a7ab90',values:[0,157,693,794,1103,187,0,0,0,0,0,96],dash:true} ],
@@ -308,20 +308,20 @@ window.DASHBOARD_DATA = {
       // 8 just hadn't populated them yet.
       kpis: [
         {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in Aug',s:'7 live · 3 Electrolytes flavours no Aug sales'},
-        {bar:'var(--green)',lbl:'Top Product Rev.',val:'£675',dCls:'du',d:'WIRED Creatine',s:'65% of Aug sales'},
+        {bar:'var(--green)',lbl:'Top Product Rev.',val:'£674',dCls:'du',d:'WIRED Creatine',s:'65% of Aug sales'},
         {bar:'var(--blue)',lbl:'Units (Aug)',val:'53',dCls:'du',d:'▲ from 0 (Jun/Jul)',s:'relaunch month'},
         {bar:'var(--amber)',lbl:'ASP',val:'£19.47',dCls:'df',d:'per unit',s:'no order-count field exposed for Aug'}
       ],
       kpisByPeriod: {
         may: { all: [
           {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in Aug',s:'7 live · 3 Electrolytes flavours no Aug sales'},
-          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£675',dCls:'du',d:'WIRED Creatine',s:'65% of Aug sales'},
+          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£674',dCls:'du',d:'WIRED Creatine',s:'65% of Aug sales'},
           {bar:'var(--blue)',lbl:'Units (Aug)',val:'53',dCls:'du',d:'▲ from 0 (Jun/Jul)',s:'relaunch month'},
           {bar:'var(--amber)',lbl:'ASP',val:'£19.47',dCls:'df',d:'per unit',s:'no order-count field exposed for Aug'}
         ] },
         '3m': { all: [
           {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in Jun–Aug',s:'7 live · all Aug, Jun/Jul £0'},
-          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£675',dCls:'du',d:'WIRED Creatine',s:'65% of 3-month sales'},
+          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£674',dCls:'du',d:'WIRED Creatine',s:'65% of 3-month sales'},
           {bar:'var(--blue)',lbl:'Units (3m)',val:'53',dCls:'du',d:'3-month total',s:'Jun £0 · Jul £0 · Aug 53'},
           {bar:'var(--amber)',lbl:'ASP',val:'£19.47',dCls:'df',d:'3-month ASP',s:'per unit'}
         ] },
@@ -352,7 +352,7 @@ window.DASHBOARD_DATA = {
       // combined per ASIN). % = share of Aug product sales. OOS Rate = share of the SKU currently
       // out of stock (all in stock, all 0%).
       groups: [
-        {name:'WIRED Pure Creatine Monohydrate',sales:'£675',units:30,pct:'65%',oosRate:'0%',oosCls:'bg'},
+        {name:'WIRED Pure Creatine Monohydrate',sales:'£674',units:30,pct:'65%',oosRate:'0%',oosCls:'bg'},
         {name:'WIRED Electrolytes Discovery Pack',sales:'£190',units:19,pct:'18%',oosRate:'0%',oosCls:'bg'},
         {name:'BrainMatter Calm',sales:'£129',units:3,pct:'12%',oosRate:'0%',oosCls:'bg'},
         {name:'BrainMatter Cognitive',sales:'£39',units:1,pct:'4%',oosRate:'0%',oosCls:'bg'},
@@ -362,7 +362,7 @@ window.DASHBOARD_DATA = {
       ],
       groupsByPeriod: {
         may: { all: [
-          {name:'WIRED Pure Creatine Monohydrate',sales:'£675',units:30,pct:'65%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Pure Creatine Monohydrate',sales:'£674',units:30,pct:'65%',oosRate:'0%',oosCls:'bg'},
           {name:'WIRED Electrolytes Discovery Pack',sales:'£190',units:19,pct:'18%',oosRate:'0%',oosCls:'bg'},
           {name:'BrainMatter Calm',sales:'£129',units:3,pct:'12%',oosRate:'0%',oosCls:'bg'},
           {name:'BrainMatter Cognitive',sales:'£39',units:1,pct:'4%',oosRate:'0%',oosCls:'bg'},
@@ -371,7 +371,7 @@ window.DASHBOARD_DATA = {
           {name:'WIRED Electrolytes — Citrus Lime',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'}
         ] },
         '3m': { all: [
-          {name:'WIRED Pure Creatine Monohydrate',sales:'£675',units:30,pct:'65%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Pure Creatine Monohydrate',sales:'£674',units:30,pct:'65%',oosRate:'0%',oosCls:'bg'},
           {name:'WIRED Electrolytes Discovery Pack',sales:'£190',units:19,pct:'18%',oosRate:'0%',oosCls:'bg'},
           {name:'BrainMatter Calm',sales:'£129',units:3,pct:'12%',oosRate:'0%',oosCls:'bg'},
           {name:'BrainMatter Cognitive',sales:'£39',units:1,pct:'4%',oosRate:'0%',oosCls:'bg'},
