@@ -44,3 +44,9 @@ slightly from the table above: UK revenue £12,430.09 (monthly bucket = weekly s
 (campaigns report settled), total £12,841 / £2,989 / TACOS 23.3% / ROAS 1.64×. Shopify net sales £1,248.89 (ex-tax)
 vs £3,266 Aug on the same basis — Jun–Aug points in the old chart were tax-inclusive and are restated.
 Still carried forward: 12m, inventory, stockWarn, products.* and ad budgets/forecast.
+
+## Update 2026-10-04 (full bake)
+Superseded: this run's `data.js` is now a FULL bake (12m, inventory, stockWarn, products, P&L, budgets, Shopify
+incl. 12m). Shopify is TOTAL REVENUE INCLUDING VAT (the earlier 'ex-tax restatement' above was wrong — Jun–Aug
+were already VAT-inclusive; Mar–May simply had no VAT). Shopify Sep revenue £1,498.71 vs £3,919.25 Aug (−61.8%).
+Totals after the settled-bucket switch: revenue £12,841 (−30.8% vs restated Aug £18,552), ad spend £2,989, TACOS 23.3%, ROAS 1.64×.

@@ -109,3 +109,19 @@ Before publishing, ALL of these must pass. Treat any failure as a hard stop:
   same notify channel.
 
 Never merge a PR yourself. The auto-publish path skips PRs entirely; the failure path always leaves a human gate.
+
+## Full-bake rule + data-basis lessons (added after the Sep 2026 run)
+
+- **Every section must advance to the target month — no "carried forward" shortcuts.** That means `dateRanges`
+  may/3m/6m/**12m** (+ `yoy`), `sections.charts`, advertising metrics/campaigns/`campaignMix`/budgets,
+  `inventory` + `stockWarn` ("stock-up" wording), `products` (tiles, table, brand groups — `LBL.may` too),
+  `pnl.statement`, Overview `cvr`, and the whole Shopify page incl. 12m and Newnique GA4. Fan the pulls out to
+  parallel subagents (Shopify, Amazon channels + 12m campaigns, inventory, products/groups, P&L + sheet) so it
+  fits in one run. Grep the finished `data.js` for the previous month's name before committing.
+- **Shopify = TOTAL REVENUE INCLUDING VAT**: always pass `includeTax:true` (VAT only appears in the data from
+  mid-2026; earlier months have none). Do not restate to ex-tax.
+- `getSalesByPeriod` `interval:'M'` works with `timezone:'GMT'` (it rejects Europe/London) and currently
+  returns correct settled monthly sales/orders for all three markets and Shopify; use it for revenue/orders.
+  UK ad spend / ad sales still come from generated `campaigns` reports per window (12m reconciles within 0.2%).
+- The Account Tracker Drive read returned no readable budget rows in Sep 2026 — advertising `budgets`/`forecast`
+  were rolled from the documented £3,000 budget / £3,500 forecast; re-confirm from the sheet when possible.
