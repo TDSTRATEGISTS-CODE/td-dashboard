@@ -41,7 +41,9 @@ window.DASHBOARD_CONFIG = {
   // 'pnl' (the real P&L & Expenses page) hidden for now — Amazon P&L is shown as the locked paywall
   //   blocker (page-amazonpnl) instead. The real P&L data still lives baked in data.js, ready to
   //   expose later by removing 'pnl' here and pointing the 'amazonpnl' nav at the real renderer.
-  hiddenPages: ['keywords', 'pnl'],
+  // 'shopify' + 'shopifypnl' hidden (Oct 2026) — Brand Manager role paused, so the D2C pages are switched off.
+  // Data/builders stay in data.js; remove them from this list to bring the pages back.
+  hiddenPages: ['keywords', 'pnl', 'shopify', 'shopifypnl'],
 
   // Pages shown as the locked "paywall blocker" (Executive Subscription upsell) rather than their full
   // data view. Both P&L pages route to a dedicated paywall gate, NOT the generic maintenance stub:
