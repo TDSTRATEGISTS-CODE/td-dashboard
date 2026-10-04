@@ -1,6 +1,6 @@
-# NKV re-bake — September 2026 — NEEDS REVIEW (data.js NOT modified)
+# NKV re-bake — September 2026 — baked after owner sign-off
 
-Run: 2026-10-01 (scheduled routine). Target month: **September 2026**. No change was made to
+Run: 2026-10-01 (scheduled routine); baked 2026-10-04 after the owner confirmed the Shopify Google Ads pause. Target month: **September 2026**. No change was made to
 `clients/nkv/data.js`, `config.js` or `index.html`; `main` was not touched. Two self-check gates failed,
 so the validated pulls below are parked here for a human decision.
 
@@ -36,3 +36,11 @@ stopped at the gate before the session-side pull.
 Inventory, stockWarn, groupsByPeriod, `dateRanges.may.yoy`, GA4/Shopify products, 3m/6m rollups.
 Campaign reports for 3m (Jul–Sep) and 6m (Apr–Sep) were generated (UK f7bb0910…, 0dd95bad…; US dcf7dc7b…)
 but not applied.
+
+## Update 2026-10-04 — baked
+`data.js` (may/3m/6m, charts, ad metrics/campaigns/mix, yoy, Shopify Contours Rx + Newnique GA4, Overview CVR),
+`config.js` (`reportPeriodLabel`) and `index.html` (`APP_VER` 2026-10-04) updated on this branch. Final figures differ
+slightly from the table above: UK revenue £12,430.09 (monthly bucket = weekly sum), UK ads £2,796.27 / £4,788.05
+(campaigns report settled), total £12,841 / £2,989 / TACOS 23.3% / ROAS 1.64×. Shopify net sales £1,248.89 (ex-tax)
+vs £3,266 Aug on the same basis — Jun–Aug points in the old chart were tax-inclusive and are restated.
+Still carried forward: 12m, inventory, stockWarn, products.* and ad budgets/forecast.
