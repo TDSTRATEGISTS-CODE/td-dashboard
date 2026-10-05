@@ -535,12 +535,12 @@ window.DASHBOARD_DATA = {
     { bar:'var(--blue)',  lbl:'Orders',         val:num(r.orders), dCls:'df', d:lbl + ' actuals', s:'AOV ' + r.aov },
     { bar:'var(--amber)', lbl:'ASP',            val:r.aov,         dCls:'df', d:lbl + ' avg',     s:'per unit' }
   ]; }
-  var usaCards = [
-    { bar:'#404935',      lbl:'Active SKUs',    val:'4',     dCls:'df', d:'Newnique · live',   s:'trading since Jun 2026' },
-    { bar:'var(--green)', lbl:'Top Brand Rev.', val:'£197',  dCls:'df', d:'Newnique',          s:'Sep actuals' },
-    { bar:'var(--blue)',  lbl:'Orders',         val:'21',    dCls:'df', d:'Newnique · live',   s:'AOV £9.37' },
-    { bar:'var(--amber)', lbl:'ASP',            val:'£8.95',dCls:'df', d:'Sep avg',           s:'per unit' }
-  ];
+  function usaCards(a, lbl) { return [
+    { bar:'#404935',      lbl:'Active SKUs',    val:'4',           dCls:'df', d:'Newnique · live', s:'trading since Jun 2026' },
+    { bar:'var(--green)', lbl:'Top Brand Rev.', val:a.rev,         dCls:'df', d:'Newnique',         s:'~100% of USA' },
+    { bar:'var(--blue)',  lbl:'Orders',         val:num(a.orders), dCls:'df', d:lbl + ' actuals',   s:'AOV ' + a.aov },
+    { bar:'var(--amber)', lbl:'ASP',            val:a.aov,         dCls:'df', d:lbl + ' avg',       s:'per unit' }
+  ]; }
   function rows(u, r, a) { return [
     { name:'United Kingdom', flag:'gb', revenue:u.rev, units:num(u.units), orders:num(u.orders), cvr:u.cvr, cvrCls:'bg', aov:u.aov },
     { name:'Ireland',        flag:'ie', revenue:r.rev, units:num(r.units), orders:num(r.orders), cvr:r.cvr, cvrCls:'ba', aov:r.aov },
@@ -562,17 +562,23 @@ window.DASHBOARD_DATA = {
       row('Newnique — Hair Growth', 0.08, 0.14, '8%')
     ];
   }
-  // USA — placed its first real orders in June 2026 (Newnique only); real ad spend/TACOS from the
-  // MerchantSpring product report (still small-sample — a brand-new market).
-  var usaGroups = [
-    { name:'Newnique — Hair Growth', sales:'£197', adSpend:'£193', tacos:'98.1%', tacosCls:'br', units:'22', pct:'100%', oosRate:'0%', oosCls:'bg' }
-  ];
+  // USA — placed its first real orders in June 2026 (Newnique only, 100% of USA — single-brand, so no
+  // allocation needed, unlike Ireland above). Real ad spend/TACOS (£193 / 98.1%) are from the September
+  // MerchantSpring product report only — no per-month USA ad-spend breakdown was pulled for Jun–Aug, so
+  // 3m/6m/12m show '—' rather than carry Sep's figure forward as if it were the window's TACOS (same
+  // "leave a metric out rather than bake an unreconciled number" convention as elsewhere in this file).
+  function usaGroups(a, p) {
+    return [
+      { name:'Newnique — Hair Growth', sales:a.rev, adSpend: p==='may' ? '£193' : '—', tacos: p==='may' ? '98.1%' : null,
+        tacosCls:'br', units:num(a.units), pct:'100%', oosRate:'0%', oosCls:'bg' }
+    ];
+  }
   P.kpisByPeriod = {}; P.tableByPeriod = {}; P.groupsByPeriod = {};
   ['may', '3m', '6m', '12m'].forEach(function (p) {
     var u = UK[p], r = IRL[p], a = USA[p], lbl = LBL[p], uc = ukCards(u, lbl), g = grp(GROUPS[p]);
-    P.kpisByPeriod[p]   = { all:allCards(u, r, a, lbl), uk:uc, irl:irlCards(r, lbl), usa:usaCards };
+    P.kpisByPeriod[p]   = { all:allCards(u, r, a, lbl), uk:uc, irl:irlCards(r, lbl), usa:usaCards(a, lbl) };
     P.tableByPeriod[p]  = rows(u, r, a);
-    P.groupsByPeriod[p] = { all:g, uk:g, irl:irlGroups(r), usa:usaGroups };
+    P.groupsByPeriod[p] = { all:g, uk:g, irl:irlGroups(r), usa:usaGroups(a, p) };
   });
 })();
 

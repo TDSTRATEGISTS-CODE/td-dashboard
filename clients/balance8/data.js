@@ -138,7 +138,7 @@ window.DASHBOARD_DATA = {
       tasksSpec: { badge: '4 in progress', items: [
         {text:'Confirm root cause of Mar–Jul 2026 sales gap', sub:'Overview · Upcoming'},
         {text:'Investigate BrainMatter Cognitive — 0% ad conversion', sub:'Advertising · Upcoming'},
-        {text:'Reorder WIRED Creatine (FBA) — ~41 days cover', sub:'Supply · Upcoming'},
+        {text:'Stock-up WIRED Creatine (FBA) — ~41 days cover', sub:'Supply · Upcoming'},
         {text:'Launch Sponsored Products on WIRED Electrolytes (3 flavours, no ads yet)', sub:'Advertising · Upcoming', active:false}
       ] },
       flagsSpec: { badge: '3 in progress', items: [
