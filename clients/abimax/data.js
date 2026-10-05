@@ -1,7 +1,7 @@
 /* Abimax — client data (window.DASHBOARD_DATA).
-   ACTUALS: MerchantSpring MCP, pulled 04 Sep 2026 (channel 106785689, seller A267LLT9LT0HS9),
+   ACTUALS: MerchantSpring MCP, pulled 05 Oct 2026 (channel 106785689, seller A267LLT9LT0HS9),
    Amazon US, native USD. Single brand: "Magnostream" magnetic water descalers. The store launched on
-   Amazon US in March 2026 (first sale Mar 2026) and is scaling — so "Since Launch" (6m key = Mar–Aug)
+   Amazon US in March 2026 (first sale Mar 2026) and is scaling — so "Since Launch" (6m key = Mar–Sep)
    is the widest window; there is no pre-March history to show.
    dataSource.type is 'appsScript' (overlay:'sections' — live Overview scope board only).
 
@@ -11,193 +11,192 @@
      May  $5,365.67 · 58 ord · 65 u · 1,118 sess · BuyBox 98.4% · spend $404.08 · adSales $2,773.50 · ACOS 14.6% · TACOS 7.5%
      Jun  $7,393.72 · 54 ord · 55 u · 1,351 sess · BuyBox 99.1% · spend $758.86 · adSales $4,636.00 · ACOS 16.4% · TACOS 10.3%
      Jul  $4,311.39 · 33 ord · 35 u · 1,351 sess · BuyBox 98.9% · spend $978.59 · adSales $2,960.95 · ACOS 33.0% · TACOS 22.7%
-     Aug  $3,793.27 · 34 ord · 35 u · 1,522 sess · BuyBox 99.4% · spend $1,146.15 · adSales $2,571.82 · ACOS 44.6% · TACOS 30.2%
+     Aug  $3,793.27 · 34 ord · 35 u · 1,522 sess · BuyBox 99.4% · spend $1,140.53 · adSales $2,571.82 · ACOS 44.4% · TACOS 30.1%
+     Sep  $5,003.35 · 46 ord · 47 u · 1,678 sess · BuyBox 99.7% · spend $1,363.92 · adSales $2,813.70 · ACOS 48.5% · TACOS 27.3%
+   (Aug ad spend was $1,146.15 in the prior bake; MerchantSpring now reports $1,140.53 — late attribution
+   restatement. Aug is shown at the restated figure in all windows.)
 
-   ⚠️ NEEDS REVIEW — Aug 2026 self-check flag: ROAS fell again to 2.24× (Jul 3.02×, Jun 6.11×), a
-   second consecutive month below Abimax's plausible ~5–7× efficient-ROAS band, and TACOS rose to
-   30.2% (Jul 22.7%, target <15%) — a continuation/worsening of the Jul review flag, NOT a resolved
-   one-off. Investigated for an obvious cause: NOT a stockout (all 4 ASINs returned by this pull are
-   in stock, 111–360 days FBA cover). Per-SKU pull (getSalesByProduct) shows the flagship Magnostream
-   Pro's ad spend rose +24% MoM ($542→$674) while its allocated ad sales fell -43% ($1,510→$855, ACOS
-   36%→79%); Magnostream Pack of 2's ad spend held roughly flat ($51→$32) while its ad-attributed
-   sales collapsed to $0 (from $316). Organic mix for the flagship actually IMPROVED (23%→53% of its
-   own sales), so this reads as an ad-efficiency problem specifically (rising CPCs / falling ad
-   conversion), not a broader organic visibility loss — but still no obvious external cause (no price
-   change, no stockout, no BuyBox loss — BuyBox is actually up to 99.4%) → routed to human review per
-   the monthly re-bake self-check gate (NOT pushed to main).
-   Also flagging separately: the Aug getSalesByProduct pull returned only 4 ASINs (Magnostream Pro,
-   Single, Pack of 2, Pack of 3) — the 5th SKU tracked in prior bakes, "Magnostream Multi-Unit Bundle"
-   (B0GH7YKPZJ, a slow mover with no recent sales), did not appear at all this month even with
-   includeNoInventory:true. Unknown whether it was deactivated/delisted or is a report gap — worth a
-   human check. It has been left out of inventory/products below rather than guessed at.
+   ⚠️ NEEDS REVIEW — Sep 2026 self-check flag: ROAS is 2.06× (Aug 2.25×, Jul 3.02×, Jun 6.11×) — a THIRD
+   consecutive month below Abimax's plausible ~5–7× efficient-ROAS band — and TACOS is 27.3% (target <15%).
+   Revenue itself rebounded +31.9% MoM ($3,793 → $5,003; orders 34 → 46) but ad spend grew +19.6% while
+   channel-attributed ad sales grew only +9.4% (56% of revenue vs 68% in Aug), so the extra revenue is
+   largely organic. Per-SKU pull (getSalesByProduct): Magnostream Pro spent $636 for $580 attributed sales
+   (ACOS 110%, ROAS 0.9×) and Single spent $594 for $650 (ACOS 91%); Pack of 3 was efficient (ACOS 11.6%, 8.6×
+   on $58 spend). No stockout, price or Buy Box cause (Buy Box 99.7%). Also: Pro Pack of 2 (B0GLPPDS1M) has been
+   out of stock since 19 Feb 2026 with no sales (not shown). Routed to human review per the monthly self-check
+   gate (NOT pushed to main). Other notes: the "Multi-Unit Bundle" (B0GH7YKPZJ) reappeared in the product
+   report and sold 1 unit ($381) in Sep — it is back in products/inventory below. Per-listing Buy Box (the
+   trafficAndConversion report) was not pulled this run; the Buy Box headline uses the channel-level 99.7%.
+   P&L Sep (settled): net rev $3,538 · expenses $2,814 · profit $724 (20.5%) — Sep refunds of $710 weigh on it.
+   The prior-bake Aug settled P&L has since restated (COGS $788 → $1,086, expenses $2,627 → $2,926).
 
    NOTE: the shared app.js trend-chart axis formatter (moneyK) hardcodes '€' — KPI cards/tables here
    are all in $, but the two trend-chart Y-axes will display '€' until the template adds a currency
    option (same known limitation noted in NKV's data.js). */
 window.DASHBOARD_DATA = {
   dateRanges: {
-  // ===== Last Month = August 2026 =====
+  // ===== Last Month = September 2026 =====
   'may': {
-    label: 'August 2026', shortLabel: 'August 2026',
-    rev: '$3,793', revD: '▼ 12.0% MoM', revC: 'dd', revS: 'vs $4,311 July',
-    adSales: '$2,572', adSalesD: '▼ 13.1% MoM', adSalesC: 'dd', adSalesS: '67.8% of revenue',
-    tacos: '30.2%', tacosD: '▲ 7.5pp vs July', tacosC: 'dd', tacosS: 'Target <15%',
-    roas: '2.24×', roasD: '▼ 0.78× vs July', roasC: 'dd', roasS: '34 orders · AOV $112',
-    spend: '$1,146', spendD: '▲ 16.9% MoM', spendC: 'dd', spendS: 'vs $980 July · efficiency down',
-    tacosAd: '30.2%', tacosAdD: '▲ 7.5pp vs July', tacosAdC: 'dd', tacosAdS: 'Target <15%',
-    roasAd: '2.24×', roasAdD: '▼ 0.78× vs July', roasAdC: 'dd', roasAdS: '$3,793 revenue',
-    aov: '$112', aovD: '▼ 14.6% MoM', aovC: 'dd', aovS: '34 orders Aug',
+    label: 'September 2026', shortLabel: 'September 2026',
+    rev: '$5,003', revD: '▲ 31.9% MoM', revC: 'du', revS: 'vs $3,793 August',
+    adSales: '$2,814', adSalesD: '▲ 9.4% MoM', adSalesC: 'du', adSalesS: '56.2% of revenue',
+    tacos: '27.3%', tacosD: '▼ 2.8pp vs August', tacosC: 'du', tacosS: 'Target <15%',
+    roas: '2.06×', roasD: '▼ 0.19× vs August', roasC: 'dd', roasS: '46 orders · AOV $109',
+    spend: '$1,364', spendD: '▲ 19.6% MoM', spendC: 'dd', spendS: 'vs $1,141 August · efficiency down',
+    tacosAd: '27.3%', tacosAdD: '▼ 2.8pp vs August', tacosAdC: 'du', tacosAdS: 'Target <15%',
+    roasAd: '2.06×', roasAdD: '▼ 0.19× vs August', roasAdC: 'dd', roasAdS: '$5,003 revenue',
+    aov: '$109', aovD: '▼ 2.5% MoM', aovC: 'dd', aovS: '46 orders Sep',
     mktRows: [
-      ['Amazon US','us','$1,200','$1,146','bg','▼ $54 under','$3,793','br','30.2%'],
-      ['Total US',null,'$1,200','$1,146','bg','95% utilised','$3,793','br','30.2%']
+      ['Amazon US','us','$1,400','$1,364','bg','▼ $36 under','$5,003','br','27.3%'],
+      ['Total US',null,'$1,400','$1,364','bg','97% utilised','$5,003','br','27.3%']
     ],
-    revBreakChart: { max: 8000, yTicks: ['$8k','$6k','$4k','$2k','$0'], xLabels: ['Aug'],
-      series: [ { color:'#404935', values:[2572] }, { color:'#a7ab90', values:[1221] } ],
+    revBreakChart: { max: 8000, yTicks: ['$8k','$6k','$4k','$2k','$0'], xLabels: ['Sep'],
+      series: [ { color:'#404935', values:[2814] }, { color:'#a7ab90', values:[2189] } ],
       legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
-    revChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Mar','Apr','May','Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[4191,1667,5366,7394,4311,3793],main:true,area:true}, {color:'#a7ab90',values:[0,197,404,759,980,1146],dash:true} ],
+    revChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Apr','May','Jun','Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[1667,5366,7394,4311,3793,5003],main:true,area:true}, {color:'#a7ab90',values:[197,404,759,981,1141,1364],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    adChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Mar','Apr','May','Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[4191,1667,5366,7394,4311,3793],main:true,area:true}, {color:'#a7ab90',values:[0,197,404,759,980,1146],dash:true} ],
+    adChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Apr','May','Jun','Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[1667,5366,7394,4311,3793,5003],main:true,area:true}, {color:'#a7ab90',values:[197,404,759,981,1141,1364],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'$2.6k',acos:'44.6%'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'$2.8k',acos:'48.5%'} ] },
   },
-  // ===== Last 3 Months = Jun–Aug 2026 =====
+  // ===== Last 3 Months = Jul–Sep 2026 =====
   '3m': {
-    label: 'Jun–Aug 2026', shortLabel: 'Jun–Aug 2026',
-    rev: '$15,498', revD: '3-month actuals', revC: 'du', revS: 'Jun $7,394 · Jul $4,311 · Aug $3,793',
-    adSales: '$10,169', adSalesD: '3-month total', adSalesC: 'df', adSalesS: '65.6% of revenue',
-    tacos: '18.6%', tacosD: '3-month blended', tacosC: 'df', tacosS: 'Target <15%',
-    roas: '3.53×', roasD: '3-month avg', roasC: 'df', roasS: '121 orders · AOV $128',
-    spend: '$2,884', spendD: '3-month total', spendC: 'df', spendS: 'Jun $759 · Jul $980 · Aug $1,146',
-    tacosAd: '18.6%', tacosAdD: '3-month blended', tacosAdC: 'df', tacosAdS: 'Aug softer than Jun/Jul',
-    roasAd: '3.53×', roasAdD: '3-month avg', roasAdC: 'df', roasAdS: '$15,498 revenue',
-    aov: '$128', aovD: '3-month avg', aovC: 'df', aovS: '121 orders total',
+    label: 'Jul–Sep 2026', shortLabel: 'Jul–Sep 2026',
+    rev: '$13,108', revD: '3-month actuals', revC: 'du', revS: 'Jul $4,311 · Aug $3,793 · Sep $5,003',
+    adSales: '$8,346', adSalesD: '3-month total', adSalesC: 'df', adSalesS: '63.7% of revenue',
+    tacos: '26.6%', tacosD: '3-month blended', tacosC: 'df', tacosS: 'Target <15%',
+    roas: '2.40×', roasD: '3-month avg', roasC: 'df', roasS: '113 orders · AOV $116',
+    spend: '$3,483', spendD: '3-month total', spendC: 'df', spendS: 'Jul $979 · Aug $1,141 · Sep $1,364',
+    tacosAd: '26.6%', tacosAdD: '3-month blended', tacosAdC: 'df', tacosAdS: 'Well above Jun-and-earlier levels',
+    roasAd: '2.40×', roasAdD: '3-month avg', roasAdC: 'df', roasAdS: '$13,108 revenue',
+    aov: '$116', aovD: '3-month avg', aovC: 'df', aovS: '113 orders total',
     mktRows: [
-      ['Amazon US','us','$3,000','$2,884','bg','▼ $116 under','$15,498','ba','18.6%'],
-      ['Total US',null,'$3,000','$2,884','bg','96% utilised','$15,498','ba','18.6%']
+      ['Amazon US','us','$3,600','$3,483','bg','▼ $117 under','$13,108','br','26.6%'],
+      ['Total US',null,'$3,600','$3,483','bg','97% utilised','$13,108','br','26.6%']
     ],
-    revBreakChart: { max: 8000, yTicks: ['$8k','$6k','$4k','$2k','$0'], xLabels: ['Jun','Jul','Aug'],
-      series: [ { color:'#404935', values:[4636,2961,2572] }, { color:'#a7ab90', values:[2758,1350,1221] } ],
+    revBreakChart: { max: 8000, yTicks: ['$8k','$6k','$4k','$2k','$0'], xLabels: ['Jul','Aug','Sep'],
+      series: [ { color:'#404935', values:[2961,2572,2814] }, { color:'#a7ab90', values:[1350,1221,2189] } ],
       legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
-    revChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[7394,4311,3793],main:true,area:true}, {color:'#a7ab90',values:[759,980,1146],dash:true} ],
+    revChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[4311,3793,5003],main:true,area:true}, {color:'#a7ab90',values:[981,1141,1364],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    adChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[7394,4311,3793],main:true,area:true}, {color:'#a7ab90',values:[759,980,1146],dash:true} ],
+    adChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[4311,3793,5003],main:true,area:true}, {color:'#a7ab90',values:[981,1141,1364],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'$10.2k',acos:'28.4%'} ] },
-    // Amazon P&L for the 3-month window (Jun+Jul+Aug settled, summed — see sections.pnl note on basis).
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'$8.3k',acos:'41.7%'} ] },
+    // Amazon P&L for the 3-month window (Jul+Aug+Sep settled, summed — see sections.pnl note on basis).
     sec: { pnl: {
-      summary: [ {val:'$13,847',lbl:'Net Revenue',color:'brand'}, {val:'$7,490',lbl:'Total Costs',color:'red'}, {val:'$6,356',lbl:'Net Profit',color:'green'} ],
-      margin: { pct:'45.9%', pctColor:'green', note:'Jun–Aug 2026 (3-month) · financial basis (MerchantSpring, settled) · US channel', rows:[
-        {lbl:'Net Revenue', val:'$13,847'},
-        {lbl:'Advertising', val:'-$2,784', color:'red'},
-        {lbl:'Selling & Shipping Fees', val:'-$1,689', color:'red'},
-        {lbl:'COGS', val:'-$2,995', color:'red'},
-        {lbl:'Other adjustments', val:'-$23', color:'red'},
-        {lbl:'Net Profit', val:'$6,356', color:'green', strong:true}
+      summary: [ {val:'$11,371',lbl:'Net Revenue',color:'brand'}, {val:'$8,201',lbl:'Total Costs',color:'red'}, {val:'$3,170',lbl:'Net Profit',color:'green'} ],
+      margin: { pct:'27.9%', pctColor:'amber', note:'Jul–Sep 2026 (3-month) · financial basis (MerchantSpring, settled) · US channel', rows:[
+        {lbl:'Net Revenue', val:'$11,371'},
+        {lbl:'Advertising', val:'-$3,525', color:'red'},
+        {lbl:'Selling & Shipping Fees', val:'-$1,170', color:'red'},
+        {lbl:'COGS', val:'-$3,504', color:'red'},
+        {lbl:'Other adjustments', val:'-$2', color:'red'},
+        {lbl:'Net Profit', val:'$3,170', color:'green', strong:true}
       ] },
       mkt: [
-        {name:'United States',flag:'us',revenue:'$13,847',adspend:'$2,784',net:'$6,356',netColor:'green',margin:'45.9%',marginCls:'bg'}
+        {name:'United States',flag:'us',revenue:'$11,371',adspend:'$3,525',net:'$3,170',netColor:'green',margin:'27.9%',marginCls:'ba'}
       ],
       statement: {
-        fixedLabel: 'Jun–Aug 2026 (3-month) · financial basis (MerchantSpring, settled)',
+        fixedLabel: 'Jul–Sep 2026 (3-month) · financial basis (MerchantSpring, settled)',
         caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag, so the most recent ~2 weeks may be understated until settlement completes.',
         groups:[
           { header:'Income', rows:[
-            {lbl:'Product sales', amount:'$15,823', pct:'114.3%', unit:'$126.59'},
-            {lbl:'Refunds & returns', amount:'-$1,437', pct:'-10.4%', unit:'-$11.50'},
-            {lbl:'Promotions & coupons', amount:'-$48', pct:'-0.4%', unit:'-$0.39'},
-            {lbl:'Reimbursements & other income', amount:'$406', pct:'2.9%', unit:'$3.25'},
-            {lbl:'Net revenue', amount:'$13,847', pct:'100.0%', unit:'$110.77', total:true}
+            {lbl:'Product sales', amount:'$12,839', pct:'112.9%', unit:'$109.73'},
+            {lbl:'Refunds & returns', amount:'-$1,155', pct:'-10.2%', unit:'-$9.87'},
+            {lbl:'Promotions & coupons', amount:'-$62', pct:'-0.5%', unit:'-$0.53'},
+            {lbl:'Reimbursements & other income', amount:'$531', pct:'4.7%', unit:'$4.53'},
+            {lbl:'Net revenue', amount:'$11,371', pct:'100.0%', unit:'$97.19', total:true}
           ] },
           { header:'Expenses', rows:[
-            {lbl:'Advertising (settlement)', amount:'$2,784', pct:'20.1%', unit:'$22.27'},
-            {lbl:'Selling fees', amount:'$840', pct:'6.1%', unit:'$6.72'},
-            {lbl:'Shipping & fulfilment fees', amount:'$849', pct:'6.1%', unit:'$6.79'},
-            {lbl:'Cost of goods', amount:'$2,995', pct:'21.6%', unit:'$23.96'},
-            {lbl:'Refund/return handling', amount:'$23', pct:'0.2%', unit:'$0.18'},
-            {lbl:'Total expenses', amount:'$7,490', pct:'54.1%', unit:'$59.92', total:true}
+            {lbl:'Advertising (settlement)', amount:'$3,525', pct:'31.0%', unit:'$30.13'},
+            {lbl:'Selling fees', amount:'$392', pct:'3.5%', unit:'$3.35'},
+            {lbl:'Shipping & fulfilment fees', amount:'$778', pct:'6.8%', unit:'$6.65'},
+            {lbl:'Cost of goods', amount:'$3,504', pct:'30.8%', unit:'$29.95'},
+            {lbl:'Refund/return handling', amount:'$2', pct:'0.0%', unit:'$0.01'},
+            {lbl:'Total expenses', amount:'$8,201', pct:'72.1%', unit:'$70.09', total:true}
           ] },
           { header:'Profit', rows:[
-            {lbl:'PROFIT', amount:'$6,356', pct:'45.9%', unit:'$50.85', total:true, profit:true},
-            {lbl:'Profit %', amount:'45.9%', accent:'green'}
+            {lbl:'PROFIT', amount:'$3,170', pct:'27.9%', unit:'$27.09', total:true, profit:true},
+            {lbl:'Profit %', amount:'27.9%', accent:'amber'}
           ] },
           { header:'Metrics', rows:[
-            {lbl:'TACOS % (console)', amount:'18.6%'},
-            {lbl:'Ad spend (console)', amount:'$2,878'}
+            {lbl:'TACOS % (console)', amount:'26.6%'},
+            {lbl:'Ad spend (console)', amount:'$3,483'}
           ] }
         ]
       }
     } },
   },
-  // ===== Since Launch = Mar–Aug 2026 (first sale Mar 2026) =====
+  // ===== Since Launch = Mar–Sep 2026 (first sale Mar 2026) =====
   '6m': {
-    label: 'Since Launch · Mar–Aug 2026', shortLabel: 'Since Launch',
-    rev: '$26,722', revD: 'Since launch (Mar–Aug)', revC: 'du', revS: 'first sale Mar 2026',
-    adSales: '$13,262', adSalesD: 'launch-to-date', adSalesC: 'df', adSalesS: '49.6% of revenue',
-    tacos: '13.0%', tacosD: 'launch blended', tacosC: 'df', tacosS: 'ads live from Apr',
-    roas: '3.81×', roasD: 'launch avg', roasC: 'df', roasS: '232 orders · AOV $115',
-    spend: '$3,484', spendD: 'launch-to-date', spendC: 'df', spendS: 'ads started Apr 2026',
-    tacosAd: '13.0%', tacosAdD: 'launch blended', tacosAdC: 'df', tacosAdS: 'Jul/Aug dipped efficiency',
-    roasAd: '3.81×', roasAdD: 'launch avg', roasAdC: 'df', roasAdS: '$26,722 revenue',
-    aov: '$115', aovD: 'launch avg', aovC: 'df', aovS: '232 orders total',
+    label: 'Since Launch · Mar–Sep 2026', shortLabel: 'Since Launch',
+    rev: '$31,725', revD: 'Since launch (Mar–Sep)', revC: 'du', revS: 'first sale Mar 2026',
+    adSales: '$16,074', adSalesD: 'launch-to-date', adSalesC: 'df', adSalesS: '50.7% of revenue',
+    tacos: '15.3%', tacosD: 'launch blended', tacosC: 'df', tacosS: 'ads live from Apr',
+    roas: '3.32×', roasD: 'launch avg', roasC: 'df', roasS: '278 orders · AOV $114',
+    spend: '$4,843', spendD: 'launch-to-date', spendC: 'df', spendS: 'ads started Apr 2026',
+    tacosAd: '15.3%', tacosAdD: 'launch blended', tacosAdC: 'df', tacosAdS: 'Jul–Sep efficiency dipped',
+    roasAd: '3.32×', roasAdD: 'launch avg', roasAdC: 'df', roasAdS: '$31,725 revenue',
+    aov: '$114', aovD: 'launch avg', aovC: 'df', aovS: '278 orders total',
     mktRows: [
-      ['Amazon US','us','$3,700','$3,484','bg','▼ $216 under','$26,722','ba','13.0%'],
-      ['Total US',null,'$3,700','$3,484','bg','94% utilised','$26,722','ba','13.0%']
+      ['Amazon US','us','$5,100','$4,843','bg','▼ $257 under','$31,725','ba','15.3%'],
+      ['Total US',null,'$5,100','$4,843','bg','95% utilised','$31,725','ba','15.3%']
     ],
-    revBreakChart: { max: 8000, yTicks: ['$8k','$6k','$4k','$2k','$0'], xLabels: ['Mar','Apr','May','Jun','Jul','Aug'],
-      series: [ { color:'#404935', values:[0,319,2774,4636,2961,2572] }, { color:'#a7ab90', values:[4191,1348,2592,2758,1350,1221] } ],
+    revBreakChart: { max: 8000, yTicks: ['$8k','$6k','$4k','$2k','$0'], xLabels: ['Mar','Apr','May','Jun','Jul','Aug','Sep'],
+      series: [ { color:'#404935', values:[0,319,2774,4636,2961,2572,2814] }, { color:'#a7ab90', values:[4191,1348,2592,2758,1350,1221,2189] } ],
       legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
-    revChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Mar','Apr','May','Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[4191,1667,5366,7394,4311,3793],main:true,area:true}, {color:'#a7ab90',values:[0,197,404,759,980,1146],dash:true} ],
+    revChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Mar','Apr','May','Jun','Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[4191,1667,5366,7394,4311,3793,5003],main:true,area:true}, {color:'#a7ab90',values:[0,197,404,759,981,1141,1364],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    adChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Mar','Apr','May','Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[4191,1667,5366,7394,4311,3793],main:true,area:true}, {color:'#a7ab90',values:[0,197,404,759,980,1146],dash:true} ],
+    adChart: { max:8000, yTicks:['$8k','$6k','$4k','$2k','$0'], xLabels:['Mar','Apr','May','Jun','Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[4191,1667,5366,7394,4311,3793,5003],main:true,area:true}, {color:'#a7ab90',values:[0,197,404,759,981,1141,1364],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'$13.3k',acos:'26.3%'} ] },
-    // Amazon P&L for the Since-Launch window (Mar–Aug settled, summed — see sections.pnl note on
-    // basis). Settled captures the Mar–Apr launch months that accrual omits.
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'$16.1k',acos:'30.1%'} ] },
+    // Amazon P&L for the Since-Launch window (Mar–Sep settled; Mar–Aug carried from the prior bake with
+    // Aug refreshed to its current settled figures, + Sep). Settled captures the Mar–Apr launch months.
     sec: { pnl: {
-      summary: [ {val:'$21,225',lbl:'Net Revenue',color:'brand'}, {val:'$11,125',lbl:'Total Costs',color:'red'}, {val:'$10,100',lbl:'Net Profit',color:'green'} ],
-      margin: { pct:'47.6%', pctColor:'green', note:'Since Launch · Mar–Aug 2026 · financial basis (MerchantSpring, settled) · US channel', rows:[
-        {lbl:'Net Revenue', val:'$21,225'},
-        {lbl:'Advertising', val:'-$3,198', color:'red'},
-        {lbl:'Selling & Shipping Fees', val:'-$3,135', color:'red'},
-        {lbl:'COGS', val:'-$4,766', color:'red'},
-        {lbl:'Other adjustments', val:'-$26', color:'red'},
-        {lbl:'Net Profit', val:'$10,100', color:'green', strong:true}
+      summary: [ {val:'$24,763',lbl:'Net Revenue',color:'brand'}, {val:'$14,238',lbl:'Total Costs',color:'red'}, {val:'$10,525',lbl:'Net Profit',color:'green'} ],
+      margin: { pct:'42.5%', pctColor:'green', note:'Since Launch · Mar–Sep 2026 · financial basis (MerchantSpring, settled) · US channel', rows:[
+        {lbl:'Net Revenue', val:'$24,763'},
+        {lbl:'Advertising', val:'-$4,366', color:'red'},
+        {lbl:'Selling & Shipping Fees', val:'-$3,490', color:'red'},
+        {lbl:'COGS', val:'-$6,354', color:'red'},
+        {lbl:'Other adjustments', val:'-$28', color:'red'},
+        {lbl:'Net Profit', val:'$10,525', color:'green', strong:true}
       ] },
       mkt: [
-        {name:'United States',flag:'us',revenue:'$21,225',adspend:'$3,198',net:'$10,100',netColor:'green',margin:'47.6%',marginCls:'bg'}
+        {name:'United States',flag:'us',revenue:'$24,763',adspend:'$4,366',net:'$10,525',netColor:'green',margin:'42.5%',marginCls:'bg'}
       ],
       statement: {
-        fixedLabel: 'Since Launch · Mar–Aug 2026 · financial basis (MerchantSpring, settled)',
+        fixedLabel: 'Since Launch · Mar–Sep 2026 · financial basis (MerchantSpring, settled)',
         caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag, so the most recent ~2 weeks may be understated until settlement completes.',
         groups:[
           { header:'Income', rows:[
-            {lbl:'Product sales', amount:'$24,962', pct:'117.6%', unit:'$100.25'},
-            {lbl:'Refunds & returns', amount:'-$1,545', pct:'-7.3%', unit:'-$6.20'},
-            {lbl:'Promotions & coupons', amount:'-$1,247', pct:'-5.9%', unit:'-$5.01'},
-            {lbl:'Reimbursements & other income', amount:'$509', pct:'2.4%', unit:'$2.04'},
-            {lbl:'Net revenue', amount:'$21,225', pct:'100.0%', unit:'$85.24', total:true}
+            {lbl:'Product sales', amount:'$29,359', pct:'118.6%', unit:'$99.19'},
+            {lbl:'Refunds & returns', amount:'-$2,255', pct:'-9.1%', unit:'-$7.62'},
+            {lbl:'Promotions & coupons', amount:'-$1,260', pct:'-5.1%', unit:'-$4.26'},
+            {lbl:'Reimbursements & other income', amount:'$633', pct:'2.6%', unit:'$2.14'},
+            {lbl:'Net revenue', amount:'$24,763', pct:'100.0%', unit:'$83.66', total:true}
           ] },
           { header:'Expenses', rows:[
-            {lbl:'Advertising (settlement)', amount:'$3,198', pct:'15.1%', unit:'$12.84'},
-            {lbl:'Selling fees', amount:'$1,656', pct:'7.8%', unit:'$6.65'},
-            {lbl:'Shipping & fulfilment fees', amount:'$1,478', pct:'7.0%', unit:'$5.94'},
-            {lbl:'Cost of goods', amount:'$4,766', pct:'22.5%', unit:'$19.14'},
-            {lbl:'Refund/return handling', amount:'$26', pct:'0.1%', unit:'$0.10'},
-            {lbl:'Total expenses', amount:'$11,125', pct:'52.4%', unit:'$44.68', total:true}
+            {lbl:'Advertising (settlement)', amount:'$4,366', pct:'17.6%', unit:'$14.75'},
+            {lbl:'Selling fees', amount:'$1,727', pct:'7.0%', unit:'$5.83'},
+            {lbl:'Shipping & fulfilment fees', amount:'$1,763', pct:'7.1%', unit:'$5.96'},
+            {lbl:'Cost of goods', amount:'$6,354', pct:'25.7%', unit:'$21.47'},
+            {lbl:'Refund/return handling', amount:'$26', pct:'0.1%', unit:'$0.09'},
+            {lbl:'Total expenses', amount:'$14,238', pct:'57.5%', unit:'$48.10', total:true}
           ] },
           { header:'Profit', rows:[
-            {lbl:'PROFIT', amount:'$10,100', pct:'47.6%', unit:'$40.56', total:true, profit:true},
-            {lbl:'Profit %', amount:'47.6%', accent:'green'}
+            {lbl:'PROFIT', amount:'$10,525', pct:'42.5%', unit:'$35.56', total:true, profit:true},
+            {lbl:'Profit %', amount:'42.5%', accent:'green'}
           ] },
           { header:'Metrics', rows:[
-            {lbl:'TACOS % (console)', amount:'13.0%'},
-            {lbl:'Ad spend (console)', amount:'$3,479'}
+            {lbl:'TACOS % (console)', amount:'15.3%'},
+            {lbl:'Ad spend (console)', amount:'$4,843'}
           ] }
         ]
       }
@@ -205,7 +204,7 @@ window.DASHBOARD_DATA = {
   },
   },
 
-  // ---- Deep-page content (rendered once at boot; August 2026 snapshot) ----
+  // ---- Deep-page content (rendered once at boot; September 2026 snapshot) ----
   sections: {
     overview: {
       // Static fallback — served live by tools/abimax-sheet-proxy.gs (overlay:'sections') when the
@@ -228,40 +227,31 @@ window.DASHBOARD_DATA = {
         {text:'Sponsored Products campaigns active', sub:'Completed · Apr 2026'},
         {text:'Buy Box 99% featured-offer rate', sub:'Completed'}
       ] },
-      // Featured-offer (Buy Box) — real per-listing rates from MerchantSpring's trafficAndConversion
-      // report (view:'parents', Aug 2026 vs Jul), pulled 07 Sep 2026 — NOT the account-level channel
-      // rate copy-pasted across SKUs (that placeholder is what was here before). Amazon computes Buy
-      // Box at the parent-listing level, and this account only has 2 live parents: Single/Pack of
-      // 2/Pack of 3 share one parent ASIN (B0GLTLW6L3 — the "5 ASINs under one listing" variation
-      // family noted in flagsSpec above), and Magnostream Pro is its own parent (B0GLP399NJ) — so all
-      // 3 Single/Pack-2/Pack-3 rows below are genuinely the SAME real number (their shared parent's
-      // rate), not 3 independent measurements; MerchantSpring exposes nothing more granular than that.
-      // Dormant Bundle (B0GH7YKPZJ, 14 page views, no sales) omitted — not shown as its own row.
+      // Featured-offer (Buy Box) — Sep 2026 channel-level rate from getSalesByPeriod (99.7%, Aug 99.4%).
+      // The per-listing trafficAndConversion report was NOT pulled this run, so the 4 rows below carry the
+      // channel rate rather than per-parent rates (Single/Pack-2/Pack-3 share one parent and Pro is its own).
+      // Refresh per-listing rates from the report at the next bake / review.
       buyBox: [
-        {label:'Magnostream Single', pct:99.5, valText:'99.5%', color:'green'},
-        {label:'Magnostream Pro', pct:99.5, valText:'99.5%', color:'green'},
-        {label:'Magnostream Pack of 3', pct:99.5, valText:'99.5%', color:'green'},
-        {label:'Magnostream Pack of 2', pct:99.5, valText:'99.5%', color:'green'}
+        {label:'Magnostream Single', pct:99.7, valText:'99.7%', color:'green'},
+        {label:'Magnostream Pro', pct:99.7, valText:'99.7%', color:'green'},
+        {label:'Magnostream Pack of 3', pct:99.7, valText:'99.7%', color:'green'},
+        {label:'Magnostream Pack of 2', pct:99.7, valText:'99.7%', color:'green'}
       ],
-      // Headline above the bars (app.js renderBuyBox's static-buyBox fallback previously left this as
-      // dead placeholder HTML in index.html — literally AMACX's own "82% ▼1.5pp" — since only
-      // buyBoxByPeriod clients had it wired up). Real page-view-weighted account average across all 3
-      // live parent ASINs, Aug vs Jul (1066+1021+14 page views / 99.50%+99.50%+100.00%): 99.5%, up
-      // from a same-methodology 98.9% in July.
-      buyBoxHeadline: { pctTxt:'99.5%', delta:'▲ 0.6pp vs July', deltaCls:'du' },
-      cvr: { val:'2.3%', note:'August 2026 · 1,522 sessions', sub:'US · session conversion' },
-      // FBA stock warnings = real MerchantSpring product report (qty + days-cover per ASIN, 04 Sep
-      // 2026). Two SKUs have dropped below the ~180-day comfort band used in prior bakes — Magnostream
-      // Single (111 days, down from 191 in Jul) and Magnostream Pro (140 days, down from 204 in Jul) —
-      // flagged as stock-up watch (not OOS, still healthy runway, but trending down fast).
-      stockWarn: { badge:'2 stock-up · 0 OOS', items:[
-        {level:'amber', title:'Magnostream Single — stock-up soon', sub:'B0GLT2LYKY · ~111 days cover · down from 191d Jul'},
-        {level:'amber', title:'Magnostream Pro — stock-up soon', sub:'B0GGRJKS2D · ~140 days cover · down from 204d Jul'}
+      buyBoxHeadline: { pctTxt:'99.7%', delta:'▲ 0.3pp vs August', deltaCls:'du' },
+      cvr: { val:'2.8%', note:'September 2026 · 1,678 sessions', sub:'US · session conversion' },
+      // FBA stock warnings = real MerchantSpring product report (qty + days-cover per ASIN, 05 Oct 2026).
+      // All 5 live ASINs are under ~150 days cover; Pack of 3 (42d) is the most urgent.
+      stockWarn: { badge:'5 stock-up · 0 OOS', items:[
+        {level:'red', title:'Magnostream Pack of 3 — stock-up now', sub:'B0GLPWZCRV · ~42 days cover · 14 units'},
+        {level:'amber', title:'Magnostream Multi-Unit Bundle — stock-up soon', sub:'B0GH7YKPZJ · ~60 days cover · 2 units'},
+        {level:'amber', title:'Magnostream Pack of 2 — stock-up soon', sub:'B0GLPQ6YZ4 · ~70 days cover · down from 120d Aug'},
+        {level:'amber', title:'Magnostream Pro — stock-up soon', sub:'B0GGRJKS2D · ~99 days cover · down from 140d Aug'},
+        {level:'amber', title:'Magnostream Single — stock-up soon', sub:'B0GLT2LYKY · ~102 days cover · down from 111d Aug'}
       ] }
     },
     // P&L is ACTIVE for Abimax (Executive tier, Sep 2026) — full MerchantSpring financial P&L, built
-    // PER TIMELINE. This top-level sections.pnl is the "Last Month" (August) statement; the 3-month
-    // (Jun–Aug) and Since-Launch (Mar–Aug) statements live on dateRanges['3m'].sec.pnl /
+    // PER TIMELINE. This top-level sections.pnl is the "Last Month" (September) statement; the 3-month
+    // (Jul–Sep) and Since-Launch (Mar–Sep) statements live on dateRanges['3m'].sec.pnl /
     // dateRanges['6m'].sec.pnl. Each carries its own fixedLabel so the page re-renders per period.
     // Basis: getStoreProfitAndLoss, profitabilityView 'settled' (cash basis), includeTax, pulled per
     // month then summed for the multi-month windows (the endpoint is 31-day-capped). SETTLED is used,
@@ -271,141 +261,138 @@ window.DASHBOARD_DATA = {
     // exactly to that month's order-date sales KPI shown elsewhere — expected for a cash-basis P&L.
     // MerchantSpring's own totalRevenue/totalExpenses drive the summary + totals; itemized rows don't
     // always foot to the top-line (a known MerchantSpring gap). "Ad spend (console)" in Metrics is the
-    // order-date figure from the Advertising page, shown for cross-reference. Aug 2026 (settled):
-    // sales $4,030 · net rev $4,058 · ad(settlement) $1,504 · selling $66 · shipping $270 · COGS $788
-    // · net profit $1,431 (35.3%).
+    // order-date figure from the Advertising page, shown for cross-reference. Sep 2026 (settled):
+    // sales $4,397 · refunds -$710 · net rev $3,538 · ad(settlement) $1,168 · selling $71 · shipping $286
+    // · COGS $1,290 · net profit $724 (20.5%).
     pnl: {
-      summary: [ {val:'$4,058',lbl:'Net Revenue',color:'brand'}, {val:'$2,627',lbl:'Total Costs',color:'red'}, {val:'$1,431',lbl:'Net Profit',color:'green'} ],
-      margin: { pct:'35.3%', pctColor:'amber', note:'August 2026 (31-day) · financial basis (MerchantSpring, settled) · US channel', rows:[
-        {lbl:'Net Revenue', val:'$4,058'},
-        {lbl:'Advertising', val:'-$1,504', color:'red'},
-        {lbl:'Selling & Shipping Fees', val:'-$336', color:'red'},
-        {lbl:'COGS', val:'-$788', color:'red'},
-        {lbl:'Net Profit', val:'$1,431', color:'green', strong:true}
+      summary: [ {val:'$3,538',lbl:'Net Revenue',color:'brand'}, {val:'$2,814',lbl:'Total Costs',color:'red'}, {val:'$724',lbl:'Net Profit',color:'green'} ],
+      margin: { pct:'20.5%', pctColor:'red', note:'September 2026 (30-day) · financial basis (MerchantSpring, settled) · US channel', rows:[
+        {lbl:'Net Revenue', val:'$3,538'},
+        {lbl:'Advertising', val:'-$1,168', color:'red'},
+        {lbl:'Selling & Shipping Fees', val:'-$356', color:'red'},
+        {lbl:'COGS', val:'-$1,290', color:'red'},
+        {lbl:'Other adjustments', val:'-$-0', color:'red'},
+        {lbl:'Net Profit', val:'$724', color:'green', strong:true}
       ] },
       mkt: [
-        {name:'United States',flag:'us',revenue:'$4,058',adspend:'$1,504',net:'$1,431',netColor:'green',margin:'35.3%',marginCls:'ba'}
+        {name:'United States',flag:'us',revenue:'$3,538',adspend:'$1,168',net:'$724',netColor:'green',margin:'20.5%',marginCls:'br'}
       ],
       statement: {
-        fixedLabel: 'August 2026 (1–31) · financial basis (MerchantSpring, settled)',
+        fixedLabel: 'September 2026 (1–30) · financial basis (MerchantSpring, settled)',
         caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag, so the most recent ~2 weeks may be understated until settlement completes.',
         groups:[
           { header:'Income', rows:[
-            {lbl:'Product sales', amount:'$4,030', pct:'99.3%', unit:'$115.14'},
-            {lbl:'Refunds & returns', amount:'$0', pct:'0.0%', unit:'$0.00'},
-            {lbl:'Promotions & coupons', amount:'-$19', pct:'-0.5%', unit:'-$0.53'},
-            {lbl:'Reimbursements & other income', amount:'$328', pct:'8.1%', unit:'$9.37'},
-            {lbl:'Net revenue', amount:'$4,058', pct:'100.0%', unit:'$115.95', total:true}
+            {lbl:'Product sales', amount:'$4,397', pct:'124.3%', unit:'$93.55'},
+            {lbl:'Refunds & returns', amount:'-$710', pct:'-20.1%', unit:'-$15.11'},
+            {lbl:'Promotions & coupons', amount:'-$13', pct:'-0.4%', unit:'-$0.28'},
+            {lbl:'Reimbursements & other income', amount:'$124', pct:'3.5%', unit:'$2.64'},
+            {lbl:'Net revenue', amount:'$3,538', pct:'100.0%', unit:'$75.28', total:true}
           ] },
           { header:'Expenses', rows:[
-            {lbl:'Advertising (settlement)', amount:'$1,504', pct:'37.1%', unit:'$42.98'},
-            {lbl:'Selling fees', amount:'$66', pct:'1.6%', unit:'$1.89'},
-            {lbl:'Shipping & fulfilment fees', amount:'$270', pct:'6.6%', unit:'$7.70'},
-            {lbl:'Cost of goods', amount:'$788', pct:'19.4%', unit:'$22.50'},
-            {lbl:'Total expenses', amount:'$2,627', pct:'64.7%', unit:'$75.07', total:true}
+            {lbl:'Advertising (settlement)', amount:'$1,168', pct:'33.0%', unit:'$24.86'},
+            {lbl:'Selling fees', amount:'$71', pct:'2.0%', unit:'$1.50'},
+            {lbl:'Shipping & fulfilment fees', amount:'$286', pct:'8.1%', unit:'$6.08'},
+            {lbl:'Cost of goods', amount:'$1,290', pct:'36.4%', unit:'$27.44'},
+            {lbl:'Total expenses', amount:'$2,814', pct:'79.5%', unit:'$59.88', total:true}
           ] },
           { header:'Profit', rows:[
-            {lbl:'PROFIT', amount:'$1,431', pct:'35.3%', unit:'$40.88', total:true, profit:true},
-            {lbl:'Profit %', amount:'35.3%', accent:'amber'}
+            {lbl:'PROFIT', amount:'$724', pct:'20.5%', unit:'$15.40', total:true, profit:true},
+            {lbl:'Profit %', amount:'20.5%', accent:'red'}
           ] },
           { header:'Metrics', rows:[
-            {lbl:'TACOS % (console)', amount:'30.1%'},
-            {lbl:'Ad spend (console)', amount:'$1,141'}
+            {lbl:'TACOS % (console)', amount:'27.3%'},
+            {lbl:'Ad spend (console)', amount:'$1,364'}
           ] }
         ]
       }
     },
     advertising: {
-      // Real August 2026 ad totals (MerchantSpring channel report, US channel, USD). ACOS/ROAS/TACOS
-      // are the channel-attributed figures (spend $1,146 · ad sales $2,572 → ACOS 44.6% · ROAS 2.24×).
-      // ⚠️ ROAS below Abimax's plausible ~5–7× efficient band for a 2nd straight month — see top-of-file review note.
+      // Real September 2026 ad totals (MerchantSpring channel report, US channel, USD). ACOS/ROAS/TACOS
+      // are the channel-attributed figures (spend $1,364 · ad sales $2,814 → ACOS 48.5% · ROAS 2.06×).
+      // ⚠️ ROAS below Abimax's plausible ~5–7× efficient band for a 3rd straight month — see top-of-file review note.
       metrics: [
-        {lbl:'Total Spend',  val:'$1,146', id:'a-spend'},
-        {lbl:'Ad Sales',     val:'$2,572', color:'brand'},
-        {lbl:'ACOS',         val:'44.6%',  color:'red', id:'a-tacos'},
-        {lbl:'ROAS',         val:'2.24×',  color:'red', id:'a-roas'},
-        {lbl:'Impressions',  val:'135.1K'},
-        {lbl:'Avg. CPC',     val:'$1.02'}
+        {lbl:'Total Spend',  val:'$1,364', id:'a-spend'},
+        {lbl:'Ad Sales',     val:'$2,814', color:'brand'},
+        {lbl:'ACOS',         val:'48.5%',  color:'red', id:'a-tacos'},
+        {lbl:'ROAS',         val:'2.06×',  color:'red', id:'a-roas'},
+        {lbl:'Impressions',  val:'171.1K'},
+        {lbl:'Avg. CPC',     val:'$1.09'}
       ],
       // No budget sheet for Abimax yet — a working monthly ad budget is tracked vs the real actual
-      // (continuing the $1,000 Jul → $1,200 Aug progression flagged in the prior bake's forecast).
-      // Refreshed at each re-bake; goes live if/when an Apps Script budget proxy is added.
+      // ($1,000 Jul → $1,200 Aug → $1,400 Sep). Goes live if/when an Apps Script budget proxy is added.
       budgets: {
-        subLabel: 'August 2026 · budget vs actual',
-        headers: ['Monthly Budget','August Actual','Variance','Utilisation'],
+        subLabel: 'September 2026 · budget vs actual',
+        headers: ['Monthly Budget','September Actual','Variance','Utilisation'],
         rows: [
-          {name:'United States', flag:'us', cells:['$1,200','$1,146','▼ $54 under','95%']},
-          {name:'Total', total:true,        cells:['$1,200','$1,146','▼ $54 under','95%']}
+          {name:'United States', flag:'us', cells:['$1,400','$1,364','▼ $36 under','97%']},
+          {name:'Total', total:true,        cells:['$1,400','$1,364','▼ $36 under','97%']}
         ]
       },
-      // Forward ad budget as the account scales into H2 (working plan; no sheet forecast yet). Given
-      // this month's efficiency flag (ROAS 2.24×, TACOS 30.2%), the human reviewer may want to revisit
-      // this progression rather than continuing to scale spend — left mechanical/unchanged pending that call.
+      // Forward ad budget (working plan; no sheet forecast yet). Given the 3-month efficiency decline
+      // (ROAS 2.06×, TACOS 27.3%) the reviewer may want to revisit this progression rather than keep
+      // scaling spend — left mechanical (+$200/month) pending that call.
       forecast: [
-        {month:'Sep', budget:'$1,400', pct:100, tacos:'<15%', tacosColor:'amber', roas:'—', opacity:0.7},
-        {month:'Oct', budget:'$1,600', pct:100, tacos:'<15%', tacosColor:'amber', roas:'—', opacity:0.6}
+        {month:'Oct', budget:'$1,600', pct:100, tacos:'<15%', tacosColor:'amber', roas:'—', opacity:0.7},
+        {month:'Nov', budget:'$1,800', pct:100, tacos:'<15%', tacosColor:'amber', roas:'—', opacity:0.6}
       ],
-      // Per-ASIN Sponsored Products campaigns (August 2026). Spend, CPC, sales, ACOS and ROAS are ALL
-      // REAL per-SKU actuals from the MerchantSpring product report (getSalesByProduct) — NOT allocated
-      // from the channel total this month. Reason for the change from the spend-share-allocation
-      // convention used in prior bakes: allocating channel ad-sales by spend share is mathematically
-      // guaranteed to produce the SAME ACOS/ROAS on every row (acos_i = spend_i/(spend_i×totalAdSales/
-      // totalSpend) = totalSpend/totalAdSales for all i), which would have shown all 4 campaigns at an
-      // identical 44.6%/2.2× — hiding that Magnostream Pro is actually badly inefficient (78.8% ACOS)
-      // while Pack of 2/3 generated ZERO ad-attributed sales despite real spend (0% ACOS/ROAS = wasted
-      // spend, not efficiency). NOTE: because these are real unallocated per-SKU figures, Σ sales here
-      // ($1,520) does NOT foot to the channel-attributed headline Ad Sales ($2,572) — MerchantSpring's
-      // per-product and channel ad-attribution reports disagree this month (a real data discrepancy,
-      // not a rounding artefact); the headline metrics above remain the channel-attributed, internally
-      // self-consistent figures per the runbook (getSalesByPeriod).
+      // Per-ASIN Sponsored Products campaigns (September 2026). Spend, CPC, sales, ACOS and ROAS are REAL
+      // per-SKU actuals from the MerchantSpring product report (getSalesByProduct), NOT allocated from the
+      // channel total (spend-share allocation would show an identical ACOS on every row and hide that Pro
+      // and Single are inefficient while Pack of 3 is not). Σ spend ($1,364) foots to the headline; Σ sales
+      // ($1,906) does NOT foot to the channel-attributed headline Ad Sales ($2,814) — MerchantSpring's
+      // per-product and channel ad-attribution reports disagree (as in Aug); headline metrics above remain
+      // the channel-attributed, self-consistent figures per the runbook (getSalesByPeriod).
       campaigns: [
-        {name:'US · Magnostream Pro — SP',type:'Sponsored Products',spend:'$674',sales:'$855',acos:'78.8%',acosCls:'br',roas:'1.3×',cpc:'$1.08',status:'Active',statusCls:'bg'},
-        {name:'US · Magnostream Single — SP',type:'Sponsored Products',spend:'$410',sales:'$665',acos:'61.7%',acosCls:'br',roas:'1.6×',cpc:'$0.94',status:'Active',statusCls:'bg'},
-        {name:'US · Magnostream Pack of 2 — SP',type:'Sponsored Products',spend:'$32',sales:'$0',acos:'0.0%',acosCls:'br',roas:'0.0×',cpc:'$0.94',status:'Active',statusCls:'bg'},
-        {name:'US · Magnostream Pack of 3 — SP',type:'Sponsored Products',spend:'$30',sales:'$0',acos:'0.0%',acosCls:'br',roas:'0.0×',cpc:'$0.95',status:'Active',statusCls:'bg'}
+        {name:'US · Magnostream Pro — SP',type:'Sponsored Products',spend:'$636',sales:'$580',acos:'109.6%',acosCls:'br',roas:'0.9×',cpc:'$0.94',status:'Active',statusCls:'bg'},
+        {name:'US · Magnostream Single — SP',type:'Sponsored Products',spend:'$594',sales:'$650',acos:'91.3%',acosCls:'br',roas:'1.1×',cpc:'$1.23',status:'Active',statusCls:'bg'},
+        {name:'US · Magnostream Pack of 2 — SP',type:'Sponsored Products',spend:'$77',sales:'$180',acos:'42.9%',acosCls:'br',roas:'2.3×',cpc:'$1.38',status:'Active',statusCls:'bg'},
+        {name:'US · Magnostream Pack of 3 — SP',type:'Sponsored Products',spend:'$58',sales:'$496',acos:'11.6%',acosCls:'bg',roas:'8.6×',cpc:'$1.31',status:'Active',statusCls:'bg'}
       ]
     },
     inventory: {
-      // Real FBA stock snapshot from the MerchantSpring product report (qty + days-cover per ASIN, 04
-      // Sep 2026). Only 4 ASINs returned this pull (see top-of-file note re: Multi-Unit Bundle missing).
-      // Two of the 4 have dropped below the ~180-day comfort band used previously — flagged as
-      // stock-up watch, not urgent (both still >100 days runway). No dispatch-rate source → the
-      // Dispatch card auto-hides (app.js).
+      // Real FBA stock snapshot from the MerchantSpring product report (qty + days-cover per ASIN, 05 Oct
+      // 2026). 5 live ASINs (the Multi-Unit Bundle is back in the report). All are under ~150 days cover;
+      // Pack of 3 (42d) is the urgent one. No dispatch-rate source → the Dispatch card auto-hides (app.js).
       kpis: [
-        {bar:'green',lbl:'In Stock',val:'4',dCls:'df',d:'ASINs · 0 OOS',s:'Multi-Bundle missing from report — see review note'},
-        {bar:'#404935',lbl:'Units on Hand',val:'169',dCls:'df',d:'FBA total',s:'across 4 SKUs'},
-        {bar:'amber',lbl:'Stock-up Watch',val:'2',dCls:'dd',d:'stock-up soon',s:'2 SKUs <150d cover'},
-        {bar:'green',lbl:'Buy Box (Aug)',val:'99.4%',dCls:'du',d:'featured-offer %',s:'vs 98.9% Jul'}
+        {bar:'green',lbl:'In Stock',val:'5',dCls:'df',d:'ASINs · 0 OOS',s:'all live ASINs in stock'},
+        {bar:'#404935',lbl:'Units on Hand',val:'128',dCls:'dd',d:'FBA total',s:'across 5 SKUs · 169 in Aug'},
+        {bar:'red',lbl:'Stock-up Watch',val:'5',dCls:'dd',d:'stock-up soon / now',s:'1 urgent (Pack of 3 · 42d)'},
+        {bar:'green',lbl:'Buy Box (Sep)',val:'99.7%',dCls:'du',d:'featured-offer %',s:'vs 99.4% Aug'}
       ],
       stock: [
-        {dot:'da',name:'Magnostream Pro — Heavy-Duty Descaler',note:'B0GGRJKS2D · US · top revenue SKU',units:'28 units',days:'~140 days',unitsColor:'amber'},
-        {dot:'da',name:'Magnostream Single Descaler',note:'B0GLT2LYKY · US · best seller by units',units:'97 units',days:'~111 days',unitsColor:'amber'},
-        {dot:'dg',name:'Magnostream Pack of 3',note:'B0GLPWZCRV · US',units:'24 units',days:'~360 days'},
-        {dot:'dg',name:'Magnostream Pack of 2',note:'B0GLPQ6YZ4 · US',units:'20 units',days:'~120 days'}
+        {dot:'dr',name:'Magnostream Pack of 3',note:'B0GLPWZCRV · US',units:'14 units',days:'~42 days',unitsColor:'red'},
+        {dot:'da',name:'Magnostream Multi-Unit Bundle',note:'B0GH7YKPZJ · US · slow mover',units:'2 units',days:'~60 days',unitsColor:'amber'},
+        {dot:'da',name:'Magnostream Pack of 2',note:'B0GLPQ6YZ4 · US',units:'14 units',days:'~70 days',unitsColor:'amber'},
+        {dot:'da',name:'Magnostream Pro — Heavy-Duty Descaler',note:'B0GGRJKS2D · US · top revenue SKU',units:'23 units',days:'~99 days',unitsColor:'amber'},
+        {dot:'da',name:'Magnostream Single Descaler',note:'B0GLT2LYKY · US · best seller by units',units:'75 units',days:'~102 days',unitsColor:'amber'}
       ],
       restock: [
-        {level:'amber', title:'Magnostream Single — stock-up soon', sub:'B0GLT2LYKY · ~111 days cover · best-seller by units'},
-        {level:'amber', title:'Magnostream Pro — stock-up soon', sub:'B0GGRJKS2D · ~140 days cover · top revenue SKU'}
+        {level:'red', title:'Magnostream Pack of 3 — stock-up now', sub:'B0GLPWZCRV · ~42 days cover · 14 units'},
+        {level:'amber', title:'Magnostream Multi-Unit Bundle — stock-up soon', sub:'B0GH7YKPZJ · ~60 days cover · 2 units'},
+        {level:'amber', title:'Magnostream Pack of 2 — stock-up soon', sub:'B0GLPQ6YZ4 · ~70 days cover'},
+        {level:'amber', title:'Magnostream Pro — stock-up soon', sub:'B0GGRJKS2D · ~99 days cover · top revenue SKU'},
+        {level:'amber', title:'Magnostream Single — stock-up soon', sub:'B0GLT2LYKY · ~102 days cover · best-seller by units'}
       ]
     },
     products: {
-      // KPIs + by-market table = August 2026 (page period). Groups card = August sales by product variant.
+      // KPIs + by-market table = September 2026 (page period). Groups card = September sales by variant.
       kpis: [
-        {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in Aug',s:'all 4 tracked SKUs sold'},
-        {bar:'var(--green)',lbl:'Top Product Rev.',val:'$1,821',dCls:'du',d:'Magnostream Pro',s:'48% of Aug sales'},
-        {bar:'var(--blue)',lbl:'Orders (Aug)',val:'34',dCls:'du',d:'▲ 3.0% MoM',s:'33 orders Jul'},
-        {bar:'var(--amber)',lbl:'ASP',val:'$108',dCls:'dd',d:'▼ 12.0% MoM',s:'per unit'}
+        {bar:'#404935',lbl:'Active SKUs',val:'5',dCls:'df',d:'sold in Sep',s:'all 5 tracked SKUs sold'},
+        {bar:'var(--green)',lbl:'Top Product Rev.',val:'$1,562',dCls:'dd',d:'Magnostream Pro',s:'31% of Sep sales'},
+        {bar:'var(--blue)',lbl:'Orders (Sep)',val:'46',dCls:'du',d:'▲ 35.3% MoM',s:'34 orders Aug'},
+        {bar:'var(--amber)',lbl:'ASP',val:'$106',dCls:'dd',d:'▼ 1.8% MoM',s:'per unit'}
       ],
       table: [
-        {name:'United States',flag:'us',revenue:'$3,793',units:'35',orders:'34',cvr:'2.3%',cvrCls:'br',aov:'$111.57'}
+        {name:'United States',flag:'us',revenue:'$5,003',units:'47',orders:'46',cvr:'2.8%',cvrCls:'br',aov:'$108.77'}
       ],
-      // August 2026 sales by product variant (real MerchantSpring product report, US channel). % = share
-      // of August product sales. OOS Rate = share of the variant currently out of stock (all in stock).
+      // September 2026 sales by product variant (real MerchantSpring product report, US channel). % = share
+      // of September product sales (Σ = $5,003, ties to headline revenue). All variants in stock.
       groups: [
-        {name:'Magnostream Pro — Heavy-Duty',sales:'$1,821',units:6,pct:'48%',oosRate:'0%',oosCls:'bg'},
-        {name:'Magnostream Single',sales:'$1,209',units:22,pct:'32%',oosRate:'0%',oosCls:'bg'},
-        {name:'Magnostream Pack of 2',sales:'$489',units:5,pct:'13%',oosRate:'0%',oosCls:'bg'},
-        {name:'Magnostream Pack of 3',sales:'$274',units:2,pct:'7%',oosRate:'0%',oosCls:'bg'}
+        {name:'Magnostream Pro — Heavy-Duty',sales:'$1,562',units:5,pct:'31%',oosRate:'0%',oosCls:'bg'},
+        {name:'Magnostream Single',sales:'$1,305',units:26,pct:'26%',oosRate:'0%',oosCls:'bg'},
+        {name:'Magnostream Pack of 3',sales:'$1,276',units:10,pct:'25%',oosRate:'0%',oosCls:'bg'},
+        {name:'Magnostream Pack of 2',sales:'$481',units:5,pct:'10%',oosRate:'0%',oosCls:'bg'},
+        {name:'Magnostream Multi-Unit Bundle',sales:'$381',units:1,pct:'8%',oosRate:'0%',oosCls:'bg'}
       ]
     }
   }
