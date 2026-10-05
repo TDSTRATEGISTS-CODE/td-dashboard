@@ -11,7 +11,7 @@ window.DASHBOARD_CONFIG = {
     name: 'Balance 8',                        // sidebar client name
     title: 'Balance 8 — TD Strategists',      // browser tab <title>
     portalLabel: 'CLIENT PORTAL',             // small label under the logo
-    reportPeriodLabel: 'August 2026 · Monthly Report',
+    reportPeriodLabel: 'September 2026 · Monthly Report',
     scopeLabel: 'UK',                         // replaces the template's '.cfg-scope' default ('All EU')
     currencyIcon: '&#163;',                   // £ — used for the P&L nav icon (currency:true pages)
     logo: 'td-logo.png',                      // per-client fallback (unused while logoSrc is set)
