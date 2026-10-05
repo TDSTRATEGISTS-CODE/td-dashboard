@@ -14,8 +14,8 @@ window.DASHBOARD_CONFIG = {
     // Stock & COGS) — forecastPages scopes the suffix to those; every other page (Overview, Amazon
     // P&L, Inventory, Advertising — all real actuals) shows reportPeriodLabelShort instead. See
     // updateReportPeriodLabel in app.js. Director's Loan dropped from this list — see hiddenPages below.
-    reportPeriodLabel: 'Aug 2026 · Year 1 Forecast',
-    reportPeriodLabelShort: 'Aug 2026',
+    reportPeriodLabel: 'Sep 2026 · Year 1 Forecast',
+    reportPeriodLabelShort: 'Sep 2026',
     forecastPages: ['founder-pnl', 'founder-stock'],
     logo: 'logo.svg',                             // per-client fallback (unused while logoSrc is set)
     logoSrc: 'td-logo.png',                       // shared TD logo for now (dashboard/td-logo.png)
