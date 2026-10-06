@@ -37,7 +37,9 @@ var CONFIG = {
     units:          'Unit Sold Actuals',
     orders:         'Number of Orders Actuals',
     forecastTacos:  'Forecast % invested',       // "Forecast % invested (TACOS)" — for the forecast card
-    expectedRoas:   'Expected Total ROAS'        // for the forecast card
+    expectedRoas:   'Expected Total ROAS',       // for the forecast card
+    unitsTarget:    'Units Sold Target',         // rebake input only (target-attainment card) — not rendered by the proxy
+    unitsTargetAlt: 'Unit Sold Target'           // fallback spelling
   },
 
   // Per-market grid TITLE cells (first cell of each grid's header row).
@@ -90,7 +92,10 @@ function doGet(e) {
   } catch (e2) {
     sections = { error: String(e2 && e2.message || e2) };
   }
-  var body = JSON.stringify({ status: status, generated: new Date().toISOString(), dateRanges: payload, sections: sections });
+  // rebakeInputs: raw monthly sheet rows + SKU list for the monthly re-bake agent (NOT consumed by app.js).
+  var rebake = null;
+  try { rebake = buildRebakeInputs_(); } catch (e3) { rebake = { error: String(e3 && e3.message || e3) }; }
+  var body = JSON.stringify({ status: status, generated: new Date().toISOString(), dateRanges: payload, sections: sections, rebakeInputs: rebake });
 
   // Optional JSONP for environments that block CORS: ?callback=fn
   var cb = e && e.parameter && e.parameter.callback;
@@ -99,6 +104,35 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JAVASCRIPT);
   }
   return ContentService.createTextOutput(body).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ============================ REBAKE INPUTS ============================
+// Lets the monthly re-bake routine read exact sheet values (the Drive connector only returns a sampled
+// preview). Index 0 = JANUARY in every monthly array. Pure read-only; app.js ignores this key.
+function buildRebakeInputs_() {
+  var d = extract_();
+  var out = { master: d.master, market: d.market, skuList: [] };
+  var sh = openBook_().getSheetByName('SKU List');
+  if (sh) {
+    var v = sh.getDataRange().getValues(), hdr = -1, col = {};
+    for (var r = 0; r < v.length && hdr < 0; r++) {
+      for (var c = 0; c < v[r].length; c++) if (String(v[r][c]).trim().toUpperCase() === 'CHILDASIN') hdr = r;
+    }
+    if (hdr >= 0) {
+      v[hdr].forEach(function (h, c) { col[String(h).trim().toUpperCase()] = c; });
+      for (var i = hdr + 1; i < v.length; i++) {
+        var asin = String(v[i][col['CHILDASIN']] || '').trim();
+        if (!asin) continue;
+        out.skuList.push({
+          asin: asin,
+          group: String(v[i][col['GROUP NAME']] || '').trim(),
+          de: String(v[i][col['DE']] || '').trim(), fr: String(v[i][col['FR']] || '').trim(),
+          es: String(v[i][col['ES']] || '').trim(), it: String(v[i][col['IT']] || '').trim()
+        });
+      }
+    }
+  }
+  return out;
 }
 
 // ============================ DATA EXTRACTION ============================
