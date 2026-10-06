@@ -1,42 +1,44 @@
 /* Balance 8 — client data (window.DASHBOARD_DATA).
-   ACTUALS: MerchantSpring MCP, pulled 03 Sep 2026 (channel 95589144, seller A3NEIOUENQO9V9),
+   ACTUALS: MerchantSpring MCP, pulled 05 Oct 2026 (channel 95589144, seller A3NEIOUENQO9V9),
    Amazon UK, native GBP. Two brands: "BrainMatter" (nootropic capsules — Cognitive + Calm, live
    since Sep 2025) and "WIRED" (sports nutrition — Creatine + 3 Electrolytes flavours + a Discovery
    Pack — new line, first sale 29 Aug 2026). dataSource.type is 'static' (no project-tracker sheet
    supplied yet — see config.js).
 
-   ⚠️ DATA-QUALITY NOTE — getSalesByPeriod (channel-level monthly backbone) returned incorrect ZERO
-   revenue/units for Sep–Oct 2025 and for Aug 2026 on this store, while its ad-spend/ad-sales/
-   sessions/impressions fields for the SAME months were correct (cross-checked: Aug adSpend £95.64 /
-   adSales £71.64 / impressions 28,786 match exactly between both tools). Nov 2025–Feb 2026 checked
-   out consistent on both tools. So every revenue/units figure below is sourced from getSalesByProduct
-   (per-SKU, summed by hand per month) instead, which reconciled correctly against product lastSold
-   timestamps. Worth a heads-up to MerchantSpring if this recurs at the next re-bake.
+   ✅ Sep 2026 revenue/units CROSS-CHECK: getSalesByPeriod (£1,778.50 / 68 u) AGREES exactly with the
+   summed getSalesByProduct rows (£1,778.50 / 68 u) — MerchantSpring's channel-level revenue lag no longer
+   shows on the most recent month. Aug 2026 also reconciles (getSalesByProduct prior-period £1,032.16 /
+   53 u = getSalesByPeriod). Oct 2025 now also returns real revenue on getSalesByPeriod. Revenue/units
+   source this bake: getSalesByPeriod, confirmed by getSalesByProduct. Keep cross-checking each cycle.
+   Ad spend/ad sales/sessions/Buy Box come from getSalesByPeriod. Aug 2026 ad spend was restated by
+   MerchantSpring from £95.64 to £97.77 (ad sales unchanged £71.64) — all windows use the restated figure.
+   (Per-SKU ad spend sums to £252.39 for Sep vs channel £260.54, and per-SKU ad sales £238.81 vs channel
+   £359.31 — the Advertising tables show an explicit "other / unattributed" row for the remainder.)
 
    ⚠️ REAL FINDING — Balance 8 had ZERO sales Mar–Jul 2026 (5 months, confirmed via per-SKU pull, not
    a reporting gap — every SKU shows totalSales:0 / unitsSold:0 in each of those months individually).
-   Cause is not visible in MerchantSpring data (not a stockout — FBA had stock the whole time per
-   current cover figures). Flagged as a task below; ask the client directly (account health, listing
-   suppression, deliberate pause, or something else).
+   Cause is not visible in MerchantSpring data. Flagged as a task below; ask the client directly.
 
-   ⚠️ REAL FINDING — August 2026 P&L (getStoreProfitAndLoss, accrual basis) shows a NET LOSS despite
-   the revenue recovery: gross sales £959.72, but -£785.82 of that was given away in promotions/
-   discounts, leaving net revenue of only £172.33 against £296.34 of expenses (ad spend £95.64 +
-   selling fees £27.62 + shipping/fulfilment £173.08) — a -£124.01 net loss, -72.0% margin. COGS is
-   reported as £0 (not configured in MerchantSpring), so true profitability is worse than this once
-   real product cost is entered. This is baked into sections.pnl (see the runbook: bake P&L even when
-   gated) but is NOT shown in the UI while hiddenPages includes 'pnl' — flagging here because it's the
-   single most important commercial fact about this account's relaunch month.
+   September 2026 P&L (getStoreProfitAndLoss, accrual basis): gross sales £1,841.95, promotions/discounts
+   -£1,200.38 (heavy discounting continues), other income +£8.51 → net revenue £541.96 vs £496.59 of
+   expenses (ad spend £252.39 + selling fees £29.19 + shipping/fulfilment £215.01) = +£45.37 net profit
+   (8.4% margin) — first profitable month since relaunch (Aug was -£124). COGS is £0 (not configured in
+   MerchantSpring), so true profitability is lower once product cost is entered. Baked into sections.pnl
+   but NOT shown in the UI while hiddenPages includes 'pnl'.
 
-   Monthly actuals used to build every window (GBP, per-SKU pull unless noted "getSalesByPeriod"):
-     Sep 25  £147.00 · 3 u · no ads
-     Oct 25  £746.62 · 17 u · spend £157.46 · adSales £109.97
-     Nov 25  £2,458.70 · 62 u · 881 sess · BuyBox 94.3% · spend £692.70 · adSales £1,304.60 · ACOS 53.1% · TACOS 28.2%  (getSalesByPeriod)
-     Dec 25  £3,261.32 · 91 u · 1,105 sess · BuyBox 98.1% · spend £794.45 · adSales £1,486.80 · ACOS 53.4% · TACOS 24.4%  (getSalesByPeriod)
-     Jan 26  £4,010.72 · 111 u · 1,543 sess · BuyBox 98.4% · spend £1,103.00 · adSales £2,438.13 · ACOS 45.2% · TACOS 27.5%  (getSalesByPeriod)
-     Feb 26  £815.47 · 21 u · 286 sess · BuyBox 97.4% · spend £187.28 · adSales £432.25 · ACOS 43.3% · TACOS 23.0%  (getSalesByPeriod)
+   Monthly actuals used to build every window (GBP; getSalesByPeriod, cross-checked vs per-SKU for Aug/Sep):
+     Sep 25  £147.00 · 3 u · no ads  (outside current 12m window)
+     Oct 25  £746.62 · 17 u · 255 sess · BuyBox 99.4% · spend £157.46 · adSales £109.97
+     Nov 25  £2,458.70 · 62 u · 881 sess · BuyBox 94.3% · spend £692.70 · adSales £1,304.60 · ACOS 53.1% · TACOS 28.2%
+     Dec 25  £3,261.32 · 91 u · 1,105 sess · BuyBox 98.1% · spend £794.45 · adSales £1,486.80 · ACOS 53.4% · TACOS 24.4%
+     Jan 26  £4,010.72 · 111 u · 1,543 sess · BuyBox 98.4% · spend £1,103.00 · adSales £2,438.13 · ACOS 45.2% · TACOS 27.5%
+     Feb 26  £815.47 · 21 u · 286 sess · BuyBox 97.4% · spend £187.28 · adSales £432.25 · ACOS 43.3% · TACOS 23.0%
      Mar–Jul 26  £0 every month, all SKUs — confirmed dead period (see finding above)
-     Aug 26  £1,032.16 · 53 u · 448 sess · BuyBox 92.0% · spend £95.64 · adSales £71.64 · ACOS 133.5% · TACOS 9.3%  (cross-checked both tools)
+     Aug 26  £1,032.16 · 53 u · 448 sess · BuyBox 92.0% · spend £97.77 · adSales £71.64 · ACOS 136.5% · TACOS 9.5%
+     Sep 26  £1,778.50 · 68 u · 1,340 sess · BuyBox 93.8% · spend £260.54 · adSales £359.31 · ACOS 72.5% · TACOS 14.6%
+   12m window Oct 25–Sep 26: £14,103.49 · 423 u · spend £3,293.20 · adSales £6,202.70 · 5,858 sessions.
+   Sep 26 revenue +72% vs Aug has an identifiable cause (not a data error): the 3 WIRED Electrolytes
+   flavours started selling (£1,098, previously £0) plus ad spend up 2.7× (£98 → £261) and sessions 3×.
 
    NOTE: the shared app.js trend-chart axis formatter (moneyK) hardcodes '€' — KPI cards/tables here
    are all in £, but the two trend-chart Y-axes will display '€' until the template adds a currency
@@ -49,87 +51,87 @@
    and the market-spend table shows "No budget set" rather than an invented target. */
 window.DASHBOARD_DATA = {
   dateRanges: {
-  // ===== Last Month = August 2026 =====
+  // ===== Last Month = September 2026 =====
   'may': {
-    label: 'August 2026', shortLabel: 'Aug 2026',
-    rev: '£1,032', revD: '▲ First sales since Feb', revC: 'du', revS: 'vs £0 Jun/Jul · WIRED relaunch',
-    adSales: '£72', adSalesD: '6.9% of revenue', adSalesC: 'df', adSalesS: '£96 spend → £72 ad sales',
-    tacos: '9.3%', tacosD: 'First ad spend since Feb', tacosC: 'df', tacosS: 'Target <15%',
-    roas: '0.75×', roasD: 'Loss-making on spend', roasC: 'dd', roasS: '53 units · ASP £19.47',
-    spend: '£96', spendD: 'First spend since Feb', spendC: 'df', spendS: 'vs £0 Jun/Jul',
-    tacosAd: '9.3%', tacosAdD: 'First ad spend since Feb', tacosAdC: 'df', tacosAdS: 'Target <15%',
-    roasAd: '0.75×', roasAdD: 'ACOS 133.5%', roasAdC: 'dd', roasAdS: '£1,032 revenue',
-    aov: '£19.47', aovD: 'ASP (per unit)', aovC: 'df', aovS: '53 units Aug — no order-count field exposed for Aug, see note',
+    label: 'September 2026', shortLabel: 'Sep 2026',
+    rev: '£1,779', revD: '▲ 72.3% vs Aug', revC: 'du', revS: 'vs £1,032 Aug · WIRED Electrolytes now selling',
+    adSales: '£359', adSalesD: '20.2% of revenue', adSalesC: 'df', adSalesS: '£261 spend → £359 ad sales',
+    tacos: '14.6%', tacosD: '▲ 5.1pp vs Aug (9.5%)', tacosC: 'df', tacosS: 'Target <15%',
+    roas: '1.38×', roasD: '▲ from 0.73× Aug', roasC: 'du', roasS: '68 units · ASP £26.15',
+    spend: '£261', spendD: '▲ 166% vs Aug (£98)', spendC: 'df', spendS: 'vs £98 Aug',
+    tacosAd: '14.6%', tacosAdD: '▲ 5.1pp vs Aug (9.5%)', tacosAdC: 'df', tacosAdS: 'Target <15%',
+    roasAd: '1.38×', roasAdD: 'ACOS 72.5%', roasAdC: 'du', roasAdS: '£1,779 revenue',
+    aov: '£26.15', aovD: 'ASP (per unit)', aovC: 'du', aovS: '68 units Sep — no order-count field exposed, see note',
     mktRows: [
-      ['Amazon UK','gb','—','£96','bb','No budget set','£1,032','bg','9.3%'],
-      ['Total UK',null,'—','£96','bb','No budget set','£1,032','bg','9.3%']
+      ['Amazon UK','gb','—','£261','bb','No budget set','£1,779','bg','14.6%'],
+      ['Total UK',null,'—','£261','bb','No budget set','£1,779','bg','14.6%']
     ],
-    revBreakChart: { max: 1200, yTicks: ['£1.2k','£900','£600','£300','£0'], xLabels: ['Aug'],
-      series: [ { color:'#404935', values:[72] }, { color:'#a7ab90', values:[960] } ],
+    revBreakChart: { max: 2000, yTicks: ['£2k','£1.5k','£1k','£500','£0'], xLabels: ['Sep'],
+      series: [ { color:'#404935', values:[359] }, { color:'#a7ab90', values:[1420] } ],
       legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
-    revChart: { max:1200, yTicks:['£1.2k','£900','£600','£300','£0'], xLabels:['Mar','Apr','May','Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[0,0,0,0,0,1032],main:true,area:true}, {color:'#a7ab90',values:[0,0,0,0,0,96],dash:true} ],
+    revChart: { max:2000, yTicks:['£2k','£1.5k','£1k','£500','£0'], xLabels:['Apr','May','Jun','Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[0,0,0,0,1032,1779],main:true,area:true}, {color:'#a7ab90',values:[0,0,0,0,98,261],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    adChart: { max:1200, yTicks:['£1.2k','£900','£600','£300','£0'], xLabels:['Mar','Apr','May','Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[0,0,0,0,0,1032],main:true,area:true}, {color:'#a7ab90',values:[0,0,0,0,0,96],dash:true} ],
+    adChart: { max:2000, yTicks:['£2k','£1.5k','£1k','£500','£0'], xLabels:['Apr','May','Jun','Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[0,0,0,0,1032,1779],main:true,area:true}, {color:'#a7ab90',values:[0,0,0,0,98,261],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'£72',acos:'133.5%'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'£359',acos:'72.5%'} ] },
   },
-  // ===== Last 3 Months = Jun–Aug 2026 =====
+  // ===== Last 3 Months = Jul–Sep 2026 =====
   '3m': {
-    label: 'Jun–Aug 2026', shortLabel: 'Jun–Aug 2026',
-    rev: '£1,032', revD: '3-month total', revC: 'df', revS: 'Jun £0 · Jul £0 · Aug £1,032',
-    adSales: '£72', adSalesD: '3-month total', adSalesC: 'df', adSalesS: '6.9% of revenue (all in Aug)',
-    tacos: '9.3%', tacosD: '3-month blended', tacosC: 'df', tacosS: 'Target <15%',
-    roas: '0.75×', roasD: '3-month avg', roasC: 'dd', roasS: 'all ad activity in Aug',
-    spend: '£96', spendD: '3-month total', spendC: 'df', spendS: 'Jun £0 · Jul £0 · Aug £96',
-    tacosAd: '9.3%', tacosAdD: '3-month blended', tacosAdC: 'df', tacosAdS: 'Target <15%',
-    roasAd: '0.75×', roasAdD: '3-month avg', roasAdC: 'dd', roasAdS: '£1,032 revenue',
-    aov: '£19.47', aovD: '3-month ASP', aovC: 'df', aovS: '53 units total',
+    label: 'Jul–Sep 2026', shortLabel: 'Jul–Sep 2026',
+    rev: '£2,811', revD: '3-month total', revC: 'df', revS: 'Jul £0 · Aug £1,032 · Sep £1,779',
+    adSales: '£431', adSalesD: '3-month total', adSalesC: 'df', adSalesS: '15.3% of revenue (Aug–Sep)',
+    tacos: '12.7%', tacosD: '3-month blended', tacosC: 'df', tacosS: 'Target <15%',
+    roas: '1.20×', roasD: '3-month avg', roasC: 'df', roasS: 'ad activity Aug–Sep',
+    spend: '£358', spendD: '3-month total', spendC: 'df', spendS: 'Jul £0 · Aug £98 · Sep £261',
+    tacosAd: '12.7%', tacosAdD: '3-month blended', tacosAdC: 'df', tacosAdS: 'Target <15%',
+    roasAd: '1.20×', roasAdD: '3-month avg', roasAdC: 'df', roasAdS: '£2,811 revenue',
+    aov: '£23.23', aovD: '3-month ASP', aovC: 'df', aovS: '121 units total',
     mktRows: [
-      ['Amazon UK','gb','—','£96','bb','No budget set','£1,032','bg','9.3%'],
-      ['Total UK',null,'—','£96','bb','No budget set','£1,032','bg','9.3%']
+      ['Amazon UK','gb','—','£358','bb','No budget set','£2,811','bg','12.7%'],
+      ['Total UK',null,'—','£358','bb','No budget set','£2,811','bg','12.7%']
     ],
-    revBreakChart: { max: 1200, yTicks: ['£1.2k','£900','£600','£300','£0'], xLabels: ['Jun','Jul','Aug'],
-      series: [ { color:'#404935', values:[0,0,72] }, { color:'#a7ab90', values:[0,0,960] } ],
+    revBreakChart: { max: 2000, yTicks: ['£2k','£1.5k','£1k','£500','£0'], xLabels: ['Jul','Aug','Sep'],
+      series: [ { color:'#404935', values:[0,72,359] }, { color:'#a7ab90', values:[0,960,1420] } ],
       legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
-    revChart: { max:1200, yTicks:['£1.2k','£900','£600','£300','£0'], xLabels:['Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[0,0,1032],main:true,area:true}, {color:'#a7ab90',values:[0,0,96],dash:true} ],
+    revChart: { max:2000, yTicks:['£2k','£1.5k','£1k','£500','£0'], xLabels:['Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[0,1032,1779],main:true,area:true}, {color:'#a7ab90',values:[0,98,261],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    adChart: { max:1200, yTicks:['£1.2k','£900','£600','£300','£0'], xLabels:['Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[0,0,1032],main:true,area:true}, {color:'#a7ab90',values:[0,0,96],dash:true} ],
+    adChart: { max:2000, yTicks:['£2k','£1.5k','£1k','£500','£0'], xLabels:['Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[0,1032,1779],main:true,area:true}, {color:'#a7ab90',values:[0,98,261],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'£72',acos:'133.5%'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'£431',acos:'83.1%'} ] },
   },
-  // ===== Last 12 Months = Sep 2025–Aug 2026 =====
+  // ===== Last 12 Months = Oct 2025–Sep 2026 =====
   '12m': {
-    label: 'Sep 2025 – Aug 2026', shortLabel: 'Last 12 Months',
-    rev: '£12,472', revD: '12-month total', revC: 'df', revS: 'Jan 26 peak £4,011 · Mar–Jul 26 £0',
-    adSales: '£5,843', adSalesD: '12-month total', adSalesC: 'df', adSalesS: '46.9% of revenue',
-    tacos: '24.3%', tacosD: '12-month blended', tacosC: 'dd', tacosS: 'Target <15%',
-    roas: '1.93×', roasD: '12-month avg', roasC: 'dd', roasS: '358 units total',
-    spend: '£3,031', spendD: '12-month total', spendC: 'df', spendS: 'concentrated Nov 25–Feb 26',
-    tacosAd: '24.3%', tacosAdD: '12-month blended', tacosAdC: 'dd', tacosAdS: 'Target <15%',
-    roasAd: '1.93×', roasAdD: '12-month avg', roasAdC: 'dd', roasAdS: '£12,472 revenue',
-    aov: '£34.84', aovD: '12-month ASP', aovC: 'df', aovS: '358 units total',
+    label: 'Oct 2025 – Sep 2026', shortLabel: 'Last 12 Months',
+    rev: '£14,103', revD: '12-month total', revC: 'df', revS: 'Jan 26 peak £4,011 · Mar–Jul 26 £0',
+    adSales: '£6,203', adSalesD: '12-month total', adSalesC: 'df', adSalesS: '44.0% of revenue',
+    tacos: '23.4%', tacosD: '12-month blended', tacosC: 'dd', tacosS: 'Target <15%',
+    roas: '1.88×', roasD: '12-month avg', roasC: 'dd', roasS: '423 units total',
+    spend: '£3,293', spendD: '12-month total', spendC: 'df', spendS: 'concentrated Nov 25–Feb 26',
+    tacosAd: '23.4%', tacosAdD: '12-month blended', tacosAdC: 'dd', tacosAdS: 'Target <15%',
+    roasAd: '1.88×', roasAdD: '12-month avg', roasAdC: 'dd', roasAdS: '£14,103 revenue',
+    aov: '£33.34', aovD: '12-month ASP', aovC: 'df', aovS: '423 units total',
     mktRows: [
-      ['Amazon UK','gb','—','£3,031','bb','No budget set','£12,472','ba','24.3%'],
-      ['Total UK',null,'—','£3,031','bb','No budget set','£12,472','ba','24.3%']
+      ['Amazon UK','gb','—','£3,293','bb','No budget set','£14,103','ba','23.4%'],
+      ['Total UK',null,'—','£3,293','bb','No budget set','£14,103','ba','23.4%']
     ],
-    revBreakChart: { max: 4000, yTicks: ['£4k','£3k','£2k','£1k','£0'], xLabels: ['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'],
-      series: [ { color:'#404935', values:[0,110,1305,1487,2438,432,0,0,0,0,0,72] }, { color:'#a7ab90', values:[147,637,1154,1774,1573,383,0,0,0,0,0,960] } ],
+    revBreakChart: { max: 4000, yTicks: ['£4k','£3k','£2k','£1k','£0'], xLabels: ['Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'],
+      series: [ { color:'#404935', values:[110,1305,1487,2438,432,0,0,0,0,0,72,359] }, { color:'#a7ab90', values:[637,1154,1774,1572,383,0,0,0,0,0,960,1420] } ],
       legend: [ { name:'Ad sales', color:'#404935' }, { name:'Organic', color:'#a7ab90' } ] },
-    revChart: { max:4000, yTicks:['£4k','£3k','£2k','£1k','£0'], xLabels:['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[147,747,2459,3261,4011,815,0,0,0,0,0,1032],main:true,area:true}, {color:'#a7ab90',values:[0,157,693,794,1103,187,0,0,0,0,0,96],dash:true} ],
+    revChart: { max:4000, yTicks:['£4k','£3k','£2k','£1k','£0'], xLabels:['Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[747,2459,3261,4011,815,0,0,0,0,0,1032,1779],main:true,area:true}, {color:'#a7ab90',values:[157,693,794,1103,187,0,0,0,0,0,98,261],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    adChart: { max:4000, yTicks:['£4k','£3k','£2k','£1k','£0'], xLabels:['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'], xHighlight:'#404935',
-      series:[ {color:'#404935',values:[147,747,2459,3261,4011,815,0,0,0,0,0,1032],main:true,area:true}, {color:'#a7ab90',values:[0,157,693,794,1103,187,0,0,0,0,0,96],dash:true} ],
+    adChart: { max:4000, yTicks:['£4k','£3k','£2k','£1k','£0'], xLabels:['Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'], xHighlight:'#404935',
+      series:[ {color:'#404935',values:[747,2459,3261,4011,815,0,0,0,0,0,1032,1779],main:true,area:true}, {color:'#a7ab90',values:[157,693,794,1103,187,0,0,0,0,0,98,261],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
-    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'£5.8k',acos:'51.9%'} ] },
+    campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'£6.2k',acos:'53.1%'} ] },
   },
   },
 
-  // ---- Deep-page content (rendered once at boot; August 2026 snapshot) ----
+  // ---- Deep-page content (rendered once at boot; September 2026 snapshot) ----
   sections: {
     overview: {
       // Placeholder scope board — no project-tracker Google Sheet supplied yet for Balance 8 (see
@@ -137,256 +139,231 @@ window.DASHBOARD_DATA = {
       // client-side tracker. Replace once tools/balance8-sheet-proxy.gs is deployed.
       tasksSpec: { badge: '4 in progress', items: [
         {text:'Confirm root cause of Mar–Jul 2026 sales gap', sub:'Overview · Upcoming'},
-        {text:'Investigate BrainMatter Cognitive — 0% ad conversion', sub:'Advertising · Upcoming'},
-        {text:'Stock-up WIRED Creatine (FBA) — ~41 days cover', sub:'Supply · Upcoming'},
-        {text:'Launch Sponsored Products on WIRED Electrolytes (3 flavours, no ads yet)', sub:'Advertising · Upcoming', active:false}
+        {text:'Review promotion depth — £1,200 of discounts on £1,842 gross sales in Sep', sub:'Pricing · Upcoming'},
+        {text:'Stock-up WIRED Electrolytes Berry Fusion (FBA) — 41 units, 31 sold in Sep', sub:'Supply · Upcoming'},
+        {text:'Fix BrainMatter Calm ads — ACOS 111% in Sep', sub:'Advertising · Upcoming', active:false}
       ] },
       flagsSpec: { badge: '3 in progress', items: [
         {level:'amber', title:'Mar–Jul 2026 sales gap — 5 months at £0', sub:'Confirmed via per-SKU pull, not a reporting gap · cause unclear'},
-        {level:'red', title:'August P&L — net loss despite revenue recovery', sub:'-£124 net (-72.0% margin) · £786 given away in promotions vs £960 gross sales'},
-        {level:'amber', title:'WIRED Creatine — low FBA cover', sub:'B0HD7ZKMZZ · ~41 days · 30 units sold in Aug alone'}
+        {level:'amber', title:'Heavy promotions — 65% of gross sales discounted', sub:'Sep net profit +£45 (8.4% margin) before COGS · £1,200 promotions vs £1,842 gross'},
+        {level:'amber', title:'WIRED Berry Fusion — fast seller, thin stock', sub:'B0HD7RFZN4 · 41 units · 31 sold in Sep (~40 days at Sep rate)'}
       ] },
       completedSpec: { badge: '3 completed', items: [
-        {text:'WIRED sports-nutrition line live on Amazon UK', sub:'Completed · Aug 2026 — first sales, mostly organic'},
-        {text:'BrainMatter Cognitive + Calm — residual sales maintained', sub:'Completed'},
+        {text:'WIRED Electrolytes flavours now selling — £1,098 in Sep', sub:'Completed · Sep 2026 — Berry Fusion £975, Melon Ice + Citrus Lime £123'},
+        {text:'Sep revenue £1,779 — up 72% on Aug', sub:'Completed · Sep 2026'},
         {text:'7 ASINs live, 0 suppressed / 0 OOS', sub:'Completed'}
       ] },
       // No per-ASIN Buy Box field exposed by the MerchantSpring product report — each SKU shown at
-      // ~the Aug 2026 channel rate (92.0%), same limitation noted in Abimax's data.js.
+      // ~the Sep 2026 channel rate (93.8%), same limitation noted in Abimax's data.js.
       buyBox: [
-        {label:'BrainMatter Cognitive', pct:92, color:'green'},
-        {label:'BrainMatter Calm', pct:92, color:'green'},
-        {label:'WIRED Creatine', pct:92, color:'green'},
-        {label:'WIRED Discovery Pack', pct:92, color:'green'}
+        {label:'BrainMatter Cognitive', pct:94, color:'green'},
+        {label:'BrainMatter Calm', pct:94, color:'green'},
+        {label:'WIRED Electrolytes', pct:94, color:'green'},
+        {label:'WIRED Creatine + Discovery Pack', pct:94, color:'green'}
       ],
-      // Headline above the bars was dead placeholder HTML (index.html hardcodes AMACX's own "82%
-      // ▼1.5pp" — app.js only overwrites it for clients with the fuller buyBoxByPeriod structure).
-      // No MoM delta shown: the prior comparable month is Feb 2026 (97.4%) — Mar–Jul was a £0 sales
-      // gap (see flagsSpec above), so a "vs last month" delta across that gap would be misleading.
-      buyBoxHeadline: { pctTxt:'92.0%', delta:'', deltaCls:'df' },
-      cvr: { val:'11.8%', note:'August 2026 · 448 sessions', sub:'UK · session conversion' },
-      // Real FBA stock snapshot (MerchantSpring product report, qty + days-cover per ASIN, 03 Sep
-      // 2026). 1 SKU on stock-up watch — WIRED Creatine sold 30 of its 41 on-hand units in its first
-      // full month, so cover is short (~41 days) despite being brand-new stock.
+      buyBoxHeadline: { pctTxt:'93.8%', delta:'▲ 1.8pp vs Aug', deltaCls:'du' },
+      cvr: { val:'5.1%', note:'September 2026 · 1,340 sessions', sub:'UK · session conversion' },
+      // Real FBA stock snapshot (MerchantSpring product report, qty + days-cover per ASIN, 05 Oct
+      // 2026). 1 SKU on stock-up watch — Berry Fusion sold 31 of its 72 units in Sep, 41 left. MerchantSpring's
+      // daysCover shows ~112 days (blended velocity); at the Sep sell rate it is ~40 days.
       stockWarn: { badge:'1 stock-up · 0 OOS', items:[
-        {level:'amber', title:'WIRED Creatine — stock-up soon', sub:'B0HD7ZKMZZ · ~41 days cover · 41 units · sold 30 in Aug'}
+        {level:'amber', title:'WIRED Berry Fusion — stock-up soon', sub:'B0HD7RFZN4 · 41 units · sold 31 in Sep (~40 days at Sep rate)'}
       ] }
     },
     // P&L is GATED behind the Executive-Subscription paywall for Balance 8 per brief ("no P&L for
     // now") — this real statement stays baked so it renders instantly the day the client wants it
-    // switched on. Financial basis from getStoreProfitAndLoss (August 2026, ACCRUAL basis — chosen
-    // to reconcile against the order-date sales figures used everywhere else on this dashboard):
-    // gross sales £959.72 · promotions/discounts -£785.82 · other income +£20.88 · net revenue
-    // £172.33 · ad spend £95.64 · selling fees £27.62 · shipping/fulfilment £173.08 · COGS £0 (NOT
-    // configured in MerchantSpring — real profitability is worse than shown once product cost is
-    // entered) · net loss -£124.01 (-72.0% margin). This is a genuine finding, not a modelling
-    // artefact: heavy promotional discounting in the WIRED relaunch month wiped out the revenue
-    // recovery and then some.
+    // switched on. Financial basis from getStoreProfitAndLoss (September 2026, ACCRUAL basis):
+    // gross sales £1,841.95 · promotions/discounts -£1,200.38 · other income +£8.51 · net revenue
+    // £541.96 · ad spend £252.39 (console) · selling fees £29.19 · shipping/fulfilment £215.01 · COGS
+    // £0 (NOT configured in MerchantSpring) · net profit +£45.37 (8.4% margin).
     pnl: {
       statement: {
-        fixedLabel: 'August 2026 (1–31) · financial basis (MerchantSpring, accrual)',
-        summary: [ {val:'£172',lbl:'Net Revenue',color:'brand'}, {val:'£296',lbl:'Total Costs',color:'red'}, {val:'-£124',lbl:'Net Profit',color:'red'} ],
-        margin: { pct:'-72.0%', pctColor:'red', note:'August 2026 (31-day) · financial basis (MerchantSpring, accrual) · UK channel', rows:[
-          {lbl:'Net Revenue', val:'£172'},
-          {lbl:'Advertising', val:'-£96', color:'red'},
-          {lbl:'Selling Fees', val:'-£28', color:'red'},
-          {lbl:'Shipping & Fulfilment', val:'-£173', color:'red'},
+        fixedLabel: 'September 2026 (1–30) · financial basis (MerchantSpring, accrual)',
+        summary: [ {val:'£542',lbl:'Net Revenue',color:'brand'}, {val:'£497',lbl:'Total Costs',color:'red'}, {val:'£45',lbl:'Net Profit',color:'green'} ],
+        margin: { pct:'8.4%', pctColor:'green', note:'September 2026 (30-day) · financial basis (MerchantSpring, accrual) · UK channel', rows:[
+          {lbl:'Net Revenue', val:'£542'},
+          {lbl:'Advertising', val:'-£252', color:'red'},
+          {lbl:'Selling Fees', val:'-£29', color:'red'},
+          {lbl:'Shipping & Fulfilment', val:'-£215', color:'red'},
           {lbl:'COGS (not yet configured)', val:'£0', color:'red'},
-          {lbl:'Other Income', val:'+£21', color:'green'},
-          {lbl:'Net Profit', val:'-£124', color:'red', strong:true}
+          {lbl:'Other Income', val:'+£9', color:'green'},
+          {lbl:'Net Profit', val:'£45', color:'green', strong:true}
         ] },
         mkt: [
-          {name:'United Kingdom',flag:'gb',revenue:'£172',adspend:'£96',net:'-£124',netColor:'red',margin:'-72.0%',marginCls:'br'}
+          {name:'United Kingdom',flag:'gb',revenue:'£542',adspend:'£252',net:'£45',netColor:'green',margin:'8.4%',marginCls:'bg'}
         ],
         groups:[
           { header:'Income', rows:[
-            {lbl:'Product sales (gross)', amount:'£960', pct:'557.0%', unit:'£18.11'},
-            {lbl:'Promotions & discounts', amount:'-£786', pct:'-456.0%', unit:'-£14.83'},
-            {lbl:'Other income', amount:'£21', pct:'12.2%', unit:'£0.40'},
-            {lbl:'Net revenue', amount:'£172', pct:'100.0%', unit:'£3.25', total:true}
+            {lbl:'Product sales (gross)', amount:'£1,842', pct:'339.9%', unit:'£27.09'},
+            {lbl:'Promotions & discounts', amount:'-£1,200', pct:'-221.5%', unit:'-£17.65'},
+            {lbl:'Other income', amount:'£9', pct:'1.6%', unit:'£0.13'},
+            {lbl:'Net revenue', amount:'£542', pct:'100.0%', unit:'£7.97', total:true}
           ] },
           { header:'Expenses', rows:[
-            {lbl:'Advertising', amount:'£96', pct:'55.7%', unit:'£1.81'},
-            {lbl:'Selling fees', amount:'£28', pct:'16.4%', unit:'£0.53'},
-            {lbl:'Shipping & fulfilment fees', amount:'£173', pct:'100.4%', unit:'£3.26'},
+            {lbl:'Advertising', amount:'£252', pct:'46.6%', unit:'£3.71'},
+            {lbl:'Selling fees', amount:'£29', pct:'5.4%', unit:'£0.43'},
+            {lbl:'Shipping & fulfilment fees', amount:'£215', pct:'39.7%', unit:'£3.16'},
             {lbl:'Cost of goods (not configured)', amount:'£0', pct:'0.0%', unit:'£0.00'},
-            {lbl:'Total expenses', amount:'£296', pct:'171.9%', unit:'£5.59', total:true}
+            {lbl:'Total expenses', amount:'£497', pct:'91.6%', unit:'£7.30', total:true}
           ] },
           { header:'Profit', rows:[
-            {lbl:'PROFIT', amount:'-£124', pct:'-72.0%', unit:'-£2.34', total:true, profit:true},
-            {lbl:'Profit %', amount:'-72.0%', accent:'red'}
+            {lbl:'PROFIT', amount:'£45', pct:'8.4%', unit:'£0.67', total:true, profit:true},
+            {lbl:'Profit %', amount:'8.4%', accent:'green'}
           ] },
           { header:'Metrics', rows:[
-            {lbl:'TACOS %', amount:'9.3%'},
-            {lbl:'Ad spend (console)', amount:'£96'}
+            {lbl:'TACOS %', amount:'14.6%'},
+            {lbl:'Ad spend (console)', amount:'£252'}
           ] }
         ]
       }
     },
     advertising: {
-      // Real August 2026 ad totals (MerchantSpring channel report, UK channel, GBP). ACOS/ROAS/TACOS
-      // are channel-attributed (spend £95.64 · ad sales £71.64 → ACOS 133.5% · ROAS 0.75×).
-      // ⚠️ ROAS below 1× — the only ad spend this relaunch month is currently loss-making on its own
-      // terms (before even counting selling/shipping/COGS). Meanwhile WIRED Creatine and Discovery
-      // Pack — 88% of Aug revenue — sold with ZERO ad spend (fully organic).
-      metrics: [
-        {lbl:'Total Spend',  val:'£96', id:'a-spend'},
-        {lbl:'Ad Sales',     val:'£72', color:'brand'},
-        {lbl:'ACOS',         val:'133.5%',  color:'red', id:'a-tacos'},
-        {lbl:'ROAS',         val:'0.75×',  color:'red', id:'a-roas'},
-        {lbl:'Impressions',  val:'28.8K'},
-        {lbl:'Avg. CPC',     val:'£1.20'}
-      ],
-      // No budget sheet for Balance 8 yet — budgets/forecast cards omitted rather than inventing a
-      // target (app.js guards both as optional). Add tools/balance8-sheet-proxy.gs once a tracker
-      // sheet with a budget is supplied.
-      // Per-ASIN Sponsored Products spend (August 2026) — REAL per-SKU actuals from the
-      // MerchantSpring product report, ad-sales are the REAL per-SKU attributed figures (not
-      // allocated — MerchantSpring exposed genuine per-product ad-sales this pull, unlike the
-      // channel-only attribution noted in Abimax's data.js). Creatine + Discovery Pack carried no ad
-      // spend this month (0 shown = no ads run, not zero performance).
+      // Sep 2026 channel ad totals (MerchantSpring channel report, UK, GBP): spend £260.54 · ad sales
+      // £359.31 → ACOS 72.5% · ROAS 1.38×. Per-SKU rows below are the real MerchantSpring per-product
+      // figures (spend £252.39 / sales £238.81) plus an explicit "other / unattributed" row carrying the
+      // remainder so the table reconciles to the headline (per-product attribution is narrower than the
+      // channel-level ad-sales figure). WIRED Creatine/Discovery/Berry ran small spend with £0 attributed.
       //
-      // campaignsByPeriod: the Active Campaigns table used to be a single static array shown under
-      // every date-range selection — so picking "Last 12 Months" showed August's 2 rows (£66+£29
-      // spend) sitting right below a pie chart correctly reading the real 12-month total (£3,031
-      // spend / £5,843 sales). Fixed by making this table period-aware (app.js now checks
-      // campaignsByPeriod[currentPeriod] first, same idiom as kpisByPeriod/groupsByPeriod elsewhere).
-      //   may / 3m: real per-SKU breakdown (Jun+Jul had £0 ad spend, so the 3-month total IS August's).
-      //   12m: MerchantSpring wasn't pulled at per-SKU granularity for Nov 25–Feb 26 (only channel-
-      //   level spend/sales for those months) — a per-SKU split for the full 12 months would be
-      //   invented, so this is one aggregate "All Sponsored Products" row using the real 12-month
-      //   totals (reconciles exactly with the campaignMix pie above it: £5.8k sales, 51.9% ACOS). CPC
-      //   is left '—' rather than backed into from a rounded CTR.
+      // campaignsByPeriod: period-aware (app.js checks campaignsByPeriod[currentPeriod] first).
+      //   may: Sep per-SKU. 3m: Aug+Sep per-SKU summed (Jul had £0 ad spend). 12m: one aggregate row —
+      //   per-SKU ad detail was not pulled for Oct 25–Feb 26, so a split would be invented.
+      metrics: [
+        {lbl:'Total Spend',  val:'£261', id:'a-spend'},
+        {lbl:'Ad Sales',     val:'£359', color:'brand'},
+        {lbl:'ACOS',         val:'72.5%',  color:'red', id:'a-tacos'},
+        {lbl:'ROAS',         val:'1.38×',  color:'brand', id:'a-roas'},
+        {lbl:'Impressions',  val:'50.0K'},
+        {lbl:'Avg. CPC',     val:'£1.35'}
+      ],
       campaigns: [
-        {name:'UK · BrainMatter Calm — SP',type:'Sponsored Products',spend:'£66',sales:'£72',acos:'92.5%',acosCls:'br',roas:'1.08×',cpc:'£1.35',status:'Active',statusCls:'bg'},
-        {name:'UK · BrainMatter Cognitive — SP',type:'Sponsored Products',spend:'£29',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£0.95',status:'Active',statusCls:'bg'}
+        {name:'UK · BrainMatter Cognitive — SP',type:'Sponsored Products',spend:'£109',sales:'£147',acos:'74.0%',acosCls:'ba',roas:'1.35×',cpc:'£1.65',status:'Active',statusCls:'bg'},
+        {name:'UK · BrainMatter Calm — SP',type:'Sponsored Products',spend:'£102',sales:'£92',acos:'111.2%',acosCls:'br',roas:'0.90×',cpc:'£1.17',status:'Active',statusCls:'bg'},
+        {name:'UK · WIRED Creatine — SP',type:'Sponsored Products',spend:'£23',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£1.33',status:'Active',statusCls:'bg'},
+        {name:'UK · WIRED Berry Fusion — SP',type:'Sponsored Products',spend:'£12',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£1.08',status:'Active',statusCls:'bg'},
+        {name:'UK · WIRED Discovery Pack — SP',type:'Sponsored Products',spend:'£7',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£1.00',status:'Active',statusCls:'bg'},
+        {name:'UK · Other / unattributed (channel remainder)',type:'Sponsored Products',spend:'£8',sales:'£121',acos:'6.8%',acosCls:'bg',roas:'14.8×',cpc:'—',status:'Active',statusCls:'bg'}
       ],
       campaignsByPeriod: {
         may: [
-          {name:'UK · BrainMatter Calm — SP',type:'Sponsored Products',spend:'£66',sales:'£72',acos:'92.5%',acosCls:'br',roas:'1.08×',cpc:'£1.35',status:'Active',statusCls:'bg'},
-          {name:'UK · BrainMatter Cognitive — SP',type:'Sponsored Products',spend:'£29',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£0.95',status:'Active',statusCls:'bg'}
+          {name:'UK · BrainMatter Cognitive — SP',type:'Sponsored Products',spend:'£109',sales:'£147',acos:'74.0%',acosCls:'ba',roas:'1.35×',cpc:'£1.65',status:'Active',statusCls:'bg'},
+          {name:'UK · BrainMatter Calm — SP',type:'Sponsored Products',spend:'£102',sales:'£92',acos:'111.2%',acosCls:'br',roas:'0.90×',cpc:'£1.17',status:'Active',statusCls:'bg'},
+          {name:'UK · WIRED Creatine — SP',type:'Sponsored Products',spend:'£23',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£1.33',status:'Active',statusCls:'bg'},
+          {name:'UK · WIRED Berry Fusion — SP',type:'Sponsored Products',spend:'£12',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£1.08',status:'Active',statusCls:'bg'},
+          {name:'UK · WIRED Discovery Pack — SP',type:'Sponsored Products',spend:'£7',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£1.00',status:'Active',statusCls:'bg'},
+          {name:'UK · Other / unattributed (channel remainder)',type:'Sponsored Products',spend:'£8',sales:'£121',acos:'6.8%',acosCls:'bg',roas:'14.8×',cpc:'—',status:'Active',statusCls:'bg'}
         ],
         '3m': [
-          {name:'UK · BrainMatter Calm — SP',type:'Sponsored Products',spend:'£66',sales:'£72',acos:'92.5%',acosCls:'br',roas:'1.08×',cpc:'£1.35',status:'Active',statusCls:'bg'},
-          {name:'UK · BrainMatter Cognitive — SP',type:'Sponsored Products',spend:'£29',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£0.95',status:'Active',statusCls:'bg'}
+          {name:'UK · BrainMatter Calm — SP',type:'Sponsored Products',spend:'£168',sales:'£164',acos:'103.0%',acosCls:'br',roas:'0.97×',cpc:'£1.24',status:'Active',statusCls:'bg'},
+          {name:'UK · BrainMatter Cognitive — SP',type:'Sponsored Products',spend:'£138',sales:'£147',acos:'94.0%',acosCls:'br',roas:'1.06×',cpc:'£1.42',status:'Active',statusCls:'bg'},
+          {name:'UK · WIRED Creatine — SP',type:'Sponsored Products',spend:'£23',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£1.33',status:'Active',statusCls:'bg'},
+          {name:'UK · WIRED Berry Fusion — SP',type:'Sponsored Products',spend:'£12',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£1.08',status:'Active',statusCls:'bg'},
+          {name:'UK · WIRED Discovery Pack — SP',type:'Sponsored Products',spend:'£7',sales:'£0',acos:'—',acosCls:'br',roas:'0.0×',cpc:'£1.00',status:'Active',statusCls:'bg'},
+          {name:'UK · Other / unattributed (channel remainder)',type:'Sponsored Products',spend:'£10',sales:'£121',acos:'8.5%',acosCls:'bg',roas:'11.7×',cpc:'—',status:'Active',statusCls:'bg'}
         ],
         '12m': [
-          {name:'UK · All Sponsored Products (12-month)',type:'Sponsored Products',spend:'£3,031',sales:'£5,843',acos:'51.9%',acosCls:'ba',roas:'1.93×',cpc:'—',status:'Active',statusCls:'bg'}
+          {name:'UK · All Sponsored Products (12-month)',type:'Sponsored Products',spend:'£3,293',sales:'£6,203',acos:'53.1%',acosCls:'ba',roas:'1.88×',cpc:'—',status:'Active',statusCls:'bg'}
         ]
       }
     },
     inventory: {
       // Real FBA stock snapshot from the MerchantSpring product report (qty + days-cover per ASIN,
-      // 03 Sep 2026). All 7 selling ASINs are in stock, 0 OOS. WIRED Creatine is the one stock-up
-      // watch item — new stock, but sold fast (30 of 41 units in its first month). The 3 WIRED
-      // Electrolytes flavours (Melon Ice / Berry Fusion / Citrus Lime) are live but have not sold yet
-      // — daysCover is not calculable with zero sales velocity. No dispatch-rate source → the
-      // Dispatch card auto-hides (app.js).
+      // 05 Oct 2026). All 7 selling ASINs are in stock, 0 OOS. WIRED Berry Fusion is the one stock-up
+      // watch item — sold 31 of 72 units in Sep (MerchantSpring daysCover ~112 days; ~40 days at the Sep
+      // sell rate). No dispatch-rate source → the Dispatch card auto-hides (app.js).
       kpis: [
         {bar:'green',lbl:'In Stock',val:'7',dCls:'du',d:'ASINs · 0 OOS',s:'all sold listings live'},
-        {bar:'#404935',lbl:'Units on Hand',val:'531',dCls:'df',d:'FBA total',s:'across 7 SKUs'},
-        {bar:'amber',lbl:'Stock-up Watch',val:'1',dCls:'dd',d:'WIRED Creatine',s:'~41 days cover'},
-        {bar:'green',lbl:'Buy Box (Aug)',val:'92.0%',dCls:'df',d:'featured-offer %',s:'channel rate'}
+        {bar:'#404935',lbl:'Units on Hand',val:'461',dCls:'df',d:'FBA total',s:'across 7 SKUs'},
+        {bar:'amber',lbl:'Stock-up Watch',val:'1',dCls:'dd',d:'WIRED Berry Fusion',s:'~40 days at Sep rate'},
+        {bar:'green',lbl:'Buy Box (Sep)',val:'93.8%',dCls:'du',d:'▲ 1.8pp vs Aug',s:'channel rate'}
       ],
       stock: [
-        {dot:'da',name:'WIRED Pure Creatine Monohydrate',note:'B0HD7ZKMZZ · UK · sold 30 in first month',units:'41 units',unitsColor:'amber',days:'~41 days'},
-        {dot:'dg',name:'WIRED Electrolytes Discovery Pack',note:'B0HD7XTQ3H · UK',units:'75 units',days:'~102 days'},
-        {dot:'dg',name:'BrainMatter Cognitive',note:'B0DS8V2T97 · UK · slow mover, residual sales',units:'101 units',days:'~1,461 days'},
-        {dot:'dg',name:'BrainMatter Calm',note:'B0DS8X7RH8 · UK · slow mover, residual sales',units:'98 units',days:'~1,461 days'},
-        {dot:'dg',name:'WIRED Electrolytes — Melon Ice',note:'B0HD7JBLVY · UK · new, no sales yet',units:'72 units',days:'n/a'},
-        {dot:'dg',name:'WIRED Electrolytes — Berry Fusion',note:'B0HD7RFZN4 · UK · new, no sales yet',units:'72 units',days:'n/a'},
-        {dot:'dg',name:'WIRED Electrolytes — Citrus Lime',note:'B0HD7WP7VT · UK · new, no sales yet',units:'72 units',days:'n/a'}
+        {dot:'da',name:'WIRED Electrolytes — Berry Fusion',note:'B0HD7RFZN4 · UK · sold 31 in Sep',units:'41 units',unitsColor:'amber',days:'~112 days (MS) · ~40 at Sep rate'},
+        {dot:'dg',name:'WIRED Pure Creatine Monohydrate',note:'B0HD7ZKMZZ · UK · sold 3 in Sep',units:'39 units',days:'~585 days'},
+        {dot:'dg',name:'WIRED Electrolytes Discovery Pack',note:'B0HD7XTQ3H · UK',units:'58 units',days:'~249 days'},
+        {dot:'dg',name:'BrainMatter Cognitive',note:'B0DS8V2T97 · UK',units:'92 units',days:'~307 days'},
+        {dot:'dg',name:'BrainMatter Calm',note:'B0DS8X7RH8 · UK',units:'91 units',days:'~390 days'},
+        {dot:'dg',name:'WIRED Electrolytes — Melon Ice',note:'B0HD7JBLVY · UK · first sales in Sep',units:'70 units',days:'~1,050 days'},
+        {dot:'dg',name:'WIRED Electrolytes — Citrus Lime',note:'B0HD7WP7VT · UK · first sales in Sep',units:'70 units',days:'~1,050 days'}
       ],
       restock: []
     },
     products: {
-      // KPIs + by-market table + groups below are the static (May-period) fallback — same reason and
-      // same fix as sections.advertising.campaignsByPeriod above: without a *ByPeriod variant these
-      // stayed pinned to August's numbers even under "Last 12 Months" (revenue would have shown
-      // £1,032/53 units instead of the real £12,472/358). kpisByPeriod/tableByPeriod/groupsByPeriod
-      // below are the fields app.js already checks first for every client (AMACX uses them) — Balance
-      // 8 just hadn't populated them yet.
+      // KPIs + by-market table + groups below are the static (May-period) fallback; the *ByPeriod
+      // variants are what app.js reads first (see advertising.campaignsByPeriod).
       kpis: [
-        {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in Aug',s:'7 live · 3 Electrolytes flavours no Aug sales'},
-        {bar:'var(--green)',lbl:'Top Product Rev.',val:'£674',dCls:'du',d:'WIRED Creatine',s:'65% of Aug sales'},
-        {bar:'var(--blue)',lbl:'Units (Aug)',val:'53',dCls:'du',d:'▲ from 0 (Jun/Jul)',s:'relaunch month'},
-        {bar:'var(--amber)',lbl:'ASP',val:'£19.47',dCls:'df',d:'per unit',s:'no order-count field exposed for Aug'}
+        {bar:'#404935',lbl:'Active SKUs',val:'7',dCls:'du',d:'sold in Sep',s:'all 7 live SKUs sold (3 Electrolytes flavours new)'},
+        {bar:'var(--green)',lbl:'Top Product Rev.',val:'£975',dCls:'du',d:'WIRED Berry Fusion',s:'55% of Sep sales'},
+        {bar:'var(--blue)',lbl:'Units (Sep)',val:'68',dCls:'du',d:'▲ from 53 (Aug)',s:'second month since relaunch'},
+        {bar:'var(--amber)',lbl:'ASP',val:'£26.15',dCls:'du',d:'per unit',s:'no order-count field exposed'}
       ],
       kpisByPeriod: {
         may: { all: [
-          {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in Aug',s:'7 live · 3 Electrolytes flavours no Aug sales'},
-          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£674',dCls:'du',d:'WIRED Creatine',s:'65% of Aug sales'},
-          {bar:'var(--blue)',lbl:'Units (Aug)',val:'53',dCls:'du',d:'▲ from 0 (Jun/Jul)',s:'relaunch month'},
-          {bar:'var(--amber)',lbl:'ASP',val:'£19.47',dCls:'df',d:'per unit',s:'no order-count field exposed for Aug'}
+          {bar:'#404935',lbl:'Active SKUs',val:'7',dCls:'du',d:'sold in Sep',s:'all 7 live SKUs sold (3 Electrolytes flavours new)'},
+          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£975',dCls:'du',d:'WIRED Berry Fusion',s:'55% of Sep sales'},
+          {bar:'var(--blue)',lbl:'Units (Sep)',val:'68',dCls:'du',d:'▲ from 53 (Aug)',s:'second month since relaunch'},
+          {bar:'var(--amber)',lbl:'ASP',val:'£26.15',dCls:'du',d:'per unit',s:'no order-count field exposed'}
         ] },
         '3m': { all: [
-          {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in Jun–Aug',s:'7 live · all Aug, Jun/Jul £0'},
-          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£674',dCls:'du',d:'WIRED Creatine',s:'65% of 3-month sales'},
-          {bar:'var(--blue)',lbl:'Units (3m)',val:'53',dCls:'du',d:'3-month total',s:'Jun £0 · Jul £0 · Aug 53'},
-          {bar:'var(--amber)',lbl:'ASP',val:'£19.47',dCls:'df',d:'3-month ASP',s:'per unit'}
+          {bar:'#404935',lbl:'Active SKUs',val:'7',dCls:'df',d:'sold in Jul–Sep',s:'Jul £0 · Aug 4 SKUs · Sep 7 SKUs'},
+          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£976',dCls:'du',d:'WIRED Berry Fusion',s:'35% of 3-month sales'},
+          {bar:'var(--blue)',lbl:'Units (3m)',val:'121',dCls:'du',d:'3-month total',s:'Jul 0 · Aug 53 · Sep 68'},
+          {bar:'var(--amber)',lbl:'ASP',val:'£23.23',dCls:'df',d:'3-month ASP',s:'per unit'}
         ] },
-        // 12-month figures are real (see dateRanges.12m + top-of-file monthly actuals) but only
-        // reconcile at PRODUCT-FAMILY level, not per-SKU: MerchantSpring wasn't pulled at per-SKU
-        // granularity for Nov 25–Feb 26 (only channel totals), and WIRED didn't exist before Aug 2026,
-        // so "BrainMatter combined" for the 12-month total is exact (12m total minus WIRED's Aug
-        // total), while a Cognitive-vs-Calm split for Nov–Feb would be invented.
+        // 12-month figures reconcile at PRODUCT-FAMILY level, not per-SKU: per-SKU data was not pulled
+        // for Oct 25–Feb 26 (channel totals only), and WIRED did not exist before Aug 2026, so
+        // "BrainMatter combined" = 12m total minus WIRED's Aug+Sep total (exact).
         '12m': { all: [
-          {bar:'#404935',lbl:'Active SKUs',val:'4',dCls:'df',d:'sold in last 12mo',s:'7 live · 3 Electrolytes flavours never sold'},
-          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£11,607',dCls:'du',d:'BrainMatter (combined)',s:'93% of 12-month sales'},
-          {bar:'var(--blue)',lbl:'Units (12m)',val:'358',dCls:'df',d:'12-month total',s:'Jan 26 peak month'},
-          {bar:'var(--amber)',lbl:'ASP',val:'£34.84',dCls:'df',d:'12-month ASP',s:'358 units total'}
+          {bar:'#404935',lbl:'Active SKUs',val:'7',dCls:'df',d:'sold in last 12mo',s:'all 7 live SKUs have sold'},
+          {bar:'var(--green)',lbl:'Top Product Rev.',val:'£11,895',dCls:'du',d:'BrainMatter (combined)',s:'84% of 12-month sales'},
+          {bar:'var(--blue)',lbl:'Units (12m)',val:'423',dCls:'df',d:'12-month total',s:'Jan 26 peak month'},
+          {bar:'var(--amber)',lbl:'ASP',val:'£33.34',dCls:'df',d:'12-month ASP',s:'423 units total'}
         ] }
       },
       table: [
-        {name:'United Kingdom',flag:'gb',revenue:'£1,032',units:'53',orders:'~53*',cvr:'11.8%',cvrCls:'bg',aov:'£19.47'}
+        {name:'United Kingdom',flag:'gb',revenue:'£1,779',units:'68',orders:'~68*',cvr:'5.1%',cvrCls:'ba',aov:'£26.15'}
       ],
       tableByPeriod: {
-        may: [ {name:'United Kingdom',flag:'gb',revenue:'£1,032',units:'53',orders:'~53*',cvr:'11.8%',cvrCls:'bg',aov:'£19.47'} ],
-        '3m': [ {name:'United Kingdom',flag:'gb',revenue:'£1,032',units:'53',orders:'~53*',cvr:'11.8%',cvrCls:'bg',aov:'£19.47'} ],
-        // Sessions summed across all 12 months (222 Sep–Oct + 881 Nov + 1,105 Dec + 1,543 Jan + 286
-        // Feb + 0 Mar–Jul + 448 Aug = 4,485); CVR = units/sessions (358/4,485), the same relationship
-        // MerchantSpring's own sessionConversions field showed for August (53/448 = 11.8%, matches).
-        '12m': [ {name:'United Kingdom',flag:'gb',revenue:'£12,472',units:'358',orders:'~358*',cvr:'8.0%',cvrCls:'ba',aov:'£34.84'} ]
+        may: [ {name:'United Kingdom',flag:'gb',revenue:'£1,779',units:'68',orders:'~68*',cvr:'5.1%',cvrCls:'ba',aov:'£26.15'} ],
+        '3m': [ {name:'United Kingdom',flag:'gb',revenue:'£2,811',units:'121',orders:'~121*',cvr:'6.8%',cvrCls:'ba',aov:'£23.23'} ],
+        // Sessions summed across the 12 months (255 Oct + 881 Nov + 1,105 Dec + 1,543 Jan + 286 Feb +
+        // 0 Mar–Jul + 448 Aug + 1,340 Sep = 5,858); CVR = units/sessions (423/5,858).
+        '12m': [ {name:'United Kingdom',flag:'gb',revenue:'£14,103',units:'423',orders:'~423*',cvr:'7.2%',cvrCls:'ba',aov:'£33.34'} ]
       },
-      // August 2026 sales by product (real MerchantSpring product report, UK channel, FBA+FBM
-      // combined per ASIN). % = share of Aug product sales. OOS Rate = share of the SKU currently
-      // out of stock (all in stock, all 0%).
+      // September 2026 sales by product (real MerchantSpring product report, UK, FBA+FBM combined per
+      // ASIN). Whole-£ values use largest-remainder rounding so the group sum equals the table total.
       groups: [
-        {name:'WIRED Pure Creatine Monohydrate',sales:'£674',units:30,pct:'65%',oosRate:'0%',oosCls:'bg'},
-        {name:'WIRED Electrolytes Discovery Pack',sales:'£190',units:19,pct:'18%',oosRate:'0%',oosCls:'bg'},
-        {name:'BrainMatter Calm',sales:'£129',units:3,pct:'12%',oosRate:'0%',oosCls:'bg'},
-        {name:'BrainMatter Cognitive',sales:'£39',units:1,pct:'4%',oosRate:'0%',oosCls:'bg'},
-        {name:'WIRED Electrolytes — Melon Ice',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
-        {name:'WIRED Electrolytes — Berry Fusion',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
-        {name:'WIRED Electrolytes — Citrus Lime',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'}
+        {name:'WIRED Electrolytes — Berry Fusion',sales:'£975',units:31,pct:'55%',oosRate:'0%',oosCls:'bg'},
+        {name:'BrainMatter Cognitive',sales:'£250',units:7,pct:'14%',oosRate:'0%',oosCls:'bg'},
+        {name:'BrainMatter Calm',sales:'£185',units:5,pct:'10%',oosRate:'0%',oosCls:'bg'},
+        {name:'WIRED Electrolytes Discovery Pack',sales:'£179',units:18,pct:'10%',oosRate:'0%',oosCls:'bg'},
+        {name:'WIRED Pure Creatine Monohydrate',sales:'£67',units:3,pct:'4%',oosRate:'0%',oosCls:'bg'},
+        {name:'WIRED Electrolytes — Melon Ice',sales:'£62',units:2,pct:'3%',oosRate:'0%',oosCls:'bg'},
+        {name:'WIRED Electrolytes — Citrus Lime',sales:'£61',units:2,pct:'3%',oosRate:'0%',oosCls:'bg'}
       ],
       groupsByPeriod: {
         may: { all: [
-          {name:'WIRED Pure Creatine Monohydrate',sales:'£674',units:30,pct:'65%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes Discovery Pack',sales:'£190',units:19,pct:'18%',oosRate:'0%',oosCls:'bg'},
-          {name:'BrainMatter Calm',sales:'£129',units:3,pct:'12%',oosRate:'0%',oosCls:'bg'},
-          {name:'BrainMatter Cognitive',sales:'£39',units:1,pct:'4%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes — Melon Ice',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes — Berry Fusion',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes — Citrus Lime',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'}
+          {name:'WIRED Electrolytes — Berry Fusion',sales:'£975',units:31,pct:'55%',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Cognitive',sales:'£250',units:7,pct:'14%',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Calm',sales:'£185',units:5,pct:'10%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes Discovery Pack',sales:'£179',units:18,pct:'10%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Pure Creatine Monohydrate',sales:'£67',units:3,pct:'4%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Melon Ice',sales:'£62',units:2,pct:'3%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Citrus Lime',sales:'£61',units:2,pct:'3%',oosRate:'0%',oosCls:'bg'}
         ] },
         '3m': { all: [
-          {name:'WIRED Pure Creatine Monohydrate',sales:'£674',units:30,pct:'65%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes Discovery Pack',sales:'£190',units:19,pct:'18%',oosRate:'0%',oosCls:'bg'},
-          {name:'BrainMatter Calm',sales:'£129',units:3,pct:'12%',oosRate:'0%',oosCls:'bg'},
-          {name:'BrainMatter Cognitive',sales:'£39',units:1,pct:'4%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes — Melon Ice',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes — Berry Fusion',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes — Citrus Lime',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'}
+          {name:'WIRED Electrolytes — Berry Fusion',sales:'£976',units:31,pct:'35%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Pure Creatine Monohydrate',sales:'£742',units:33,pct:'26%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes Discovery Pack',sales:'£368',units:37,pct:'13%',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Calm',sales:'£314',units:8,pct:'11%',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Cognitive',sales:'£288',units:8,pct:'10%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Melon Ice',sales:'£62',units:2,pct:'2%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Citrus Lime',sales:'£61',units:2,pct:'2%',oosRate:'0%',oosCls:'bg'}
         ] },
-        // Product-family level (see kpisByPeriod.12m comment for why): BrainMatter = 12m total minus
-        // WIRED's Aug total (£12,471.99 − £864.51 = £11,607.48, 309 units = 358 − 49). WIRED =
-        // Creatine + Discovery Pack, Aug only (the only month either existed). Electrolytes flavours
-        // have never sold.
+        // Product-family level (see kpisByPeriod.12m comment): BrainMatter = 12m total £14,103.49 minus
+        // WIRED £2,208.20 (Aug £864.51 + Sep £1,343.69) = £11,895.29, 318 units (423 − 105).
         '12m': { all: [
-          {name:'BrainMatter (Cognitive + Calm combined)',sales:'£11,607',units:309,pct:'93%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED (Creatine + Discovery Pack)',sales:'£865',units:49,pct:'7%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes (3 flavours, never sold)',sales:'£0',units:0,pct:'0%',oosRate:'0%',oosCls:'bg'}
+          {name:'BrainMatter (Cognitive + Calm combined)',sales:'£11,895',units:318,pct:'84%',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED (Creatine, Electrolytes + Discovery Pack)',sales:'£2,208',units:105,pct:'16%',oosRate:'0%',oosCls:'bg'}
         ] }
       }
     }
