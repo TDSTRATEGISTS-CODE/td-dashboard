@@ -26,7 +26,7 @@ The **latest fully-closed calendar month**. If today is 2026-10-05, the target m
 **September 2026**. Recompute the MerchantSpring period epochs each run with `calculateDateEpoch`
 in timezone `Europe/Berlin`. The `data.js` object key **`may`** is the "Last Month" slot — keep the
 key literally `may`; only update its `label`/`shortLabel`. Periods: `may` = last month · `3m` =
-trailing 3 · `6m` = trailing 6 · `12m` = trailing 12 · `2025` = **frozen FY2025 history, never
+trailing 3 · `6m` = **Year to Date (Jan 1 → end of target month)** — the dropdown shows "YTD", NOT a rolling 6 months · `12m` = trailing 12 · `2025` = **frozen FY2025 history, never
 touch**.
 
 ## Scope — `dateRanges` is not the whole rebake

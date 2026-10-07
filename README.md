@@ -497,7 +497,7 @@ steps in order; each ends with a confirmation. "This month" = the latest closed 
 > pulls for it because this table still names it.
 
 **Periods** (recompute epochs each month with `calculateDateEpoch`, `dateRange`, tz `Europe/Berlin`):
-`may` = this month · `3m` = trailing 3 · `6m` = trailing 6 · `12m` = trailing 12 · `2025` = FY2025 **(FROZEN — pull once ever; SKIP on monthly refreshes)**. So recurring monthly = **4 windows × 4 ad channels** per per-period feature, not 5×4.
+`may` = this month · `3m` = trailing 3 · `6m` = **Year to Date (Jan 1 → end of target month)** — the dropdown shows "YTD", NOT a rolling 6 months · `12m` = trailing 12 · `2025` = FY2025 **(FROZEN — pull once ever; SKIP on monthly refreshes)**. So recurring monthly = **4 windows × 4 ad channels** per per-period feature, not 5×4.
 
 > **Per-period features that each need their own 4×4 = 16 windowed pulls:** product groups (`getSalesByProduct`),
 > campaign-type pie (`generateCampaignsReport`), and Buy Box % (`generateTrafficAndConversionReport`). Plus per-channel
