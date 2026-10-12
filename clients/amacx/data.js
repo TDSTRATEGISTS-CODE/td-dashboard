@@ -259,8 +259,11 @@ window.DASHBOARD_DATA = {
       // otherIncome (FBM shipping charged to customers) ÷ P&L orders, per market, summed over the 3 months.
       // DE 970.18/137 · FR 789.00/144 · ES 403.01/87 · IT 436.24/96 (EU 2,598.43/464 = €5.60). Refreshed by the
       // MONTHLY rebake (needs MerchantSpring); the weekly overview routine must carry it over unchanged.
-      stockWarn: { shipping: { label:'Avg shipping per order', note:'Jul–Sep 2026 · charged to customer', items:[
-          {flag:'de',label:'DE',val:'€7.08'}, {flag:'fr',label:'FR',val:'€5.48'}, {flag:'es',label:'ES',val:'€4.63'}, {flag:'it',label:'IT',val:'€4.54'} ] },
+      // target / targetTxt: short-term goal €6.95 per order in every market (Ryan, 12 Oct 2026), raised gradually
+      // to protect the Buy Box. Green = at/above target, amber = below.
+      stockWarn: { shipping: { label:'Avg shipping per order', note:'Jul–Sep 2026 · charged to customer', target:6.95,
+          targetTxt:'Target €6.95 per order in every market · being raised gradually to protect the Buy Box', items:[
+          {flag:'de',label:'DE',val:'€7.08',num:7.08}, {flag:'fr',label:'FR',val:'€5.48',num:5.48}, {flag:'es',label:'ES',val:'€4.63',num:4.63}, {flag:'it',label:'IT',val:'€4.54',num:4.54} ] },
         title:'&#128230; Logistics &amp; Operations', badge:'4 OOS SKUs', subLabel:'SKU List · pooled EU stock · 12 Oct 2026', items:[
         {level:'red',title:'Turbo Chew Lemon — OOS all markets',sub:'B0GZ3XD7QX · since 6 Oct · please confirm a stock-up date'},
         {level:'red',title:'Energy Drink Powder 320g Lemon — OOS all markets',sub:'B0GZ43HK1F · since 29 Jul'},

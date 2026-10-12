@@ -1271,7 +1271,8 @@ function renderCompleted(spec) {
 
 // Compact per-market strip at the foot of the Logistics & Operations (stock) card — e.g. AMACX
 // "Avg shipping per order" from the SKU List's <MKT> Ship Price/Order columns (stockWarn.shipping =
-// { label, note, items:[{flag, label, val}] }). Created on demand; absent spec = nothing rendered.
+// { label, note, target?, targetTxt?, items:[{flag, label, val, num?}] }). With a numeric target, each value
+// is green at/above it and amber below, and the target shows under the strip. Absent spec = nothing rendered.
 function renderShippingStrip(spec) {
   var list = el('sec-stockwarn'), card = list && list.closest ? list.closest('.card') : null;
   var w = el('sec-stockwarn-ship');
@@ -1285,8 +1286,9 @@ function renderShippingStrip(spec) {
     spec.items.map(function (x) {
       return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;text-align:center;">' +
         '<div style="font-size:10px;color:var(--muted);">' + flagTag(x.flag, x.label) + x.label + '</div>' +
-        '<div style="font-size:13px;font-weight:600;margin-top:2px;">' + x.val + '</div></div>';
-    }).join('') + '</div>';
+        '<div style="font-size:13px;font-weight:600;margin-top:2px;' + (spec.target != null && x.num != null ? 'color:' + (x.num >= spec.target ? 'var(--green)' : 'var(--amber)') + ';' : '') + '">' + x.val + '</div></div>';
+    }).join('') + '</div>' +
+    (spec.targetTxt ? '<div style="font-size:10px;color:var(--muted);margin-top:6px;">' + spec.targetTxt + '</div>' : '');
 }
 
 // Shared renderer for the coloured alert lists (Flags & Warnings, Stock Warnings).

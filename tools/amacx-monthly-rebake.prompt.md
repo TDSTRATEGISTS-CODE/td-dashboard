@@ -87,8 +87,9 @@ hits — aside from genuine historical "OOS since" / "as of" dates — is the ac
   refreshed here, every rebake:** for each of DE/FR/ES/IT, generate `channelProfitAndLoss` (accrual,
   includeTax true, timezone Europe/Berlin) for each of the **last 3 complete months** (the report allows
   ≤31 days, so one per month). Per market: sum `otherIncome` (FBM shipping charged to customers) ÷ sum
-  `orders` (the P&L's own order count, not line items) → `€x.xx`. Update the four `items` vals, the
-  `note` (`'<Mon>–<Mon> YYYY · charged to customer'`) and the source comment with the sums. Touch nothing
+  `orders` (the P&L's own order count, not line items) → `€x.xx`. Update the four `items` (`val` text and
+  numeric `num`), the `note` (`'<Mon>–<Mon> YYYY · charged to customer'`) and the source comment with the
+  sums. Keep `target` / `targetTxt` (€6.95 short-term goal) unless Ryan changes it. Touch nothing
   else in `stockWarn`.
 - **`sections.overview.stockWarn` is owned by the WEEKLY overview routine** while
   `clients/amacx/config.js` has `overviewSource: 'notion'` (source: SKU List tab, pooled EU Stock —
