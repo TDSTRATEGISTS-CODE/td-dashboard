@@ -56,8 +56,9 @@ Item shape: `{level, title, sub}`.
 | `green` | done (`sub` starts `Done <d Mon> · `) — **exactly the 2 most recent per card** (fewer only if fewer exist in the last 30 days) |
 
 **`healthMgmtSpec`**
-- Use the "Notes for client" lines, as written — **except inventory / stock topics** (topic
+- Use the "Notes for client" lines, as written — **filter out inventory / stock topics** (topic
   `Inventory`, or anything about OOS, stock-up dates or stock levels): those go to `stockWarn` instead.
+  Compliance notes (including blocked listings, e.g. Hydro Tabs pending safety documents) stay here.
   The note `🔴 **IT** · Account Health · <text>` becomes title `Italy — Account Health` and sub
   `In progress · <text>` (first letter lower-cased). `ACCT` becomes `All markets`.
 - **Max 4 open items** (so the card stays at 6 with the 2 Done lines): keep every 🔴 first, then ⚠️ in
