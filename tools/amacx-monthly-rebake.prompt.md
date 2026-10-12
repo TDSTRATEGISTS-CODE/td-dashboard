@@ -87,7 +87,10 @@ hits — aside from genuine historical "OOS since" / "as of" dates — is the ac
   refreshed here, every rebake:** for each of DE/FR/ES/IT, generate `channelProfitAndLoss` (accrual,
   includeTax true, timezone Europe/Berlin) for each of the **last 3 complete months** (the report allows
   ≤31 days, so one per month). Per market: sum `otherIncome` (FBM shipping charged to customers) ÷ sum
-  `orders` (the P&L's own order count, not line items) → `€x.xx`. Update the four `items` (`val` text and
+  of the same months' orders from `getSalesByPeriod` (`lineItemCount`, interval M, GMT — the dashboard's
+  own order count) → `€x.xx`. **Don't divide by the P&L report's `orders` field: it undercounts** (in Jul/Aug
+  2026 it put DE above the flat €6.95 rate, which is impossible). Sanity check: no market can exceed €6.95
+  while the rate is a flat €6.95 per order. Update the four `items` (`val` text and
   numeric `num`), the `note` (`'<Mon>–<Mon> YYYY · charged to customer'`) and the source comment with the
   sums. Keep `target` / `targetTxt` (€6.95 short-term goal) unless Ryan changes it. Touch nothing
   else in `stockWarn`.
