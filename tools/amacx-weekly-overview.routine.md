@@ -56,8 +56,10 @@ Item shape: `{level, title, sub}`.
 | `green` | done (`sub` starts `Done <d Mon> · `) — **exactly the 2 most recent per card** (fewer only if fewer exist in the last 30 days) |
 
 **`healthMgmtSpec`**
-- Use the "Notes for client" lines, as written — **except inventory / stock topics** (topic
-  `Inventory`, or anything about OOS, stock-up dates or stock levels): those go to `stockWarn` instead.
+- Use the "Notes for client" lines, as written — **except inventory and listing-status topics** —
+  topic `Inventory`, anything about OOS / stock-up dates / stock levels, and blocked or inactive
+  listings (the review's checks 7 and 7b, e.g. "Hydro Tabs remain blocked … pending safety
+  documents"): those go to `stockWarn` (Logistics & Operations) instead.
   The note `🔴 **IT** · Account Health · <text>` becomes title `Italy — Account Health` and sub
   `In progress · <text>` (first letter lower-cased). `ACCT` becomes `All markets`.
 - **Max 4 open items** (so the card stays at 6 with the 2 Done lines): keep every 🔴 first, then ⚠️ in
@@ -91,7 +93,9 @@ Item shape: `{level, title, sub}`.
   if a note is about an OOS SKU already listed, fold its ask into that item's `sub` (e.g.
   `· please confirm a stock-up date`) instead of adding a second line; otherwise add it as its own item
   (keep its 🔴/⚠️ level).
-- **Max 6 items:** most recent OOS first; if over 6, drop the longest-OOS SKUs and list them in the PR.
+- Blocked / inactive-listing notes moved from the health review are added as their own item, after the
+  OOS SKUs (title names the product and markets, e.g. `Hydro Tabs — listings blocked (France, Spain & Italy)`).
+- **Max 6 items:** OOS SKUs first (most recent first), then listing / operations items; if over 6, drop the longest-OOS SKUs and list them in the PR.
 - `badge` = `'<n> OOS SKUs'` (or `'All in stock'` with an empty list).
   `subLabel` = `'SKU List · pooled EU stock · <sync date>'`.
 
