@@ -1248,7 +1248,8 @@ function renderTasks(spec) {
 function syncFlagsGridCols() {
   var grid = el('tasks-flags'); if (!grid) return;
   var vis = [].slice.call(grid.children).filter(function (c) { return c.style.display !== 'none'; }).length;
-  grid.classList.toggle('tf-3', vis <= 3);   // 3-col on desktop; CSS still stacks to 1-col on mobile
+  grid.classList.toggle('tf-3', vis === 3);   // 3-col on desktop; CSS still stacks to 1-col on mobile
+  grid.classList.toggle('tf-2', vis <= 2);    // e.g. NKV on Notion cards: stock card lives in the Buy Box slot
 }
 function renderCompleted(spec) {
   var w = el('sec-completed');

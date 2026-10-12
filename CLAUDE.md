@@ -117,7 +117,7 @@ Leave genuine non-restock uses of "order" alone: Supplier-PO **"Order By"** date
 should return only those legitimate cases — any "reorder soon"/"order this week" is a wording bug.
 
 
-## Overview cards are baked WEEKLY from Notion + SKU sync (AMACX live; Abimax / Balance 8 / NKV ready)
+## Overview cards are baked WEEKLY from Notion + SKU sync (AMACX, Abimax, Balance 8, NKV on; Harvaza not covered)
 
 For any client whose `config.js` has `overviewSource: 'notion'`, the Overview's three cards — Account
 Health Management (`sections.overview.healthMgmtSpec`), Advertising & Marketing Strategy

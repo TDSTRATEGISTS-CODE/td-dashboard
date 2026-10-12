@@ -88,6 +88,12 @@ Item shape: `{level, title, sub}`.
     **Per-market stock:** title `<Product> — OOS <market>`; one item per market file.
   - `sub: '<ASIN> · since <d Mon of noStockSince>'`. Add `· stock-up now` when it went OOS in the last 14 days.
   - Short product names (e.g. "Turbo Chew Lemon", "Energy Drink Powder 320g Lemon"), not Amazon titles.
+- **Low-cover warnings** (only where the client config sets a stock-up threshold): for in-stock SKUs,
+  days cover = `stock / (units30 / 30)` (skip SKUs with `units30` = 0). Cover at or below the
+  **stock-up now** threshold → `red`, title `<Product> — stock-up now`; at or below the **stock-up soon**
+  threshold → `amber`, title `<Product> — stock-up soon`. `sub: '<ASIN> · ~<n> days cover · <stock> units'`
+  (add the market for per-market clients). Order: OOS, then stock-up now, then stock-up soon (lowest
+  cover first). Badge becomes `'<n> stock-up · <m> OOS'`.
 - **Leave out discontinued / superseded SKUs:** `PARENT-*` rows; SKUs the client config lists as
   superseded; where a SKU List is available, rows whose live-market statuses are all `De-Listed` /
   `Don't List` / `Inactive`; otherwise SKUs with no sale in the last 120 days (`lastSold` empty or older).
@@ -153,6 +159,7 @@ Item shape: `{level, title, sub}`.
 | Monthly SOP | https://app.notion.com/p/349d3da05122803eacc5ee7b997942c7 |
 | SKU sync files | `AMACX_EU` |
 | Stock basis | **Pooled** EU FBM stock → every OOS SKU is "OOS all markets" |
+| Stock-up thresholds | — (OOS only: FBM, AMACX controls its own stock) |
 | SKU List | `https://script.google.com/macros/s/AKfycbzKVf_ujq00IHmfVbbqGKfE-Gl4niA6w7yG8QyGou6xkNAl2nSdKMDcxlJBAa_ZTYLeWQ/exec?rebake=1` → `skuList[]` (`de/fr/es/it` status, `euStock`, `oos`, `mismatch`) |
 | Superseded | Hydro Tabs 3-pack (B0CCJWBX6W, B0CCJWLKTM, B0CCJW62HZ — replaced by the 6-pack) |
 | Layout note | — |
@@ -160,14 +167,15 @@ Item shape: `{level, title, sub}`.
 ### Abimax
 | Field | Value |
 |---|---|
-| Overview | Off (ready — switch on when Ryan says) |
+| Overview | **On** (from 12 Oct 2026 — first bake on the first Thursday its review is Done) |
 | Dashboard folder | `clients/abimax` |
 | Markets | US |
 | Account Health parent task | https://app.notion.com/p/3e5d3da051228184ba65f127069cd0a5 |
 | Advertising task | https://app.notion.com/p/399d3da0512280b197adc4418abc5e9f |
 | Monthly SOP | https://app.notion.com/p/2b7d3da0512280a5b53af9f0788d0e81 |
 | SKU sync files | `Abimax_US` |
-| Stock basis | Per market (US only) |
+| Stock basis | Per market (US only, FBA) |
+| Stock-up thresholds | now ≤ 45 days cover · soon ≤ 120 days (long US lead times; matches the Sep 2026 bake) |
 | SKU List | — (use the 120-day rule for discontinued SKUs) |
 | Superseded | — |
 | Layout note | — |
@@ -175,14 +183,15 @@ Item shape: `{level, title, sub}`.
 ### Balance 8
 | Field | Value |
 |---|---|
-| Overview | Off (ready — switch on when Ryan says) |
+| Overview | **On** (from 12 Oct 2026 — first bake on the first Thursday its review is Done) |
 | Dashboard folder | `clients/balance8` |
 | Markets | UK |
 | Account Health parent task | https://app.notion.com/p/3e5d3da0512281fda711ec3cc1000d46 |
 | Advertising task | https://app.notion.com/p/3c0d3da0512280968ed2fb99af06d7f2 |
 | Monthly SOP | https://app.notion.com/p/3a3d3da051228085a495eafafcdd6e7a |
 | SKU sync files | `Balance8_UK` |
-| Stock basis | Per market (UK only) |
+| Stock basis | Per market (UK only, FBA) |
+| Stock-up thresholds | now ≤ 21 days cover · soon ≤ 45 days |
 | SKU List | — (use the 120-day rule) |
 | Superseded | — |
 | Layout note | Client notes say stock is inbound after the Oct 2026 re-engagement; OOS items are expected until it lands |
@@ -190,7 +199,7 @@ Item shape: `{level, title, sub}`.
 ### NKV (Naikav Global)
 | Field | Value |
 |---|---|
-| Overview | Off (needs the layout fix below first) |
+| Overview | **On** (from 12 Oct 2026 — first bake on the first Thursday its review is Done) |
 | Dashboard folder | `clients/nkv` |
 | Markets | UK, US (IRL early-stage) |
 | Account Health parent task | https://app.notion.com/p/3e5d3da05122819ca0e6c0d790f4a9d9 |
@@ -198,9 +207,10 @@ Item shape: `{level, title, sub}`.
 | Monthly SOP | https://app.notion.com/p/341d3da0512281098d22d1d6a3657cd3 |
 | SKU sync files | `NKV_UK`, `NKV_US` |
 | Stock basis | **Per market** (FBA) → "OOS UK" / "OOS US" |
+| Stock-up thresholds | now ≤ 14 days cover · soon ≤ 30 days (matches the Sep 2026 bake) |
 | SKU List | — (use the 120-day rule) |
 | Superseded | — |
-| Layout note | NKV moves Stock Warnings into the Buy Box slot (`layout.stockToBuyBoxSlot`), leaving 2 cards in the top grid. A 2-column grid rule is needed in `app.js`/`index.html` before switching on (one-off code change, not this routine). |
+| Layout note | Stock card sits in the Buy Box slot (`layout.stockToBuyBoxSlot`) and keeps its "FBA Stock Warnings" relabel; the top grid shows the other 2 cards side by side (2-column grid, added 12 Oct 2026). |
 
 ### Not covered
 - **Harvaza:** founder dashboard layout; tasks and milestones already come from Notion via its proxy.
