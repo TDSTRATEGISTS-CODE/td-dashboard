@@ -238,24 +238,21 @@ window.DASHBOARD_DATA = {
       //                  Cherry Juice Booster 6×500) are left off.
       // Item levels: red/amber = open issue · green = done · muted = next up. Client-facing wording only.
       healthMgmtSpec: { badge:'6 open', subLabel:'Weekly review · 12 Oct 2026', items:[
-        {level:'red',title:'Italy — Account Health',sub:'Order defect rate 2.08%, above Amazon\'s 1% limit; offers at risk of deactivation'},
-        {level:'red',title:'Spain — Compliance',sub:'Packaging EPR registration overdue, up to €14.9k sales at risk; please send your EPR number'},
-        {level:'red',title:'France — Account Health',sub:'On-time delivery 81.8%, below Amazon\'s 90% target; we\'re reviewing the carrier'},
-        {level:'amber',title:'All markets — Compliance',sub:'Hydro Tabs remain blocked in France, Spain and Italy pending safety documents'},
-        {level:'amber',title:'Germany — Buy Box',sub:'Buy Box share 53%, down from 61%; we\'re identifying the competing offer'},
-        {level:'amber',title:'All markets — Inventory',sub:'Turbo Chew Lemon out of stock since 6 Oct; please confirm a stock-up date'},
+        {level:'red',title:'Italy — Account Health',sub:'In progress · order defect rate 2.08%, above Amazon\'s 1% limit; offers at risk of deactivation'},
+        {level:'red',title:'Spain — Compliance',sub:'In progress · packaging EPR registration overdue, up to €14.9k sales at risk; please send your EPR number'},
+        {level:'red',title:'France — Account Health',sub:'In progress · on-time delivery 81.8%, below Amazon\'s 90% target; we\'re reviewing the carrier'},
+        {level:'amber',title:'All markets — Compliance',sub:'In progress · Hydro Tabs remain blocked in France, Spain and Italy pending safety documents'},
+        {level:'amber',title:'Germany — Buy Box',sub:'In progress · Buy Box share 53%, down from 61%; we\'re identifying the competing offer'},
+        {level:'amber',title:'All markets — Inventory',sub:'In progress · Turbo Chew Lemon out of stock since 6 Oct; please confirm a stock-up date'},
         {level:'green',title:'Italy — late deliveries back under limit',sub:'Done 12 Oct · on-time delivery 92.86%'},
         {level:'green',title:'France — order defect rate back under 1%',sub:'Done 12 Oct · 0.99%'}
       ] },
       adsStrategySpec: { badge:'Cherry Juice+ live', subLabel:'Weekly review · 7 Oct 2026', items:[
-        {level:'green',title:'Cherry Juice+ campaigns launched — France',sub:'Done 7 Oct · €10/day · target ACoS 30%'},
-        {level:'green',title:'Cherry Juice+ campaigns launched — Spain',sub:'Done 7 Oct · €10/day · target ACoS 35%'},
-        {level:'green',title:'Cherry Juice+ campaigns launched — Italy',sub:'Done 7 Oct · €10/day · target ACoS 30%'},
-        {level:'green',title:'Non-converting campaigns paused — Germany',sub:'Done 7 Oct · budget moved to converting campaigns'},
-        {level:'green',title:'Brand Défense budget raised — France',sub:'Done 7 Oct · €10 → €15/day'},
         {level:'muted',title:'Cherry Juice+ — Germany campaign decision',sub:'Next up'},
         {level:'muted',title:'Advertising focus week',sub:'Next up · w/c 19 Oct · performance, growth & profitability'},
-        {level:'muted',title:'Black Friday / Cyber Monday deals',sub:'Next up · submit by 18 Nov'}
+        {level:'muted',title:'Black Friday / Cyber Monday deals',sub:'Next up · submit by 18 Nov'},
+        {level:'green',title:'Cherry Juice+ campaigns launched',sub:'Done 7 Oct · France, Spain & Italy · €10/day each'},
+        {level:'green',title:'Non-converting campaigns paused — Germany',sub:'Done 7 Oct · budget moved to converting campaigns'}
       ] },
       stockWarn: { badge:'4 OOS SKUs', subLabel:'SKU List · pooled EU stock · 12 Oct 2026', items:[
         {level:'red',title:'Turbo Chew Lemon — OOS all markets',sub:'B0GZ3XD7QX · since 6 Oct · stock-up now'},

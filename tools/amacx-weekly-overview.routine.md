@@ -50,20 +50,22 @@ Item shape: `{level, title, sub}`.
 
 | level | meaning |
 |---|---|
-| `red` | 🔴 in Notes for client, or: account at risk, money at risk, past due |
-| `amber` | ⚠️ in Notes for client, or: below target, being worked on |
-| `green` | done in the last 30 days (`sub` starts `Done <d Mon> · `) |
+| `red` | 🔴 in Notes for client, or: account at risk, money at risk, past due (`sub` starts `In progress · `) |
+| `amber` | ⚠️ in Notes for client, or: below target, being worked on (`sub` starts `In progress · `) |
 | `muted` | next up (`sub` starts `Next up · `) |
+| `green` | done (`sub` starts `Done <d Mon> · `) — **exactly the 2 most recent per card** (fewer only if fewer exist in the last 30 days) |
 
 **`healthMgmtSpec`**
 - Use every "Notes for client" line, as written. The note `🔴 **IT** · Account Health · <text>`
-  becomes title `Italy — Account Health` and sub `<text>`. `ACCT` becomes `All markets`.
-- Then add up to 2 green items from **Resolved**.
+  becomes title `Italy — Account Health` and sub `In progress · <text>` (first letter lower-cased).
+  `ACCT` becomes `All markets`.
+- Then the 2 most recent **Resolved** items as green `Done <d Mon> · …` lines.
 - `badge` = `'<n> open'` (red + amber count). `subLabel` = `'Weekly review · <review date>'`.
 
 **`adsStrategySpec`**
-- Use the advertising "Notes for client" if there are any. Otherwise build items from the sub-task
-  status and the Weekly log "Done" lines (green), then the next SOP advertising items (muted).
+- Use the advertising "Notes for client" if there are any. Otherwise build open / next-up items from
+  the sub-task status and the next SOP advertising items (muted).
+- Then the 2 most recent "Done" actions from the sub-task and Weekly log as green `Done <d Mon> · …` lines.
 - `badge` = a 2–3 word headline. `subLabel` = `'Weekly review · <latest log date>'`.
 
 **`stockWarn` (from the SKU List only)**
@@ -73,16 +75,19 @@ Item shape: `{level, title, sub}`.
   - `sub: '<ASIN> · since <d Mon>'`. Add `· stock-up now` when the item went OOS in the last 14 days.
   - Use the date the stock ran out (`noStockSince` from the latest `AMACX_EU_sku-sync_<date>.json` in
     Drive, if available). Otherwise use `euLastSold`.
-- Leave out SKUs that are discontinued or superseded: `PARENT-*` rows, and rows Inactive in every
-  live market.
-- **Mismatches:** rows with `mismatch: true` (per-market status columns disagree with each other or
-  with the pooled `euStock`) are NOT shown on the dashboard. List them in the PR body under
-  "SKU List fixes for Coogan".
+- Pooled `euStock` is the truth: a SKU with `oos: true` is shown even if its status columns still say
+  Active (that row is also a mismatch — see below).
+- Leave out SKUs that are discontinued or superseded: `PARENT-*` rows; rows whose live-market statuses
+  are all `De-Listed` / `Don't List` / `Inactive`; and the superseded **Hydro Tabs 3-pack** (B0CCJWBX6W,
+  B0CCJWLKTM, B0CCJW62HZ — replaced by the 6-pack) until Ryan says otherwise.
+- `euLastSold` comes back as a date string (e.g. `Tue Sep 29 2026 …`); format it as `d Mon`.
+- **Mismatches:** list every `mismatch: true` row (status columns disagree with each other or with the
+  pooled `euStock`) in the PR body under "SKU List fixes for Coogan", with what each column says.
 - `badge` = `'<n> OOS SKUs'` (or `'All in stock'` with an empty list).
   `subLabel` = `'SKU List · pooled EU stock · <sync date>'`.
 
-**Order and size:** red → amber → green → muted. Max 8 items per card. Drop the oldest green
-items first.
+**Order and size:** red → amber → muted → green (the 2 Done lines always sit at the bottom). Max 8
+items per card; if over, trim muted items before open ones — never drop below 2 Done lines.
 
 **Wording rules (client-facing; this is shown to AMACX):**
 - Lines from "Notes for client" are already client-approved: keep their wording, numbers and risk
