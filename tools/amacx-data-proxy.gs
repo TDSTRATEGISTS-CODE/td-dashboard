@@ -787,47 +787,19 @@ function rebakeInputs_() {
       }
     }
     if (sh.getName() === 'SKU List') {
-      // Header-tolerant: the tab's headers have moved over time (CHILDASIN → ASIN, DE → DE Status).
-      // Header row = first row with an ASIN column; per-market status = 'DE Status' (or legacy 'DE').
       var hdr = -1, col = {};
       for (r = 0; r < v.length && hdr < 0; r++) {
-        for (c = 0; c < v[r].length; c++) {
-          var hc = String(v[r][c]).trim().toUpperCase();
-          if (hc === 'ASIN' || hc === 'CHILDASIN') { hdr = r; break; }
-        }
+        for (c = 0; c < v[r].length; c++) if (String(v[r][c]).trim().toUpperCase() === 'CHILDASIN') hdr = r;
       }
       if (hdr >= 0) {
-        v[hdr].forEach(function (h, i) { var k = String(h).trim().toUpperCase(); if (!(k in col)) col[k] = i; });
-        var cell = function (row, names) {
-          for (var n = 0; n < names.length; n++) if (names[n] in col) return String(row[col[names[n]]] == null ? '' : row[col[names[n]]]).trim();
-          return '';
-        };
+        v[hdr].forEach(function (h, i) { col[String(h).trim().toUpperCase()] = i; });
         for (r = hdr + 1; r < v.length; r++) {
-          var asin = cell(v[r], ['ASIN', 'CHILDASIN']);
+          var asin = String(v[r][col['CHILDASIN']] || '').trim();
           if (!asin) continue;
-          var st = {
-            de: cell(v[r], ['DE STATUS', 'DE']), fr: cell(v[r], ['FR STATUS', 'FR']),
-            es: cell(v[r], ['ES STATUS', 'ES']), it: cell(v[r], ['IT STATUS', 'IT'])
-          };
-          var stockTxt = cell(v[r], ['EU STOCK']);
-          var euStock = stockTxt === '' ? null : Number(stockTxt);
-          // Stock is ONE pooled EU FBM stock, so every live market (DE/FR/ES/IT; NL is not live) must agree.
-          // oos: pooled EU Stock is 0 (falls back to the status columns only when EU Stock is blank).
-          // mismatch: the status columns disagree with each other or with the pooled stock — a SKU List
-          // hygiene flag for the team to fix, never shown to the client as OOS until it's resolved.
-          var live = [st.de, st.fr, st.es, st.it].map(function (x) { return x.toUpperCase(); });
-          var anyOos = live.indexOf('OOS') !== -1;
-          var oos = euStock === 0 || (euStock == null && anyOos);
-          var mismatch = (anyOos && live.some(function (x) { return x === 'ACTIVE'; })) ||
-                         (anyOos && euStock != null && euStock > 0) ||
-                         (euStock === 0 && live.indexOf('ACTIVE') !== -1);
           out.skuList.push({
-            asin: asin, sku: cell(v[r], ['AMAZON SKU', 'FBM SKU']), title: cell(v[r], ['TITLE']),
-            group: cell(v[r], ['GROUP NAME']),
-            de: st.de, fr: st.fr, es: st.es, it: st.it,
-            euStock: euStock, euUnits30: cell(v[r], ['EU UNITS 30D']), euLastSold: cell(v[r], ['EU LAST SOLD']),
-            euSyncStatus: cell(v[r], ['EU SYNC STATUS']), lastSynced: cell(v[r], ['LAST SYNCED']),
-            oos: oos, mismatch: mismatch
+            asin: asin, group: String(v[r][col['GROUP NAME']] || '').trim(),
+            de: String(v[r][col['DE']] || '').trim(), fr: String(v[r][col['FR']] || '').trim(),
+            es: String(v[r][col['ES']] || '').trim(), it: String(v[r][col['IT']] || '').trim()
           });
         }
       }
