@@ -61,7 +61,7 @@ Item shape: `{level, title, sub}`.
   Compliance notes (including blocked listings, e.g. Hydro Tabs pending safety documents) stay here.
   The note `🔴 **IT** · Account Health · <text>` becomes title `Italy — Account Health` and sub
   `In progress · <text>` (first letter lower-cased). `ACCT` becomes `All markets`.
-- **Max 4 open items** (so the card stays at 6 with the 2 Done lines): keep every 🔴 first, then ⚠️ in
+- **Max 5 open items** (so the card stays at 7 with the 2 Done lines): keep every 🔴 first, then ⚠️ in
   the order they're written. List any dropped notes in the PR body.
 - Then the 2 most recent **Resolved** items as green `Done <d Mon> · …` lines.
 - `badge` = `'<n> open'` (red + amber count). `subLabel` = `'Weekly review · <review date>'`.
@@ -92,12 +92,12 @@ Item shape: `{level, title, sub}`.
   if a note is about an OOS SKU already listed, fold its ask into that item's `sub` (e.g.
   `· please confirm a stock-up date`) instead of adding a second line; otherwise add it as its own item
   (keep its 🔴/⚠️ level).
-- **Max 6 items:** most recent OOS first; if over 6, drop the longest-OOS SKUs and list them in the PR.
+- **Max 7 items:** most recent OOS first; if over 7, drop the longest-OOS SKUs and list them in the PR.
 - `badge` = `'<n> OOS SKUs'` (or `'All in stock'` with an empty list).
   `subLabel` = `'SKU List · pooled EU stock · <sync date>'`.
 
 **Order and size:** red → amber → muted → green (the 2 Done lines always sit at the bottom).
-**Max 6 items per card.** For Account Health / Advertising that means up to 4 open or next-up items plus
+**Max 7 items per card.** For Account Health / Advertising that means up to 5 open or next-up items plus
 the 2 Done lines; trim muted before open, and never drop below 2 Done lines.
 
 **Wording rules (client-facing; this is shown to AMACX):**
