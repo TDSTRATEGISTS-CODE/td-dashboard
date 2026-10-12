@@ -259,10 +259,11 @@ window.DASHBOARD_DATA = {
       // accrual otherIncome, tax incl., Europe/Berlin) ÷ orders from getSalesByPeriod (lineItemCount = the dashboard's
       // order count). DE 970.18/163 · FR 789.00/191 · ES 403.01/109 · IT 436.24/128 (EU 2,598.43/591 = €4.40).
       // NOT the P&L's own "orders" field — it undercounts (DE Jul/Aug gave >€6.95, impossible on a flat €6.95 rate).
-      // Refreshed by the MONTHLY rebake (needs MerchantSpring); the weekly overview routine carries it over unchanged.
+      // FROZEN as the Jul–Sep 2026 baseline until the 5 Jan 2027 monthly rebake (Ryan, 12 Oct 2026); weekly routine
+      // and Nov/Dec rebakes carry it over unchanged. After that the monthly rebake refreshes it.
       // target / targetTxt: short-term goal €6.95 per order in every market (Ryan, 12 Oct 2026), raised gradually
       // to protect the Buy Box. Green = at/above target, amber = below.
-      stockWarn: { shipping: { label:'Avg shipping per order', note:'Jul–Sep 2026 · charged to customer', target:6.95,
+      stockWarn: { shipping: { label:'Avg shipping per order', note:'Jul–Sep 2026 baseline · charged to customer', target:6.95,
           targetTxt:'Target €6.95 per order in every market · being raised gradually to protect the Buy Box', items:[
           {flag:'de',label:'DE',val:'€5.95',num:5.95}, {flag:'fr',label:'FR',val:'€4.13',num:4.13}, {flag:'es',label:'ES',val:'€3.70',num:3.70}, {flag:'it',label:'IT',val:'€3.41',num:3.41} ] },
         title:'&#128230; Logistics &amp; Operations', badge:'4 OOS SKUs', subLabel:'SKU List · pooled EU stock · 12 Oct 2026', items:[

@@ -83,8 +83,10 @@ hits — aside from genuine historical "OOS since" / "as of" dates — is the ac
 - **⚠️ `inventoryHealth` is not a supported report for this channel** (Amazon-vendor-only; AMACX is
   seller — confirmed via a 400 on every market). Use `salesByProduct` (`quantity` field, 0 = OOS)
   for stock warnings instead.
-- **`sections.overview.stockWarn.shipping` (Avg shipping per order, Overview › Logistics & Operations) IS
-  refreshed here, every rebake:** for each of DE/FR/ES/IT, generate `channelProfitAndLoss` (accrual,
+- **`sections.overview.stockWarn.shipping` (Avg shipping per order, Overview › Logistics & Operations) is
+  FROZEN at the Jul–Sep 2026 baseline until the 5 Jan 2027 rebake (Ryan, 12 Oct 2026).** Don't touch it
+  on the Nov or Dec 2026 rebakes. From the 5 Jan 2027 rebake on (unless Ryan extends the freeze), refresh it
+  every rebake using the method below: for each of DE/FR/ES/IT, generate `channelProfitAndLoss` (accrual,
   includeTax true, timezone Europe/Berlin) for each of the **last 3 complete months** (the report allows
   ≤31 days, so one per month). Per market: sum `otherIncome` (FBM shipping charged to customers) ÷ sum
   of the same months' orders from `getSalesByPeriod` (`lineItemCount`, interval M, GMT — the dashboard's
