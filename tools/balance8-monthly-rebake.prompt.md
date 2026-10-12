@@ -7,7 +7,7 @@ review gate if something fails.
 
 Balance 8 is Amazon-only, single UK marketplace, GBP. Two brands on one seller account: BrainMatter
 (nootropics, live since Sep 2025) and WIRED (sports nutrition, first sale Aug 2026). Digital Dash
-tier — the real P&L is baked but stays behind the paywall.
+tier until Oct 2026, when the Amazon P&L was activated (settled basis).
 
 ## What to do
 
@@ -76,13 +76,17 @@ history, so a fixed launch-to-date framing would misrepresent an inactive period
   fallback — leave them, unless they're now stale enough to actively mislead, e.g. still describing
   the Mar–Jul gap a year after it resolved — in that case update the fallback text too and say so in
   the run log).
-- **Digital Dash tier — P&L stays gated.** `sections.pnl` is baked (from `getStoreProfitAndLoss`,
-  **accrual basis** — chosen so it reconciles against the order-date sales figures used everywhere
-  else on this dashboard, per the tool's own guidance) but hidden behind the Executive paywall.
-  Refresh its numbers so it stays current, but **never remove `'pnl'` from `config.hiddenPages`** —
-  Balance 8 is Digital Dash, so the Amazon P&L must remain the 🔒 locked gate.
+- **Amazon P&L is ACTIVE (settled basis, per timeline) — activated Oct 2026 at Ryan's request.**
+  `config.js` has `hiddenPages:['keywords','amazonpnl']` + `pageLabels:{pnl:'Amazon P&L'}`; **never
+  re-add `'pnl'` to `hiddenPages`**. Rebuild all three window statements every run:
+  `sections.pnl` (Last Month), `dateRanges['3m'].sec.pnl`, `dateRanges['12m'].sec.pnl`. Source:
+  `getStoreProfitAndLoss` with `profitabilityView:'settled'` and **`includeTax:false`** (so sales are
+  ex-VAT and the Income lines foot exactly to Net revenue — assert this), one call per month
+  (≈31-day cap), summed for 3m/12m. Each statement keeps its `caveat` (settlement lag, ad spend billed
+  in arrears, COGS not configured → profit overstated). Single-month settled figures swing (Aug orders
+  settle in Sep) — do not gate on a single settled month's sign, but flag a settled net loss in the run log.
 - **Sections to refresh:** `dateRanges` (`may`/`3m`/`12m` — headline KPIs, `mktRows`, `revChart`/
-  `adChart`/`revBreakChart`, `campaignMix`), and `sections.{advertising, inventory, products, pnl}` +
+  `adChart`/`revBreakChart`, `campaignMix`), and `sections.{advertising, inventory, products, pnl}` + `sec.pnl` on 3m/12m +
   the three MerchantSpring overview cards.
 - **Period-aware sub-fields — do not skip these.** Balance 8 (unlike Abimax) has
   `sections.advertising.campaignsByPeriod` and `sections.products.{kpisByPeriod,tableByPeriod,

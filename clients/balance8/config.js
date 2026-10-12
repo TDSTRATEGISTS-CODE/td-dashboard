@@ -1,8 +1,9 @@
 /* Balance 8 — client config. Loaded as window.DASHBOARD_CONFIG.
    Amazon-only, UK marketplace. Two brands under one seller account: "BrainMatter" (nootropic
    supplements, launched Sep 2025) and "WIRED" (sports-nutrition — creatine + electrolytes — new
-   line, first sales Aug 2026). Digital Dash tier (NOT Executive yet) — the Amazon P&L page is
-   shown as the locked "Executive Subscription" paywall gate, exactly like Abimax/NKV.
+   line, first sales Aug 2026). Amazon P&L ACTIVATED Oct 2026 (settled basis, per timeline) — the
+   real P&L page renders as "Amazon P&L" and the locked "Executive Subscription" gate is hidden,
+   exactly like Abimax.
    Everything here is client-specific. To add a client, copy this folder and edit this file. */
 window.DASHBOARD_CONFIG = {
 
@@ -35,17 +36,17 @@ window.DASHBOARD_CONFIG = {
 
   // Uses the default 'amazon' template page set (no custom `pages` needed):
   //   overview · pnl · advertising · inventory · products · keywords · amazonpnl
-  // 'keywords' + the real 'pnl' page are hidden below; 'amazonpnl' stays as the locked P&L gate.
+  // 'keywords' + the paywall gate 'amazonpnl' are hidden below; the real 'pnl' page is now ACTIVE.
   template: 'amazon',
+
+  // Relabel the real P&L page "Amazon P&L" so the nav matches what the client saw on the paywall gate.
+  pageLabels: { pnl: 'Amazon P&L' },
 
   // Pages to hide for this client (nav item + tab + page).
   // 'keywords' dropped — MerchantSpring's MCP exposes no keyword-level data (matches AMACX/NKV/Abimax).
-  // 'pnl' (the real P&L & Expenses page) hidden per brief ("no P&L for now") — Balance 8 is on the
-  //   Digital Dash tier, so the Amazon P&L shows as the locked paywall blocker (page-amazonpnl) instead
-  //   of the full renderer. The real P&L data still lives baked in data.js (sections.pnl), ready to
-  //   expose the day Balance 8 wants it: drop 'pnl' from hiddenPages and repoint the nav at the real
-  //   renderer.
-  hiddenPages: ['keywords', 'pnl'],
+  // 'amazonpnl' (the locked paywall gate) hidden — P&L activated Oct 2026 on the settled basis (per
+  //   Ryan). To revert to the gate: swap back to hiddenPages ['keywords','pnl'].
+  hiddenPages: ['keywords', 'amazonpnl'],
 
   // Nothing routes to the generic "under maintenance" stub. The Amazon P&L page (amazonpnl) routes to
   // its dedicated Executive-Subscription paywall gate in index.html, not this stub.

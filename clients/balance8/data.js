@@ -102,6 +102,47 @@ window.DASHBOARD_DATA = {
       series:[ {color:'#404935',values:[0,1032,1779],main:true,area:true}, {color:'#a7ab90',values:[0,98,261],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'£431',acos:'83.1%'} ] },
+    // Amazon P&L for this window (settled, summed per month — see sections.pnl note on basis).
+    sec: { pnl: {
+      summary: [ {val:'£603',lbl:'Net Revenue',color:'brand'}, {val:'£864',lbl:'Total Costs',color:'red'}, {val:'-£261',lbl:'Net Profit',color:'red'} ],
+      margin: { pct:'-43.3%', pctColor:'red', note:'Jul–Sep 2026 (3-month) · financial basis (MerchantSpring, settled) · UK channel · COGS not configured', rows:[
+        {lbl:'Net Revenue', val:'£603'},
+        {lbl:'Advertising', val:'-£99', color:'red'},
+        {lbl:'Selling & Shipping Fees', val:'-£765', color:'red'},
+        {lbl:'COGS (not yet configured)', val:'£0', color:'red'},
+        {lbl:'Net Profit', val:'-£261', color:'red', strong:true}
+      ] },
+      mkt: [
+        {name:'United Kingdom',flag:'gb',revenue:'£603',adspend:'£99',net:'-£261',netColor:'red',margin:'-43.3%',marginCls:'br'}
+      ],
+      statement: {
+        fixedLabel: 'Jul–Sep 2026 (3-month) · financial basis (MerchantSpring, settled)',
+        caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag and bills ad spend in arrears, so the latest weeks are understated until settlement completes (settled ad spend £99 vs £358 in the ad console). COGS is not configured in MerchantSpring (£0 shown), so real profit is lower once product cost is entered.',
+        groups:[
+          { header:'Income', rows:[
+            {lbl:'Product sales (ex-VAT)', amount:'£2,553', pct:'423.4%', unit:'£21.10'},
+            {lbl:'Promotions & discounts', amount:'-£1,973', pct:'-327.2%', unit:'-£16.30'},
+            {lbl:'Reimbursements & other income', amount:'£23', pct:'3.7%', unit:'£0.19'},
+            {lbl:'Net revenue', amount:'£603', pct:'100.0%', unit:'£4.98',total:true}
+          ] },
+          { header:'Expenses', rows:[
+            {lbl:'Advertising (settlement)', amount:'£99', pct:'16.4%', unit:'£0.82'},
+            {lbl:'Selling fees', amount:'£392', pct:'65.1%', unit:'£3.24'},
+            {lbl:'Shipping & fulfilment fees', amount:'£372', pct:'61.7%', unit:'£3.08'},
+            {lbl:'Cost of goods (not configured)', amount:'£0', pct:'0.0%', unit:'£0.00'},
+            {lbl:'Total expenses', amount:'£864', pct:'143.3%', unit:'£7.14',total:true}
+          ] },
+          { header:'Profit', rows:[
+            {lbl:'PROFIT', amount:'-£261', pct:'-43.3%', unit:'-£2.16', total:true, profit:true},
+            {lbl:'Profit %', amount:'-43.3%', accent:'red'}
+          ] },
+          { header:'Metrics', rows:[
+            {lbl:'TACOS % (console)', amount:'12.7%'},
+            {lbl:'Ad spend (console)', amount:'£358'}
+          ] }
+        ]
+      }
+    } },
   },
   // ===== Last 12 Months = Oct 2025–Sep 2026 =====
   '12m': {
@@ -128,6 +169,50 @@ window.DASHBOARD_DATA = {
       series:[ {color:'#404935',values:[747,2459,3261,4011,815,0,0,0,0,0,1032,1779],main:true,area:true}, {color:'#a7ab90',values:[157,693,794,1103,187,0,0,0,0,0,98,261],dash:true} ],
       legend:[ {name:'Revenue',color:'#404935'}, {name:'Ad Spend',color:'#a7ab90'} ] },
     campaignMix: { slices:[ {name:'Sponsored Products',color:'#404935',pct:100,sales:'£6.2k',acos:'53.1%'} ] },
+    // Amazon P&L for this window (settled, summed per month — see sections.pnl note on basis).
+    sec: { pnl: {
+      summary: [ {val:'£9,681',lbl:'Net Revenue',color:'brand'}, {val:'£5,960',lbl:'Total Costs',color:'red'}, {val:'£3,721',lbl:'Net Profit',color:'green'} ],
+      margin: { pct:'38.4%', pctColor:'green', note:'Oct 2025 – Sep 2026 (12-month) · financial basis (MerchantSpring, settled) · UK channel · COGS not configured', rows:[
+        {lbl:'Net Revenue', val:'£9,681'},
+        {lbl:'Advertising', val:'-£3,026', color:'red'},
+        {lbl:'Selling & Shipping Fees', val:'-£2,928', color:'red'},
+        {lbl:'COGS (not yet configured)', val:'£0', color:'red'},
+        {lbl:'Other adjustments', val:'-£5', color:'red'},
+        {lbl:'Net Profit', val:'£3,721', color:'green', strong:true}
+      ] },
+      mkt: [
+        {name:'United Kingdom',flag:'gb',revenue:'£9,681',adspend:'£3,026',net:'£3,721',netColor:'green',margin:'38.4%',marginCls:'bg'}
+      ],
+      statement: {
+        fixedLabel: 'Oct 2025 – Sep 2026 (12-month) · financial basis (MerchantSpring, settled)',
+        caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag and bills ad spend in arrears, so the latest weeks are understated until settlement completes (settled ad spend £3,026 vs £3,293 in the ad console). COGS is not configured in MerchantSpring (£0 shown), so real profit is lower once product cost is entered.',
+        groups:[
+          { header:'Income', rows:[
+            {lbl:'Product sales (ex-VAT)', amount:'£12,075', pct:'124.7%', unit:'£28.55'},
+            {lbl:'Refunds & returns', amount:'-£276', pct:'-2.9%', unit:'-£0.65'},
+            {lbl:'Promotions & discounts', amount:'-£2,484', pct:'-25.7%', unit:'-£5.87'},
+            {lbl:'Reimbursements & other income', amount:'£367', pct:'3.8%', unit:'£0.87'},
+            {lbl:'Net revenue', amount:'£9,681', pct:'100.0%', unit:'£22.89',total:true}
+          ] },
+          { header:'Expenses', rows:[
+            {lbl:'Advertising (settlement)', amount:'£3,026', pct:'31.3%', unit:'£7.15'},
+            {lbl:'Selling fees', amount:'£1,563', pct:'16.1%', unit:'£3.69'},
+            {lbl:'Shipping & fulfilment fees', amount:'£1,365', pct:'14.1%', unit:'£3.23'},
+            {lbl:'Cost of goods (not configured)', amount:'£0', pct:'0.0%', unit:'£0.00'},
+            {lbl:'Refund/return handling', amount:'£5', pct:'0.1%', unit:'£0.01'},
+            {lbl:'Total expenses', amount:'£5,960', pct:'61.6%', unit:'£14.09',total:true}
+          ] },
+          { header:'Profit', rows:[
+            {lbl:'PROFIT', amount:'£3,721', pct:'38.4%', unit:'£8.80', total:true, profit:true},
+            {lbl:'Profit %', amount:'38.4%', accent:'green'}
+          ] },
+          { header:'Metrics', rows:[
+            {lbl:'TACOS % (console)', amount:'23.4%'},
+            {lbl:'Ad spend (console)', amount:'£3,293'}
+          ] }
+        ]
+      }
+    } },
   },
   },
 
@@ -188,49 +273,51 @@ window.DASHBOARD_DATA = {
         {level:'muted',title:'All live listings in stock',sub:'No stock-up needed on current sales'}
       ] }
     },
-    // P&L is GATED behind the Executive-Subscription paywall for Balance 8 per brief ("no P&L for
-    // now") — this real statement stays baked so it renders instantly the day the client wants it
-    // switched on. Financial basis from getStoreProfitAndLoss (September 2026, ACCRUAL basis):
-    // gross sales £1,841.95 · promotions/discounts -£1,200.38 · other income +£8.51 · net revenue
-    // £541.96 · ad spend £252.39 (console) · selling fees £29.19 · shipping/fulfilment £215.01 · COGS
-    // £0 (NOT configured in MerchantSpring) · net profit +£45.37 (8.4% margin).
+    // Amazon P&L — ACTIVE (un-gated Oct 2026, see config.js hiddenPages). Basis: getStoreProfitAndLoss,
+    // profitabilityView 'settled', includeTax:false (so Product sales is ex-VAT and the Income lines
+    // foot exactly to Net revenue), pulled per month (endpoint is ~31-day capped) and summed for the
+    // multi-month windows. sections.pnl = Last Month (Sep 2026); dateRanges['3m'|'12m'].sec.pnl = the
+    // other windows. COGS is NOT configured in MerchantSpring (£0) so profit/margin are overstated vs
+    // true profit. Settled timing: Aug orders settle into Sep, and ad spend is billed in arrears
+    // (settled Sep ad £99 vs £261 console), so single-month figures swing — read the 12-month view.
+    // Monthly settled net (rev − exp): Oct +121 · Nov +849 · Dec +1,175 · Jan +1,000 · Feb +914 · Mar −142 ·
+    // Apr +67 · May–Jul ~£0 · Aug −1 · Sep −260 (Sep: £1,969 of promotions vs £2,481 ex-VAT sales).
     pnl: {
+      summary: [ {val:'£531',lbl:'Net Revenue',color:'brand'}, {val:'£792',lbl:'Total Costs',color:'red'}, {val:'-£260',lbl:'Net Profit',color:'red'} ],
+      margin: { pct:'-49.0%', pctColor:'red', note:'September 2026 (30-day) · financial basis (MerchantSpring, settled) · UK channel · COGS not configured', rows:[
+        {lbl:'Net Revenue', val:'£531'},
+        {lbl:'Advertising', val:'-£99', color:'red'},
+        {lbl:'Selling & Shipping Fees', val:'-£692', color:'red'},
+        {lbl:'COGS (not yet configured)', val:'£0', color:'red'},
+        {lbl:'Net Profit', val:'-£260', color:'red', strong:true}
+      ] },
+      mkt: [
+        {name:'United Kingdom',flag:'gb',revenue:'£531',adspend:'£99',net:'-£260',netColor:'red',margin:'-49.0%',marginCls:'br'}
+      ],
       statement: {
-        fixedLabel: 'September 2026 (1–30) · financial basis (MerchantSpring, accrual)',
-        summary: [ {val:'£542',lbl:'Net Revenue',color:'brand'}, {val:'£497',lbl:'Total Costs',color:'red'}, {val:'£45',lbl:'Net Profit',color:'green'} ],
-        margin: { pct:'8.4%', pctColor:'green', note:'September 2026 (30-day) · financial basis (MerchantSpring, accrual) · UK channel', rows:[
-          {lbl:'Net Revenue', val:'£542'},
-          {lbl:'Advertising', val:'-£252', color:'red'},
-          {lbl:'Selling Fees', val:'-£29', color:'red'},
-          {lbl:'Shipping & Fulfilment', val:'-£215', color:'red'},
-          {lbl:'COGS (not yet configured)', val:'£0', color:'red'},
-          {lbl:'Other Income', val:'+£9', color:'green'},
-          {lbl:'Net Profit', val:'£45', color:'green', strong:true}
-        ] },
-        mkt: [
-          {name:'United Kingdom',flag:'gb',revenue:'£542',adspend:'£252',net:'£45',netColor:'green',margin:'8.4%',marginCls:'bg'}
-        ],
+        fixedLabel: 'September 2026 (1–30) · financial basis (MerchantSpring, settled)',
+        caveat: 'Settled (cash) basis — Amazon settles orders on a ~2-week lag and bills ad spend in arrears, so the latest weeks are understated until settlement completes (settled ad spend £99 vs £261 in the ad console). COGS is not configured in MerchantSpring (£0 shown), so real profit is lower once product cost is entered.',
         groups:[
           { header:'Income', rows:[
-            {lbl:'Product sales (gross)', amount:'£1,842', pct:'339.9%', unit:'£27.09'},
-            {lbl:'Promotions & discounts', amount:'-£1,200', pct:'-221.5%', unit:'-£17.65'},
-            {lbl:'Other income', amount:'£9', pct:'1.6%', unit:'£0.13'},
-            {lbl:'Net revenue', amount:'£542', pct:'100.0%', unit:'£7.97', total:true}
+            {lbl:'Product sales (ex-VAT)', amount:'£2,481', pct:'467.1%', unit:'£36.49'},
+            {lbl:'Promotions & discounts', amount:'-£1,969', pct:'-370.6%', unit:'-£28.95'},
+            {lbl:'Reimbursements & other income', amount:'£19', pct:'3.5%', unit:'£0.28'},
+            {lbl:'Net revenue', amount:'£531', pct:'100.0%', unit:'£7.81',total:true}
           ] },
           { header:'Expenses', rows:[
-            {lbl:'Advertising', amount:'£252', pct:'46.6%', unit:'£3.71'},
-            {lbl:'Selling fees', amount:'£29', pct:'5.4%', unit:'£0.43'},
-            {lbl:'Shipping & fulfilment fees', amount:'£215', pct:'39.7%', unit:'£3.16'},
+            {lbl:'Advertising (settlement)', amount:'£99', pct:'18.7%', unit:'£1.46'},
+            {lbl:'Selling fees', amount:'£367', pct:'69.2%', unit:'£5.40'},
+            {lbl:'Shipping & fulfilment fees', amount:'£325', pct:'61.2%', unit:'£4.78'},
             {lbl:'Cost of goods (not configured)', amount:'£0', pct:'0.0%', unit:'£0.00'},
-            {lbl:'Total expenses', amount:'£497', pct:'91.6%', unit:'£7.30', total:true}
+            {lbl:'Total expenses', amount:'£792', pct:'149.0%', unit:'£11.64',total:true}
           ] },
           { header:'Profit', rows:[
-            {lbl:'PROFIT', amount:'£45', pct:'8.4%', unit:'£0.67', total:true, profit:true},
-            {lbl:'Profit %', amount:'8.4%', accent:'green'}
+            {lbl:'PROFIT', amount:'-£260', pct:'-49.0%', unit:'-£3.83', total:true, profit:true},
+            {lbl:'Profit %', amount:'-49.0%', accent:'red'}
           ] },
           { header:'Metrics', rows:[
-            {lbl:'TACOS %', amount:'14.6%'},
-            {lbl:'Ad spend (console)', amount:'£252'}
+            {lbl:'TACOS % (console)', amount:'14.6%'},
+            {lbl:'Ad spend (console)', amount:'£261'}
           ] }
         ]
       }
