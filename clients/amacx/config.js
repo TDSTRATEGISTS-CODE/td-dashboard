@@ -79,7 +79,7 @@ window.DASHBOARD_CONFIG = {
   // 'notion' = Overview shows Account Health Management + Advertising & Marketing Strategy + Stock Warnings.
   //            The first two are baked weekly into data.js → sections.overview.{healthMgmtSpec,adsStrategySpec}
   //            from Notion (latest sub-task of "AMACX Account Health" and of "AMACX Advertising", plus the
-  //            AMACX Monthly SOP week schedule) — see tools/amacx-weekly-overview.routine.md. The sheet's
+  //            AMACX Monthly SOP week schedule) — see tools/weekly-overview.routine.md. The sheet's
   //            Project Scope board (In Progress / Completed / Upcoming) is ignored. Stock Warnings unchanged.
   // 'sheet'  = previous behaviour: In Progress / Completed / Upcoming pulled live from the sheet's Project
   //            Scope board via the proxy. Saved as the pre-change state on main (commit 2e079af).

@@ -125,3 +125,7 @@ Never merge a PR yourself. The auto-publish path skips PRs entirely; the failure
   UK ad spend / ad sales still come from generated `campaigns` reports per window (12m reconciles within 0.2%).
 - The Account Tracker Drive read returned no readable budget rows in Sep 2026 — advertising `budgets`/`forecast`
   were rolled from the documented £3,000 budget / £3,500 forecast; re-confirm from the sheet when possible.
+
+**Guard — weekly Overview cards:** if `clients/nkv/config.js` has `overviewSource: 'notion'`, the three
+Overview cards (`sections.overview.healthMgmtSpec`, `adsStrategySpec`, `stockWarn`) are owned by the
+weekly routine (`tools/weekly-overview.routine.md`). Don't overwrite them in this rebake.

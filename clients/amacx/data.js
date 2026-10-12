@@ -227,7 +227,7 @@ window.DASHBOARD_DATA = {
         {name:'Turbo Ice Gel 12x77ml – Cola Lime',asin:'B0F331SKR5',ean:'8714411002929',market:'it',reason:'No Winner',rc:'ba',your:'€79.95',winner:'n/a',gap:''}
       ],
       cvr: { val:'5.6%', note:'recent month · 3,991 sessions', sub:'All EU · session conversion' },
-      // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/amacx-weekly-overview.routine.md) ----
+      // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
       // healthMgmtSpec ← "12 Oct 2026 - AMACX Account Health Review" (latest sub-task of AMACX Account Health):
       //                  its "Notes for client" lines as written (max 5 open; inventory notes go to stockWarn),
       //                  plus the 2 most recent "Resolved" items as Done.
