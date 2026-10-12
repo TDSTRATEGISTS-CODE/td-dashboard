@@ -72,8 +72,15 @@ Item shape: `{level, title, sub}`.
 - `badge` = `'<n> open'` (red + amber count), or `'All healthy'` when none. `subLabel` = `'Weekly review · <review date>'`.
 
 **`adsStrategySpec`**
-- If the Advertising task has **"Notes for client"**, use them as written (same format and conversion
-  as above).
+- If the Advertising task has a **"Notes for Client"** section (top of the task page), use those lines as
+  written. Their format is `**<Topic>:** <text>` (e.g. `**Cherry Juice+:** launched with dedicated
+  campaigns in France, Spain and Italy on 7 Oct. Germany to follow.`) → title `<Topic>`, sub = the text.
+  Set the level from what the note says: something completed with a date → `green`, sub starting
+  `Done <d Mon> · `; something under way → `amber`, `In progress · `; something planned → `muted`,
+  `Next up · `; a standing fact (e.g. how stock is handled) → `muted` with no prefix. Notes are
+  client-approved, so keep their wording and figures (including any ACoS they quote).
+  If a note covers a stock topic, it still belongs here (it's about advertising) unless it names an
+  out-of-stock SKU — then fold it into `stockWarn` as for health notes.
 - Otherwise build open / next-up items yourself from the task's status, the unticked approved lines in
   the Ads Action Plan and the next SOP advertising items (`muted`).
 - Then the 2 most recent done actions (ticked Ads Action Plan lines or Weekly log "Done") as green
