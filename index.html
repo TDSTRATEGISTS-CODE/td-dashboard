@@ -192,7 +192,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 @keyframes fi{to{opacity:1;transform:translateY(0);}}
 @keyframes pulse2{0%,100%{opacity:1;}50%{opacity:.3;}}
 .tasks-flags-grid{display:grid;grid-template-columns:1fr;gap:14px;}
-@media(min-width:1025px){.tasks-flags-grid{grid-template-columns:1.3fr 1fr 1fr 1fr;}.tasks-flags-grid.tf-3{grid-template-columns:1.3fr 1fr 1fr;}}
+@media(min-width:1025px){.tasks-flags-grid{grid-template-columns:1.3fr 1fr 1fr 1fr;}.tasks-flags-grid.tf-3{grid-template-columns:1.3fr 1fr 1fr;}.tasks-flags-grid.tf-2{grid-template-columns:1fr 1fr;}}
 /* Netherlands pre-launch: a page with .nld-active (NLD market selected) hides its normal content and
    shows only the pending-launch banner (.nld-ph); sections flagged .nld-keep stay (Overview scope cards). */
 .page-content.nld-active > *:not(.nld-ph):not(.nld-keep){display:none!important;}
@@ -223,7 +223,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
      cached page (GitHub Pages caps index.html at a 10-min browser cache) by reloading once with a
      cache-bust param; and if it changes mid-session it shows the "please refresh" overlay. One bump,
      all jobs. */
-  var APP_VER = '2026-10-12';
+  var APP_VER = '2026-10-12-2';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
