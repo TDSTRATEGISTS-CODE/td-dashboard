@@ -255,10 +255,12 @@ window.DASHBOARD_DATA = {
         {level:'green',title:'Cherry Juice+',sub:'Done 7 Oct · launched with dedicated campaigns in France, Spain and Italy. Germany to follow'},
         {level:'green',title:'Clean-up',sub:'Done 7 Oct · products and campaigns that didn\'t pay back over 12 weeks paused, e.g. some Energy Gel flavours in France and Fruit Chews in Germany. They still sell organically'}
       ] },
-      // stockWarn.shipping ← SKU List "<MKT> Ship Price/Order" columns (same values as AMACX_EU_sku-sync
-      // shipPriceByMarket, sync 12 Oct 2026, last 30 days): simple mean across SKUs that sold in that market.
-      stockWarn: { shipping: { label:'Avg shipping per order', note:'SKU List · last 30 days', items:[
-          {flag:'de',label:'DE',val:'€5.47'}, {flag:'fr',label:'FR',val:'€4.35'}, {flag:'es',label:'ES',val:'€4.09'}, {flag:'it',label:'IT',val:'€3.63'} ] },
+      // stockWarn.shipping ← MerchantSpring channelProfitAndLoss (accrual, tax incl., Europe/Berlin), Jul–Sep 2026:
+      // otherIncome (FBM shipping charged to customers) ÷ P&L orders, per market, summed over the 3 months.
+      // DE 970.18/137 · FR 789.00/144 · ES 403.01/87 · IT 436.24/96 (EU 2,598.43/464 = €5.60). Refreshed by the
+      // MONTHLY rebake (needs MerchantSpring); the weekly overview routine must carry it over unchanged.
+      stockWarn: { shipping: { label:'Avg shipping per order', note:'Jul–Sep 2026 · charged to customer', items:[
+          {flag:'de',label:'DE',val:'€7.08'}, {flag:'fr',label:'FR',val:'€5.48'}, {flag:'es',label:'ES',val:'€4.63'}, {flag:'it',label:'IT',val:'€4.54'} ] },
         title:'&#128230; Logistics &amp; Operations', badge:'4 OOS SKUs', subLabel:'SKU List · pooled EU stock · 12 Oct 2026', items:[
         {level:'red',title:'Turbo Chew Lemon — OOS all markets',sub:'B0GZ3XD7QX · since 6 Oct · please confirm a stock-up date'},
         {level:'red',title:'Energy Drink Powder 320g Lemon — OOS all markets',sub:'B0GZ43HK1F · since 29 Jul'},
