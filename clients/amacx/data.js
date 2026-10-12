@@ -255,15 +255,16 @@ window.DASHBOARD_DATA = {
         {level:'green',title:'Cherry Juice+',sub:'Done 7 Oct · launched with dedicated campaigns in France, Spain and Italy. Germany to follow'},
         {level:'green',title:'Clean-up',sub:'Done 7 Oct · products and campaigns that didn\'t pay back over 12 weeks paused, e.g. some Energy Gel flavours in France and Fruit Chews in Germany. They still sell organically'}
       ] },
-      // stockWarn.shipping ← MerchantSpring channelProfitAndLoss (accrual, tax incl., Europe/Berlin), Jul–Sep 2026:
-      // otherIncome (FBM shipping charged to customers) ÷ P&L orders, per market, summed over the 3 months.
-      // DE 970.18/137 · FR 789.00/144 · ES 403.01/87 · IT 436.24/96 (EU 2,598.43/464 = €5.60). Refreshed by the
-      // MONTHLY rebake (needs MerchantSpring); the weekly overview routine must carry it over unchanged.
+      // stockWarn.shipping ← MerchantSpring, Jul–Sep 2026, per market: shipping charged to customers (channelProfitAndLoss
+      // accrual otherIncome, tax incl., Europe/Berlin) ÷ orders from getSalesByPeriod (lineItemCount = the dashboard's
+      // order count). DE 970.18/163 · FR 789.00/191 · ES 403.01/109 · IT 436.24/128 (EU 2,598.43/591 = €4.40).
+      // NOT the P&L's own "orders" field — it undercounts (DE Jul/Aug gave >€6.95, impossible on a flat €6.95 rate).
+      // Refreshed by the MONTHLY rebake (needs MerchantSpring); the weekly overview routine carries it over unchanged.
       // target / targetTxt: short-term goal €6.95 per order in every market (Ryan, 12 Oct 2026), raised gradually
       // to protect the Buy Box. Green = at/above target, amber = below.
       stockWarn: { shipping: { label:'Avg shipping per order', note:'Jul–Sep 2026 · charged to customer', target:6.95,
           targetTxt:'Target €6.95 per order in every market · being raised gradually to protect the Buy Box', items:[
-          {flag:'de',label:'DE',val:'€7.08',num:7.08}, {flag:'fr',label:'FR',val:'€5.48',num:5.48}, {flag:'es',label:'ES',val:'€4.63',num:4.63}, {flag:'it',label:'IT',val:'€4.54',num:4.54} ] },
+          {flag:'de',label:'DE',val:'€5.95',num:5.95}, {flag:'fr',label:'FR',val:'€4.13',num:4.13}, {flag:'es',label:'ES',val:'€3.70',num:3.70}, {flag:'it',label:'IT',val:'€3.41',num:3.41} ] },
         title:'&#128230; Logistics &amp; Operations', badge:'4 OOS SKUs', subLabel:'SKU List · pooled EU stock · 12 Oct 2026', items:[
         {level:'red',title:'Turbo Chew Lemon — OOS all markets',sub:'B0GZ3XD7QX · since 6 Oct · please confirm a stock-up date'},
         {level:'red',title:'Energy Drink Powder 320g Lemon — OOS all markets',sub:'B0GZ43HK1F · since 29 Jul'},
