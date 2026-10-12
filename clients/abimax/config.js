@@ -29,6 +29,9 @@ window.DASHBOARD_CONFIG = {
 
   // ---- Defaults ----
   defaultPeriod: 'may',
+
+  // Overview cards baked weekly from Notion + SKU sync (tools/weekly-overview.routine.md). Revert = 'sheet' + APP_VER bump.
+  overviewSource: 'notion',
   defaultMarket: 'all',
 
   // Uses the default 'amazon' template page set (no custom `pages` needed):

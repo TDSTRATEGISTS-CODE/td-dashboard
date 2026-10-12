@@ -241,12 +241,31 @@ window.DASHBOARD_DATA = {
       cvr: { val:'2.8%', note:'September 2026 · 1,678 sessions', sub:'US · session conversion' },
       // FBA stock warnings = real MerchantSpring product report (qty + days-cover per ASIN, 05 Oct 2026).
       // All 5 live ASINs are under ~150 days cover; Pack of 3 (42d) is the most urgent.
-      stockWarn: { badge:'5 stock-up · 0 OOS', items:[
-        {level:'red', title:'Magnostream Pack of 3 — stock-up now', sub:'B0GLPWZCRV · ~42 days cover · 14 units'},
-        {level:'amber', title:'Magnostream Multi-Unit Bundle — stock-up soon', sub:'B0GH7YKPZJ · ~60 days cover · 2 units'},
-        {level:'amber', title:'Magnostream Pack of 2 — stock-up soon', sub:'B0GLPQ6YZ4 · ~70 days cover · down from 120d Aug'},
-        {level:'amber', title:'Magnostream Pro — stock-up soon', sub:'B0GGRJKS2D · ~99 days cover · down from 140d Aug'},
-        {level:'amber', title:'Magnostream Single — stock-up soon', sub:'B0GLT2LYKY · ~102 days cover · down from 111d Aug'}
+      // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
+      // First baked 12 Oct 2026 (review used as approved for this run by Ryan's instruction). The sheet-era
+      // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
+      // healthMgmtSpec ← "12 Oct 2026 - Abimax Account Health Review" (no 'Notes for client' section on that page, so
+      //                  items are built from its verdict/recommendations; inventory goes to stockWarn).
+      // adsStrategySpec ← "Abimax US Ad Strategy" task › Notes for Client (updated 12 Oct 2026).
+      // stockWarn      ← Abimax_US_sku-sync_2026-10-12 (MerchantSpring, 12 Sep–11 Oct 2026, FBA). Thresholds now ≤45d / soon ≤120d.
+      //                  Magno-PRO-002 (0 stock since 19 Feb, no sales) left off as dormant.
+      healthMgmtSpec: { badge:'3 open', subLabel:'Weekly review · 12 Oct 2026', items:[
+        {level:'amber',title:'US — Deals',sub:'In progress · Black Friday recommended-deal deadline is 20 Oct 2026; coupon or Prime Exclusive Discount decision needed'},
+        {level:'amber',title:'US — Account Health',sub:'In progress · emergency contact still shows as not verified in Seller Central; please verify it'},
+        {level:'amber',title:'US — Compliance',sub:'In progress · confirming the 1 Aug INFORM Consumers Act notice is fully closed; no follow-up notice received'}
+      ] },
+      adsStrategySpec: { badge:'Magnostream restructured', subLabel:'Weekly review · 12 Oct 2026', items:[
+        {level:'amber',title:'MAGNO-PRO',sub:'In progress · cutting broad "water softener" searches that don\'t convert and protecting "water descaler", which does (25% ACoS over the 12 weeks to 5 Oct)'},
+        {level:'muted',title:'Main Magnostream campaign',sub:'Running inside target at 32% ACoS against a 35% target (30 days to 5 Oct)'},
+        {level:'muted',title:'Magnostream decision',sub:'Next up · around 3 Nov · after 2–4 weeks of monitoring'},
+        {level:'green',title:'Magnostream campaigns restructured',sub:'Done 6 Oct · two campaigns no longer compete for the same searches. Monitoring for 2–4 weeks'}
+      ] },
+      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'5 stock-up · 0 OOS', subLabel:'SKU sync · US FBA stock · 12 Oct 2026', items:[
+        {level:'red',title:'Magnostream Pack of 2 — stock-up now',sub:'B0GLPQ6YZ4 · ~36 days cover · 12 units'},
+        {level:'amber',title:'Magnostream Pack of 3 — stock-up soon',sub:'B0GLPWZCRV · ~60 days cover · 14 units'},
+        {level:'amber',title:'Magnostream Multi-Unit Bundle — stock-up soon',sub:'B0GH7YKPZJ · ~60 days cover · 2 units'},
+        {level:'amber',title:'Magnostream Pro — stock-up soon',sub:'B0GGRJKS2D · ~86 days cover · 20 units'},
+        {level:'amber',title:'Magnostream Single — stock-up soon',sub:'B0GLT2LYKY · ~87 days cover · 67 units'}
       ] }
     },
     // P&L is ACTIVE for Abimax (Executive tier, Sep 2026) — full MerchantSpring financial P&L, built

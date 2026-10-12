@@ -166,8 +166,26 @@ window.DASHBOARD_DATA = {
       // Real FBA stock snapshot (MerchantSpring product report, qty + days-cover per ASIN, 05 Oct
       // 2026). 1 SKU on stock-up watch — Berry Fusion sold 31 of its 72 units in Sep, 41 left. MerchantSpring's
       // daysCover shows ~112 days (blended velocity); at the Sep sell rate it is ~40 days.
-      stockWarn: { badge:'1 stock-up · 0 OOS', items:[
-        {level:'amber', title:'WIRED Berry Fusion — stock-up soon', sub:'B0HD7RFZN4 · 41 units · sold 31 in Sep (~40 days at Sep rate)'}
+      // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
+      // First baked 12 Oct 2026 (review used as approved for this run by Ryan's instruction). The sheet-era
+      // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
+      // healthMgmtSpec ← "12 Oct 2026 - Balance 8 Account Health Review" › Notes for client (⚠️ lines; ✅ lines left out).
+      // adsStrategySpec ← "Balance8 Ad Strategy" task › Notes for Client (updated 12 Oct 2026) + Weekly log for done items.
+      // stockWarn      ← Balance8_UK_sku-sync_2026-10-12 (MerchantSpring, 12 Sep–11 Oct 2026, FBA). Thresholds ≤21d / soon ≤45d: none hit.
+      healthMgmtSpec: { badge:'2 open', subLabel:'Weekly review · 12 Oct 2026', items:[
+        {level:'amber',title:'UK — Sales',sub:'In progress · WIRED flavours and Creatine slow since mid-September; we\'ve proposed listing improvements'},
+        {level:'amber',title:'UK — Deals',sub:'In progress · Black Friday deal submissions close 18 Nov; we\'ve proposed a deal plan'},
+        {level:'green',title:'UK — WIRED listings confirmed live',sub:'Done 12 Oct · all 14 UK listings Active, none inactive'}
+      ] },
+      adsStrategySpec: { badge:'Building keywords', subLabel:'Weekly review · 6 Oct 2026', items:[
+        {level:'muted',title:'BrainMatter',sub:'Recovering after the stock gap earlier this year. Cognitive and Calm sales are up in the 30 days to 5 Oct, with a growing share coming organically'},
+        {level:'muted',title:'WIRED',sub:'Early stage in a competitive category with few reviews yet, so ads run lean while reviews build (Amazon Vine recommended)'},
+        {level:'muted',title:'Next step',sub:'Next up · building keyword campaigns from the search terms that already convert'},
+        {level:'green',title:'WIRED campaigns live',sub:'Done 17 Sep · first advertising campaigns running'},
+        {level:'green',title:'BrainMatter manual keyword campaigns added',sub:'Done 2 Sep · targeting terms alongside the automatic campaigns'}
+      ] },
+      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'All in stock', subLabel:'SKU sync · UK FBA stock · 12 Oct 2026', items:[
+        {level:'muted',title:'All live listings in stock',sub:'No stock-up needed on current sales'}
       ] }
     },
     // P&L is GATED behind the Executive-Subscription paywall for Balance 8 per brief ("no P&L for

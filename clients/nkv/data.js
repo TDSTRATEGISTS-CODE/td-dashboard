@@ -242,11 +242,34 @@ window.DASHBOARD_DATA = {
       // 20 of the 74 UK listings are at 0 stock (out of stock / suppressed) — 19 dormant Girlactik
       // long-tail SKUs plus Lilibeth Pink GB 2-Pack (OOS since 3 Oct); 43 listings sold in September.
       // (Account-health/strategy alerts moved to their own section — see ACCOUNT-HEALTH note below.)
-      stockWarn: { badge:'3 stock-up · 20 OOS', items:[
-        {level:'amber', title:'Contours Rx Lids Assortment 4–7mm — stock-up soon', sub:'B0FYR8DQ2G · ~27 days cover · 70 units · top seller (73/mo)'},
-        {level:'amber', title:'Girlactik Gel Eyeliner Pure Black — stock-up this week', sub:'B099KVFGZP · ~5 days cover · 1 unit · 7/mo'},
-        {level:'amber', title:'Contours Rx Lids 2-Pack 6mm — stock-up this week', sub:'B0C12KT8L6 · ~6 days cover · 1 unit · 4/mo'},
-        {level:'amber', title:'20 listings out of stock / suppressed', sub:'19 dormant Girlactik long-tail SKUs · plus Lilibeth Pink GB 2-Pack (B0FFDPBJP2, selling 3/mo, OOS since 3 Oct) · all other selling SKUs in stock'}
+      // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
+      // First baked 12 Oct 2026 (review used as approved for this run by Ryan's instruction). The sheet-era
+      // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
+      // healthMgmtSpec ← "12 Oct 2026 - NKV Account Health Review" › Notes for client (🔴/⚠️ lines; ✅ lines left out;
+      //                  the UK inventory note is folded into stockWarn).
+      // adsStrategySpec ← "NKV Beauty Ad Strategy" task › Notes for Client (updated 12 Oct 2026) + Ads Action Plan / Weekly log for done items.
+      // stockWarn      ← NKV_UK + NKV_US_sku-sync_2026-10-12 (MerchantSpring, 12 Sep–11 Oct 2026, FBA). Thresholds ≤14d / soon ≤30d.
+      //                  The dormant Girlactik long-tail (no sale in 120+ days) is left off. Card title/sub come from config.layout.relabel.
+      healthMgmtSpec: { badge:'3 open', subLabel:'Weekly review · 12 Oct 2026', items:[
+        {level:'red',title:'US — Account Health',sub:'In progress · Seller Central access restricted by Amazon: invalid payment method. Please update the card on file.'},
+        {level:'red',title:'US — Compliance',sub:'In progress · GrowPod policy item still overdue, $500 sales at risk; appeal in progress with Amazon.'},
+        {level:'amber',title:'UK — Deals',sub:'In progress · Three products eligible for Black Friday deals; submissions close 18 Nov.'}
+      ] },
+      adsStrategySpec: { badge:'Q4 push', subLabel:'Weekly review · 8 Oct 2026', items:[
+        {level:'amber',title:'UK — White Luxe (Q4 push)',sub:'In progress · gearing the Kit and Strips up for peak season, with ad spend held at around 20% of their total sales'},
+        {level:'amber',title:'UK — Newnique hair growth range',sub:'In progress · funding launch advertising to build organic sales and ranking. Organic sales are growing where ads run. Next review in early November'},
+        {level:'amber',title:'UK — Efficiency',sub:'In progress · pausing campaigns and keywords that haven\'t converted over the last 12 weeks and moving budget to proven terms'},
+        {level:'muted',title:'UK — Stock',sub:'Several Lids by Design sizes are low; stock-up recommended to protect the account\'s strongest campaign'},
+        {level:'muted',title:'US',sub:'Early-stage market. Ads are paused while a stock issue on the GrowPod Hair Comb is resolved'},
+        {level:'green',title:'UK — Display re-targeting paused',sub:'Done 8 Oct · Mixed Re-targeting campaign'},
+        {level:'green',title:'UK — Grow Bundle campaigns paused',sub:'Done 6 Oct · Manual and Auto'}
+      ] },
+      stockWarn: { badge:'2 stock-up · 3 OOS', subLabel:'SKU sync · per market (FBA) · 12 Oct 2026', items:[
+        {level:'red',title:'Girlactik Gel Eyeliner Pure Black — OOS UK',sub:'B099KVFGZP · since 5 Oct · stock-up now · please confirm a stock-up date'},
+        {level:'red',title:'Lilibeth Brow Shaper Pink 2-Pack — OOS UK',sub:'B0FFDPBJP2 · since 3 Oct · stock-up now · please confirm a stock-up date'},
+        {level:'red',title:'Lilibeth Brow Shaper Pack of 3 (Mint, Aqua, Baby Pink) — OOS UK',sub:'B0DWSNH6M3 · since 28 Aug'},
+        {level:'amber',title:'Newnique GrowPod Device — stock-up soon',sub:'B0F8QKKZMQ · UK · ~30 days cover · 2 units'},
+        {level:'amber',title:'Lilibeth Brow Shaper Purple 2-Pack — stock-up soon',sub:'B0FFDSR57K · UK · ~30 days cover · 6 units'}
       ] }
       // Account Health (strategy/performance alerts) card removed from the NKV Overview per client request.
     },

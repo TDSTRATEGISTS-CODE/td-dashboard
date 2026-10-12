@@ -28,6 +28,9 @@ window.DASHBOARD_CONFIG = {
 
   // ---- Defaults ----
   defaultPeriod: 'may',
+
+  // Overview cards baked weekly from Notion + SKU sync (tools/weekly-overview.routine.md). Revert = 'sheet' + APP_VER bump.
+  overviewSource: 'notion',
   defaultMarket: 'all',
 
   // Page order for NKV. Mirrors the 'amazon' template but inserts the new 'shopify' page (D2C
