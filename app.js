@@ -1885,6 +1885,7 @@ function renderSections() {
   renderNotionOverview(o);            // overviewSource:'notion' → Account Health / Advertising cards
   renderAlertList('sec-stockwarn', 'sec-stockwarn-badge', o.stockWarn);   // inventory state → MCP live later
   setCardSub('sec-stockwarn-sub', o.stockWarn);
+  if (o.stockWarn && o.stockWarn.title) { var swt = el('sec-stockwarn-ttl'); if (swt) swt.innerHTML = o.stockWarn.title; }   // e.g. AMACX 'Logistics & Operations'
   renderAlertList('sec-health', 'sec-health-badge', o.healthSpec);        // Account Health (strategy alerts)
   setCardSub('sec-health-sub', o.healthSpec);
   var healthWrap = el('sec-health-wrap'); if (healthWrap) healthWrap.style.display = o.healthSpec ? '' : 'none';

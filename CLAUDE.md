@@ -121,9 +121,9 @@ should return only those legitimate cases — any "reorder soon"/"order this wee
 
 While `clients/amacx/config.js` has `overviewSource: 'notion'`, the Overview's three cards —
 Account Health Management (`sections.overview.healthMgmtSpec`), Advertising & Marketing Strategy
-(`adsStrategySpec`) and Stock Warnings (`stockWarn`) — are owned by the weekly routine in
-`tools/amacx-weekly-overview.routine.md`. The monthly rebake must not overwrite them. Stock Warnings
-comes from the AMACX Project Tracker › SKU List (via the proxy's `?rebake=1` → `skuList`): stock is ONE
+(`adsStrategySpec`) and Logistics & Operations (`stockWarn`, title set by `stockWarn.title`) — are owned by the weekly routine in
+`tools/amacx-weekly-overview.routine.md`. The monthly rebake must not overwrite them. Max 6 items per
+card; inventory topics live only on Logistics & Operations. Its OOS list comes from the AMACX Project Tracker › SKU List (via the proxy's `?rebake=1` → `skuList`): stock is ONE
 pooled EU FBM stock, so an OOS SKU is always "OOS all markets"; SKU List rows whose per-market status
 columns disagree (`mismatch:true`) are a team fix-list item, never shown to the client as OOS.
 Revert to the sheet's Project Scope board = `overviewSource: 'sheet'` + `APP_VER` bump.

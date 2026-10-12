@@ -229,7 +229,8 @@ window.DASHBOARD_DATA = {
       cvr: { val:'5.6%', note:'recent month · 3,991 sessions', sub:'All EU · session conversion' },
       // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/amacx-weekly-overview.routine.md) ----
       // healthMgmtSpec ← "12 Oct 2026 - AMACX Account Health Review" (latest sub-task of AMACX Account Health):
-      //                  its "Notes for client" lines as written, plus "Resolved" items as done.
+      //                  its "Notes for client" lines as written (max 4 open; inventory notes go to stockWarn),
+      //                  plus the 2 most recent "Resolved" items as Done.
       // adsStrategySpec ← "Cherry Juice campaign launch" (latest sub-task of AMACX Advertising) + the 7 Oct
       //                  Weekly log, plus the AMACX Monthly SOP week schedule for what's next.
       // stockWarn      ← AMACX Project Tracker › SKU List (EU Stock = pooled EU FBM stock, synced 12 Oct 2026
@@ -237,13 +238,11 @@ window.DASHBOARD_DATA = {
       //                  Discontinued / superseded SKUs (Hydro Tabs 3×20, Beet Shot, Energy Drink Grape,
       //                  Cherry Juice Booster 6×500) are left off.
       // Item levels: red/amber = open issue · green = done · muted = next up. Client-facing wording only.
-      healthMgmtSpec: { badge:'6 open', subLabel:'Weekly review · 12 Oct 2026', items:[
+      healthMgmtSpec: { badge:'4 open', subLabel:'Weekly review · 12 Oct 2026', items:[
         {level:'red',title:'Italy — Account Health',sub:'In progress · order defect rate 2.08%, above Amazon\'s 1% limit; offers at risk of deactivation'},
         {level:'red',title:'Spain — Compliance',sub:'In progress · packaging EPR registration overdue, up to €14.9k sales at risk; please send your EPR number'},
         {level:'red',title:'France — Account Health',sub:'In progress · on-time delivery 81.8%, below Amazon\'s 90% target; we\'re reviewing the carrier'},
         {level:'amber',title:'All markets — Compliance',sub:'In progress · Hydro Tabs remain blocked in France, Spain and Italy pending safety documents'},
-        {level:'amber',title:'Germany — Buy Box',sub:'In progress · Buy Box share 53%, down from 61%; we\'re identifying the competing offer'},
-        {level:'amber',title:'All markets — Inventory',sub:'In progress · Turbo Chew Lemon out of stock since 6 Oct; please confirm a stock-up date'},
         {level:'green',title:'Italy — late deliveries back under limit',sub:'Done 12 Oct · on-time delivery 92.86%'},
         {level:'green',title:'France — order defect rate back under 1%',sub:'Done 12 Oct · 0.99%'}
       ] },
@@ -254,8 +253,8 @@ window.DASHBOARD_DATA = {
         {level:'green',title:'Cherry Juice+ campaigns launched',sub:'Done 7 Oct · France, Spain & Italy · €10/day each'},
         {level:'green',title:'Non-converting campaigns paused — Germany',sub:'Done 7 Oct · budget moved to converting campaigns'}
       ] },
-      stockWarn: { badge:'4 OOS SKUs', subLabel:'SKU List · pooled EU stock · 12 Oct 2026', items:[
-        {level:'red',title:'Turbo Chew Lemon — OOS all markets',sub:'B0GZ3XD7QX · since 6 Oct · stock-up now'},
+      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'4 OOS SKUs', subLabel:'SKU List · pooled EU stock · 12 Oct 2026', items:[
+        {level:'red',title:'Turbo Chew Lemon — OOS all markets',sub:'B0GZ3XD7QX · since 6 Oct · please confirm a stock-up date'},
         {level:'red',title:'Energy Drink Powder 320g Lemon — OOS all markets',sub:'B0GZ43HK1F · since 29 Jul'},
         {level:'red',title:'Energy Drink Powder 320g Forest Fruit — OOS all markets',sub:'B0GZ469Z98 · since 17 Jul'},
         {level:'red',title:'Fast Bar Lemon — OOS all markets',sub:'B086XB1N46 · since 14 May'}
