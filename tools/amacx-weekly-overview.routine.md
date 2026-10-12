@@ -1,79 +1,115 @@
-# AMACX Weekly Overview Cards (Notion → dashboard) — runbook
+# AMACX Weekly Overview Cards (Notion + SKU List → dashboard) — runbook
 
-**This file is the runbook the scheduled weekly routine executes.** It refreshes the two Notion-fed
-Overview cards on the AMACX dashboard. When this runbook changes, edit this file (via git); the trigger
-prompt just points here.
+**This file is the runbook the scheduled weekly routine executes.** It refreshes the three Overview
+cards on the AMACX dashboard. When this runbook changes, edit this file (via git); the trigger prompt
+just points here.
 
 Applies only while `clients/amacx/config.js` has `overviewSource: 'notion'`. If it says `'sheet'`, stop
 and report "AMACX overview is on the sheet; nothing to do".
 
 **Context**
-- **Cards:** `clients/amacx/data.js` → `sections.overview.healthMgmtSpec` (Account Health Management)
-  and `sections.overview.adsStrategySpec` (Advertising & Marketing Strategy).
-- **Stock Warnings (`stockWarn`) is NOT touched here.** It stays on the monthly rebake.
-- **Connectors needed:** Notion (read only). No MerchantSpring, no Seller Central, no Sheet.
-- **Runs:** Monday, after the weekly AMACX Account Health Review has been written.
+- **Cards in `clients/amacx/data.js` → `sections.overview`:**
+  - `healthMgmtSpec`: Account Health Management
+  - `adsStrategySpec`: Advertising & Marketing Strategy
+  - `stockWarn`: Stock Warnings
+- **Connectors needed:** Notion (read only). The SKU List comes from the AMACX proxy (no connector).
+- **Runs:** Monday afternoon, after the weekly AMACX Account Health Review and the Monday SKU sync.
 
 ---
 
-## STEP 1 — Read Notion (latest sub-task in each section)
+## STEP 1 — Read the sources
 
 1. **Account Health:** open `AMACX Account Health`
    (https://app.notion.com/p/3e5d3da051228054b583d449b7c849a5), list its **Sub-tasks**, and open the
-   most recent one (by the date in the title, e.g. "12 Oct 2026 - AMACX Account Health Review").
+   most recent one (by the date in its title, e.g. "12 Oct 2026 - AMACX Account Health Review").
+   - Read its **"Notes for client"** section. Also read "Changes vs last week" → **Resolved**.
 2. **Advertising:** open `AMACX Advertising`
    (https://app.notion.com/p/399d3da051228051a0a7cc400c7b774e), list its **Sub-tasks**, and open the
-   most recent one. Also read the parent page's **Weekly log** entries from the last 14 days.
+   most recent one. If it has a **"Notes for client"** section, use it. Also read the parent page's
+   **Weekly log** entries from the last 14 days.
 3. **What's next:** open `AMACX Monthly SOP`
    (https://app.notion.com/p/349d3da05122803eacc5ee7b997942c7) and read the week block for next week
    (Week 1 = 1st–5th, then Weeks 2–4).
+4. **SKU List (stock):** fetch
+   `https://script.google.com/macros/s/AKfycbzKVf_ujq00IHmfVbbqGKfE-Gl4niA6w7yG8QyGou6xkNAl2nSdKMDcxlJBAa_ZTYLeWQ/exec?rebake=1`
+   and read `skuList[]`. This is the AMACX Project Tracker › SKU List tab. Each row has `asin`, `sku`,
+   `title`, `de/fr/es/it` status, `euStock` (pooled EU FBM stock), `euLastSold`, `lastSynced`, `oos`
+   and `mismatch`.
+   - If `skuList` is empty, or `lastSynced` is more than 8 days old, leave `stockWarn` as it is and
+     say so in the report.
 
-**Preferred source:** if a page has a **"Dashboard (client-facing)"** section, use its lines as they
-are written (only reshape them into the item format below). Use the rest of the page only to fill
-gaps. Without that section, write the items yourself from the page, following the wording rules.
+**Stop conditions:**
+- If the latest Account Health sub-task is more than 10 days old, don't bake anything. Report
+  "Account Health Review is stale ([date]); cards not updated".
+- If a page has no "Notes for client" section, build its card from the rest of the page, following
+  the wording rules. Note this in the PR.
 
-If the latest Account Health sub-task is more than 10 days old, don't bake anything. Report
-"Account Health Review is stale ([date]); cards not updated".
+## STEP 2 — Build the three specs
 
-## STEP 2 — Build the two specs
+Item shape: `{level, title, sub}`.
 
-Item shape (same as Stock Warnings): `{level, title, sub}`.
+| level | meaning |
+|---|---|
+| `red` | 🔴 in Notes for client, or: account at risk, money at risk, past due |
+| `amber` | ⚠️ in Notes for client, or: below target, being worked on |
+| `green` | done in the last 30 days (`sub` starts `Done <d Mon> · `) |
+| `muted` | next up (`sub` starts `Next up · `) |
 
-| level | meaning | `sub` starts with |
-|---|---|---|
-| `red` | open issue: account at risk, money at risk, past due | `In progress · ` |
-| `amber` | open issue: below target, being worked on | `In progress · ` |
-| `green` | done in the last 30 days | `Done <d Mon> · ` |
-| `muted` | next up (SOP week or a not-started task) | `Next up · ` |
+**`healthMgmtSpec`**
+- Use every "Notes for client" line, as written. The note `🔴 **IT** · Account Health · <text>`
+  becomes title `Italy — Account Health` and sub `<text>`. `ACCT` becomes `All markets`.
+- Then add up to 2 green items from **Resolved**.
+- `badge` = `'<n> open'` (red + amber count). `subLabel` = `'Weekly review · <review date>'`.
 
-- **Order within each card:** red → amber → green → muted. Max 8 items per card. Drop the oldest
-  green items first.
-- **`healthMgmtSpec`:** from the review's Verdict, "Still open", "Resolved" and Recommendations.
-  `badge` = `'<n> open'` (red + amber count). `subLabel` = `'Weekly review · <review date>'`.
-- **`adsStrategySpec`:** from the advertising sub-task status and the Weekly log "Done" lines, plus
-  the next SOP advertising items. `badge` = a 2–3 word headline (e.g. `'Cherry Juice+ live'`).
-  `subLabel` = `'Weekly review · <latest log date>'`.
+**`adsStrategySpec`**
+- Use the advertising "Notes for client" if there are any. Otherwise build items from the sub-task
+  status and the Weekly log "Done" lines (green), then the next SOP advertising items (muted).
+- `badge` = a 2–3 word headline. `subLabel` = `'Weekly review · <latest log date>'`.
+
+**`stockWarn` (from the SKU List only)**
+- One item per row with `oos: true`. Stock is one pooled EU FBM stock, so every OOS item reads
+  `<Product> — OOS all markets`. Never list a single market.
+  - `level: 'red'`
+  - `sub: '<ASIN> · since <d Mon>'`. Add `· stock-up now` when the item went OOS in the last 14 days.
+  - Use the date the stock ran out (`noStockSince` from the latest `AMACX_EU_sku-sync_<date>.json` in
+    Drive, if available). Otherwise use `euLastSold`.
+- Leave out SKUs that are discontinued or superseded: `PARENT-*` rows, and rows Inactive in every
+  live market.
+- **Mismatches:** rows with `mismatch: true` (per-market status columns disagree with each other or
+  with the pooled `euStock`) are NOT shown on the dashboard. List them in the PR body under
+  "SKU List fixes for Coogan".
+- `badge` = `'<n> OOS SKUs'` (or `'All in stock'` with an empty list).
+  `subLabel` = `'SKU List · pooled EU stock · <sync date>'`.
+
+**Order and size:** red → amber → green → muted. Max 8 items per card. Drop the oldest green
+items first.
 
 **Wording rules (client-facing; this is shown to AMACX):**
-- One market per item, in the title: `Italy — …`, `Spain — …`. Never combine markets in one item.
-- Plain outcome language. Never include internal notes: no "UNACTIONED", "escalate", "HOLD",
-  "needs Ryan", run numbers, tool or permission errors, Perpetua or MerchantSpring mechanics, staff
-  names, or blame.
-- Keep exact numbers from Notion, with the target where there is one (e.g. `81.82% (18 of 22) vs 90% target`).
-- Never invent a number. If Notion doesn't state it, leave it out.
-- Stock: say "stock-up", never "order" or "reorder".
-- Escape single quotes for the JS string literal.
+- Lines from "Notes for client" are already client-approved: keep their wording, numbers and risk
+  level.
+- Anything you write yourself:
+  - One market per item unless it really applies to every market (`All markets — …`).
+  - No internal notes: no "UNACTIONED", "escalate", "HOLD", "needs Ryan", run numbers, tool or
+    permission errors, Perpetua or MerchantSpring mechanics, staff names, or blame.
+  - Exact numbers only, with the target where there is one. Never invent a number.
+- Stock: always "stock-up", never "order", "restock" or "reorder" (change "restock date" to
+  "stock-up date").
+- Escape single quotes for the JS string literal (`\'`).
 
-## STEP 3 — Write, check, commit
+## STEP 3 — Write, check, open a PR
 
-1. Replace only the `healthMgmtSpec: {…}` and `adsStrategySpec: {…}` blocks in
-   `clients/amacx/data.js`. Update the source comment above them with the Notion page titles used.
+1. Replace only the `healthMgmtSpec`, `adsStrategySpec` and `stockWarn` blocks in
+   `clients/amacx/data.js`. Update the source comment above them: page titles and the SKU sync time.
 2. Bump `APP_VER` in `index.html` to today's date (cache-buster; see CLAUDE.md).
 3. Checks, which must all pass:
    - `node --check clients/amacx/data.js`
-   - `grep -niE 'order this week|order soon|order now|reorder' clients/amacx/data.js` returns nothing new
-   - No item mentions NLD or Netherlands as live
+   - `grep -niE 'order this week|order soon|order now|reorder|restock' clients/amacx/data.js`:
+     no new hits in the three blocks
+   - No item presents NLD or the Netherlands as live
 4. Commit on a new branch `amacx-overview-<YYYY-MM-DD>` and open a PR titled
-   `AMACX overview cards — week of <date>`. In the PR body, list every item, grouped by card.
-   **Do not merge.** Ryan or Solei approves the merge, and nothing reaches the client before that.
-5. Report the PR link and a 3-line summary: open count, done count, and anything skipped (with why).
+   `AMACX overview cards — week of <date>`. In the PR body:
+   - every item, grouped by card
+   - "SKU List fixes for Coogan" (mismatches)
+   - anything skipped, and why
+   **Do not merge.** Ryan or Solei approves the merge; nothing reaches the client before that.
+5. Report the PR link and a 3-line summary: open health items, OOS SKUs, and SKU List mismatches.

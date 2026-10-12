@@ -83,6 +83,10 @@ hits — aside from genuine historical "OOS since" / "as of" dates — is the ac
 - **⚠️ `inventoryHealth` is not a supported report for this channel** (Amazon-vendor-only; AMACX is
   seller — confirmed via a 400 on every market). Use `salesByProduct` (`quantity` field, 0 = OOS)
   for stock warnings instead.
+- **`sections.overview.stockWarn` is owned by the WEEKLY overview routine** while
+  `clients/amacx/config.js` has `overviewSource: 'notion'` (source: SKU List tab, pooled EU Stock —
+  see `tools/amacx-weekly-overview.routine.md`). Don't overwrite it here; only `inventory.stock` /
+  `inventory.restock` below.
 - **Discontinued-SKU check, every run:** before writing `stockWarn` / `inventory.stock` /
   `inventory.restock`, check each currently-tracked SKU's status in the Google Sheet's SKU List tab
   (columns P–T, per-market Active/Inactive). A SKU Inactive across every market has been delisted,

@@ -116,3 +116,14 @@ Leave genuine non-restock uses of "order" alone: Supplier-PO **"Order By"** date
 ✅ After a rebake, `grep -niE 'order this week|order soon|order now|reorder' clients/<client>/data.js`
 should return only those legitimate cases — any "reorder soon"/"order this week" is a wording bug.
 
+
+## AMACX Overview cards are baked WEEKLY from Notion + the SKU List (not the monthly rebake)
+
+While `clients/amacx/config.js` has `overviewSource: 'notion'`, the Overview's three cards —
+Account Health Management (`sections.overview.healthMgmtSpec`), Advertising & Marketing Strategy
+(`adsStrategySpec`) and Stock Warnings (`stockWarn`) — are owned by the weekly routine in
+`tools/amacx-weekly-overview.routine.md`. The monthly rebake must not overwrite them. Stock Warnings
+comes from the AMACX Project Tracker › SKU List (via the proxy's `?rebake=1` → `skuList`): stock is ONE
+pooled EU FBM stock, so an OOS SKU is always "OOS all markets"; SKU List rows whose per-market status
+columns disagree (`mismatch:true`) are a team fix-list item, never shown to the client as OOS.
+Revert to the sheet's Project Scope board = `overviewSource: 'sheet'` + `APP_VER` bump.
