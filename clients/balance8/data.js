@@ -437,32 +437,32 @@ window.DASHBOARD_DATA = {
       // September 2026 sales by product (real MerchantSpring product report, UK, FBA+FBM combined per
       // ASIN). Whole-£ values use largest-remainder rounding so the group sum equals the table total.
       groups: [
-        {name:'WIRED Electrolytes — Berry Fusion',sales:'£975',units:31,pct:'55%',oosRate:'0%',oosCls:'bg'},
-        {name:'BrainMatter Cognitive',sales:'£250',units:7,pct:'14%',oosRate:'0%',oosCls:'bg'},
-        {name:'BrainMatter Calm',sales:'£185',units:5,pct:'10%',oosRate:'0%',oosCls:'bg'},
-        {name:'WIRED Electrolytes Discovery Pack',sales:'£179',units:18,pct:'10%',oosRate:'0%',oosCls:'bg'},
-        {name:'WIRED Pure Creatine Monohydrate',sales:'£67',units:3,pct:'4%',oosRate:'0%',oosCls:'bg'},
-        {name:'WIRED Electrolytes — Melon Ice',sales:'£62',units:2,pct:'3%',oosRate:'0%',oosCls:'bg'},
-        {name:'WIRED Electrolytes — Citrus Lime',sales:'£61',units:2,pct:'3%',oosRate:'0%',oosCls:'bg'}
+        {name:'WIRED Electrolytes — Berry Fusion',sales:'£975',units:31,pct:'55%',adSpend:'£12',tacos:'1.2%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'},
+        {name:'BrainMatter Cognitive',sales:'£250',units:7,pct:'14%',adSpend:'£109',tacos:'43.6%',tacosCls:'br',oosRate:'0%',oosCls:'bg'},
+        {name:'BrainMatter Calm',sales:'£185',units:5,pct:'10%',adSpend:'£102',tacos:'55.2%',tacosCls:'br',oosRate:'0%',oosCls:'bg'},
+        {name:'WIRED Electrolytes Discovery Pack',sales:'£179',units:18,pct:'10%',adSpend:'£7',tacos:'3.9%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'},
+        {name:'WIRED Pure Creatine Monohydrate',sales:'£67',units:3,pct:'4%',adSpend:'£23',tacos:'33.8%',tacosCls:'br',oosRate:'0%',oosCls:'bg'},
+        {name:'WIRED Electrolytes — Melon Ice',sales:'£62',units:2,pct:'3%',adSpend:'£0',tacos:'0.0%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'},
+        {name:'WIRED Electrolytes — Citrus Lime',sales:'£61',units:2,pct:'3%',adSpend:'£0',tacos:'0.0%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'}
       ],
       groupsByPeriod: {
         may: { all: [
-          {name:'WIRED Electrolytes — Berry Fusion',sales:'£975',units:31,pct:'55%',oosRate:'0%',oosCls:'bg'},
-          {name:'BrainMatter Cognitive',sales:'£250',units:7,pct:'14%',oosRate:'0%',oosCls:'bg'},
-          {name:'BrainMatter Calm',sales:'£185',units:5,pct:'10%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes Discovery Pack',sales:'£179',units:18,pct:'10%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Pure Creatine Monohydrate',sales:'£67',units:3,pct:'4%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes — Melon Ice',sales:'£62',units:2,pct:'3%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes — Citrus Lime',sales:'£61',units:2,pct:'3%',oosRate:'0%',oosCls:'bg'}
+          {name:'WIRED Electrolytes — Berry Fusion',sales:'£975',units:31,pct:'55%',adSpend:'£12',tacos:'1.2%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Cognitive',sales:'£250',units:7,pct:'14%',adSpend:'£109',tacos:'43.6%',tacosCls:'br',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Calm',sales:'£185',units:5,pct:'10%',adSpend:'£102',tacos:'55.2%',tacosCls:'br',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes Discovery Pack',sales:'£179',units:18,pct:'10%',adSpend:'£7',tacos:'3.9%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Pure Creatine Monohydrate',sales:'£67',units:3,pct:'4%',adSpend:'£23',tacos:'33.8%',tacosCls:'br',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Melon Ice',sales:'£62',units:2,pct:'3%',adSpend:'£0',tacos:'0.0%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Citrus Lime',sales:'£61',units:2,pct:'3%',adSpend:'£0',tacos:'0.0%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'}
         ] },
         '3m': { all: [
-          {name:'WIRED Electrolytes — Berry Fusion',sales:'£976',units:31,pct:'35%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Pure Creatine Monohydrate',sales:'£742',units:33,pct:'26%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes Discovery Pack',sales:'£368',units:37,pct:'13%',oosRate:'0%',oosCls:'bg'},
-          {name:'BrainMatter Calm',sales:'£314',units:8,pct:'11%',oosRate:'0%',oosCls:'bg'},
-          {name:'BrainMatter Cognitive',sales:'£288',units:8,pct:'10%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes — Melon Ice',sales:'£62',units:2,pct:'2%',oosRate:'0%',oosCls:'bg'},
-          {name:'WIRED Electrolytes — Citrus Lime',sales:'£61',units:2,pct:'2%',oosRate:'0%',oosCls:'bg'}
+          {name:'WIRED Electrolytes — Berry Fusion',sales:'£976',units:31,pct:'35%',adSpend:'£12',tacos:'1.2%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Pure Creatine Monohydrate',sales:'£742',units:33,pct:'26%',adSpend:'£23',tacos:'3.0%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes Discovery Pack',sales:'£368',units:37,pct:'13%',adSpend:'£7',tacos:'1.9%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Calm',sales:'£314',units:8,pct:'11%',adSpend:'£168',tacos:'53.6%',tacosCls:'br',oosRate:'0%',oosCls:'bg'},
+          {name:'BrainMatter Cognitive',sales:'£288',units:8,pct:'10%',adSpend:'£138',tacos:'47.9%',tacosCls:'br',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Melon Ice',sales:'£62',units:2,pct:'2%',adSpend:'£0',tacos:'0.0%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'},
+          {name:'WIRED Electrolytes — Citrus Lime',sales:'£61',units:2,pct:'2%',adSpend:'£0',tacos:'0.0%',tacosCls:'bg',oosRate:'0%',oosCls:'bg'}
         ] },
         // Product-family level (see kpisByPeriod.12m comment): BrainMatter = 12m total £14,103.49 minus
         // WIRED £2,208.20 (Aug £864.51 + Sep £1,343.69) = £11,895.29, 318 units (423 − 105).
