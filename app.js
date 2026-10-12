@@ -1269,6 +1269,26 @@ function renderCompleted(spec) {
   }).join('');
 }
 
+// Compact per-market strip at the foot of the Logistics & Operations (stock) card — e.g. AMACX
+// "Avg shipping per order" from the SKU List's <MKT> Ship Price/Order columns (stockWarn.shipping =
+// { label, note, items:[{flag, label, val}] }). Created on demand; absent spec = nothing rendered.
+function renderShippingStrip(spec) {
+  var list = el('sec-stockwarn'), card = list && list.closest ? list.closest('.card') : null;
+  var w = el('sec-stockwarn-ship');
+  if (!spec || !spec.items || !card) { if (w) w.style.display = 'none'; return; }
+  if (!w) { w = document.createElement('div'); w.id = 'sec-stockwarn-ship'; card.appendChild(w); }
+  w.style.cssText = 'border-top:1px solid var(--border);padding:10px 16px 12px;margin-top:auto;';
+  w.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">' +
+      '<div style="font-size:11px;font-weight:600;color:var(--text);">' + (spec.label || '') + '</div>' +
+      '<div style="font-size:10px;color:var(--muted2);">' + (spec.note || '') + '</div></div>' +
+    '<div style="display:grid;grid-template-columns:repeat(' + spec.items.length + ',1fr);gap:6px;">' +
+    spec.items.map(function (x) {
+      return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;text-align:center;">' +
+        '<div style="font-size:10px;color:var(--muted);">' + flagTag(x.flag, x.label) + x.label + '</div>' +
+        '<div style="font-size:13px;font-weight:600;margin-top:2px;">' + x.val + '</div></div>';
+    }).join('') + '</div>';
+}
+
 // Shared renderer for the coloured alert lists (Flags & Warnings, Stock Warnings).
 function renderAlertList(id, badgeId, spec) {
   if (!spec) return;
@@ -1885,6 +1905,7 @@ function renderSections() {
   renderCompleted(o.completedSpec);   // Project Scope column G (Completed)
   renderNotionOverview(o);            // overviewSource:'notion' → Account Health / Advertising cards
   renderAlertList('sec-stockwarn', 'sec-stockwarn-badge', o.stockWarn);   // inventory state → MCP live later
+  renderShippingStrip(o.stockWarn && o.stockWarn.shipping);                // AMACX: avg shipping per order by market
   setCardSub('sec-stockwarn-sub', o.stockWarn);
   if (o.stockWarn && o.stockWarn.title) { var swt = el('sec-stockwarn-ttl'); if (swt) swt.innerHTML = o.stockWarn.title; }   // e.g. AMACX 'Logistics & Operations'
   renderAlertList('sec-health', 'sec-health-badge', o.healthSpec);        // Account Health (strategy alerts)
