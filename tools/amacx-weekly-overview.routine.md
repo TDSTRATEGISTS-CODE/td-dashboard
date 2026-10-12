@@ -13,7 +13,9 @@ and report "AMACX overview is on the sheet; nothing to do".
   - `adsStrategySpec`: Advertising & Marketing Strategy
   - `stockWarn`: Logistics & Operations (card title set by `stockWarn.title`)
 - **Connectors needed:** Notion (read only). The SKU List comes from the AMACX proxy (no connector).
-- **Runs:** Monday afternoon, after the weekly AMACX Account Health Review and the Monday SKU sync.
+- **Runs:** Thursday morning (`CRON_TZ=Europe/London 56 8 * * 4`), after Coogan has reviewed the
+  Monday AMACX Account Health Review and marked it **Done**. Done = the "Notes for client" are approved
+  to publish. **Publishes straight to `main` — no PR** (the approval is the Done status in Notion).
 
 ---
 
@@ -22,6 +24,7 @@ and report "AMACX overview is on the sheet; nothing to do".
 1. **Account Health:** open `AMACX Account Health`
    (https://app.notion.com/p/3e5d3da051228054b583d449b7c849a5), list its **Sub-tasks**, and open the
    most recent one (by the date in its title, e.g. "12 Oct 2026 - AMACX Account Health Review").
+   - **Check its Status.** Only a review with Status **Done** is approved for the client.
    - Read its **"Notes for client"** section. Also read "Changes vs last week" → **Resolved**.
 2. **Advertising:** open `AMACX Advertising`
    (https://app.notion.com/p/399d3da051228051a0a7cc400c7b774e), list its **Sub-tasks**, and open the
@@ -39,10 +42,14 @@ and report "AMACX overview is on the sheet; nothing to do".
      say so in the report.
 
 **Stop conditions:**
-- If the latest Account Health sub-task is more than 10 days old, don't bake anything. Report
-  "Account Health Review is stale ([date]); cards not updated".
+- **Latest review not Done:** don't touch `healthMgmtSpec` or `adsStrategySpec` (they keep last week's
+  approved content). Still refresh `stockWarn` from the SKU List (factual stock data, no approval
+  needed). Report "Account Health Review <date> not marked Done; health and ads cards not updated".
+- **Latest review more than 10 days old:** same as above — refresh `stockWarn` only, report
+  "Account Health Review is stale ([date]); health and ads cards not updated".
+- If nothing changed in any of the three blocks, don't commit; report "No changes this week".
 - If a page has no "Notes for client" section, build its card from the rest of the page, following
-  the wording rules. Note this in the PR.
+  the wording rules. Note this in the run report.
 
 ## STEP 2 — Build the three specs
 
@@ -62,7 +69,7 @@ Item shape: `{level, title, sub}`.
   The note `🔴 **IT** · Account Health · <text>` becomes title `Italy — Account Health` and sub
   `In progress · <text>` (first letter lower-cased). `ACCT` becomes `All markets`.
 - **Max 5 open items** (so the card stays at 7 with the 2 Done lines): keep every 🔴 first, then ⚠️ in
-  the order they're written. List any dropped notes in the PR body.
+  the order they're written. List any dropped notes in the run report.
 - Then the 2 most recent **Resolved** items as green `Done <d Mon> · …` lines.
 - `badge` = `'<n> open'` (red + amber count). `subLabel` = `'Weekly review · <review date>'`.
 
@@ -87,12 +94,12 @@ Item shape: `{level, title, sub}`.
   B0CCJWLKTM, B0CCJW62HZ — replaced by the 6-pack) until Ryan says otherwise.
 - `euLastSold` comes back as a date string (e.g. `Tue Sep 29 2026 …`); format it as `d Mon`.
 - **Mismatches:** list every `mismatch: true` row (status columns disagree with each other or with the
-  pooled `euStock`) in the PR body under "SKU List fixes for Coogan", with what each column says.
+  pooled `euStock`) in the run report under "SKU List fixes for Coogan", with what each column says.
 - **Inventory notes from the health review** ("Notes for client" lines moved out of `healthMgmtSpec`):
   if a note is about an OOS SKU already listed, fold its ask into that item's `sub` (e.g.
   `· please confirm a stock-up date`) instead of adding a second line; otherwise add it as its own item
   (keep its 🔴/⚠️ level).
-- **Max 7 items:** most recent OOS first; if over 7, drop the longest-OOS SKUs and list them in the PR.
+- **Max 7 items:** most recent OOS first; if over 7, drop the longest-OOS SKUs and list them in the run report.
 - `badge` = `'<n> OOS SKUs'` (or `'All in stock'` with an empty list).
   `subLabel` = `'SKU List · pooled EU stock · <sync date>'`.
 
@@ -112,20 +119,24 @@ the 2 Done lines; trim muted before open, and never drop below 2 Done lines.
   "stock-up date").
 - Escape single quotes for the JS string literal (`\'`).
 
-## STEP 3 — Write, check, open a PR
+## STEP 3 — Write, check, publish to main
 
-1. Replace only the `healthMgmtSpec`, `adsStrategySpec` and `stockWarn` blocks in
-   `clients/amacx/data.js`. Update the source comment above them: page titles and the SKU sync time.
-2. Bump `APP_VER` in `index.html` to today's date (cache-buster; see CLAUDE.md).
-3. Checks, which must all pass:
+1. Work on `main` (pull the latest first). Replace only the blocks you're allowed to update this run
+   (`healthMgmtSpec`, `adsStrategySpec`, `stockWarn`) in `clients/amacx/data.js`. Update the source
+   comment above them: page titles and the SKU sync time.
+2. Bump `APP_VER` in `index.html` to today's date (cache-buster; see CLAUDE.md). Without it the client
+   keeps seeing last week's cards.
+3. Checks, which must all pass — **if any fails, don't push**; report the failure instead:
    - `node --check clients/amacx/data.js`
    - `grep -niE 'order this week|order soon|order now|reorder|restock' clients/amacx/data.js`:
      no new hits in the three blocks
    - No item presents NLD or the Netherlands as live
-4. Commit on a new branch `amacx-overview-<YYYY-MM-DD>` and open a PR titled
-   `AMACX overview cards — week of <date>`. In the PR body:
-   - every item, grouped by card
-   - "SKU List fixes for Coogan" (mismatches)
-   - anything skipped, and why
-   **Do not merge.** Ryan or Solei approves the merge; nothing reaches the client before that.
-5. Report the PR link and a 3-line summary: open health items, OOS SKUs, and SKU List mismatches.
+   - Every Account Health item traces to a "Notes for client" or "Resolved" line on a **Done** review
+4. Commit to `main` with the message `AMACX overview cards — <d Mon YYYY>` and push
+   (`git push origin main`). This is the authorised publish step: the Done status in Notion is the
+   approval, so no PR is needed. Touch nothing outside `clients/amacx/data.js` and `index.html`.
+5. Run report (the session's final message, sent as a push notification), 4 short lines:
+   - what was published (or "No changes this week" / the stop reason)
+   - open health items and OOS SKUs
+   - "SKU List fixes for Coogan" (mismatch rows, with what each column says)
+   - any notes dropped by the 7-item limit
