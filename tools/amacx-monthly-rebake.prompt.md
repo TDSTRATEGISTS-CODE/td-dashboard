@@ -83,6 +83,13 @@ hits — aside from genuine historical "OOS since" / "as of" dates — is the ac
 - **⚠️ `inventoryHealth` is not a supported report for this channel** (Amazon-vendor-only; AMACX is
   seller — confirmed via a 400 on every market). Use `salesByProduct` (`quantity` field, 0 = OOS)
   for stock warnings instead.
+- **`sections.overview.stockWarn.shipping` (Avg shipping per order, Overview › Logistics & Operations) IS
+  refreshed here, every rebake:** for each of DE/FR/ES/IT, generate `channelProfitAndLoss` (accrual,
+  includeTax true, timezone Europe/Berlin) for each of the **last 3 complete months** (the report allows
+  ≤31 days, so one per month). Per market: sum `otherIncome` (FBM shipping charged to customers) ÷ sum
+  `orders` (the P&L's own order count, not line items) → `€x.xx`. Update the four `items` vals, the
+  `note` (`'<Mon>–<Mon> YYYY · charged to customer'`) and the source comment with the sums. Touch nothing
+  else in `stockWarn`.
 - **`sections.overview.stockWarn` is owned by the WEEKLY overview routine** while
   `clients/amacx/config.js` has `overviewSource: 'notion'` (source: SKU List tab, pooled EU Stock —
   see `tools/weekly-overview.routine.md`). Don't overwrite it here; only `inventory.stock` /

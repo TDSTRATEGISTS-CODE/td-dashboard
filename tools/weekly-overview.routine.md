@@ -112,12 +112,9 @@ Item shape: `{level, title, sub}`.
   under "SKU List fixes for Coogan", with what each column says. Never show a mismatch as OOS unless the
   stock figure itself is 0.
 - **Max 7 items:** most recent OOS first; drop the longest-OOS SKUs beyond 7 and list them in the report.
-- **Avg shipping per order strip** (only where the client config has `Shipping strip: Yes`):
-  `stockWarn.shipping = { label:'Avg shipping per order', note:'SKU List · last 30 days', items:[{flag,label,val}] }`,
-  one item per live market in the config's market order. Source: the SKU sync rows' `shipPriceByMarket`
-  (the same values as the SKU List's `<MKT> Ship Price/Order` columns). Per market = simple mean of the
-  non-zero values across SKUs (0 = no sale there), rounded to 2 dp, in the market currency (e.g. `€5.47`).
-  Skip `PARENT-*` rows. If a market has no non-zero values, show `—`.
+- **`stockWarn.shipping` (Avg shipping per order strip):** owned by the client's **monthly rebake**
+  (it needs MerchantSpring). When you rewrite the `stockWarn` block, **copy `shipping` across unchanged**,
+  including the comment above it.
 - `badge` = `'<n> OOS SKUs'` (or `'All in stock'`). `subLabel` = `'SKU sync · <stock basis> · <sync date>'`.
 
 **Order and size (all cards):** red → amber → muted → green (the 2 Done lines always at the bottom).
@@ -173,7 +170,7 @@ Item shape: `{level, title, sub}`.
 | SKU sync files | `AMACX_EU` |
 | Stock basis | **Pooled** EU FBM stock → every OOS SKU is "OOS all markets" |
 | Stock-up thresholds | — (OOS only: FBM, AMACX controls its own stock) |
-| Shipping strip | **Yes** — DE, FR, ES, IT (`flag` de/fr/es/it, label = market code, €) |
+| Shipping strip | Yes — owned by the monthly AMACX rebake; carry `stockWarn.shipping` over unchanged |
 | SKU List | `https://script.google.com/macros/s/AKfycbzKVf_ujq00IHmfVbbqGKfE-Gl4niA6w7yG8QyGou6xkNAl2nSdKMDcxlJBAa_ZTYLeWQ/exec?rebake=1` → `skuList[]` (`de/fr/es/it` status, `euStock`, `oos`, `mismatch`) |
 | Superseded | Hydro Tabs 3-pack (B0CCJWBX6W, B0CCJWLKTM, B0CCJW62HZ — replaced by the 6-pack) |
 | Layout note | — |
