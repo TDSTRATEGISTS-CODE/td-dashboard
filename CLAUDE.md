@@ -122,7 +122,8 @@ should return only those legitimate cases — any "reorder soon"/"order this wee
 While `clients/amacx/config.js` has `overviewSource: 'notion'`, the Overview's three cards —
 Account Health Management (`sections.overview.healthMgmtSpec`), Advertising & Marketing Strategy
 (`adsStrategySpec`) and Logistics & Operations (`stockWarn`, title set by `stockWarn.title`) — are owned by the weekly routine in
-`tools/amacx-weekly-overview.routine.md`. The monthly rebake must not overwrite them. Max 7 items per
+`tools/amacx-weekly-overview.routine.md` (Thursdays 08:56 UK; health + ads cards only update once the
+latest AMACX Account Health Review is marked **Done** in Notion; publishes straight to `main`, no PR). The monthly rebake must not overwrite them. Max 7 items per
 card; inventory topics live only on Logistics & Operations. Its OOS list comes from the AMACX Project Tracker › SKU List (via the proxy's `?rebake=1` → `skuList`): stock is ONE
 pooled EU FBM stock, so an OOS SKU is always "OOS all markets"; SKU List rows whose per-market status
 columns disagree (`mismatch:true`) are a team fix-list item, never shown to the client as OOS.
