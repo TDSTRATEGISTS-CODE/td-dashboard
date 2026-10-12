@@ -75,6 +75,17 @@ window.DASHBOARD_CONFIG = {
     'blue': '#1e4fa0', 'blue-bg': '#edf2fc', 'blue-b': '#b3c9f0'
   },
 
+  // ---- Overview cards: where they come from ----
+  // 'notion' = Overview shows Account Health Management + Advertising & Marketing Strategy + Stock Warnings.
+  //            The first two are baked weekly into data.js → sections.overview.{healthMgmtSpec,adsStrategySpec}
+  //            from Notion (latest sub-task of "AMACX Account Health" and of "AMACX Advertising", plus the
+  //            AMACX Monthly SOP week schedule) — see tools/amacx-weekly-overview.routine.md. The sheet's
+  //            Project Scope board (In Progress / Completed / Upcoming) is ignored. Stock Warnings unchanged.
+  // 'sheet'  = previous behaviour: In Progress / Completed / Upcoming pulled live from the sheet's Project
+  //            Scope board via the proxy. Saved as the pre-change state on main (commit 2e079af).
+  // To revert: set this to 'sheet' and bump APP_VER in index.html.
+  overviewSource: 'notion',
+
   // ---- Live data source ----
   // MerchantSpring data is baked into data.js (snapshot, via tools/build-amacx-data.ps1).
   // overlay:'sections' = fetch the Apps Script proxy on load and merge ONLY the live sheet-controlled

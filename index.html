@@ -223,7 +223,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
      cached page (GitHub Pages caps index.html at a 10-min browser cache) by reloading once with a
      cache-bust param; and if it changes mid-session it shows the "please refresh" overlay. One bump,
      all jobs. */
-  var APP_VER = '2026-10-07';
+  var APP_VER = '2026-10-12';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -285,7 +285,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
     <div class="fade tasks-flags-grid nld-keep" id="tasks-flags">
       <div class="card" style="order:3;background:var(--blue-bg);">
         <div class="card-hdr">
-          <div><div class="card-ttl">&#128203; Upcoming Tasks</div><div class="card-sub">From project scope</div></div>
+          <div><div class="card-ttl">&#128203; Upcoming Tasks</div><div class="card-sub" id="sec-tasks-sub">From project scope</div></div>
           <span id="sec-tasks-badge" style="font-size:10px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);border-radius:5px;padding:2px 8px;font-weight:500;">June 2026</span>
         </div>
         <div id="sec-tasks" style="display:flex;flex-direction:column;gap:0;">
@@ -313,7 +313,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       </div>
       <div class="card" style="order:1;">
         <div class="card-hdr">
-          <div><div class="card-ttl">&#128260; In Progress</div><div class="card-sub">Live from project board</div></div>
+          <div><div class="card-ttl">&#128260; In Progress</div><div class="card-sub" id="sec-flags-sub">Live from project board</div></div>
           <span id="sec-flags-badge" style="font-size:10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span>
         </div>
         <div id="sec-flags" style="display:flex;flex-direction:column;gap:0;">
@@ -341,7 +341,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       </div>
       <div class="card" style="order:2;background:var(--green-bg);">
         <div class="card-hdr">
-          <div><div class="card-ttl">&#9989; Completed</div><div class="card-sub">From project scope</div></div>
+          <div><div class="card-ttl">&#9989; Completed</div><div class="card-sub" id="sec-completed-sub">From project scope</div></div>
           <span id="sec-completed-badge" style="font-size:10px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span>
         </div>
         <div id="sec-completed" style="display:flex;flex-direction:column;gap:0;">
@@ -359,9 +359,24 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
           </div>
         </div>
       </div>
+      <!-- overviewSource:'notion' only (shown by renderNotionOverview, replaces In Progress / Completed / Upcoming) -->
+      <div class="card" style="order:1;display:none;" id="sec-ahm-card">
+        <div class="card-hdr">
+          <div><div class="card-ttl">&#128153; Account Health Management</div><div class="card-sub" id="sec-ahm-sub">Weekly review</div></div>
+          <span id="sec-ahm-badge" style="font-size:10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span>
+        </div>
+        <div id="sec-ahm" style="display:flex;flex-direction:column;gap:0;"></div>
+      </div>
+      <div class="card" style="order:2;display:none;" id="sec-ads-card">
+        <div class="card-hdr">
+          <div><div class="card-ttl">&#128200; Advertising &amp; Marketing Strategy</div><div class="card-sub" id="sec-ads-sub">Weekly review</div></div>
+          <span id="sec-ads-badge" style="font-size:10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span>
+        </div>
+        <div id="sec-ads" style="display:flex;flex-direction:column;gap:0;"></div>
+      </div>
       <div class="card" style="order:4;" id="sec-stockwarn-card">
         <div class="card-hdr">
-          <div><div class="card-ttl">&#128230; Stock Warnings</div><div class="card-sub">Empty &amp; low stock</div></div>
+          <div><div class="card-ttl" id="sec-stockwarn-ttl">&#128230; Stock Warnings</div><div class="card-sub" id="sec-stockwarn-sub">Empty &amp; low stock</div></div>
           <span id="sec-stockwarn-badge" style="font-size:10px;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b);border-radius:5px;padding:2px 8px;font-weight:500;">2 alerts</span>
         </div>
         <div id="sec-stockwarn" style="display:flex;flex-direction:column;gap:0;">
@@ -481,7 +496,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
     <div class="fade" id="sec-health-wrap" style="display:none;">
       <div class="sec-lbl">Account Health</div>
       <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">&#128153; Account Health</div><div class="card-sub">Strategy &amp; performance alerts</div></div><span id="sec-health-badge" style="font-size:10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span></div>
+        <div class="card-hdr"><div><div class="card-ttl">&#128153; Account Health</div><div class="card-sub" id="sec-health-sub">Strategy &amp; performance alerts</div></div><span id="sec-health-badge" style="font-size:10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span></div>
         <div id="sec-health" style="display:flex;flex-direction:column;gap:0;"></div>
       </div>
     </div>

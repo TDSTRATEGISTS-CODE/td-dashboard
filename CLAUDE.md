@@ -116,3 +116,32 @@ Leave genuine non-restock uses of "order" alone: Supplier-PO **"Order By"** date
 ✅ After a rebake, `grep -niE 'order this week|order soon|order now|reorder' clients/<client>/data.js`
 should return only those legitimate cases — any "reorder soon"/"order this week" is a wording bug.
 
+
+## AMACX Overview cards are baked WEEKLY from Notion + the SKU List (not the monthly rebake)
+
+While `clients/amacx/config.js` has `overviewSource: 'notion'`, the Overview's three cards —
+Account Health Management (`sections.overview.healthMgmtSpec`), Advertising & Marketing Strategy
+(`adsStrategySpec`) and Logistics & Operations (`stockWarn`, title set by `stockWarn.title`) — are owned by the weekly routine in
+`tools/amacx-weekly-overview.routine.md`. The monthly rebake must not overwrite them. Max 7 items per
+card; inventory topics live only on Logistics & Operations. Its OOS list comes from the AMACX Project Tracker › SKU List (via the proxy's `?rebake=1` → `skuList`): stock is ONE
+pooled EU FBM stock, so an OOS SKU is always "OOS all markets"; SKU List rows whose per-market status
+columns disagree (`mismatch:true`) are a team fix-list item, never shown to the client as OOS.
+Revert to the sheet's Project Scope board = `overviewSource: 'sheet'` + `APP_VER` bump.
+
+## Apps Script proxies — prefer a small extra .gs file when adding something new
+
+Guidance, not a hard rule. In Oct 2026 pasting the full 837-line AMACX `Code.gs` kept truncating at
+~86–100 lines ("SyntaxError: Unexpected end of input", save blocked, deploy dialog errored). The cause
+wasn't pinned down (likely the copy source rather than Apps Script); the live proxy survived only
+because the broken paste never saved.
+
+- **Adding new behaviour** (a new endpoint, a new tab parser, an override): default to a **new, short
+  file** Ryan adds via Files › + › Script (e.g. `tools/amacx-proxy-skulist.gs` → `SkuList.gs`). All
+  `.gs` files share one global scope and load in file-list order, so a function declared in a file
+  **below** `Code.gs` replaces the one in `Code.gs`. Name the overriding file in a header comment.
+- **Wide or structural changes:** pasting the whole file is fine and sometimes cleaner — but give a
+  paste check ("ends at ~line N with …") and the GitHub **"Copy raw file"** link as the copy source,
+  and fall back to the small-file approach if it truncates.
+- Either way: keep the repo copies identical to what's live; test locally (concatenate the files, run in
+  node with mocked `SpreadsheetApp`/`ContentService`); hand-over ends with Ctrl+S (orange dot gone) →
+  **Deploy › Manage deployments › pencil › New version** (never "New deployment" — new URL).
