@@ -128,20 +128,20 @@ pooled EU FBM stock, so an OOS SKU is always "OOS all markets"; SKU List rows wh
 columns disagree (`mismatch:true`) are a team fix-list item, never shown to the client as OOS.
 Revert to the sheet's Project Scope board = `overviewSource: 'sheet'` + `APP_VER` bump.
 
-## Apps Script proxies — never ask Ryan to paste a whole file; ship changes as a small extra .gs file
+## Apps Script proxies — prefer a small extra .gs file when adding something new
 
-Pasting a long file into the Apps Script editor silently truncates (Oct 2026: the 837-line AMACX
-`Code.gs` cut off at ~86–100 lines → "SyntaxError: Unexpected end of input", save blocked, deploy
-dialog errors). The live proxy survived only because the broken paste never saved.
+Guidance, not a hard rule. In Oct 2026 pasting the full 837-line AMACX `Code.gs` kept truncating at
+~86–100 lines ("SyntaxError: Unexpected end of input", save blocked, deploy dialog errored). The cause
+wasn't pinned down (likely the copy source rather than Apps Script); the live proxy survived only
+because the broken paste never saved.
 
-So for any change to a `tools/*-proxy.gs` / `*-sheet-proxy.gs`:
-1. **Don't edit the big file.** Put the change in a **new, short file** (aim for under ~60 lines) that
-   Ryan adds via Files › + › Script, e.g. `tools/amacx-proxy-skulist.gs` → `SkuList.gs`.
-2. Override by redefining the function: all `.gs` files share one global scope and load in file-list
-   order, so a function declared in a file **below** `Code.gs` replaces the one in `Code.gs`. Keep the
-   repo copy of `Code.gs` identical to what's live, and name the overriding file in a header comment.
-3. Test locally before handing over: concatenate `Code.gs` + the new file and run it in node with
-   mocked `SpreadsheetApp`/`ContentService` (see the 12 Oct 2026 SkuList change for the pattern).
-4. Hand-over steps must include: paste check ("ends at ~line N with …"), Ctrl+S (orange dot gone),
-   then **Deploy › Manage deployments › pencil › New version** (never "New deployment" — new URL).
-   Offer GitHub's "Copy raw file" as the fallback copy source.
+- **Adding new behaviour** (a new endpoint, a new tab parser, an override): default to a **new, short
+  file** Ryan adds via Files › + › Script (e.g. `tools/amacx-proxy-skulist.gs` → `SkuList.gs`). All
+  `.gs` files share one global scope and load in file-list order, so a function declared in a file
+  **below** `Code.gs` replaces the one in `Code.gs`. Name the overriding file in a header comment.
+- **Wide or structural changes:** pasting the whole file is fine and sometimes cleaner — but give a
+  paste check ("ends at ~line N with …") and the GitHub **"Copy raw file"** link as the copy source,
+  and fall back to the small-file approach if it truncates.
+- Either way: keep the repo copies identical to what's live; test locally (concatenate the files, run in
+  node with mocked `SpreadsheetApp`/`ContentService`); hand-over ends with Ctrl+S (orange dot gone) →
+  **Deploy › Manage deployments › pencil › New version** (never "New deployment" — new URL).
