@@ -227,6 +227,31 @@ window.DASHBOARD_DATA = {
         {name:'Turbo Ice Gel 12x77ml – Cola Lime',asin:'B0F331SKR5',ean:'8714411002929',market:'it',reason:'No Winner',rc:'ba',your:'€79.95',winner:'n/a',gap:''}
       ],
       cvr: { val:'5.6%', note:'recent month · 3,991 sessions', sub:'All EU · session conversion' },
+      // ---- Overview cards — baked WEEKLY from Notion (config.overviewSource:'notion') ----
+      // healthMgmtSpec ← latest sub-task of "AMACX Account Health" (currently "12 Oct 2026 - AMACX Account
+      //                  Health Review"), its "Dashboard (client-facing)" section once the SOP adds it.
+      // adsStrategySpec ← latest sub-task of "AMACX Advertising" ("Cherry Juice campaign launch") + that
+      //                  page's Weekly log, plus the AMACX Monthly SOP week schedule for what's next.
+      // Item levels: red/amber = open issue · green = done · muted = next up. Client-facing wording only.
+      // Routine: tools/amacx-weekly-overview.routine.md.
+      healthMgmtSpec: { badge:'4 open', subLabel:'Weekly review · 12 Oct 2026', items:[
+        {level:'red',title:'Italy — seller-fulfilled offers at risk',sub:'In progress · order defect rate 2.08% (1 of 48) · resolving open A-to-z claim · valid tracking on every shipment'},
+        {level:'red',title:'Spain — EPR packaging number overdue',sub:'In progress · 44 SKUs · up to €14,886 sales at risk · registration number needed from AMACX'},
+        {level:'amber',title:'France — late deliveries above target',sub:'In progress · on-time delivery 81.82% (18 of 22) vs 90% target · carrier check'},
+        {level:'amber',title:'Germany — Buy Box share 53.4%',sub:'In progress · was 60.5% · identifying the competing offer'},
+        {level:'green',title:'Italy — late deliveries back under limit',sub:'Done 12 Oct · on-time delivery 92.86%'},
+        {level:'green',title:'France — order defect rate back under 1%',sub:'Done 12 Oct · 0.99%'}
+      ] },
+      adsStrategySpec: { badge:'Cherry Juice+ live', subLabel:'Weekly review · 7 Oct 2026', items:[
+        {level:'green',title:'Cherry Juice+ campaigns launched — France',sub:'Done 7 Oct · €10/day · target ACoS 30%'},
+        {level:'green',title:'Cherry Juice+ campaigns launched — Spain',sub:'Done 7 Oct · €10/day · target ACoS 35%'},
+        {level:'green',title:'Cherry Juice+ campaigns launched — Italy',sub:'Done 7 Oct · €10/day · target ACoS 30%'},
+        {level:'green',title:'Non-converting campaigns paused — Germany',sub:'Done 7 Oct · budget moved to converting campaigns'},
+        {level:'green',title:'Brand Défense budget raised — France',sub:'Done 7 Oct · €10 → €15/day'},
+        {level:'muted',title:'Cherry Juice+ — Germany campaign decision',sub:'Next up'},
+        {level:'muted',title:'Advertising focus week',sub:'Next up · w/c 19 Oct · performance, growth & profitability'},
+        {level:'muted',title:'Black Friday / Cyber Monday deals',sub:'Next up · submit by 18 Nov'}
+      ] },
       stockWarn: { badge:'3 OOS SKUs', items:[
         {level:'red',title:'Fast Bar Lemon — OOS all markets',sub:'B086XB1N46 · since 14 May'},
         {level:'red',title:'Energy Drink Powder 320g Forest Fruit — OOS all markets',sub:'B0GZ469Z98 · since 17 Jul'},

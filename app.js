@@ -952,6 +952,8 @@ function applyLive(j) {
       // supplied stays on the "Currently updating" placeholder rather than a stale baked snapshot.
       DATA.__liveOverview = DATA.__liveOverview || {};
       var lo = j.sections.overview;
+      // Notion-baked overview: ignore the sheet's Project Scope cards so they can't overwrite it.
+      if (lo && notionOverview()) { delete lo.tasksSpec; delete lo.flagsSpec; delete lo.completedSpec; }
       if (lo) ['tasksSpec', 'flagsSpec', 'completedSpec'].forEach(function (k) { if (lo[k]) DATA.__liveOverview[k] = true; });
       mergeSections(DATA.sections, j.sections);
       // Live revenue-TARGET line: the proxy sends it as a month→value map so we align it to the baked
@@ -1178,9 +1180,40 @@ function renderTargetAttainment(o) {
 // placeholder instead of a potentially stale baked snapshot. Static clients never count as pending
 // (their baked content IS the real content). Generic — applies to every brand.
 function liveCardPending(key) {
+  if (notionOverview()) return false;   // Notion-baked cards are the real content, never "updating"
   var ds = CONFIG.dataSource || {};
   if (ds.type !== 'appsScript' || ds.overlay !== 'sections') return false;
   return !(DATA.__liveOverview && DATA.__liveOverview[key]);
+}
+
+// overviewSource:'notion' (config.js) = the Overview project-board cards (In Progress / Completed /
+// Upcoming / Stock Warnings / Account Health) are BAKED into data.js weekly from Notion (the latest
+// Account Health Review + Advertising sub-tasks + Monthly SOP), not pulled live from the sheet's Project
+// Scope board. The sheet proxy still runs for budgets/forecast/targets. Revert = overviewSource:'sheet'.
+function notionOverview() { return CONFIG.overviewSource === 'notion'; }
+
+// Optional per-card subtitle override (spec.subLabel), e.g. "Weekly review · 12 Oct 2026".
+function setCardSub(id, spec) { if (spec && spec.subLabel) set(id, spec.subLabel); }
+
+// overviewSource:'notion': hide the sheet-era In Progress / Completed / Upcoming cards and show the two
+// Notion-baked cards instead — Account Health Management (sections.overview.healthMgmtSpec) and
+// Advertising & Marketing Strategy (adsStrategySpec). Same item shape as Stock Warnings
+// ({level, title, sub}): red/amber = open issue, green = done, muted = next up.
+function renderNotionOverview(o) {
+  var on = notionOverview();
+  ['sec-tasks', 'sec-flags', 'sec-completed'].forEach(function (id) {
+    var w = el(id), c = w && w.closest ? w.closest('.card') : null;
+    if (c && on) c.style.display = 'none';
+  });
+  [['sec-ahm', o.healthMgmtSpec], ['sec-ads', o.adsStrategySpec]].forEach(function (p) {
+    var c = el(p[0] + '-card'); if (!c) return;
+    var show = on && !!p[1];
+    c.style.display = show ? '' : 'none';
+    if (!show) return;
+    setCardSub(p[0] + '-sub', p[1]);
+    renderAlertList(p[0], p[0] + '-badge', p[1]);
+  });
+  syncFlagsGridCols();
 }
 
 // Shared "Currently updating" placeholder for a sheet-driven card whose live data hasn't landed.
@@ -1195,6 +1228,7 @@ function renderUpdatingCard(containerId, badgeId) {
 function renderTasks(spec) {
   if (spec && liveCardPending('tasksSpec')) return renderUpdatingCard('sec-tasks', 'sec-tasks-badge');
   if (!spec) return;
+  setCardSub('sec-tasks-sub', spec);
   if (spec.badge != null) set('sec-tasks-badge', spec.badge);
   var w = el('sec-tasks'); if (!w || !spec.items) return;
   w.innerHTML = spec.items.map(function (t, i) {
@@ -1223,6 +1257,7 @@ function renderCompleted(spec) {
   syncFlagsGridCols();
   if (!spec) return;
   if (liveCardPending('completedSpec')) return renderUpdatingCard('sec-completed', 'sec-completed-badge');
+  setCardSub('sec-completed-sub', spec);
   if (spec.badge != null) set('sec-completed-badge', spec.badge);
   if (!w || !spec.items) return;
   w.innerHTML = spec.items.map(function (t, i) {
@@ -1256,6 +1291,7 @@ function renderAlertList(id, badgeId, spec) {
 }
 function renderFlags(spec) {
   if (spec && liveCardPending('flagsSpec')) return renderUpdatingCard('sec-flags', 'sec-flags-badge');
+  setCardSub('sec-flags-sub', spec);
   renderAlertList('sec-flags', 'sec-flags-badge', spec);
 }
 
@@ -1846,8 +1882,11 @@ function renderSections() {
   renderTasks(o.tasksSpec);
   renderFlags(o.flagsSpec);
   renderCompleted(o.completedSpec);   // Project Scope column G (Completed)
+  renderNotionOverview(o);            // overviewSource:'notion' → Account Health / Advertising cards
   renderAlertList('sec-stockwarn', 'sec-stockwarn-badge', o.stockWarn);   // inventory state → MCP live later
+  setCardSub('sec-stockwarn-sub', o.stockWarn);
   renderAlertList('sec-health', 'sec-health-badge', o.healthSpec);        // Account Health (strategy alerts)
+  setCardSub('sec-health-sub', o.healthSpec);
   var healthWrap = el('sec-health-wrap'); if (healthWrap) healthWrap.style.display = o.healthSpec ? '' : 'none';
   renderEarlyLaunch(o.earlyLaunch);
 
