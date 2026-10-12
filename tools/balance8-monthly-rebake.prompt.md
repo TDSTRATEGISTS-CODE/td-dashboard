@@ -182,3 +182,7 @@ Before publishing, ALL of these must pass. Treat any failure as a hard stop:
 
 Never merge a PR yourself. The auto-publish path skips PRs entirely; the failure path always leaves a
 human gate.
+
+**Guard — weekly Overview cards:** if `clients/balance8/config.js` has `overviewSource: 'notion'`, the three
+Overview cards (`sections.overview.healthMgmtSpec`, `adsStrategySpec`, `stockWarn`) are owned by the
+weekly routine (`tools/weekly-overview.routine.md`). Don't overwrite them in this rebake.

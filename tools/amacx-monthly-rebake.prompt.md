@@ -85,7 +85,7 @@ hits — aside from genuine historical "OOS since" / "as of" dates — is the ac
   for stock warnings instead.
 - **`sections.overview.stockWarn` is owned by the WEEKLY overview routine** while
   `clients/amacx/config.js` has `overviewSource: 'notion'` (source: SKU List tab, pooled EU Stock —
-  see `tools/amacx-weekly-overview.routine.md`). Don't overwrite it here; only `inventory.stock` /
+  see `tools/weekly-overview.routine.md`). Don't overwrite it here; only `inventory.stock` /
   `inventory.restock` below.
 - **Discontinued-SKU check, every run:** before writing `stockWarn` / `inventory.stock` /
   `inventory.restock`, check each currently-tracked SKU's status in the Google Sheet's SKU List tab
