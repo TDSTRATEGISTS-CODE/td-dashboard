@@ -231,7 +231,7 @@ window.DASHBOARD_DATA = {
       // healthMgmtSpec ← "12 Oct 2026 - AMACX Account Health Review" (latest sub-task of AMACX Account Health):
       //                  its "Notes for client" lines as written (max 5 open; inventory notes go to stockWarn),
       //                  plus the 2 most recent "Resolved" items as Done.
-      // adsStrategySpec ← "AMACX Ad Strategy" task › Notes for Client (updated 12 Oct 2026), plus the AMACX
+      // adsStrategySpec ← "AMACX Ad Strategy" task › Notes for Client (updated 13 Oct 2026), plus the AMACX
       //                  Monthly SOP week schedule for what's next.
       // stockWarn      ← AMACX Project Tracker › SKU List (EU Stock = pooled EU FBM stock, synced 12 Oct 2026
       //                  03:55 UTC from MerchantSpring). One pooled stock → every OOS SKU is OOS in all markets.
@@ -247,13 +247,14 @@ window.DASHBOARD_DATA = {
         {level:'green',title:'Italy — late deliveries back under limit',sub:'Done 12 Oct · on-time delivery 92.86%'},
         {level:'green',title:'France — order defect rate back under 1%',sub:'Done 12 Oct · 0.99%'}
       ] },
-      adsStrategySpec: { badge:'Cherry Juice+ live', subLabel:'Weekly review · 12 Oct 2026', items:[
-        {level:'amber',title:'Brand defence',sub:'In progress · budget is moving into brand-defence campaigns, the most efficient in the account (France: 17.7% ACoS over the 12 weeks to 5 Oct)'},
+      adsStrategySpec: { badge:'Cherry Juice+ live', subLabel:'Weekly review · 14 Oct 2026', items:[
+        {level:'amber',title:'Cherry Juice+',sub:'In progress · live with dedicated campaigns in France, Spain and Italy since 7 Oct. Too early to judge after the first week; Germany to follow'},
+        {level:'amber',title:'Results by market',sub:'In progress · Germany improved, with ad spend at 15% of total sales in the 30 days to 12 Oct (23% the month before). Italy rose to 24% (15%); further clean-up of non-converting Italian campaigns is recommended'},
+        {level:'muted',title:'Brand defence',sub:'Still the most efficient spend in the account (France: ad spend 18.6% of the sales it drove over the 12 weeks to 12 Oct)'},
         {level:'muted',title:'Stock',sub:'All listings are fulfilled by AMACX, so we pause ads on any product that reaches zero stock'},
-        {level:'muted',title:'Advertising focus week',sub:'Next up · w/c 19 Oct · performance, growth & profitability'},
         {level:'muted',title:'Black Friday / Cyber Monday deals',sub:'Next up · submit by 18 Nov'},
-        {level:'green',title:'Cherry Juice+',sub:'Done 7 Oct · launched with dedicated campaigns in France, Spain and Italy. Germany to follow'},
-        {level:'green',title:'Clean-up',sub:'Done 7 Oct · products and campaigns that didn\'t pay back over 12 weeks paused, e.g. some Energy Gel flavours in France and Fruit Chews in Germany. They still sell organically'}
+        {level:'green',title:'Clean-up',sub:'Done 7 Oct · products and campaigns that didn\'t pay back over 12 weeks paused, e.g. some Energy Gel flavours in France and Fruit Chews in Germany. They still sell organically'},
+        {level:'green',title:'France brand-defence budget increased',sub:'Done 7 Oct · more budget to protect branded searches'}
       ] },
       // stockWarn.shipping ← MerchantSpring, Jul–Sep 2026, per market: shipping charged to customers (channelProfitAndLoss
       // accrual otherIncome, tax incl., Europe/Berlin) ÷ orders from getSalesByPeriod (lineItemCount = the dashboard's

@@ -255,17 +255,17 @@ window.DASHBOARD_DATA = {
       // First baked 12 Oct 2026 (review used as approved for this run by Ryan's instruction). The sheet-era
       // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
       // healthMgmtSpec ← "12 Oct 2026 - Balance 8 Account Health Review" › Notes for client (⚠️ lines; ✅ lines left out).
-      // adsStrategySpec ← "Balance8 Ad Strategy" task › Notes for Client (updated 12 Oct 2026) + Weekly log for done items.
+      // adsStrategySpec ← "Balance8 Ad Strategy" task › Notes for Client (updated 13 Oct 2026) + Weekly log for done items.
       // stockWarn      ← Balance8_UK_sku-sync_2026-10-12 (MerchantSpring, 12 Sep–11 Oct 2026, FBA). Thresholds ≤21d / soon ≤45d: none hit.
       healthMgmtSpec: { badge:'2 open', subLabel:'Weekly review · 12 Oct 2026', items:[
         {level:'amber',title:'UK — Sales',sub:'In progress · WIRED flavours and Creatine slow since mid-September; we\'ve proposed listing improvements'},
         {level:'amber',title:'UK — Deals',sub:'In progress · Black Friday deal submissions close 18 Nov; we\'ve proposed a deal plan'},
         {level:'green',title:'UK — WIRED listings confirmed live',sub:'Done 12 Oct · all 14 UK listings Active, none inactive'}
       ] },
-      adsStrategySpec: { badge:'Building keywords', subLabel:'Weekly review · 6 Oct 2026', items:[
-        {level:'muted',title:'BrainMatter',sub:'Recovering after the stock gap earlier this year. Cognitive and Calm sales are up in the 30 days to 5 Oct, with a growing share coming organically'},
-        {level:'muted',title:'WIRED',sub:'Early stage in a competitive category with few reviews yet, so ads run lean while reviews build (Amazon Vine recommended)'},
-        {level:'muted',title:'Next step',sub:'Next up · building keyword campaigns from the search terms that already convert'},
+      adsStrategySpec: { badge:'Building keywords', subLabel:'Weekly review · 14 Oct 2026', items:[
+        {level:'amber',title:'BrainMatter',sub:'In progress · Calm\'s keyword campaign is now converting well (5 orders in the week to 12 Oct). The automatic campaigns are being monitored as sales build'},
+        {level:'amber',title:'WIRED',sub:'In progress · the automatic campaigns haven\'t produced a sale since launch on 17 Sep. As agreed, we\'re keeping them running and trialling a new main image to lift conversion; Amazon Vine is still recommended to build reviews'},
+        {level:'muted',title:'Next step',sub:'Next up · building the Cognitive keyword campaign from search terms that already convert'},
         {level:'green',title:'WIRED campaigns live',sub:'Done 17 Sep · first advertising campaigns running'},
         {level:'green',title:'BrainMatter manual keyword campaigns added',sub:'Done 2 Sep · targeting terms alongside the automatic campaigns'}
       ] },

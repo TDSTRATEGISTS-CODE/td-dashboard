@@ -246,7 +246,7 @@ window.DASHBOARD_DATA = {
       // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
       // healthMgmtSpec ← "12 Oct 2026 - Abimax Account Health Review" (no 'Notes for client' section on that page, so
       //                  items are built from its verdict/recommendations; inventory goes to stockWarn).
-      // adsStrategySpec ← "Abimax US Ad Strategy" task › Notes for Client (updated 12 Oct 2026).
+      // adsStrategySpec ← "Abimax US Ad Strategy" task › Notes for Client (updated 13 Oct 2026).
       // stockWarn      ← Abimax_US_sku-sync_2026-10-12 (MerchantSpring, 12 Sep–11 Oct 2026, FBA). Thresholds now ≤45d / soon ≤120d.
       //                  Magno-PRO-002 (0 stock since 19 Feb, no sales) left off as dormant.
       healthMgmtSpec: { badge:'3 open', subLabel:'Weekly review · 12 Oct 2026', items:[
@@ -254,9 +254,10 @@ window.DASHBOARD_DATA = {
         {level:'amber',title:'US — Account Health',sub:'In progress · emergency contact still shows as not verified in Seller Central; please verify it'},
         {level:'amber',title:'US — Compliance',sub:'In progress · confirming the 1 Aug INFORM Consumers Act notice is fully closed; no follow-up notice received'}
       ] },
-      adsStrategySpec: { badge:'Magnostream restructured', subLabel:'Weekly review · 12 Oct 2026', items:[
-        {level:'amber',title:'MAGNO-PRO',sub:'In progress · cutting broad "water softener" searches that don\'t convert and protecting "water descaler", which does (25% ACoS over the 12 weeks to 5 Oct)'},
-        {level:'muted',title:'Main Magnostream campaign',sub:'Running inside target at 32% ACoS against a 35% target (30 days to 5 Oct)'},
+      adsStrategySpec: { badge:'Magnostream restructured', subLabel:'Weekly review · 14 Oct 2026', items:[
+        {level:'amber',title:'Magnostream',sub:'In progress · campaigns restructured on 6 Oct so two campaigns stop competing for the same searches. In the first week the main automatic campaign stayed efficient but spent much less than usual; we are checking why and will restore it if needed'},
+        {level:'amber',title:'MAGNO-PRO',sub:'In progress · the keyword campaign improved in the week to 12 Oct (ad spend 32% of the sales it drove). A bid reduction is recommended on the automatic campaign, which hasn\'t converted in the 30 days to 12 Oct'},
+        {level:'amber',title:'Overall',sub:'In progress · ad spend was 31% of total sales in the 30 days to 12 Oct (27% the month before)'},
         {level:'muted',title:'Magnostream decision',sub:'Next up · around 3 Nov · after 2–4 weeks of monitoring'},
         {level:'green',title:'Magnostream campaigns restructured',sub:'Done 6 Oct · two campaigns no longer compete for the same searches. Monitoring for 2–4 weeks'}
       ] },

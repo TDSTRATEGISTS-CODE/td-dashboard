@@ -247,7 +247,7 @@ window.DASHBOARD_DATA = {
       // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
       // healthMgmtSpec ← "12 Oct 2026 - NKV Account Health Review" › Notes for client (🔴/⚠️ lines; ✅ lines left out;
       //                  the UK inventory note is folded into stockWarn).
-      // adsStrategySpec ← "NKV Beauty Ad Strategy" task › Notes for Client (updated 12 Oct 2026) + Ads Action Plan / Weekly log for done items.
+      // adsStrategySpec ← "NKV Beauty Ad Strategy" task › Notes for Client (updated 13 Oct 2026) + Ads Action Plan / Weekly log for done items.
       // stockWarn      ← NKV_UK + NKV_US_sku-sync_2026-10-12 (MerchantSpring, 12 Sep–11 Oct 2026, FBA). Thresholds ≤14d / soon ≤30d.
       //                  The dormant Girlactik long-tail (no sale in 120+ days) is left off. Card title/sub come from config.layout.relabel.
       healthMgmtSpec: { badge:'3 open', subLabel:'Weekly review · 12 Oct 2026', items:[
@@ -255,12 +255,12 @@ window.DASHBOARD_DATA = {
         {level:'red',title:'US — Compliance',sub:'In progress · GrowPod policy item still overdue, $500 sales at risk; appeal in progress with Amazon.'},
         {level:'amber',title:'UK — Deals',sub:'In progress · Three products eligible for Black Friday deals; submissions close 18 Nov.'}
       ] },
-      adsStrategySpec: { badge:'Q4 push', subLabel:'Weekly review · 8 Oct 2026', items:[
-        {level:'amber',title:'UK — White Luxe (Q4 push)',sub:'In progress · gearing the Kit and Strips up for peak season, with ad spend held at around 20% of their total sales'},
-        {level:'amber',title:'UK — Newnique hair growth range',sub:'In progress · funding launch advertising to build organic sales and ranking. Organic sales are growing where ads run. Next review in early November'},
-        {level:'amber',title:'UK — Efficiency',sub:'In progress · pausing campaigns and keywords that haven\'t converted over the last 12 weeks and moving budget to proven terms'},
-        {level:'muted',title:'UK — Stock',sub:'Several Lids by Design sizes are low; stock-up recommended to protect the account\'s strongest campaign'},
-        {level:'muted',title:'US',sub:'Early-stage market. Ads are paused while a stock issue on the GrowPod Hair Comb is resolved'},
+      adsStrategySpec: { badge:'Q4 push', subLabel:'Weekly review · 14 Oct 2026', items:[
+        {level:'amber',title:'UK — White Luxe (Q4 push)',sub:'In progress · the Whitening Kit\'s keyword campaign is live again for peak season and the Strips are converting well. Ad spend is planned at around 20% of each product\'s sales across the quarter'},
+        {level:'amber',title:'UK — Newnique hair growth range',sub:'In progress · launch advertising continues to build sales and ranking. Recommended: switch off the two campaigns that haven\'t paid back over 12 weeks (the Organic Hair Growth Serum automatic campaign and the Serum Bundle) and keep the search terms that convert. Next review in early November'},
+        {level:'muted',title:'UK — Efficiency',sub:'Ad spend was £2,402 against £4,521 of ad-driven sales in the 30 days to 12 Oct. Ad spend as a share of total sales fell to 23% (25% the month before)'},
+        {level:'muted',title:'UK — Stock',sub:'Stock-up recommended for several Lids by Design sizes, and for the Whitening Strips ahead of Black Friday'},
+        {level:'muted',title:'US',sub:'Ads remain paused while a stock issue on the GrowPod Hair Comb is resolved'},
         {level:'green',title:'UK — Display re-targeting paused',sub:'Done 8 Oct · Mixed Re-targeting campaign'},
         {level:'green',title:'UK — Grow Bundle campaigns paused',sub:'Done 6 Oct · Manual and Auto'}
       ] },
