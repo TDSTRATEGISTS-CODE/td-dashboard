@@ -45,6 +45,21 @@ commit:
    static reference table — check for unmatched ASINs with nonzero `totalSales` each run and extend
    it; sanity-check sum-of-groups against the already-baked headline revenue for that window
    (within ~1–2%).
+   - **Per-group `cvr`/`cvrCls` — currently only populated on `may` (every scope: `all`/`de`/`fr`/
+     `es`/`it`), found missing on `3m`/`6m`/`12m` 19 Oct 2026. Same bug class as the Balance 8/
+     Abimax/NKV fixes that week (`tools/{balance8,abimax}-monthly-rebake.prompt.md`,
+     `tools/nkv-monthly-rebake.prompt.md`) — a client switching the date range to anything but "Last
+     Month" sees `cvr:'—'` (not fabricated, just absent) on every group row. Source:
+     `generateReport(report_type:'trafficAndConversion', view:'skus')` per market channel per window
+     (fetch the CSV from `downloadUrl` directly, not the AI summary), summed to group level via the
+     SAME SKU→Group map used for the sales/units columns above — don't compute CVR from a different
+     grouping than the one already baked for that period, or the two won't describe the same
+     products. `cvr` = (Σ group `orderedUnits`) ÷ (Σ group `sessions`); thresholds ≥10% `'bg'`,
+     4–9.99% `'ba'`, <4% `'br'`. **Not backfilled manually in the 19 Oct 2026 session** that found
+     it — at 15 groups × 5 scopes × 3 periods, reconstructing it without the live Sheet mapping in
+     hand risked mis-joining a SKU to the wrong group (wrong-but-plausible numbers are worse than an
+     honest `—`), unlike Abimax's 5 named SKUs which needed no mapping lookup. This rebake is the
+     first chance to fill it in with the mapping actually in hand — do it this run, not "next time."
 3. `sections.advertising.campaignMixByPeriod` — same per-window-pull shape as #2, from the
    `campaigns` report, aggregated by `ad_type`.
 4. `sections.charts` (trailing 6-month trend) — drop the oldest month, append the new one:
@@ -122,7 +137,11 @@ hits — aside from genuine historical "OOS since" / "as of" dates — is the ac
     ['may','3m','6m','12m'].forEach(p=>{if(!s.products.groupsByPeriod[p]) throw new Error('missing groupsByPeriod '+p); \
       if(!s.advertising.campaignMixByPeriod[p]) throw new Error('missing campaignMixByPeriod '+p); \
       if(!s.products.kpisByPeriod[p]) throw new Error('missing kpisByPeriod '+p); \
-      if(!s.products.tableByPeriod[p]) throw new Error('missing tableByPeriod '+p);}); \
+      if(!s.products.tableByPeriod[p]) throw new Error('missing tableByPeriod '+p); \
+      ['all','de','fr','es','it'].forEach(function(mk){ var rows=s.products.groupsByPeriod[p][mk]; \
+        if(!rows) throw new Error('missing groupsByPeriod '+p+'.'+mk); \
+        var noCvr=rows.filter(function(r){return r.cvr==null}).length; \
+        if(noCvr) console.log('⚠️ '+p+'.'+mk+': '+noCvr+'/'+rows.length+' groups missing cvr'); });}); \
     console.log('shape OK →', d.may.label, d.may.rev); \
     console.log('chart last month →', s.charts.months.slice(-1)[0]); \
     console.log('reportPeriodLabel →', window.DASHBOARD_CONFIG.client.reportPeriodLabel);"
