@@ -395,25 +395,85 @@ window.DASHBOARD_DATA = {
       ]
     },
     products: {
-      // KPIs + by-market table = September 2026 (page period). Groups card = September sales by variant.
+      // KPIs + by-market table + groups below are the static (May-period) fallback — same pattern as
+      // Balance 8/NKV/AMACX. kpisByPeriod/tableByPeriod/groupsByPeriod (added 19 Oct 2026) are what
+      // app.js reads first; without them this page showed May's numbers under every date-range
+      // selection (the same bug found and fixed on Balance 8 in Sep 2026 — Abimax just hadn't been
+      // caught yet since nobody had checked "Since Launch" against the real total before).
+      // Per-product session CVR sourced the same way as Balance 8/NKV/AMACX:
+      // generateReport(report_type:'trafficAndConversion', view:'skus') — getSalesByProduct has no
+      // per-SKU session count. Pulled 19 Oct 2026; thresholds ≥10% green, 4–9.99% amber, <4% red.
+      // adSpend/TACOS are getSalesByProduct's own per-SKU fields (bg<20% / ba 20–40% / br>40%, same
+      // bands NKV documents). B0GLPPDS1M (unlaunched variant) excluded throughout, as before.
       kpis: [
         {bar:'#404935',lbl:'Active SKUs',val:'5',dCls:'df',d:'sold in Sep',s:'all 5 tracked SKUs sold'},
         {bar:'var(--green)',lbl:'Top Product Rev.',val:'$1,562',dCls:'dd',d:'Magnostream Pro',s:'31% of Sep sales'},
         {bar:'var(--blue)',lbl:'Orders (Sep)',val:'46',dCls:'du',d:'▲ 35.3% MoM',s:'34 orders Aug'},
         {bar:'var(--amber)',lbl:'ASP',val:'$106',dCls:'dd',d:'▼ 1.8% MoM',s:'per unit'}
       ],
+      kpisByPeriod: {
+        may: { all: [
+          {bar:'#404935',lbl:'Active SKUs',val:'5',dCls:'df',d:'sold in Sep',s:'all 5 tracked SKUs sold'},
+          {bar:'var(--green)',lbl:'Top Product Rev.',val:'$1,562',dCls:'dd',d:'Magnostream Pro',s:'31% of Sep sales'},
+          {bar:'var(--blue)',lbl:'Orders (Sep)',val:'46',dCls:'du',d:'▲ 35.3% MoM',s:'34 orders Aug'},
+          {bar:'var(--amber)',lbl:'ASP',val:'$106',dCls:'dd',d:'▼ 1.8% MoM',s:'per unit'}
+        ] },
+        '3m': { all: [
+          {bar:'#404935',lbl:'Active SKUs',val:'5',dCls:'df',d:'sold in Jul–Sep',s:'all 5 tracked SKUs sold'},
+          {bar:'var(--green)',lbl:'Top Product Rev.',val:'$5,343',dCls:'df',d:'Magnostream Pro',s:'41% of 3-month sales'},
+          {bar:'var(--blue)',lbl:'Orders (3m)',val:'113',dCls:'df',d:'3-month total',s:'Jul 33 · Aug 34 · Sep 46'},
+          {bar:'var(--amber)',lbl:'ASP',val:'$112',dCls:'df',d:'3-month ASP',s:'per unit'}
+        ] },
+        '6m': { all: [
+          {bar:'#404935',lbl:'Active SKUs',val:'5',dCls:'df',d:'sold since launch',s:'all 5 tracked SKUs sold'},
+          {bar:'var(--green)',lbl:'Top Product Rev.',val:'$11,841',dCls:'df',d:'Magnostream Pro',s:'37% of launch-to-date sales'},
+          {bar:'var(--blue)',lbl:'Orders (6m)',val:'278',dCls:'df',d:'launch-to-date',s:'Mar–Sep 2026'},
+          {bar:'var(--amber)',lbl:'ASP',val:'$107',dCls:'df',d:'launch ASP',s:'per unit'}
+        ] }
+      },
       table: [
         {name:'United States',flag:'us',revenue:'$5,003',units:'47',orders:'46',cvr:'2.8%',cvrCls:'br',aov:'$108.77'}
       ],
+      // Market-level (session) CVR = units ÷ sessions summed across all 5 tracked SKUs from the same
+      // trafficAndConversion pull as the per-product CVR below: may 47/1,678=2.8%, 3m 117/4,548=2.6%,
+      // 6m 296/7,726=3.8%.
+      tableByPeriod: {
+        may: [ {name:'United States',flag:'us',revenue:'$5,003',units:'47',orders:'46',cvr:'2.8%',cvrCls:'br',aov:'$108.77'} ],
+        '3m': [ {name:'United States',flag:'us',revenue:'$13,108',units:'117',orders:'113',cvr:'2.6%',cvrCls:'br',aov:'$116.00'} ],
+        '6m': [ {name:'United States',flag:'us',revenue:'$31,725',units:'296',orders:'278',cvr:'3.8%',cvrCls:'br',aov:'$114.12'} ]
+      },
       // September 2026 sales by product variant (real MerchantSpring product report, US channel). % = share
       // of September product sales (Σ = $5,003, ties to headline revenue). All variants in stock.
       groups: [
-        {name:'Magnostream Pro — Heavy-Duty',sales:'$1,562',units:5,pct:'31%',oosRate:'0%',oosCls:'bg'},
-        {name:'Magnostream Single',sales:'$1,305',units:26,pct:'26%',oosRate:'0%',oosCls:'bg'},
-        {name:'Magnostream Pack of 3',sales:'$1,276',units:10,pct:'25%',oosRate:'0%',oosCls:'bg'},
-        {name:'Magnostream Pack of 2',sales:'$481',units:5,pct:'10%',oosRate:'0%',oosCls:'bg'},
-        {name:'Magnostream Multi-Unit Bundle',sales:'$381',units:1,pct:'8%',oosRate:'0%',oosCls:'bg'}
-      ]
+        {name:'Magnostream Pro — Heavy-Duty',sales:'$1,562',units:5,pct:'31%',adSpend:'$632',tacos:'40.5%',tacosCls:'br',cvr:'0.6%',cvrCls:'br',oosRate:'0%',oosCls:'bg'},
+        {name:'Magnostream Single',sales:'$1,304',units:26,pct:'26%',adSpend:'$593',tacos:'45.4%',tacosCls:'br',cvr:'4.0%',cvrCls:'ba',oosRate:'0%',oosCls:'bg'},
+        {name:'Magnostream Pack of 3',sales:'$1,276',units:10,pct:'25%',adSpend:'$57',tacos:'4.4%',tacosCls:'bg',cvr:'11.2%',cvrCls:'bg',oosRate:'0%',oosCls:'bg'},
+        {name:'Magnostream Pack of 2',sales:'$480',units:5,pct:'10%',adSpend:'$76',tacos:'15.8%',tacosCls:'bg',cvr:'4.6%',cvrCls:'ba',oosRate:'0%',oosCls:'bg'},
+        {name:'Magnostream Multi-Unit Bundle',sales:'$381',units:1,pct:'8%',adSpend:'$0',tacos:'0.0%',tacosCls:'bg',cvr:'9.1%',cvrCls:'ba',oosRate:'0%',oosCls:'bg'}
+      ],
+      groupsByPeriod: {
+        may: { all: [
+          {name:'Magnostream Pro — Heavy-Duty',sales:'$1,562',units:5,pct:'31%',adSpend:'$632',tacos:'40.5%',tacosCls:'br',cvr:'0.6%',cvrCls:'br',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Single',sales:'$1,304',units:26,pct:'26%',adSpend:'$593',tacos:'45.4%',tacosCls:'br',cvr:'4.0%',cvrCls:'ba',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Pack of 3',sales:'$1,276',units:10,pct:'25%',adSpend:'$57',tacos:'4.4%',tacosCls:'bg',cvr:'11.2%',cvrCls:'bg',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Pack of 2',sales:'$480',units:5,pct:'10%',adSpend:'$76',tacos:'15.8%',tacosCls:'bg',cvr:'4.6%',cvrCls:'ba',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Multi-Unit Bundle',sales:'$381',units:1,pct:'8%',adSpend:'$0',tacos:'0.0%',tacosCls:'bg',cvr:'9.1%',cvrCls:'ba',oosRate:'0%',oosCls:'bg'}
+        ] },
+        '3m': { all: [
+          {name:'Magnostream Pro — Heavy-Duty',sales:'$5,343',units:17,pct:'41%',adSpend:'$1,847',tacos:'34.6%',tacosCls:'ba',cvr:'0.8%',cvrCls:'br',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Single',sales:'$3,708',units:68,pct:'28%',adSpend:'$1,354',tacos:'36.5%',tacosCls:'ba',cvr:'3.5%',cvrCls:'br',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Pack of 3',sales:'$2,161',units:16,pct:'16%',adSpend:'$116',tacos:'5.4%',tacosCls:'bg',cvr:'7.4%',cvrCls:'ba',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Pack of 2',sales:'$1,515',units:15,pct:'12%',adSpend:'$159',tacos:'10.5%',tacosCls:'bg',cvr:'5.2%',cvrCls:'ba',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Multi-Unit Bundle',sales:'$381',units:1,pct:'3%',adSpend:'$0',tacos:'0.0%',tacosCls:'bg',cvr:'3.2%',cvrCls:'br',oosRate:'0%',oosCls:'bg'}
+        ] },
+        '6m': { all: [
+          {name:'Magnostream Pro — Heavy-Duty',sales:'$11,841',units:37,pct:'37%',adSpend:'$2,295',tacos:'19.4%',tacosCls:'bg',cvr:'1.3%',cvrCls:'br',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Single',sales:'$10,812',units:191,pct:'34%',adSpend:'$2,210',tacos:'20.4%',tacosCls:'ba',cvr:'4.8%',cvrCls:'ba',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Pack of 3',sales:'$4,734',units:33,pct:'15%',adSpend:'$149',tacos:'3.1%',tacosCls:'bg',cvr:'8.3%',cvrCls:'ba',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Pack of 2',sales:'$3,539',units:33,pct:'11%',adSpend:'$183',tacos:'5.2%',tacosCls:'bg',cvr:'7.1%',cvrCls:'ba',oosRate:'0%',oosCls:'bg'},
+          {name:'Magnostream Multi-Unit Bundle',sales:'$799',units:2,pct:'3%',adSpend:'$0',tacos:'0.0%',tacosCls:'bg',cvr:'2.5%',cvrCls:'br',oosRate:'0%',oosCls:'bg'}
+        ] }
+      }
     }
   }
 };
