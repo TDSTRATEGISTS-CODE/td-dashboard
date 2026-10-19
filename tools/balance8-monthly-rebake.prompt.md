@@ -99,10 +99,27 @@ history, so a fixed launch-to-date framing would misrepresent an inactive period
   - `may`/`3m` can use real per-SKU ad/product detail (MerchantSpring exposes genuine per-product
     ad-sales for the current pull, per Abimax's data.js comment on the channel-only-attribution
     limitation elsewhere — check whether that's still true this pull).
-  - `12m` may need to roll up to **product-family level** (BrainMatter combined vs WIRED combined)
-    rather than fabricate a per-SKU split for months where only channel-level ad/product data was
-    pulled historically — same reasoning as the Sep 2026 bake. Reconcile: the `12m` product-group
-    sum must equal the `12m` table revenue **exactly** (verify with the validation script below).
+  - `12m`: pull the SAME `getSalesByProduct`-style per-SKU detail for the full rolling 12-month window
+    (not just the target month) before falling back to a product-family rollup — see the CVR bullet
+    below: the `trafficAndConversion` report returns real per-SKU `orderedRevenue`/`orderedUnits` for
+    the whole requested window, including months you can't query `getSalesByProduct` per-SKU for
+    individually (confirmed 19 Oct 2026: it had real Cognitive-vs-Calm figures back to Oct 2025).
+    Reconcile: the `12m` product-group sum must equal the `12m` table revenue **exactly** (verify with
+    the validation script below) — only roll up to product-family level if that per-SKU data genuinely
+    isn't available this pull, and say so in the comment.
+- **Per-product session CVR (`products.groups[].cvr`/`cvrCls`) — pull every rebake, don't let it go
+  stale.** Added 19 Oct 2026. `getSalesByProduct` has NO per-SKU session count (only ad-click data),
+  so this needs a SEPARATE pull: `generateReport(report_type:'trafficAndConversion', view:'skus',
+  channelId:'95589144', merchantId:'A3NEIOUENQO9V9 @ A1F83G8C2ARO7P', fromDate/toDate = the period's
+  window, priorFromDate/priorToDate = same as current — poll `getReportStatus` then fetch the CSV
+  from its `downloadUrl` directly (don't rely on `readSummarizedReport`'s AI summary — it only gives
+  aggregate stats, not the per-row data you need). The CSV's `unitsPerSession` column IS the CVR
+  already expressed as a percentage (e.g. `23.85` = 23.85%, verified against units÷sessions by hand).
+  Run this once per period (`may`/`3m`/`12m`) and match rows to `products.groups[period]` by
+  `productSku` (the ASIN). Thresholds: `cvrCls` ≥10% `'bg'` (green), 4–9.99% `'ba'` (amber), <4% `'br'`
+  (red). Cross-check: total CSV `sessions` summed should roughly match `overview.cvr`'s session count
+  for that period (small gaps are normal — channel-level sessions include some non-ASIN-attributed
+  traffic) and `Σ orderedRevenue` across SKUs should tie to the period's headline revenue.
 - **Advertising campaigns (`may`/`3m`):** spend/CPC/ad-sales real per-SKU where MerchantSpring exposes
   it for the current pull; if it ever reverts to channel-only attribution, allocate by spend share and
   say so (see Abimax's data.js for that pattern) rather than presenting an allocation as exact.

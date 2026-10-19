@@ -23,7 +23,8 @@ one and ship a page that's half July, half stale — that has actually happened.
 
 1. **Amazon** (MerchantSpring): `dateRanges`, `marketKpis`, `sections.charts` (the trend charts —
    **separate from `dateRanges`, easy to forget**), `sections.advertising.{metrics,campaigns}`, `campaignMix`,
-   `sections.inventory`, `stockWarn`, `sections.products.groupsByPeriod`.
+   `sections.inventory`, `stockWarn`, `sections.products.groupsByPeriod` (UK groups include real per-product
+   session CVR — see the lessons-learned bullet below on where that comes from and why it needs its own pull).
 2. **Shopify/D2C** (MerchantSpring Shopify channel + GA4 via Reporting Ninja): `sections.shopify` — its own
    channels (Contours Rx `33616599`), its own GA4 properties, its own trend chart. Completely separate pull,
    completely separate part of the file. See the runbook's "Shopify (D2C) → `sections.shopify`" step.
@@ -125,6 +126,18 @@ Never merge a PR yourself. The auto-publish path skips PRs entirely; the failure
   UK ad spend / ad sales still come from generated `campaigns` reports per window (12m reconciles within 0.2%).
 - The Account Tracker Drive read returned no readable budget rows in Sep 2026 — advertising `budgets`/`forecast`
   were rolled from the documented £3,000 budget / £3,500 forecast; re-confirm from the sheet when possible.
+- **Per-product session CVR (`GROUPS[period]` row index 7/8, UK only) — refresh every rebake, don't carry it
+  forward.** `getSalesByProduct` has no per-SKU session count, only ad-click data — the real CVR comes from
+  `generateReport(report_type:'trafficAndConversion', view:'skus')` per UK channel (`71662311`) and period,
+  summed to brand level (fetch the CSV from the report's `downloadUrl` directly — `readSummarizedReport`'s AI
+  summary only gives aggregate stats, not the per-row numbers you need to sum by brand). CVR = ordered units ÷
+  sessions from that report, NOT the market-level `getSalesByChannels` conversion rate used for `overview.cvr`
+  — they're different metrics and will disagree slightly. Thresholds: `cvrCls` `'bg'` ≥8%, `'ba'` 3–8%, `'br'`
+  <3% (brand-level bands are naturally lower than Balance 8's per-ASIN ones — don't reuse those thresholds).
+  Expect the product report's brand totals to undercount the channel total by a growing margin on wider
+  windows (SKU/brand mapping drift on older rows) — note the gap in the comment like the existing bake does,
+  don't silently force the two to reconcile. Girlactik has shown `'—'` for CVR in some periods (sessions too
+  thin to trust) — leaving it blank is correct, don't invent a number to fill it.
 
 **Guard — weekly Overview cards:** if `clients/nkv/config.js` has `overviewSource: 'notion'`, the three
 Overview cards (`sections.overview.healthMgmtSpec`, `adsStrategySpec`, `stockWarn`) are owned by the
