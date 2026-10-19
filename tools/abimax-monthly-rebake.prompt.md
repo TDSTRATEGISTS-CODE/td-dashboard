@@ -55,6 +55,25 @@ last month; launch-to-date — keep the key `6m` and the "Since Launch" label). 
 - **Advertising campaigns** are per-ASIN Sponsored Products: **spend + CPC are real** per-SKU (product report);
   **ad-sales are allocated** from the channel-attributed total by spend share (keep the existing comment). Headline
   `adSales`/`ACOS`/`ROAS`/`TACOS` come from `getSalesByPeriod` (channel-attributed, self-consistent).
+- **Products page is now period-aware (added 19 Oct 2026) — refresh all three periods every rebake.**
+  `sections.products.{kpisByPeriod,tableByPeriod,groupsByPeriod}` (each keyed `may`/`3m`/`6m`; kpis/groups
+  additionally keyed `.all`) are what app.js reads first — before this, every date-range selection on Products
+  showed May's numbers (e.g. "Since Launch" claiming only the latest month's revenue). Keep the flat
+  `kpis`/`table`/`groups` fields in sync with `may` as the fallback, same as the dateRanges pattern elsewhere.
+  - `table`/`tableByPeriod`: revenue/units from `getSalesByProduct` summed across all 5 tracked SKUs (excl.
+    `B0GLPPDS1M`, unlaunched) — must equal that period's already-baked headline `rev`. `cvr` here is
+    MARKET-level session CVR = total units ÷ total sessions (from the same `trafficAndConversion` pull below).
+  - `groupsByPeriod`: per-SKU `sales`/`units`/`adSpend`/`tacos` straight from `getSalesByProduct`
+    (`tacos`/`tacosCls` bands: bg<20% / ba 20–40% / br>40%). The `groupsByPeriod[period].all` sum must equal
+    that period's `tableByPeriod[period]` revenue **exactly** — use largest-remainder rounding across the 5 rows
+    if whole-dollar rounding doesn't land on the total (don't let each row round independently and drift by $1–2).
+  - **Per-product session CVR** — `getSalesByProduct` has no per-SKU session count, only ad-click data. Pull
+    `generateReport(report_type:'trafficAndConversion', view:'skus', channelId:'106785689',
+    merchantId:'A267LLT9LT0HS9 @ ATVPDKIKX0DER')` per period window, fetch the CSV from its `downloadUrl`
+    directly (not `readSummarizedReport`'s AI summary — it only gives aggregates), and read `unitsPerSession`
+    straight off as the CVR percentage. Thresholds: `cvrCls` ≥10% `'bg'`, 4–9.99% `'ba'`, <4% `'br'`. Note: this
+    report's own `orderedRevenue` column runs ~5–8% off `getSalesByProduct`'s `totalSales` for the same SKU/
+    period (different revenue basis) — use it ONLY for `sessions`/`unitsPerSession`, never for revenue/units.
 - **`revBreakChart`** (stacked monthly bars) is derived: per month Ad-attributed = ad sales, Organic = gross
   revenue − ad sales; series `#404935` (Ad) / `#a7ab90` (Organic).
 - **Currency note:** all figures are `$`, but the shared trend-chart axis formatter (`moneyK`) hardcodes `€` — a
@@ -72,11 +91,18 @@ last month; launch-to-date — keep the key `6m` and the "Since Launch" label). 
     (c.dateRangeOptions||[]).forEach(o=>{if(!d[o.value]) throw new Error('missing period '+o.value); \
       const b=d[o.value].revBreakChart; if(b){var a=b.series[0].values.reduce((x,y)=>x+y,0), \
       org=b.series[1].values.reduce((x,y)=>x+y,0); console.log(o.value,'ad',a,'organic',org,'gross',a+org);} \
-      const st=(d[o.value].sec&&d[o.value].sec.pnl&&d[o.value].sec.pnl.statement)||S.pnl.statement; \
+      const pnl=(d[o.value].sec&&d[o.value].sec.pnl)||S.pnl, st=pnl.statement; \
       if(!st||!st.fixedLabel) throw new Error('missing per-timeline P&L statement for '+o.value); \
-      console.log('  P&L',o.value,'→',st.fixedLabel.split(String.fromCharCode(183))[0].trim(),st.summary[2].val);}); \
+      if(!pnl.summary||!pnl.summary[2]) throw new Error('missing pnl.summary for '+o.value); \
+      console.log('  P&L',o.value,'→',st.fixedLabel.split(String.fromCharCode(183))[0].trim(),pnl.summary[2].val);}); \
+    ['may','3m','6m'].forEach(function(p){ \
+      var g=S.products.groupsByPeriod[p].all.reduce((x,r)=>x+parseFloat(String(r.sales).replace(/[\$,]/g,''))||0,0); \
+      var t=parseFloat(String(S.products.tableByPeriod[p][0].revenue).replace(/[\$,]/g,'')); \
+      console.log(p,'products groups sum',g,'vs table revenue',t,g===t?'OK':'MISMATCH'); }); \
     console.log('shape OK →', d[c.defaultPeriod].label, d[c.defaultPeriod].rev)"
   ```
+  The groups-vs-table reconciliation (`MISMATCH`) is a hard stop, same as the revBreak check below — it's exactly
+  the class of bug the 19 Oct 2026 Products fix was for.
   Sanity-check: TACOS never >100%, ROAS plausible (Abimax runs efficient — ~5–7×), no negative/blank revenue,
   every MoM delta present.
 
