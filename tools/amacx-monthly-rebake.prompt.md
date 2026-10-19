@@ -45,21 +45,38 @@ commit:
    static reference table — check for unmatched ASINs with nonzero `totalSales` each run and extend
    it; sanity-check sum-of-groups against the already-baked headline revenue for that window
    (within ~1–2%).
-   - **Per-group `cvr`/`cvrCls` — currently only populated on `may` (every scope: `all`/`de`/`fr`/
-     `es`/`it`), found missing on `3m`/`6m`/`12m` 19 Oct 2026. Same bug class as the Balance 8/
-     Abimax/NKV fixes that week (`tools/{balance8,abimax}-monthly-rebake.prompt.md`,
-     `tools/nkv-monthly-rebake.prompt.md`) — a client switching the date range to anything but "Last
-     Month" sees `cvr:'—'` (not fabricated, just absent) on every group row. Source:
-     `generateReport(report_type:'trafficAndConversion', view:'skus')` per market channel per window
-     (fetch the CSV from `downloadUrl` directly, not the AI summary), summed to group level via the
-     SAME SKU→Group map used for the sales/units columns above — don't compute CVR from a different
-     grouping than the one already baked for that period, or the two won't describe the same
-     products. `cvr` = (Σ group `orderedUnits`) ÷ (Σ group `sessions`); thresholds ≥10% `'bg'`,
-     4–9.99% `'ba'`, <4% `'br'`. **Not backfilled manually in the 19 Oct 2026 session** that found
-     it — at 15 groups × 5 scopes × 3 periods, reconstructing it without the live Sheet mapping in
-     hand risked mis-joining a SKU to the wrong group (wrong-but-plausible numbers are worse than an
-     honest `—`), unlike Abimax's 5 named SKUs which needed no mapping lookup. This rebake is the
-     first chance to fill it in with the mapping actually in hand — do it this run, not "next time."
+   - **Per-group `cvr`/`cvrCls` — refresh every rebake, don't carry it forward.** Backfilled for
+     `3m`/`6m`/`12m` (every scope: `all`/`de`/`fr`/`es`/`it`) on 19 Oct 2026, having been missing
+     since whenever the per-period Products rebuild first shipped (only `may` had it before). Same
+     bug class as the Balance 8/Abimax/NKV fixes that week (`tools/{balance8,abimax}-monthly-rebake.
+     prompt.md`, `tools/nkv-monthly-rebake.prompt.md`). Source: `generateReport(report_type:
+     'trafficAndConversion', view:'skus')` per market channel (DE/FR/ES/IT) per window — one pull per
+     market per window, 12 total for 3m/6m/12m — fetch the CSV from `downloadUrl` directly, not the
+     AI summary. `cvr` = (Σ group `orderedUnits`) ÷ (Σ group `sessions`) from that pull; thresholds
+     ≥10% `'bg'`, 4–9.99% `'ba'`, <4% `'br'`. For the `all` (blended EU) scope, sum sessions/units
+     across all four markets first, then divide — don't average the four markets' percentages.
+   - **The ASIN→Group map used for this is the "SKU List" tab of the AMACX Project Tracker Google
+     Sheet** (Drive file ID `1yJvCPOnxhQO4oa1cUzrnyiORRO6kWKtf1Fw544C-K9Q`, column B = Group Name e.g.
+     `PARENT-Energy Drink`, column E = child ASIN). Export the whole workbook as `.xlsx` via
+     `download_file_content` (`exportMimeType: application/vnd.openxmlformats-officedocument.
+     spreadsheetml.sheet`) and read it with a library (e.g. `openpyxl`) — a plain CSV/text export of
+     a Google Sheet only returns the first tab, not "SKU List". The map only covers ~51 current
+     ASINs; each rebake found a handful of legacy/superseded ASINs (old "Energy Drink Pulver"/"Turbo
+     Drink Pulver" variants, a sugar-free Hydro Tabs SKU) still showing sessions in the trafficAndConversion
+     pull that aren't in the Sheet — title-match them to the right existing group rather than dropping
+     their sessions (see the 19 Oct 2026 session's `EXTRA_ASIN_GROUPS` workaround). One genuinely new
+     SKU (`B0F331NKWY`, "Beet Shot") has no matching category at all — exclude it, don't invent one.
+   - **Known small reconciliation gap, not a regression:** the DE/ES group-level `sales` sums already
+     run ~0.4–1.5% under the baked `tableByPeriod` market revenue for `3m`/`6m`/`12m` (pre-existing,
+     confirmed present before the 19 Oct 2026 CVR backfill — not introduced by it). Root cause is the
+     same handful of legacy/unmapped SKUs above; worth folding their revenue into the right group next
+     time groupsByPeriod sales/units are rebuilt from scratch, but out of scope for a CVR-only patch.
+   - **Reconciliation vs `tableByPeriod` units (the sanity check to re-run each time):** pulling the
+     same per-market total sessions/units from this report and comparing to the already-baked
+     `tableByPeriod[period]` units — DE matched exactly on all three windows in the 19 Oct 2026 run;
+     FR/ES/IT ran 96–99% of the baked figure on `6m`/`12m` (not `3m`, which matched exactly everywhere).
+     This mirrors NKV's documented "product report undercounts on wider windows" pattern — treat a
+     96%+ match as a pass, don't force exact reconciliation.
 3. `sections.advertising.campaignMixByPeriod` — same per-window-pull shape as #2, from the
    `campaigns` report, aggregated by `ad_type`.
 4. `sections.charts` (trailing 6-month trend) — drop the oldest month, append the new one:
