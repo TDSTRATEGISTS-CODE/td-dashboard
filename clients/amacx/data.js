@@ -233,8 +233,8 @@ window.DASHBOARD_DATA = {
       //                  plus the 2 most recent "Resolved" items as Done.
       // adsStrategySpec ← "AMACX Ad Strategy" task › Notes for Client (updated 13 Oct 2026), plus the AMACX
       //                  Monthly SOP week schedule for what's next.
-      // stockWarn      ← AMACX Project Tracker › SKU List (EU Stock = pooled EU FBM stock, synced 12 Oct 2026
-      //                  03:55 UTC from MerchantSpring). One pooled stock → every OOS SKU is OOS in all markets.
+      // stockWarn      ← AMACX_EU_sku-sync_2026-10-19 (pooled EU FBM stock, MerchantSpring 19 Sep–18 Oct 2026) + SKU List.
+      //                  One pooled stock → every OOS SKU is OOS in all markets.
       //                  Discontinued / superseded SKUs (Hydro Tabs 3×20, Beet Shot, Energy Drink Grape,
       //                  Cherry Juice Booster 6×500) are left off.
       // Item levels: red/amber = open issue · green = done · muted = next up. Client-facing wording only.
@@ -267,8 +267,7 @@ window.DASHBOARD_DATA = {
       stockWarn: { shipping: { label:'Avg shipping per order', note:'Jul–Sep 2026 baseline · charged to customer', target:6.95,
           targetTxt:'Target €6.95 per order in every market · being raised gradually to protect the Buy Box', items:[
           {flag:'de',label:'DE',val:'€5.95',num:5.95}, {flag:'fr',label:'FR',val:'€4.13',num:4.13}, {flag:'es',label:'ES',val:'€3.70',num:3.70}, {flag:'it',label:'IT',val:'€3.41',num:3.41} ] },
-        title:'&#128230; Logistics &amp; Operations', badge:'4 OOS SKUs', subLabel:'SKU List · pooled EU stock · 12 Oct 2026', items:[
-        {level:'red',title:'Turbo Chew Lemon — OOS all markets',sub:'B0GZ3XD7QX · since 6 Oct · please confirm a stock-up date'},
+        title:'&#128230; Logistics &amp; Operations', badge:'3 OOS SKUs', subLabel:'SKU sync · pooled EU stock · 19 Oct 2026', items:[
         {level:'red',title:'Energy Drink Powder 320g Lemon — OOS all markets',sub:'B0GZ43HK1F · since 29 Jul'},
         {level:'red',title:'Energy Drink Powder 320g Forest Fruit — OOS all markets',sub:'B0GZ469Z98 · since 17 Jul'},
         {level:'red',title:'Fast Bar Lemon — OOS all markets',sub:'B086XB1N46 · since 14 May'}

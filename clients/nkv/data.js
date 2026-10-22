@@ -248,7 +248,7 @@ window.DASHBOARD_DATA = {
       // healthMgmtSpec ← "12 Oct 2026 - NKV Account Health Review" › Notes for client (🔴/⚠️ lines; ✅ lines left out;
       //                  the UK inventory note is folded into stockWarn).
       // adsStrategySpec ← "NKV Beauty Ad Strategy" task › Notes for Client (updated 13 Oct 2026) + Ads Action Plan / Weekly log for done items.
-      // stockWarn      ← NKV_UK + NKV_US_sku-sync_2026-10-12 (MerchantSpring, 12 Sep–11 Oct 2026, FBA). Thresholds ≤14d / soon ≤30d.
+      // stockWarn      ← NKV_UK + NKV_US_sku-sync_2026-10-19 (MerchantSpring, 19 Sep–18 Oct 2026, FBA). Thresholds ≤14d / soon ≤30d.
       //                  The dormant Girlactik long-tail (no sale in 120+ days) is left off. Card title/sub come from config.layout.relabel.
       healthMgmtSpec: { badge:'3 open', subLabel:'Weekly review · 12 Oct 2026', items:[
         {level:'red',title:'US — Account Health',sub:'In progress · Seller Central access restricted by Amazon: invalid payment method. Please update the card on file.'},
@@ -264,9 +264,9 @@ window.DASHBOARD_DATA = {
         {level:'green',title:'UK — Display re-targeting paused',sub:'Done 8 Oct · Mixed Re-targeting campaign'},
         {level:'green',title:'UK — Grow Bundle campaigns paused',sub:'Done 6 Oct · Manual and Auto'}
       ] },
-      stockWarn: { badge:'2 stock-up · 3 OOS', subLabel:'SKU sync · per market (FBA) · 12 Oct 2026', items:[
-        {level:'red',title:'Girlactik Gel Eyeliner Pure Black — OOS UK',sub:'B099KVFGZP · since 5 Oct · stock-up now · please confirm a stock-up date'},
-        {level:'red',title:'Lilibeth Brow Shaper Pink 2-Pack — OOS UK',sub:'B0FFDPBJP2 · since 3 Oct · stock-up now · please confirm a stock-up date'},
+      stockWarn: { badge:'2 stock-up · 3 OOS', subLabel:'SKU sync · per market (FBA) · 19 Oct 2026', items:[
+        {level:'red',title:'Girlactik Gel Eyeliner Pure Black — OOS UK',sub:'B099KVFGZP · since 5 Oct · please confirm a stock-up date'},
+        {level:'red',title:'Lilibeth Brow Shaper Pink 2-Pack — OOS UK',sub:'B0FFDPBJP2 · since 3 Oct · please confirm a stock-up date'},
         {level:'red',title:'Lilibeth Brow Shaper Pack of 3 (Mint, Aqua, Baby Pink) — OOS UK',sub:'B0DWSNH6M3 · since 28 Aug'},
         {level:'amber',title:'Newnique GrowPod Device — stock-up soon',sub:'B0F8QKKZMQ · UK · ~30 days cover · 2 units'},
         {level:'amber',title:'Lilibeth Brow Shaper Purple 2-Pack — stock-up soon',sub:'B0FFDSR57K · UK · ~30 days cover · 6 units'}

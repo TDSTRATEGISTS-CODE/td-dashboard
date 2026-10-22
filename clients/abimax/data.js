@@ -247,7 +247,7 @@ window.DASHBOARD_DATA = {
       // healthMgmtSpec ← "12 Oct 2026 - Abimax Account Health Review" (no 'Notes for client' section on that page, so
       //                  items are built from its verdict/recommendations; inventory goes to stockWarn).
       // adsStrategySpec ← "Abimax US Ad Strategy" task › Notes for Client (updated 13 Oct 2026).
-      // stockWarn      ← Abimax_US_sku-sync_2026-10-12 (MerchantSpring, 12 Sep–11 Oct 2026, FBA). Thresholds now ≤45d / soon ≤120d.
+      // stockWarn      ← Abimax_US_sku-sync_2026-10-19 (MerchantSpring, 19 Sep–18 Oct 2026, FBA). Thresholds now ≤45d / soon ≤120d.
       //                  Magno-PRO-002 (0 stock since 19 Feb, no sales) left off as dormant.
       healthMgmtSpec: { badge:'3 open', subLabel:'Weekly review · 12 Oct 2026', items:[
         {level:'amber',title:'US — Deals',sub:'In progress · Black Friday recommended-deal deadline is 20 Oct 2026; coupon or Prime Exclusive Discount decision needed'},
@@ -261,12 +261,12 @@ window.DASHBOARD_DATA = {
         {level:'muted',title:'Magnostream decision',sub:'Next up · around 3 Nov · after 2–4 weeks of monitoring'},
         {level:'green',title:'Magnostream campaigns restructured',sub:'Done 6 Oct · two campaigns no longer compete for the same searches. Monitoring for 2–4 weeks'}
       ] },
-      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'5 stock-up · 0 OOS', subLabel:'SKU sync · US FBA stock · 12 Oct 2026', items:[
-        {level:'red',title:'Magnostream Pack of 2 — stock-up now',sub:'B0GLPQ6YZ4 · ~36 days cover · 12 units'},
-        {level:'amber',title:'Magnostream Pack of 3 — stock-up soon',sub:'B0GLPWZCRV · ~60 days cover · 14 units'},
+      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'5 stock-up · 0 OOS', subLabel:'SKU sync · US FBA stock · 19 Oct 2026', items:[
+        {level:'red',title:'Magnostream Pro — stock-up now',sub:'B0GGRJKS2D · ~38 days cover · 15 units'},
+        {level:'red',title:'Magnostream Pack of 2 — stock-up now',sub:'B0GLPQ6YZ4 · ~39 days cover · 9 units'},
         {level:'amber',title:'Magnostream Multi-Unit Bundle — stock-up soon',sub:'B0GH7YKPZJ · ~60 days cover · 2 units'},
-        {level:'amber',title:'Magnostream Pro — stock-up soon',sub:'B0GGRJKS2D · ~86 days cover · 20 units'},
-        {level:'amber',title:'Magnostream Single — stock-up soon',sub:'B0GLT2LYKY · ~87 days cover · 67 units'}
+        {level:'amber',title:'Magnostream Single — stock-up soon',sub:'B0GLT2LYKY · ~64 days cover · 60 units'},
+        {level:'amber',title:'Magnostream Pack of 3 — stock-up soon',sub:'B0GLPWZCRV · ~70 days cover · 14 units'}
       ] }
     },
     // P&L is ACTIVE for Abimax (Executive tier, Sep 2026) — full MerchantSpring financial P&L, built

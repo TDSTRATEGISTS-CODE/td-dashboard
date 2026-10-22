@@ -256,7 +256,7 @@ window.DASHBOARD_DATA = {
       // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
       // healthMgmtSpec ← "12 Oct 2026 - Balance 8 Account Health Review" › Notes for client (⚠️ lines; ✅ lines left out).
       // adsStrategySpec ← "Balance8 Ad Strategy" task › Notes for Client (updated 13 Oct 2026) + Weekly log for done items.
-      // stockWarn      ← Balance8_UK_sku-sync_2026-10-12 (MerchantSpring, 12 Sep–11 Oct 2026, FBA). Thresholds ≤21d / soon ≤45d: none hit.
+      // stockWarn      ← Balance8_UK_sku-sync_2026-10-19 (MerchantSpring, 19 Sep–18 Oct 2026, FBA). Thresholds ≤21d / soon ≤45d: none hit.
       healthMgmtSpec: { badge:'2 open', subLabel:'Weekly review · 12 Oct 2026', items:[
         {level:'amber',title:'UK — Sales',sub:'In progress · WIRED flavours and Creatine slow since mid-September; we\'ve proposed listing improvements'},
         {level:'amber',title:'UK — Deals',sub:'In progress · Black Friday deal submissions close 18 Nov; we\'ve proposed a deal plan'},
@@ -269,7 +269,7 @@ window.DASHBOARD_DATA = {
         {level:'green',title:'WIRED campaigns live',sub:'Done 17 Sep · first advertising campaigns running'},
         {level:'green',title:'BrainMatter manual keyword campaigns added',sub:'Done 2 Sep · targeting terms alongside the automatic campaigns'}
       ] },
-      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'All in stock', subLabel:'SKU sync · UK FBA stock · 12 Oct 2026', items:[
+      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'All in stock', subLabel:'SKU sync · UK FBA stock · 19 Oct 2026', items:[
         {level:'muted',title:'All live listings in stock',sub:'No stock-up needed on current sales'}
       ] }
     },
