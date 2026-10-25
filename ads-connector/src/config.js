@@ -62,8 +62,10 @@ export const GUARDS = {
   // Profiles handed over from Perpetua (comma-separated IDs). Writes refused for any other profile.
   releasedProfiles: (process.env.PERPETUA_RELEASED_PROFILES || '').split(',').map((s) => s.trim()).filter(Boolean),
   maxItemsPerRun: num('MAX_ITEMS_PER_RUN', 100),
-  maxBidChangePct: num('MAX_BID_CHANGE_PCT', 25),
-  minBid: num('MIN_BID', 0.02),
+  // Bid rules approved by Ryan 25 Oct 2026: cut at most 25%, raise at most 10% per keyword per week.
+  maxBidCutPct: num('MAX_BID_CUT_PCT', 25),
+  maxBidRaisePct: num('MAX_BID_RAISE_PCT', 10),
+  minBid: num('MIN_BID', 0.15),
   maxBid: num('MAX_BID', 3),
   maxBudgetChangePct: num('MAX_BUDGET_CHANGE_PCT', 50),
   maxDailyBudget: num('MAX_DAILY_BUDGET', 100),

@@ -148,8 +148,7 @@ Golden rule: flag, don't fix. Every change goes Proposed → Approved by Ryan �
 5. **Verify.** After writing, every item is re-read from Amazon and logged as `APPLIED_VERIFIED`,
    `APPLIED_MISMATCH` or `FAILED`. Claude then marks the queue row Done with the result.
 
-**Guards (defaults, change via env vars on the service):** max 100 items per run; bids £0.02–£3.00 and at most
-±25% per keyword/target per run; daily budgets ≤ 100 and at most ±50% per run; placement adjustments 0–100%;
+**Guards (defaults, change via env vars on the service):** max 100 items per run; bids £0.15–£3.00, at most −25% cut / +10% raise per keyword/target per run (bid rules approved 25 Oct 2026; full rules in the Notion plan); daily budgets ≤ 100 and at most ±50% per run; placement adjustments 0–100%;
 transfers only into manual campaigns; duplicates refused. No tool can archive or delete anything. Bid rules
 (Notion Open decision 3) may change these.
 

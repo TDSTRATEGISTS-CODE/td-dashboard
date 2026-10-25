@@ -53,11 +53,12 @@ const approve = (args, tool = 'update_bids') => {
 };
 
 test('dry run by default: shows old → new, plan code, changes nothing', async () => {
-  const r = await runChange('update_bids', bid(0.6), { email: 'ryan@tdstrategists.co.uk' });
+  const r = await runChange('update_bids', bid(0.55), { email: 'ryan@tdstrategists.co.uk' });
   assert.equal(r.mode, 'DRY RUN');
   assert.equal(r.items[0].old, 0.5);
-  assert.equal(r.items[0].new, 0.6);
-  assert.equal(r.items[0].change_pct, 20);
+  assert.equal(r.items[0].new, 0.55);
+  assert.equal(r.items[0].change_pct, 10);
+  assert.deepEqual(r.items[0].blockers, []);
   assert.match(r.plan_code, /^plan:[0-9a-f]{12}$/);
   assert.equal(r.ready_to_apply, false);
   assert.ok(r.approval_needed.some((g) => /Approved/.test(g)));
@@ -75,19 +76,22 @@ test('plan code is stable regardless of key order', () => {
     planHash('update_bids', P, { changes: [{ entity: 'keyword', id: 'K1', new_bid: 0.61 }] }));
 });
 
-test('bid guards: cap, min, max, unknown keyword', async () => {
-  assert.match((await runChange('update_bids', bid(0.9))).items[0].blockers.join(), /exceeds ±25% cap/);
+test('bid guards (approved rules): +10% raise cap, -25% cut cap, £0.15 floor, max, unknown keyword', async () => {
+  assert.match((await runChange('update_bids', bid(0.56))).items[0].blockers.join(), /raise \+12% exceeds the \+10% weekly cap/);
+  assert.deepEqual((await runChange('update_bids', bid(0.38))).items[0].blockers, []); // -24%
+  assert.match((await runChange('update_bids', bid(0.37))).items[0].blockers.join(), /cut -26% exceeds the -25% weekly cap/);
   assert.match((await runChange('update_bids', bid(5))).items[0].blockers.join(), /above maximum/);
-  assert.match((await runChange('update_bids', bid(0.01))).items[0].blockers.join(), /below minimum/);
+  assert.match((await runChange('update_bids', bid(0.14))).items[0].blockers.join(), /below minimum bid 0.15/);
   const r = await runChange('update_bids', { profile_id: P, queue_row_id: 'ADS-200', changes: [{ entity: 'keyword', id: 'NOPE', new_bid: 0.5 }] });
   assert.match(r.items[0].blockers.join(), /not found/);
 });
 
 test('apply refused while live writes are off, even when approved', async () => {
-  const args = bid(0.6, { apply: true });
+  const args = bid(0.55, { apply: true });
   approve(args);
   const r = await runChange('update_bids', args);
   assert.equal(r.applied, false);
+  assert.equal(r.items_blocked, 0);
   assert.ok(r.switches.some((s) => /WRITES_ENABLED/.test(s)));
   assert.equal(writes.length, 0);
   assert.equal(logs.at(-1).status, 'REFUSED');
@@ -95,8 +99,8 @@ test('apply refused while live writes are off, even when approved', async () => 
 
 test('apply refused when the approved plan code does not match the batch', async () => {
   GUARDS.writesEnabled = true; GUARDS.releasedProfiles = [P];
-  approve(bid(0.6));
-  const r = await runChange('update_bids', bid(0.62, { apply: true })); // different from what was approved
+  approve(bid(0.55));
+  const r = await runChange('update_bids', bid(0.54, { apply: true })); // different from what was approved
   assert.equal(r.applied, false);
   assert.ok(r.approval_needed.some((g) => /row has plan:[0-9a-f]{12}: the batch differs/.test(g)));
   assert.equal(writes.length, 0);
@@ -104,7 +108,7 @@ test('apply refused when the approved plan code does not match the batch', async
 
 test('apply refused for a profile not released from Perpetua', async () => {
   GUARDS.writesEnabled = true;
-  const args = bid(0.6, { apply: true });
+  const args = bid(0.55, { apply: true });
   approve(args);
   const r = await runChange('update_bids', args);
   assert.equal(r.applied, false);
@@ -115,7 +119,7 @@ test('apply refused for a profile not released from Perpetua', async () => {
 test('apply refused for wrong client/market/lever, stale or finished rows', async () => {
   GUARDS.writesEnabled = true; GUARDS.releasedProfiles = [P];
   for (const patch of [{ client: 'NKV' }, { market: 'DE' }, { lever: 'Budget' }, { approvedOn: '2026-01-01' }, { status: 'Done' }]) {
-    const args = bid(0.6, { apply: true });
+    const args = bid(0.55, { apply: true });
     approve(args);
     Object.assign(row, patch);
     const r = await runChange('update_bids', args);
@@ -126,7 +130,7 @@ test('apply refused for wrong client/market/lever, stale or finished rows', asyn
 
 test('apply refused if change_log cannot be written first', async () => {
   GUARDS.writesEnabled = true; GUARDS.releasedProfiles = [P];
-  const args = bid(0.6, { apply: true });
+  const args = bid(0.55, { apply: true });
   approve(args);
   setChangeDepsForTests({ logChanges: async () => { throw new Error('bq down'); } });
   const r = await runChange('update_bids', args);

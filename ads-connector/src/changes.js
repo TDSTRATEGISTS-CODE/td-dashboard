@@ -85,7 +85,8 @@ async function planBids(profileId, { changes }) {
     if (next > GUARDS.maxBid) blockers.push(`above maximum bid ${GUARDS.maxBid}`);
     if (found && old === null) blockers.push('no current bid to compare against');
     const change = pct(old, next);
-    if (change !== null && Math.abs(change) > GUARDS.maxBidChangePct) blockers.push(`change ${change}% exceeds ±${GUARDS.maxBidChangePct}% cap`);
+    if (change !== null && change < -GUARDS.maxBidCutPct) blockers.push(`cut ${change}% exceeds the -${GUARDS.maxBidCutPct}% weekly cap`);
+    if (change !== null && change > GUARDS.maxBidRaisePct) blockers.push(`raise +${change}% exceeds the +${GUARDS.maxBidRaisePct}% weekly cap`);
     if (old === next) blockers.push('no change');
     const label = c.entity === 'keyword' ? `"${found?.keywordText ?? '?'}" (${found?.matchType ?? '?'})` : JSON.stringify(found?.expression ?? '?');
     return { entity_type: c.entity, entity_id: c.id, field: 'bid', old, new: next, change_pct: change, label, campaign_id: found?.campaignId, blockers };
