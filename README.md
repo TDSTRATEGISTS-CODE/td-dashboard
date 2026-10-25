@@ -1,5 +1,7 @@
 # Client Reporting Dashboard — split architecture
 
+> **Also in this repo:** `ads-connector/` — the TDS Amazon Ads API connector (Cloud Run + BigQuery), separate from the dashboard. See `ads-connector/RUNBOOK.md`.
+
 A single shared template that renders any client's dashboard, selected by a URL parameter. Each client
 picks a **template** (a page set): `amazon` (seller analytics) or `founder` (acquired-brand forecast).
 

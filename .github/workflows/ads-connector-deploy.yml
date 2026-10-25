@@ -1,0 +1,66 @@
+# Deploys ads-connector/ to Cloud Run (service + daily pull job) on every push to main that touches it.
+# Keyless: GitHub signs in to Google Cloud via Workload Identity Federation (set up by deploy/setup.sh),
+# restricted to this repo's main branch. No Google keys are stored in GitHub.
+name: Deploy Ads connector
+
+on:
+  push:
+    branches: [main]
+    paths: ['ads-connector/**', '.github/workflows/ads-connector-deploy.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: ads-connector-deploy
+  cancel-in-progress: false
+
+env:
+  PROJECT: tds-amazon-ads
+  PROJECT_NUMBER: 'SET_AFTER_SETUP' # from deploy/setup.sh output; not a secret
+  REGION: europe-west2
+  IMAGE: europe-west2-docker.pkg.dev/tds-amazon-ads/ads-connector/ads-connector
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: ads-connector
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Tests
+        run: npm ci && npm test
+
+      - name: Check project number is set
+        run: |
+          [[ "$PROJECT_NUMBER" =~ ^[0-9]+$ ]] || { echo "::error::Set PROJECT_NUMBER in this workflow (printed by deploy/setup.sh)"; exit 1; }
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github/providers/td-dashboard
+          service_account: github-deployer@tds-amazon-ads.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and push image
+        run: |
+          gcloud auth configure-docker "$REGION-docker.pkg.dev" --quiet
+          docker build -t "$IMAGE:$GITHUB_SHA" .
+          docker push "$IMAGE:$GITHUB_SHA"
+
+      # Image only: every other setting (service account, env vars, limits) stays as setup.sh set it.
+      - name: Deploy connector service
+        run: gcloud run deploy ads-connector --image "$IMAGE:$GITHUB_SHA" --region "$REGION" --quiet
+
+      - name: Update daily pull job
+        run: gcloud run jobs update ads-pull --image "$IMAGE:$GITHUB_SHA" --region "$REGION" --quiet
+
+      - name: Health check
+        run: curl -fsS "https://ads-connector-$PROJECT_NUMBER.$REGION.run.app/healthz"

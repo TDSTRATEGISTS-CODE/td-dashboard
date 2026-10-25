@@ -148,3 +148,12 @@ because the broken paste never saved.
 - Either way: keep the repo copies identical to what's live; test locally (concatenate the files, run in
   node with mocked `SpreadsheetApp`/`ContentService`); hand-over ends with Ctrl+S (orange dot gone) →
   **Deploy › Manage deployments › pencil › New version** (never "New deployment" — new URL).
+
+## Amazon Ads connector (`ads-connector/`) — read-only v1; writes only behind the approval gate
+
+`ads-connector/` is the TDS Amazon Ads API connector (remote MCP on Cloud Run + daily BigQuery pull),
+not part of the dashboard site. Runbook: `ads-connector/RUNBOOK.md`; plan: Notion "Ads API Migration —
+Perpetua Replacement — Project Plan". Rules: never print or log secret values; the 8-profile allowlist in
+`src/config.js` is the only list of callable profiles; do not add write tools (bids, negatives, budgets,
+transfers, bid strategy) without the Ads Approval Queue gate described in the Notion Build brief; run
+`cd ads-connector && npm ci && npm test` before pushing. Merges to `main` touching it auto-deploy.
