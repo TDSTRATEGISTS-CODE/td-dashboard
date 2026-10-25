@@ -378,7 +378,11 @@ export async function checkApproval(tool, profileId, rowId, hash, today = new Da
     const age = Math.floor((today - new Date(`${row.approvedOn.slice(0, 10)}T00:00:00Z`)) / 86_400_000);
     if (age > GUARDS.approvalMaxAgeDays) approvalGaps.push(`Approval is ${age} days old (max ${GUARDS.approvalMaxAgeDays}); re-approve`);
   }
-  if (!row.text.includes(`plan:${hash}`)) approvalGaps.push(`Plan code plan:${hash} is not written on queue row ${row.id}`);
+  if (!row.text.includes(`plan:${hash}`)) {
+    const found = [...new Set(row.text.match(/plan:[0-9a-f]{12}/g) || [])];
+    approvalGaps.push(`Plan code plan:${hash} is not written on queue row ${row.id}`
+      + (found.length ? ` (row has ${found.join(', ')}: the batch differs from the one written on the row)` : ` (no plan code found in ${row.text.length} characters read from the row)`));
+  }
   return { row, blockers, approvalGaps };
 }
 

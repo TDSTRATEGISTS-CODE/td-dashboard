@@ -98,7 +98,7 @@ test('apply refused when the approved plan code does not match the batch', async
   approve(bid(0.6));
   const r = await runChange('update_bids', bid(0.62, { apply: true })); // different from what was approved
   assert.equal(r.applied, false);
-  assert.ok(r.approval_needed.some((g) => /Plan code/.test(g)));
+  assert.ok(r.approval_needed.some((g) => /row has plan:[0-9a-f]{12}: the batch differs/.test(g)));
   assert.equal(writes.length, 0);
 });
 

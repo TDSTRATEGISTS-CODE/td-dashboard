@@ -58,7 +58,9 @@ export async function getQueueRow(rowId) {
   const p = page.properties || {};
   const blocks = await notion('GET', `/blocks/${page.id}/children?page_size=100`);
   const body = (blocks.results || []).map((b) => plain(b[b.type]?.rich_text)).join('\n');
-  const text = [prop(p.Change), prop(p.Evidence), prop(p['Result / notes']), prop(p['Goal / campaign']), body].join('\n');
+  // Every text field on the row (not just named ones) plus the page body.
+  const fields = Object.values(p).filter((x) => x?.type === 'title' || x?.type === 'rich_text').map(prop);
+  const text = [...fields, body].join('\n');
   return {
     id: prop(p.ID) || `ADS-${number}`,
     url: page.url,
