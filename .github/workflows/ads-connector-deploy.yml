@@ -15,7 +15,7 @@ concurrency:
 
 env:
   PROJECT: tds-amazon-ads
-  PROJECT_NUMBER: 'SET_AFTER_SETUP' # from deploy/setup.sh output; not a secret
+  PROJECT_NUMBER: '874703822438' # from deploy/setup.sh output; not a secret
   REGION: europe-west2
   IMAGE: europe-west2-docker.pkg.dev/tds-amazon-ads/ads-connector/ads-connector
 
