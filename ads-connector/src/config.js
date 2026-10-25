@@ -22,6 +22,7 @@ export const SECRETS = {
   tokenSigningKey: 'mcp-token-signing-key',
   googleClientId: 'google-oauth-client-id',
   googleClientSecret: 'google-oauth-client-secret',
+  notionQueueToken: 'notion-ads-queue-token',
 };
 
 // Profile allowlist: the connector may only call these profile IDs. Anything else is refused in code.
@@ -50,3 +51,22 @@ export const CLAUDE_REDIRECT_URIS = [
 ];
 
 export const SCOPE = 'ads.read';
+
+// Notion "Ads Approval Queue" database (Client Account Tasks › Amazon Advertising Actions).
+export const ADS_QUEUE_DATABASE_ID = '5794bf8e26b2470ea3216d45273227f6';
+
+// Change-tool guards. Defaults are deliberately tight; bid rules are Open decision 3 in the Notion plan.
+const num = (name, dflt) => (process.env[name] === undefined ? dflt : Number(process.env[name]));
+export const GUARDS = {
+  writesEnabled: process.env.WRITES_ENABLED === 'true', // master switch; off = dry run only
+  // Profiles handed over from Perpetua (comma-separated IDs). Writes refused for any other profile.
+  releasedProfiles: (process.env.PERPETUA_RELEASED_PROFILES || '').split(',').map((s) => s.trim()).filter(Boolean),
+  maxItemsPerRun: num('MAX_ITEMS_PER_RUN', 100),
+  maxBidChangePct: num('MAX_BID_CHANGE_PCT', 25),
+  minBid: num('MIN_BID', 0.02),
+  maxBid: num('MAX_BID', 3),
+  maxBudgetChangePct: num('MAX_BUDGET_CHANGE_PCT', 50),
+  maxDailyBudget: num('MAX_DAILY_BUDGET', 100),
+  maxPlacementPct: num('MAX_PLACEMENT_PCT', 100),
+  approvalMaxAgeDays: num('APPROVAL_MAX_AGE_DAYS', 14),
+};

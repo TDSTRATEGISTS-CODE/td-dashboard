@@ -40,7 +40,7 @@ mk_sa github-deployer "GitHub Actions deploy of ads-connector"
 sleep 5 # new service accounts take a moment to be usable in IAM bindings
 
 step "3/9 Connector-owned secrets (random values generated here, never shown)"
-for s in mcp-oauth-client-secret mcp-token-signing-key google-oauth-client-id google-oauth-client-secret; do
+for s in mcp-oauth-client-secret mcp-token-signing-key google-oauth-client-id google-oauth-client-secret notion-ads-queue-token; do
   gcloud secrets describe "$s" >/dev/null 2>&1 \
     || gcloud secrets create "$s" --replication-policy=user-managed --locations="$REGION" --quiet
 done
@@ -52,11 +52,11 @@ for s in mcp-oauth-client-secret mcp-token-signing-key; do
 done
 
 step "4/9 Least-access permissions for the runtime account"
-for s in ads-client-id ads-client-secret ads-refresh-token-eu mcp-oauth-client-secret mcp-token-signing-key google-oauth-client-id google-oauth-client-secret; do
+for s in ads-client-id ads-client-secret ads-refresh-token-eu mcp-oauth-client-secret mcp-token-signing-key google-oauth-client-id google-oauth-client-secret notion-ads-queue-token; do
   gcloud secrets add-iam-policy-binding "$s" --member="serviceAccount:$RUNTIME_SA" \
     --role=roles/secretmanager.secretAccessor --quiet >/dev/null
 done
-echo "  secret access: the 7 named secrets only"
+echo "  secret access: the 8 named secrets only"
 # Write access to the amazon_ads dataset only (dataset-level WRITER = BigQuery Data Editor on that dataset).
 tmp=$(mktemp)
 bq show --format=prettyjson "$PROJECT:$DATASET" > "$tmp"

@@ -108,3 +108,9 @@ export async function query(sql, params = {}) {
   const [rows] = await client().query({ query: sql, params, location: BQ_LOCATION });
   return rows;
 }
+
+// Audit trail for the change tools (dry runs, refusals, pending and applied changes). Never updated or deleted.
+export async function logChanges(rows) {
+  if (!rows.length) return;
+  await client().dataset(DATASET).table('change_log').insert(rows);
+}

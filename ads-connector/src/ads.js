@@ -1,6 +1,6 @@
-// Amazon Ads API client (EU). v1 is READ-ONLY: only the routes in READ_ROUTES can be called,
-// so no write can happen through this client even by mistake.
-import { ADS_API_BASE, ADS_TOKEN_URL, SECRETS } from './config.js';
+// Amazon Ads API client (EU). Reads go through READ_ROUTES. Writes go only through adsWrite(),
+// only to WRITE_ROUTES, and only when GUARDS.writesEnabled is on. There is no delete/archive route at all.
+import { ADS_API_BASE, ADS_TOKEN_URL, SECRETS, GUARDS } from './config.js';
 import { getSecret } from './secrets.js';
 import { assertAllowedProfile } from './allowlist.js';
 import { warn } from './log.js';
@@ -12,10 +12,24 @@ const READ_ROUTES = [
   ['GET', /^\/reporting\/reports\/[A-Za-z0-9-]+$/],
 ];
 
+// The only writes the change tools make: bid/budget/strategy updates and creating keywords, targets
+// and negatives. Nothing here can delete or archive.
+const WRITE_ROUTES = [
+  ['PUT', /^\/sp\/(keywords|targets|campaigns)$/],
+  ['POST', /^\/sp\/(keywords|targets|negativeKeywords|campaignNegativeKeywords|negativeTargets)$/],
+];
+
 export function assertReadOnly(method, path) {
   if (!READ_ROUTES.some(([m, re]) => m === method && re.test(path))) {
-    throw new Error(`Blocked: ${method} ${path} is not a read route. Writes are not enabled in v1.`);
+    throw new Error(`Blocked: ${method} ${path} is not a read route.`);
   }
+}
+
+export function assertAllowedWrite(method, path, body) {
+  if (!WRITE_ROUTES.some(([m, re]) => m === method && re.test(path))) {
+    throw new Error(`Blocked: ${method} ${path} is not an allowed change route.`);
+  }
+  if (/"state"\s*:\s*"ARCHIVED"/i.test(JSON.stringify(body ?? {}))) throw new Error('Blocked: archiving is not allowed.');
 }
 
 // Amazon IDs (campaignId, keywordId, ...) can exceed JavaScript's safe integer range. Quote any
@@ -54,8 +68,18 @@ async function getAccessToken() {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export async function adsRequest(method, path, { profileId, body, mediaType } = {}) {
+export async function adsWrite(method, path, opts = {}) {
+  if (!GUARDS.writesEnabled) throw new Error('Blocked: live writes are switched off (WRITES_ENABLED is not true). Dry run only.');
+  assertAllowedWrite(method, path, opts.body);
+  return send(method, path, opts);
+}
+
+export async function adsRequest(method, path, opts = {}) {
   assertReadOnly(method, path);
+  return send(method, path, opts);
+}
+
+async function send(method, path, { profileId, body, mediaType } = {}) {
   const headers = {
     Authorization: `Bearer ${await getAccessToken()}`,
     'Amazon-Advertising-API-ClientId': await getSecret(SECRETS.adsClientId),

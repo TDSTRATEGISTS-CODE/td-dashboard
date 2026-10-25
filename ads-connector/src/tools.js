@@ -7,6 +7,7 @@ import { assertAllowedProfile } from './allowlist.js';
 import { listProfiles, spList } from './ads.js';
 import { REPORTS, createReport, getReportStatus, downloadReport, summarise, validateRange } from './reports.js';
 import { info, warn } from './log.js';
+import { runChange } from './changes.js';
 
 const profileId = z.string().describe('Amazon Ads profile ID; must be on the TDS allowlist (see list_profiles)');
 const states = z.array(z.enum(['ENABLED', 'PAUSED', 'ARCHIVED'])).optional()
@@ -115,5 +116,86 @@ export function buildMcpServer({ email } = {}) {
     };
   });
 
+  registerChangeTools(server, { email });
   return server;
+}
+
+// ---------- change tools (dry run by default; apply needs an Approved queue row carrying the plan code) ----------
+
+const CHANGE_NOTE = ' DRY RUN by default: shows old → new and a plan code, changes nothing. '
+  + 'Apply (apply=true) only works when the Ads Approval Queue row is Approved, carries the plan code, '
+  + 'the profile is released from Perpetua and live writes are switched on.';
+const common = {
+  profile_id: profileId,
+  queue_row_id: z.string().describe('Ads Approval Queue row ID, e.g. ADS-92'),
+  apply: z.boolean().optional().describe('false/omitted = dry run (default). true = make the change, only if every check passes'),
+};
+const money = z.number().positive();
+
+function registerChangeTools(server, { email }) {
+  const tool = (name, description, inputSchema) => server.registerTool(name, {
+    description: description + CHANGE_NOTE,
+    inputSchema: { ...common, ...inputSchema },
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  }, async (args) => {
+    try {
+      args.profile_id = assertAllowedProfile(args.profile_id);
+      info('Change tool call', { tool: name, by: email, profile: args.profile_id, queue_row: args.queue_row_id, apply: Boolean(args.apply) });
+      const out = await runChange(name, args, { email });
+      info('Change tool result', { tool: name, by: email, mode: out.mode, ready: out.ready_to_apply, applied: Boolean(out.applied), plan: out.plan_code });
+      return ok(out);
+    } catch (e) {
+      warn('Change tool failed', { tool: name, by: email, reason: e.message });
+      return fail(e);
+    }
+  });
+
+  tool('update_bids', 'Change Sponsored Products keyword or target bids.', {
+    changes: z.array(z.object({
+      entity: z.enum(['keyword', 'target']),
+      id: z.string().describe('keywordId or targetId'),
+      new_bid: money,
+    })).min(1),
+  });
+
+  tool('add_negatives', 'Add negative keywords (exact/phrase, ad group or campaign level) or negative ASINs (ad group level).', {
+    negatives: z.array(z.object({
+      type: z.enum(['keyword', 'product']),
+      level: z.enum(['ad_group', 'campaign']).optional().describe('Default ad_group'),
+      campaign_id: z.string(),
+      ad_group_id: z.string().optional(),
+      keyword_text: z.string().optional(),
+      match_type: z.enum(['NEGATIVE_EXACT', 'NEGATIVE_PHRASE']).optional(),
+      asin: z.string().optional(),
+    })).min(1),
+  });
+
+  tool('transfer_targets', 'Harvest a search term: create it as a keyword/ASIN target in the destination manual ad group and add a matching negative exact in the source.', {
+    transfers: z.array(z.object({
+      type: z.enum(['keyword', 'product']),
+      keyword_text: z.string().optional(),
+      match_type: z.enum(['EXACT', 'PHRASE', 'BROAD']).optional(),
+      asin: z.string().optional(),
+      bid: money,
+      destination_campaign_id: z.string(),
+      destination_ad_group_id: z.string(),
+      source_campaign_id: z.string(),
+      source_ad_group_id: z.string(),
+      negate_in_source: z.enum(['ad_group', 'campaign']).optional().describe('Default ad_group'),
+    })).min(1),
+  });
+
+  tool('update_budgets', 'Change Sponsored Products campaign daily budgets.', {
+    changes: z.array(z.object({ campaign_id: z.string(), new_daily_budget: money })).min(1),
+  });
+
+  tool('update_bid_strategy', 'Change a campaign\'s bidding strategy (down only = LEGACY_FOR_SALES, up and down = AUTO_FOR_SALES, fixed = MANUAL) and/or placement adjustments (%).', {
+    changes: z.array(z.object({
+      campaign_id: z.string(),
+      strategy: z.enum(['LEGACY_FOR_SALES', 'AUTO_FOR_SALES', 'MANUAL']).optional(),
+      top_of_search_pct: z.number().int().min(0).optional(),
+      rest_of_search_pct: z.number().int().min(0).optional(),
+      product_page_pct: z.number().int().min(0).optional(),
+    })).min(1),
+  });
 }

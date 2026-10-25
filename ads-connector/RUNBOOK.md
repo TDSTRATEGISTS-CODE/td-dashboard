@@ -3,9 +3,9 @@
 Replaces Perpetua's data access with TDS's own Amazon Ads API connection.
 Plan and decisions: Notion › Claude Business › **Ads API Migration — Perpetua Replacement — Project Plan** (Build brief v1).
 
-**v1 is read-only.** No tool can change a bid, budget, negative or campaign. The Ads API client only allows
-list/report routes (`src/ads.js` › `READ_ROUTES`); anything else is blocked in code. Write tools come next,
-behind the Ads Approval Queue.
+**Changes are dry run only for now.** The 5 change tools show exactly what they would change but send nothing
+to Amazon: live writes are switched off on the server (`WRITES_ENABLED`), and every profile is locked until
+it is handed over from Perpetua. See "Change tools" below.
 
 ## What it is
 
@@ -17,8 +17,11 @@ behind the Ads Approval Queue.
 | Credentials | Secret Manager (London) | Never in the repo, Notion, chat or logs. |
 | Code | this folder; deploys from GitHub `main` | `.github/workflows/ads-connector-deploy.yml` |
 
-**Tools:** `list_profiles`, `get_campaigns`, `get_ad_groups`, `get_keywords`, `get_targets`, `get_negatives`,
+**Read tools:** `list_profiles`, `get_campaigns`, `get_ad_groups`, `get_keywords`, `get_targets`, `get_negatives`,
 `run_report`, `get_report`.
+
+**Change tools (dry run by default):** `update_bids`, `add_negatives`, `transfer_targets`, `update_budgets`,
+`update_bid_strategy`.
 
 **Profile allowlist** (`src/config.js`): Harvaza UK, Balance 8 UK, NKV UK, AMACX DE/FR/IT/ES, HSB DE (Mokum Dusk).
 Any other profile ID is refused before Amazon is called. Changing it = edit `config.js`, update the Notion
@@ -37,7 +40,7 @@ profiles table, merge to `main`.
 
 | Service account | Can do | Cannot do |
 | --- | --- | --- |
-| `ads-connector@` (runs the service and job) | Read the 7 named secrets; write tables in `amazon_ads`; run BigQuery jobs | Read other secrets or datasets; change IAM; deploy |
+| `ads-connector@` (runs the service and job) | Read the 8 named secrets; write tables in `amazon_ads`; run BigQuery jobs | Read other secrets or datasets; change IAM; deploy |
 | `ads-scheduler@` | Start the `ads-pull` job | Anything else |
 | `github-deployer@` | Push images; deploy the service/job as `ads-connector@` | Read secrets or data. Only usable from `main` of td-dashboard (keyless, no JSON key) |
 
@@ -125,6 +128,54 @@ campaigns and keywords."*
 
 ---
 
+## Change tools — how approval works
+
+Golden rule: flag, don't fix. Every change goes Proposed → Approved by Ryan → made → verified by re-reading.
+
+1. **Dry run.** Claude calls a change tool with the queue row ID (e.g. `ADS-92`). Nothing is changed. It returns,
+   per item, the current value read live from Amazon, the new value, % change, anything that blocks it, and a
+   **plan code** (`plan:` + 12 characters) that fingerprints exactly this batch.
+2. **Propose.** Claude writes the item list and the plan code on the queue row (in *Result / notes*), Status Proposed.
+3. **Approve.** Ryan checks the row and sets Status = **Approved** and *Approved on* = today.
+4. **Apply** (only once live writes are on). Claude calls the same tool with the same items and `apply=true`.
+   The connector re-reads the Notion row itself and refuses unless **all** of these hold:
+   - Status is Approved, *Approved on* is within 14 days, and the row isn't Done/Rejected/Expired;
+   - the row's Client and Market match the profile, and its Lever fits the tool;
+   - the plan code on the row matches this exact batch (change one bid by 1p and it won't match);
+   - every item passes the guards below;
+   - live writes are on and the profile is released from Perpetua;
+   - the pending change was written to `change_log` first.
+5. **Verify.** After writing, every item is re-read from Amazon and logged as `APPLIED_VERIFIED`,
+   `APPLIED_MISMATCH` or `FAILED`. Claude then marks the queue row Done with the result.
+
+**Guards (defaults, change via env vars on the service):** max 100 items per run; bids £0.02–£3.00 and at most
+±25% per keyword/target per run; daily budgets ≤ 100 and at most ±50% per run; placement adjustments 0–100%;
+transfers only into manual campaigns; duplicates refused. No tool can archive or delete anything. Bid rules
+(Notion Open decision 3) may change these.
+
+**Every call is logged** in BigQuery `change_log`: who, when, queue row, old → new, dry run or not, status,
+verified value, plan code.
+
+### Set up the Notion approval check (Ryan, once, ~5 minutes)
+
+The connector needs its own **read-only** Notion key that can see only the Ads Approval Queue.
+
+1. Go to <https://www.notion.so/profile/integrations> › **New integration**.
+   Name `TDS Ads connector (read)`, workspace = TDS, type **Internal** › **Save**.
+2. On the integration's **Capabilities**: tick **Read content** only. Untick *Update content*, *Insert content*
+   and *comments*; user information: **No user information**. **Save**.
+3. **Configuration** tab › Internal Integration Secret › **Show** › **Copy**. Don't paste it anywhere except step 5.
+4. Open the **Ads Approval Queue** database (Client Account Tasks › Amazon Advertising Actions) › **•••** (top right) ›
+   **Connections** › search `TDS Ads connector (read)` › **Confirm**. Share only this database.
+5. In Cloud Shell: `cd ~/td-dashboard && bash ads-connector/deploy/set-notion-token.sh`, paste the secret (hidden), Enter.
+
+### Switching live writes on (later — not yet)
+
+Only after the Perpetua handover for that profile (Notion plan, Step 2) and Ryan's go-ahead:
+Cloud Run › ads-connector › **Edit & deploy new revision** › Variables › set `WRITES_ENABLED=true` and
+`PERPETUA_RELEASED_PROFILES=2067592198905075` (comma-separate more later) › **Deploy**. To switch off again,
+set `WRITES_ENABLED=false` and deploy. First live test: +1p on one Harvaza UK keyword, then reverted.
+
 ## Day to day
 
 | Task | How |
@@ -134,6 +185,7 @@ campaigns and keywords."*
 | One client only | Add `--update-env-vars PROFILES=<id>` to a manual execute, or set `PROFILES` / `REPORT_TYPES` on the job temporarily. |
 | Query history | BigQuery console › `amazon_ads`. Spend: `SUM(cost)`. Sales: `sales_7d` / `sales_14d` (store both; pick one per report and say which). |
 | Add / remove a profile | Edit `PROFILE_ALLOWLIST` in `src/config.js` + the Notion profiles table; merge to `main`. North America needs its own authorisation and endpoint first (not built). |
+| Deploy code that isn't on `main` yet | `cd ~/td-dashboard && git pull && bash ads-connector/deploy/redeploy.sh` |
 | Restrict to named people | Cloud Run › ads-connector › Edit › Variables › `ALLOWED_EMAILS=ryan@tdstrategists.co.uk,…` › Deploy. |
 
 ### Tables (`amazon_ads`)
@@ -144,7 +196,7 @@ campaigns and keywords."*
 | `sp_targeting_daily` | profile · day · keyword/target |
 | `sp_search_term_daily` | profile · day · search term · keyword/target |
 | `sp_advertised_product_daily` | profile · day · ad (ASIN/SKU) |
-| `change_log` | every write (empty until write tools exist) |
+| `change_log` | every change-tool call: dry runs, refusals, pending, applied + verified |
 | `target_acos_config` | profile · campaign/ad group · target ACoS (loaded from PPC Strategy tasks) |
 
 Report tables are partitioned by `date`, clustered by `profile_id, campaign_id`. Each has `client`, `market`,
@@ -174,6 +226,6 @@ Expected £0–5/month (Cloud Run scales to zero; BigQuery storage is MBs). Budg
 - `cd ads-connector && npm ci && npm test` before pushing. Tests cover the allowlist, the read-only guard,
   the OAuth flow (non-TDS accounts, foreign redirects, code replay, PKCE) and the tools end to end against a mocked Amazon.
 - Never log or print secret values; `src/log.js` redacts credential-like keys, but don't rely on it.
-- Do not add write tools without the Ads Approval Queue gate (Status = Approved row ID, dry-run, apply, re-read,
-  `change_log`), a per-run bid-change cap and no archive/delete — see the Notion Build brief.
+- Change tools live in `src/changes.js`; every apply must keep all the gates listed in "Change tools — how approval
+  works". Never add a delete/archive route, never bypass `adsWrite()`, never default `apply` to true.
 - Never write to a campaign Perpetua still manages.
