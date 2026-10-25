@@ -1,6 +1,6 @@
 // Reads one row of the Notion "Ads Approval Queue" (read-only integration token in Secret Manager).
 // The connector never writes to Notion; Claude updates the row through the Notion connector.
-import { SECRETS, ADS_QUEUE_DATABASE_ID } from './config.js';
+import { SECRETS, ADS_QUEUE_DATABASE_ID, ADS_GOALS_DATABASE_ID } from './config.js';
 import { getSecret } from './secrets.js';
 
 const NOTION_API = 'https://api.notion.com/v1';
@@ -33,6 +33,7 @@ const prop = (p) => {
     case 'select': return p.select?.name ?? null;
     case 'status': return p.status?.name ?? null;
     case 'date': return p.date?.start ?? null;
+    case 'number': return p.number ?? null;
     case 'unique_id': return p.unique_id ? `${p.unique_id.prefix ? `${p.unique_id.prefix}-` : ''}${p.unique_id.number}` : null;
     default: return null;
   }
@@ -72,4 +73,42 @@ export async function getQueueRow(rowId) {
     approvedOn: prop(p['Approved on']),
     text,
   };
+}
+
+const list = (v) => String(v || '').split(/[\s,;]+/).map((x) => x.trim()).filter(Boolean);
+
+// Goals from the Notion "Ads Goals" database: groups of campaigns run to one strategy (like Perpetua goals).
+export async function getGoals({ profileId } = {}) {
+  const goals = [];
+  let cursor;
+  do {
+    const q = await notion('POST', `/databases/${ADS_GOALS_DATABASE_ID}/query`, {
+      ...(profileId ? { filter: { property: 'Profile ID', rich_text: { equals: String(profileId) } } } : {}),
+      page_size: 100,
+      ...(cursor ? { start_cursor: cursor } : {}),
+    });
+    for (const page of q.results || []) {
+      const p = page.properties || {};
+      goals.push({
+        id: prop(p['Goal ID']),
+        name: prop(p.Goal),
+        url: page.url,
+        client: prop(p.Client),
+        market: prop(p.Market),
+        profileId: (prop(p['Profile ID']) || '').trim(),
+        status: prop(p.Status),
+        managedBy: prop(p['Managed by']),
+        role: prop(p.Role),
+        asins: list(prop(p.ASINs)),
+        campaignIds: list(prop(p['Campaign IDs'])),
+        targetAcos: prop(p['Target ACoS']),
+        breakEvenAcos: prop(p['Break-even ACoS']),
+        monthlyBudget: prop(p['Monthly budget']),
+        currency: prop(p.Currency),
+        perpetuaGoalId: prop(p['Perpetua goal ID']),
+      });
+    }
+    cursor = q.has_more ? q.next_cursor : undefined;
+  } while (cursor);
+  return goals;
 }

@@ -106,9 +106,9 @@ test('TDS sign-in → tokens → tools, with allowlist and single-use codes', as
   const list = await mcp(tokens.access_token, 'tools/list');
   assert.equal(list.status, 200);
   const names = list.body.result.tools.map((t) => t.name).sort();
-  assert.deepEqual(names, ['add_negatives', 'get_ad_groups', 'get_campaigns', 'get_keywords', 'get_negatives', 'get_report', 'get_targets',
-    'list_profiles', 'run_report', 'transfer_targets', 'update_bid_strategy', 'update_bids', 'update_budgets']);
-  const readTools = list.body.result.tools.filter((t) => t.name.startsWith('get_') || ['list_profiles', 'run_report'].includes(t.name));
+  assert.deepEqual(names, ['add_negatives', 'get_ad_groups', 'get_campaigns', 'get_goals', 'get_keywords', 'get_negatives', 'get_report', 'get_targets',
+    'goal_performance', 'list_profiles', 'run_report', 'transfer_targets', 'update_bid_strategy', 'update_bids', 'update_budgets']);
+  const readTools = list.body.result.tools.filter((t) => t.name.startsWith('get_') || ['list_profiles', 'run_report', 'goal_performance'].includes(t.name));
   assert.ok(readTools.every((t) => t.annotations.readOnlyHint === true));
 
   const profiles = await mcp(tokens.access_token, 'tools/call', { name: 'list_profiles', arguments: {} });

@@ -54,6 +54,8 @@ export const SCOPE = 'ads.read';
 
 // Notion "Ads Approval Queue" database (Client Account Tasks › Amazon Advertising Actions).
 export const ADS_QUEUE_DATABASE_ID = '5794bf8e26b2470ea3216d45273227f6';
+// Notion "Ads Goals" database (same page; filtered views sit inside each client's PPC Strategy task).
+export const ADS_GOALS_DATABASE_ID = '8c1c5c76a4284eb9857c9ec2f61c6a13';
 
 // Change-tool guards. Defaults are deliberately tight; bid rules are Open decision 3 in the Notion plan.
 const num = (name, dflt) => (process.env[name] === undefined ? dflt : Number(process.env[name]));

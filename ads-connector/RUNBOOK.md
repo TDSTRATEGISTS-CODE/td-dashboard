@@ -20,6 +20,15 @@ it is handed over from Perpetua. See "Change tools" below.
 **Read tools:** `list_profiles`, `get_campaigns`, `get_ad_groups`, `get_keywords`, `get_targets`, `get_negatives`,
 `run_report`, `get_report`.
 
+**Goal tools:** `get_goals` (goals from Notion, plus any live campaign not in a goal), `goal_performance`
+(spend, 14-day sales, orders, ACoS, CPC per goal from BigQuery).
+
+**Goals** work like Perpetua goals: a group of campaigns run to one strategy. They live in the Notion **Ads Goals**
+database (Client Account Tasks › Amazon Advertising Actions), shown and edited as a filtered view inside each
+client's PPC Strategy task. Each row: client, market, profile ID, status, role, ASINs, campaign IDs, target and
+break-even ACoS, monthly budget. **Every change must belong to an Active goal** — a campaign not in a goal, or in a
+Paused/Draft/Retired goal, blocks the batch, and so does Notion being unreadable.
+
 **Change tools (dry run by default):** `update_bids`, `add_negatives`, `transfer_targets`, `update_budgets`,
 `update_bid_strategy`.
 
@@ -165,7 +174,8 @@ The connector needs its own **read-only** Notion key that can see only the Ads A
    and *comments*; user information: **No user information**. **Save**.
 3. **Configuration** tab › Internal Integration Secret › **Show** › **Copy**. Don't paste it anywhere except step 5.
 4. Open the **Ads Approval Queue** database (Client Account Tasks › Amazon Advertising Actions) › **•••** (top right) ›
-   **Connections** › search `TDS Ads connector (read)` › **Confirm**. Share only this database.
+   **Connections** › search `TDS Ads connector (read)` › **Confirm**. Do the same for the **Ads Goals** database on
+   the same page. Share only these two databases.
 5. In Cloud Shell: `cd ~/td-dashboard && bash ads-connector/deploy/set-notion-token.sh`, paste the secret (hidden), Enter.
 
 ### Switching live writes on (later — not yet)

@@ -12,10 +12,10 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { GUARDS, PROFILE_ALLOWLIST } from './config.js';
 import { spList, adsWrite, SP_LISTS } from './ads.js';
-import { getQueueRow } from './notion.js';
+import { getQueueRow, getGoals } from './notion.js';
 import { logChanges } from './bq.js';
 
-let deps = { spList, adsWrite, getQueueRow, logChanges };
+let deps = { spList, adsWrite, getQueueRow, getGoals, logChanges };
 export function setChangeDepsForTests(d) { deps = { ...deps, ...d }; }
 
 export const TOOL_LEVERS = {
@@ -192,7 +192,7 @@ async function planNegatives(profileId, { negatives }) {
     const camp = checkPlacement(blockers, struct, n.campaign_id, n.level === 'campaign' ? null : n.ad_group_id);
     if (!blockers.length && negMatches(specs[i], existing[specs[i].kind])) blockers.push('already exists');
     if (specs.findIndex((s) => canon(s.row) === canon(specs[i].row)) !== i) blockers.push('duplicate in this batch');
-    return { entity_type: specs[i].kind, entity_id: n.level === 'campaign' ? n.campaign_id : n.ad_group_id, field: 'create', old: null, new: specs[i].label, label: camp?.name, blockers };
+    return { entity_type: specs[i].kind, entity_id: n.level === 'campaign' ? n.campaign_id : n.ad_group_id, field: 'create', old: null, new: specs[i].label, label: camp?.name, campaign_id: n.campaign_id, blockers };
   });
   const verify = async () => {
     const now = await readNegatives(profileId, campaignIds);
@@ -243,14 +243,14 @@ async function planTransfers(profileId, { transfers }) {
     if (t.destination_ad_group_id === t.source_ad_group_id) b1.push('source and destination are the same ad group');
     if (!b1.length && inDest(t, dest)) b1.push('already a target in the destination');
     const cs = createSpec(t);
-    items.push({ entity_type: cs.kind, entity_id: t.destination_ad_group_id, field: 'create', old: null, new: cs.label, label: dc?.name, blockers: b1 });
+    items.push({ entity_type: cs.kind, entity_id: t.destination_ad_group_id, field: 'create', old: null, new: cs.label, label: dc?.name, campaign_id: t.destination_campaign_id, blockers: b1 });
     specs.push(cs);
 
     const n = negOf(t); const ns = negativeSpec(n); const b2 = [];
     validateNegative(n, b2);
     const sc = checkPlacement(b2, struct, t.source_campaign_id, n.level === 'campaign' ? null : t.source_ad_group_id);
     const already = !b2.length && negMatches(ns, existingNeg[ns.kind]);
-    items.push({ entity_type: ns.kind, entity_id: n.ad_group_id || n.campaign_id, field: 'create', old: null, new: `${ns.label} (source)`, label: sc?.name, blockers: b2,
+    items.push({ entity_type: ns.kind, entity_id: n.ad_group_id || n.campaign_id, field: 'create', old: null, new: `${ns.label} (source)`, label: sc?.name, campaign_id: t.source_campaign_id, blockers: b2,
       ...(already ? { note: 'already negated in source; will be skipped', skip: true } : {}) });
     specs.push(already ? null : ns);
   });
@@ -278,7 +278,7 @@ async function planBudgets(profileId, { changes }) {
     const change = pct(old, next);
     if (change !== null && Math.abs(change) > GUARDS.maxBudgetChangePct) blockers.push(`change ${change}% exceeds ±${GUARDS.maxBudgetChangePct}% cap`);
     if (old === next) blockers.push('no change');
-    return { entity_type: 'campaign', entity_id: c.campaign_id, field: 'daily_budget', old, new: next, change_pct: change, label: camp?.name, blockers };
+    return { entity_type: 'campaign', entity_id: c.campaign_id, field: 'daily_budget', old, new: next, change_pct: change, label: camp?.name, campaign_id: c.campaign_id, blockers };
   });
   const writes = [{ method: 'PUT', path: '/sp/campaigns', mediaType: SP_LISTS.campaigns.mediaType, key: 'campaigns',
     itemIdx: changes.map((_, i) => i), rows: changes.map((c) => ({ campaignId: c.campaign_id, budget: { budget: r2(c.new_daily_budget), budgetType: 'DAILY' } })) }];
@@ -308,7 +308,7 @@ async function planBidStrategy(profileId, { changes }) {
       const b = [...base];
       if (!STRATEGIES.includes(c.strategy)) b.push(`strategy must be ${STRATEGIES.join('/')}`);
       if (c.strategy === db.strategy) b.push('no change');
-      myItems.push({ entity_type: 'campaign', entity_id: c.campaign_id, field: 'bid_strategy', old: db.strategy, new: c.strategy, label: camp?.name, blockers: b });
+      myItems.push({ entity_type: 'campaign', entity_id: c.campaign_id, field: 'bid_strategy', old: db.strategy, new: c.strategy, label: camp?.name, campaign_id: c.campaign_id, blockers: b });
       expect.push((cmp) => cmp?.dynamicBidding?.strategy);
     }
     for (const [arg, name] of Object.entries(PLACEMENTS)) {
@@ -317,11 +317,11 @@ async function planBidStrategy(profileId, { changes }) {
       if (c[arg] < 0 || c[arg] > GUARDS.maxPlacementPct) b.push(`placement % must be 0–${GUARDS.maxPlacementPct}`);
       if ((placement[name] ?? 0) === c[arg]) b.push('no change');
       nextPlacement[name] = c[arg];
-      myItems.push({ entity_type: 'campaign', entity_id: c.campaign_id, field: name, old: placement[name] ?? 0, new: c[arg], label: camp?.name, blockers: b });
+      myItems.push({ entity_type: 'campaign', entity_id: c.campaign_id, field: name, old: placement[name] ?? 0, new: c[arg], label: camp?.name, campaign_id: c.campaign_id, blockers: b });
       expect.push((cmp) => (cmp?.dynamicBidding?.placementBidding || []).find((p) => p.placement === name)?.percentage ?? 0);
     }
     if (!myItems.length) {
-      myItems.push({ entity_type: 'campaign', entity_id: c.campaign_id, field: 'bid_strategy', old: null, new: null, label: camp?.name, blockers: [...base, 'nothing to change'] });
+      myItems.push({ entity_type: 'campaign', entity_id: c.campaign_id, field: 'bid_strategy', old: null, new: null, label: camp?.name, campaign_id: c.campaign_id, blockers: [...base, 'nothing to change'] });
       expect.push(() => null);
     }
     const start = items.length;
@@ -356,6 +356,26 @@ const PLANNERS = {
   update_budgets: { plan: planBudgets, count: (a) => a.changes.length },
   update_bid_strategy: { plan: planBidStrategy, count: (a) => a.changes.length },
 };
+
+// ---------- goals ----------
+
+// Every change must belong to an Active goal (Notion "Ads Goals"), so nothing runs unmanaged.
+// If goals can't be read, the batch is blocked (fail closed).
+async function attachGoals(profileId, items, globalBlockers) {
+  let goals;
+  try { goals = await deps.getGoals({ profileId }); } catch (e) {
+    globalBlockers.push(`Could not read Ads Goals: ${e.message}`);
+    return;
+  }
+  for (const it of items) {
+    if (!it.campaign_id) continue; // unknown campaign already blocked by the planner
+    const g = goals.find((x) => x.campaignIds.includes(String(it.campaign_id)));
+    if (!g) { it.blockers.push(`campaign ${it.campaign_id} is not in any goal; add it to a goal in the PPC Strategy task`); continue; }
+    it.goal = g.name;
+    it.goal_id = g.id;
+    if (g.status !== 'Active') it.blockers.push(`goal ${g.id} "${g.name}" is ${g.status || 'not Active'}`);
+  }
+}
 
 // ---------- approval ----------
 
@@ -400,6 +420,7 @@ export async function runChange(tool, args, { email } = {}) {
   const globalBlockers = [];
   if (def.count(payload) > GUARDS.maxItemsPerRun) globalBlockers.push(`Batch has ${def.count(payload)} items; max ${GUARDS.maxItemsPerRun} per run`);
   const plan = await def.plan(profileId, payload);
+  await attachGoals(profileId, plan.items, globalBlockers);
   const approval = await checkApproval(tool, profileId, rowId, hash);
   globalBlockers.push(...approval.blockers);
 
@@ -415,7 +436,7 @@ export async function runChange(tool, args, { email } = {}) {
     old_value: it.old === null || it.old === undefined ? null : String(it.old), new_value: it.new === null || it.new === undefined ? null : String(it.new),
     dry_run: dryRun, status: typeof status === 'function' ? status(i) : status,
     verified_value: verified[i] === undefined || verified[i] === null ? null : String(verified[i]),
-    notes: [`plan:${hash}`, it.blockers.join('; '), typeof notes === 'function' ? notes(i) : notes].filter(Boolean).join(' | '),
+    notes: [`plan:${hash}`, it.goal_id && `goal:${it.goal_id}`, it.blockers.join('; '), typeof notes === 'function' ? notes(i) : notes].filter(Boolean).join(' | '),
   }));
 
   const summary = {

@@ -8,7 +8,7 @@ import { getQueueRow, setNotionFetchForTests } from '../src/notion.js';
 import { setSecretSourceForTests } from '../src/secrets.js';
 
 const P = '2067592198905075'; // Harvaza UK
-let store; let writes; let logs; let row;
+let store; let writes; let logs; let row; let goals;
 
 beforeEach(() => {
   GUARDS.writesEnabled = false;
@@ -25,6 +25,7 @@ beforeEach(() => {
     campaignNegativeKeywords: [], negativeTargets: [],
   };
   writes = []; logs = [];
+  goals = [{ id: 'GOAL-1', name: 'UK · Coconut Water · universal', status: 'Active', campaignIds: ['C1', 'C2'] }];
   row = { id: 'ADS-200', status: 'Proposed', client: 'Harvaza', market: 'UK', lever: 'Fixed bid', approvedOn: null, text: '' };
   const pick = (kind, f) => store[kind].filter((x) => {
     const inc = (k, v) => !f[k] || f[k].include.includes(v);
@@ -33,6 +34,7 @@ beforeEach(() => {
   setChangeDepsForTests({
     spList: async (kind, _p, f) => ({ items: pick(kind, f), truncated: false }),
     getQueueRow: async () => row,
+    getGoals: async () => goals,
     logChanges: async (rows) => { logs.push(...rows); },
     adsWrite: async (method, path, { body }) => {
       writes.push({ method, path, body });
@@ -227,4 +229,44 @@ test('Notion queue row is read by ID and must be in the Ads Approval Queue', asy
   db = 'someotherdatabase';
   await assert.rejects(getQueueRow('ADS-92'), /not in the Ads Approval Queue/);
   await assert.rejects(getQueueRow('drop table'), /ADS-92/);
+});
+
+test('every change must sit in an Active goal (fail closed)', async () => {
+  const ok = await runChange('update_bids', bid(0.55));
+  assert.equal(ok.items[0].goal_id, 'GOAL-1');
+  assert.match(logs.at(-1).notes, /goal:GOAL-1/);
+
+  goals = [{ id: 'GOAL-1', name: 'x', status: 'Active', campaignIds: ['C2'] }];
+  assert.match((await runChange('update_bids', bid(0.55))).items[0].blockers.join(), /not in any goal/);
+
+  goals = [{ id: 'GOAL-1', name: 'x', status: 'Paused', campaignIds: ['C1'] }];
+  assert.match((await runChange('update_bids', bid(0.55))).items[0].blockers.join(), /is Paused/);
+
+  setChangeDepsForTests({ getGoals: async () => { throw new Error('no access'); } });
+  const r = await runChange('update_bids', bid(0.55));
+  assert.match(r.blockers.join(), /Could not read Ads Goals/);
+  assert.equal(r.ready_to_apply, false);
+});
+
+test('goals are parsed from the Notion Ads Goals database', async () => {
+  const { getGoals } = await import('../src/notion.js');
+  setSecretSourceForTests(async () => 'notion-token');
+  let body;
+  setNotionFetchForTests(async (url, opts) => {
+    body = JSON.parse(opts.body);
+    assert.match(String(url), /8c1c5c76a4284eb9857c9ec2f61c6a13/);
+    return new Response(JSON.stringify({ has_more: false, results: [{ url: 'u', properties: {
+      Goal: { type: 'title', title: [{ plain_text: 'UK · 200ml Coconut Water · universal' }] },
+      'Goal ID': { type: 'unique_id', unique_id: { prefix: 'GOAL', number: 1 } },
+      'Profile ID': { type: 'rich_text', rich_text: [{ plain_text: '2067592198905075' }] },
+      Status: { type: 'select', select: { name: 'Active' } },
+      'Campaign IDs': { type: 'rich_text', rich_text: [{ plain_text: '63739564909591, 10575998198869,37089907414884' }] },
+      'Target ACoS': { type: 'number', number: 0.25 },
+      'Break-even ACoS': { type: 'number', number: 0.32 },
+    } }] }), { status: 200 });
+  });
+  const [g] = await getGoals({ profileId: '2067592198905075' });
+  assert.equal(body.filter.rich_text.equals, '2067592198905075');
+  assert.deepEqual([g.id, g.status, g.targetAcos, g.breakEvenAcos], ['GOAL-1', 'Active', 0.25, 0.32]);
+  assert.deepEqual(g.campaignIds, ['63739564909591', '10575998198869', '37089907414884']);
 });

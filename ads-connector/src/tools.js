@@ -8,6 +8,9 @@ import { listProfiles, spList } from './ads.js';
 import { REPORTS, createReport, getReportStatus, downloadReport, summarise, validateRange } from './reports.js';
 import { info, warn } from './log.js';
 import { runChange } from './changes.js';
+import { getGoals } from './notion.js';
+import { query } from './bq.js';
+import { GCP_PROJECT, DATASET } from './config.js';
 
 const profileId = z.string().describe('Amazon Ads profile ID; must be on the TDS allowlist (see list_profiles)');
 const states = z.array(z.enum(['ENABLED', 'PAUSED', 'ARCHIVED'])).optional()
@@ -114,6 +117,60 @@ export function buildMcpServer({ email } = {}) {
       start_date: s.startDate, end_date: s.endDate, totals: summarise(rows),
       rows_returned: Math.min(max, rows.length), rows: rows.slice(0, max),
     };
+  });
+
+  tool('get_goals', {
+    description: 'Ads goals from the Notion "Ads Goals" database (grouped campaigns with role, target and break-even ACoS, monthly budget). Optionally one profile. Flags any live campaign that is not in a goal.',
+    inputSchema: { profile_id: profileId.optional() },
+  }, async (a) => {
+    const ids = a.profile_id ? [a.profile_id] : Object.keys(PROFILE_ALLOWLIST);
+    const goals = (await getGoals(a.profile_id ? { profileId: a.profile_id } : {})).filter((g) => ids.includes(g.profileId));
+    const unassigned = {};
+    if (a.profile_id) {
+      const camps = (await spList('campaigns', a.profile_id, { stateFilter: { include: ['ENABLED', 'PAUSED'] } }, 5000)).items;
+      const inGoals = new Set(goals.flatMap((g) => g.campaignIds));
+      unassigned[a.profile_id] = camps.filter((c) => !inGoals.has(String(c.campaignId))).map((c) => ({ campaign_id: c.campaignId, name: c.name, state: c.state }));
+    }
+    return { goals, campaigns_not_in_a_goal: unassigned };
+  });
+
+  tool('goal_performance', {
+    description: 'Spend, sales (14-day), orders, ACoS and CPC per goal for one profile and date range, from the BigQuery history (amazon_ads). Campaigns not in any goal are shown as "Not in a goal". Data is complete to yesterday; the last ~3 days are still filling in.',
+    inputSchema: {
+      profile_id: profileId,
+      start_date: z.string().describe('YYYY-MM-DD'),
+      end_date: z.string().describe('YYYY-MM-DD, inclusive'),
+    },
+  }, async (a) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(a.start_date) || !/^\d{4}-\d{2}-\d{2}$/.test(a.end_date)) throw new Error('Dates must be YYYY-MM-DD');
+    const [goals, rows] = await Promise.all([
+      getGoals({ profileId: a.profile_id }),
+      query(`SELECT campaign_id, ANY_VALUE(campaign_name) AS campaign_name, SUM(impressions) AS impressions, SUM(clicks) AS clicks,
+               SUM(cost) AS cost, SUM(sales_14d) AS sales, SUM(purchases_14d) AS orders, COUNT(DISTINCT date) AS days
+             FROM \`${GCP_PROJECT}.${DATASET}.sp_campaign_daily\`
+             WHERE profile_id = @p AND date BETWEEN @s AND @e GROUP BY campaign_id`, { p: a.profile_id, s: a.start_date, e: a.end_date }),
+    ]);
+    const buckets = new Map();
+    const bucket = (key, g) => {
+      if (!buckets.has(key)) buckets.set(key, { goal_id: g?.id ?? null, goal: g?.name ?? 'Not in a goal', status: g?.status ?? null, target_acos: g?.targetAcos ?? null, break_even_acos: g?.breakEvenAcos ?? null, monthly_budget: g?.monthlyBudget ?? null, impressions: 0, clicks: 0, cost: 0, sales: 0, orders: 0, campaigns: [] });
+      return buckets.get(key);
+    };
+    goals.forEach((g) => bucket(g.id, g));
+    for (const r of rows) {
+      const g = goals.find((x) => x.campaignIds.includes(String(r.campaign_id)));
+      const b = bucket(g ? g.id : 'none', g);
+      for (const k of ['impressions', 'clicks', 'cost', 'sales', 'orders']) b[k] += Number(r[k] ?? 0);
+      b.campaigns.push(r.campaign_name);
+    }
+    const out = [...buckets.values()].map((b) => ({
+      ...b,
+      cost: Math.round(b.cost * 100) / 100,
+      sales: Math.round(b.sales * 100) / 100,
+      acos: b.sales ? Math.round((b.cost / b.sales) * 1000) / 10 : null,
+      cpc: b.clicks ? Math.round((b.cost / b.clicks) * 100) / 100 : null,
+      vs_target: b.sales && b.target_acos ? (b.cost / b.sales <= b.target_acos ? 'at or under target' : b.cost / b.sales <= (b.break_even_acos ?? 1) ? 'above target, under break-even' : 'above break-even') : null,
+    }));
+    return { profile_id: a.profile_id, ...label(a.profile_id), period: `${a.start_date} to ${a.end_date}`, source: 'BigQuery amazon_ads.sp_campaign_daily (14-day attribution)', goals: out };
   });
 
   registerChangeTools(server, { email });
