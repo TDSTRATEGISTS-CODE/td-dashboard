@@ -35,6 +35,7 @@ beforeEach(() => {
     spList: async (kind, _p, f) => ({ items: pick(kind, f), truncated: false }),
     getQueueRow: async () => row,
     getGoals: async () => goals,
+    getDryRunRows: async (q, codes) => logs.filter((l) => l.dry_run && l.queue_row_id === q && codes.some((c) => l.notes.includes(c))),
     logChanges: async (rows) => { logs.push(...rows); },
     adsWrite: async (method, path, { body }) => {
       writes.push({ method, path, body });
@@ -49,9 +50,12 @@ beforeEach(() => {
 });
 
 const bid = (new_bid, extra = {}) => ({ profile_id: P, queue_row_id: 'ADS-200', changes: [{ entity: 'keyword', id: 'K1', new_bid }], ...extra });
-const approve = (args, tool = 'update_bids') => {
-  const { profile_id, queue_row_id, apply, ...payload } = args;
-  Object.assign(row, { status: 'Approved', approvedOn: new Date().toISOString().slice(0, 10), text: `ok plan:${planHash(tool, profile_id, payload)}` });
+// Approve the way the live flow does: dry run, write its plan code on the row, set Approved.
+const approve = async (args, tool = 'update_bids') => {
+  const { apply, ...rest } = args;
+  const r = await runChange(tool, rest);
+  Object.assign(row, { status: 'Approved', approvedOn: new Date().toISOString().slice(0, 10), text: `ok ${r.plan_code}` });
+  return r;
 };
 
 test('dry run by default: shows old → new, plan code, changes nothing', async () => {
@@ -90,7 +94,7 @@ test('bid guards (approved rules): +10% raise cap, -25% cut cap, £0.15 floor, m
 
 test('apply refused while live writes are off, even when approved', async () => {
   const args = bid(0.55, { apply: true });
-  approve(args);
+  await approve(args);
   const r = await runChange('update_bids', args);
   assert.equal(r.applied, false);
   assert.equal(r.items_blocked, 0);
@@ -101,7 +105,7 @@ test('apply refused while live writes are off, even when approved', async () => 
 
 test('apply refused when the approved plan code does not match the batch', async () => {
   GUARDS.writesEnabled = true; GUARDS.releasedProfiles = [P];
-  approve(bid(0.55));
+  await approve(bid(0.55));
   const r = await runChange('update_bids', bid(0.54, { apply: true })); // different from what was approved
   assert.equal(r.applied, false);
   assert.ok(r.approval_needed.some((g) => /row has plan:[0-9a-f]{12}: the batch differs/.test(g)));
@@ -111,7 +115,7 @@ test('apply refused when the approved plan code does not match the batch', async
 test('apply refused for a profile not released from Perpetua', async () => {
   GUARDS.writesEnabled = true;
   const args = bid(0.55, { apply: true });
-  approve(args);
+  await approve(args);
   const r = await runChange('update_bids', args);
   assert.equal(r.applied, false);
   assert.ok(r.switches.some((s) => /Perpetua/.test(s)));
@@ -122,7 +126,7 @@ test('apply refused for wrong client/market/lever, stale or finished rows', asyn
   GUARDS.writesEnabled = true; GUARDS.releasedProfiles = [P];
   for (const patch of [{ client: 'NKV' }, { market: 'DE' }, { lever: 'Budget' }, { approvedOn: '2026-01-01' }, { status: 'Done' }]) {
     const args = bid(0.55, { apply: true });
-    approve(args);
+    await approve(args);
     Object.assign(row, patch);
     const r = await runChange('update_bids', args);
     assert.equal(r.applied, false, JSON.stringify(patch));
@@ -133,7 +137,7 @@ test('apply refused for wrong client/market/lever, stale or finished rows', asyn
 test('apply refused if change_log cannot be written first', async () => {
   GUARDS.writesEnabled = true; GUARDS.releasedProfiles = [P];
   const args = bid(0.55, { apply: true });
-  approve(args);
+  await approve(args);
   setChangeDepsForTests({ logChanges: async () => { throw new Error('bq down'); } });
   const r = await runChange('update_bids', args);
   assert.equal(r.applied, false);
@@ -144,7 +148,7 @@ test('apply refused if change_log cannot be written first', async () => {
 test('full apply when every gate passes: write, re-read, log verified', async () => {
   GUARDS.writesEnabled = true; GUARDS.releasedProfiles = [P];
   const args = bid(0.51, { apply: true });
-  approve(args);
+  await approve(args);
   const r = await runChange('update_bids', args);
   assert.equal(r.applied, true);
   assert.deepEqual(writes, [{ method: 'PUT', path: '/sp/keywords', body: { keywords: [{ keywordId: 'K1', bid: 0.51 }] } }]);
@@ -179,7 +183,7 @@ test('transfer: creates in destination + negative exact in source; checks manual
 
   GUARDS.writesEnabled = true; GUARDS.releasedProfiles = [P];
   const args = { profile_id: P, queue_row_id: 'ADS-200', transfers: [t], apply: true };
-  approve(args, 'transfer_targets');
+  await approve(args, 'transfer_targets');
   const done = await runChange('transfer_targets', args);
   assert.deepEqual(done.results.map((x) => x.status), ['APPLIED_VERIFIED', 'APPLIED_VERIFIED']);
   assert.deepEqual(writes.map((w) => `${w.method} ${w.path}`), ['POST /sp/keywords', 'POST /sp/negativeKeywords']);
@@ -196,7 +200,7 @@ test('budgets and bid strategy plans', async () => {
 
   GUARDS.writesEnabled = true; GUARDS.releasedProfiles = [P];
   const args = { profile_id: P, queue_row_id: 'ADS-200', changes: [{ campaign_id: 'C1', strategy: 'AUTO_FOR_SALES', top_of_search_pct: 20 }], apply: true };
-  approve(args, 'update_bid_strategy');
+  await approve(args, 'update_bid_strategy');
   row.lever = 'Other';
   const done = await runChange('update_bid_strategy', args);
   assert.deepEqual(done.results.map((x) => x.status), ['APPLIED_VERIFIED', 'APPLIED_VERIFIED']);
@@ -269,4 +273,36 @@ test('goals are parsed from the Notion Ads Goals database', async () => {
   assert.equal(body.filter.rich_text.equals, '2067592198905075');
   assert.deepEqual([g.id, g.status, g.targetAcos, g.breakEvenAcos], ['GOAL-1', 'Active', 0.25, 0.32]);
   assert.deepEqual(g.campaignIds, ['63739564909591', '10575998198869', '37089907414884']);
+});
+
+test('stale-value guard: live bid moved after approval blocks with was/now, new plan code', async () => {
+  GUARDS.writesEnabled = true; GUARDS.releasedProfiles = [P];
+  const approved = await approve(bid(0.55));
+  store.keywords[0].bid = 0.61; // someone changed the bid after approval
+  const r = await runChange('update_bids', bid(0.55, { apply: true }));
+  assert.equal(r.applied, false);
+  assert.notEqual(r.plan_code, approved.plan_code, 'a changed old value gives a new plan code');
+  assert.ok(r.items[0].blockers.includes('Live value changed since approval (was 0.5, now 0.61). Re-run the dry run and re-approve.'));
+  assert.equal(writes.length, 0);
+
+  // Re-run the dry run and re-approve on the new live value: applies.
+  await approve(bid(0.62));
+  const ok = await runChange('update_bids', bid(0.62, { apply: true }));
+  assert.equal(ok.applied, true);
+  assert.equal(ok.results[0].status, 'APPLIED_VERIFIED');
+});
+
+test('stale-value guard covers budgets too', async () => {
+  row.lever = 'Budget';
+  const args = { profile_id: P, queue_row_id: 'ADS-200', changes: [{ campaign_id: 'C1', new_daily_budget: 22 }] };
+  await approve(args, 'update_budgets');
+  row.lever = 'Budget';
+  store.campaigns[0].budget.budget = 21;
+  const r = await runChange('update_budgets', { ...args, apply: true });
+  assert.ok(r.items[0].blockers.some((b) => /Live value changed since approval \(was 20, now 21\)/.test(b)));
+});
+
+test('plan code includes the old values', () => {
+  const items = { changes: [{ entity: 'keyword', id: 'K1', new_bid: 0.62 }] };
+  assert.notEqual(planHash('update_bids', P, items, [['K1', 'bid', 0.5]]), planHash('update_bids', P, items, [['K1', 'bid', 0.61]]));
 });

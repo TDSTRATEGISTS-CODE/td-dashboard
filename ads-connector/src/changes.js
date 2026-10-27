@@ -13,9 +13,9 @@ import { createHash, randomUUID } from 'node:crypto';
 import { GUARDS, PROFILE_ALLOWLIST } from './config.js';
 import { spList, adsWrite, SP_LISTS } from './ads.js';
 import { getQueueRow, getGoals } from './notion.js';
-import { logChanges } from './bq.js';
+import { logChanges, getDryRunRows } from './bq.js';
 
-let deps = { spList, adsWrite, getQueueRow, getGoals, logChanges };
+let deps = { spList, adsWrite, getQueueRow, getGoals, logChanges, getDryRunRows };
 export function setChangeDepsForTests(d) { deps = { ...deps, ...d }; }
 
 export const TOOL_LEVERS = {
@@ -39,9 +39,13 @@ function canon(v) {
   return JSON.stringify(v);
 }
 
-export function planHash(tool, profileId, items) {
-  return createHash('sha256').update(canon({ tool, profileId, items })).digest('hex').slice(0, 12);
+// The plan code fingerprints the batch AND the live "old" values read at dry-run time, so if a live value
+// moves after approval (e.g. a bid changed elsewhere) the approved code no longer matches.
+export function planHash(tool, profileId, items, oldValues) {
+  return createHash('sha256').update(canon({ tool, profileId, items, ...(oldValues ? { old: oldValues } : {}) })).digest('hex').slice(0, 12);
 }
+
+const oldValuesOf = (items) => items.map((it) => [String(it.entity_id), it.field, it.old === undefined ? null : it.old]);
 
 async function list(kind, profileId, filter) {
   return (await deps.spList(kind, profileId, { ...ALL_STATES, ...filter }, 5000)).items;
@@ -377,6 +381,25 @@ async function attachGoals(profileId, items, globalBlockers) {
   }
 }
 
+// ---------- stale values ----------
+
+// If the approved plan code on the row no longer matches, find that approved batch's dry run in change_log.
+// Where an item has the same target and new value but the live old value has moved, block it explicitly.
+async function flagStaleValues(row, hash, items) {
+  const codes = [...new Set(row.text.match(/plan:[0-9a-f]{12}/g) || [])].filter((c) => c !== `plan:${hash}`);
+  if (!codes.length || row.text.includes(`plan:${hash}`)) return;
+  let logged;
+  try { logged = await deps.getDryRunRows(row.id, codes); } catch { return; } // still blocked by the plan-code check
+  for (const it of items) {
+    if (it.old === null || it.old === undefined) continue; // creates have no old value
+    const prev = logged.find((l) => String(l.entity_id) === String(it.entity_id) && l.field === it.field
+      && String(l.new_value) === String(it.new));
+    if (prev && prev.old_value !== null && String(prev.old_value) !== String(it.old)) {
+      it.blockers.push(`Live value changed since approval (was ${prev.old_value}, now ${it.old}). Re-run the dry run and re-approve.`);
+    }
+  }
+}
+
 // ---------- approval ----------
 
 export async function checkApproval(tool, profileId, rowId, hash, today = new Date()) {
@@ -413,16 +436,17 @@ export async function runChange(tool, args, { email } = {}) {
   const { profile_id: profileId, queue_row_id: rowId, apply = false } = args;
   const def = PLANNERS[tool];
   const payload = Object.fromEntries(Object.entries(args).filter(([k]) => !['profile_id', 'queue_row_id', 'apply'].includes(k)));
-  const hash = planHash(tool, profileId, payload);
   const runId = randomUUID();
   const calledAt = new Date().toISOString();
 
   const globalBlockers = [];
   if (def.count(payload) > GUARDS.maxItemsPerRun) globalBlockers.push(`Batch has ${def.count(payload)} items; max ${GUARDS.maxItemsPerRun} per run`);
   const plan = await def.plan(profileId, payload);
+  const hash = planHash(tool, profileId, payload, oldValuesOf(plan.items));
   await attachGoals(profileId, plan.items, globalBlockers);
   const approval = await checkApproval(tool, profileId, rowId, hash);
   globalBlockers.push(...approval.blockers);
+  if (approval.row) await flagStaleValues(approval.row, hash, plan.items);
 
   const switchGaps = [];
   if (!GUARDS.writesEnabled) switchGaps.push('Live writes are switched off (WRITES_ENABLED); dry run only');

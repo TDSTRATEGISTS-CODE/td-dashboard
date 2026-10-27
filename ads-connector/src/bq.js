@@ -114,3 +114,15 @@ export async function logChanges(rows) {
   if (!rows.length) return;
   await client().dataset(DATASET).table('change_log').insert(rows);
 }
+
+// Dry-run rows logged for a queue row under any of the given plan codes (newest first). Used to tell whether
+// an approved batch was built on a live value that has since changed.
+export async function getDryRunRows(queueRowId, planCodes) {
+  if (!planCodes.length) return [];
+  const re = `(${planCodes.map((c) => c.replace(/[^a-z0-9:]/gi, '')).join('|')})`;
+  return query(
+    `SELECT entity_id, field, old_value, new_value, notes, called_at
+     FROM \`${GCP_PROJECT}.${DATASET}.change_log\`
+     WHERE queue_row_id = @q AND dry_run = TRUE AND REGEXP_CONTAINS(notes, @re)
+     ORDER BY called_at DESC`, { q: String(queueRowId), re });
+}

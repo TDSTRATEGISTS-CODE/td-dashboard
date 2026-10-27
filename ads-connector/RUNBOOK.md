@@ -150,7 +150,11 @@ Golden rule: flag, don't fix. Every change goes Proposed → Approved by Ryan �
    The connector re-reads the Notion row itself and refuses unless **all** of these hold:
    - Status is Approved, *Approved on* is within 14 days, and the row isn't Done/Rejected/Expired;
    - the row's Client and Market match the profile, and its Lever fits the tool;
-   - the plan code on the row matches this exact batch (change one bid by 1p and it won't match);
+   - the plan code on the row matches this exact batch **and the live values it was built on** (change one bid by 1p
+     and it won't match);
+   - no live value has moved since the approved dry run. If a bid or budget changed after approval, the item is
+     blocked with "Live value changed since approval (was X, now Y). Re-run the dry run and re-approve." (found by
+     looking up the approved plan code's dry-run rows in `change_log`);
    - every item passes the guards below;
    - live writes are on and the profile is released from Perpetua;
    - the pending change was written to `change_log` first.
@@ -178,12 +182,26 @@ The connector needs its own **read-only** Notion key that can see only the Ads A
    the same page. Share only these two databases.
 5. In Cloud Shell: `cd ~/td-dashboard && bash ads-connector/deploy/set-notion-token.sh`, paste the secret (hidden), Enter.
 
-### Switching live writes on (later — not yet)
+### Opening and closing a write window for one profile
 
-Only after the Perpetua handover for that profile (Notion plan, Step 2) and Ryan's go-ahead:
-Cloud Run › ads-connector › **Edit & deploy new revision** › Variables › set `WRITES_ENABLED=true` and
-`PERPETUA_RELEASED_PROFILES=2067592198905075` (comma-separate more later) › **Deploy**. To switch off again,
-set `WRITES_ENABLED=false` and deploy. First live test: +1p on one Harvaza UK keyword, then reverted.
+Writes stay off by default. Open a window only with Ryan's go-ahead, only for a profile already handed over from
+Perpetua (or for an agreed test), and close it as soon as the work is done. Run in Cloud Shell from `~/td-dashboard`:
+
+1. **Check:** `bash ads-connector/deploy/write-window.sh status` — shows the live `WRITES_ENABLED`,
+   `PERPETUA_RELEASED_PROFILES` and revision, and whether a window is already open.
+2. **Open:** `bash ads-connector/deploy/write-window.sh open <profile ID>`
+   - Refuses a profile that isn't on the allowlist, and refuses if a window is already open.
+   - Saves the previous values of both variables to `~/.ads-write-window.json` (including "not set"), then sets
+     `WRITES_ENABLED=true` and **adds** the profile to `PERPETUA_RELEASED_PROFILES` (existing entries kept).
+   - Prints the previous revision and the new one. Note both in the Notion change log.
+3. **Do the work** in Cowork: dry run → plan code on the queue row → Ryan approves → apply → re-read → (revert if a test).
+4. **Close:** `bash ads-connector/deploy/write-window.sh close` — restores both variables exactly (removes them
+   if they weren't set before), deploys, and checks the result matches. Ends with
+   `Matches the values recorded before the window opened.`
+5. **Confirm:** a dry run on the same queue row must again list both switches under `switches`.
+
+If Cloud Shell was reset and `~/.ads-write-window.json` is gone, close by hand: Cloud Run › ads-connector ›
+**Edit & deploy new revision** › Variables › put both variables back to the values noted in the change log › **Deploy**.
 
 ## Day to day
 
