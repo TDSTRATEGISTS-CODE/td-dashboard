@@ -3,9 +3,9 @@
 Replaces Perpetua's data access with TDS's own Amazon Ads API connection.
 Plan and decisions: Notion › Claude Business › **Ads API Migration — Perpetua Replacement — Project Plan** (Build brief v1).
 
-**Changes are dry run only for now.** The 5 change tools show exactly what they would change but send nothing
-to Amazon: live writes are switched off on the server (`WRITES_ENABLED`), and every profile is locked until
-it is handed over from Perpetua. See "Change tools" below.
+**Live writes are on for profiles handed over from Perpetua** (Harvaza UK since 27 Oct 2026). Every change still
+needs an Approved Ads Approval Queue row carrying the batch's plan code, and passes the guards below. Profiles not
+yet handed over are refused (`PERPETUA_RELEASED_PROFILES`). See "Change tools" below.
 
 ## What it is
 
@@ -182,9 +182,31 @@ The connector needs its own **read-only** Notion key that can see only the Ads A
    the same page. Share only these two databases.
 5. In Cloud Shell: `cd ~/td-dashboard && bash ads-connector/deploy/set-notion-token.sh`, paste the secret (hidden), Enter.
 
-### Opening and closing a write window for one profile
+### Steady state: releasing a profile at its handover
 
-Writes stay off by default. Open a window only with Ryan's go-ahead, only for a profile already handed over from
+Live writes stay **on** (`WRITES_ENABLED=true`). Each profile is added to `PERPETUA_RELEASED_PROFILES` **once**, when
+it is handed over from Perpetua, and stays there. No weekly opening or closing: the per-change control is the
+queue approval, plan code and guards.
+
+Current (27 Oct 2026, revision `ads-connector-00011-vtm`): `WRITES_ENABLED=true`, `PERPETUA_RELEASED_PROFILES=2067592198905075`.
+
+**Handover for a profile** (Ryan + Claude): export its Perpetua history → Claude snapshots every setting via the
+connector → delete the Perpetua goal(s) → re-enable the campaigns that were live → Claude checks every setting against
+the snapshot → release it:
+
+```bash
+bash ads-connector/deploy/write-window.sh open <profile ID> && rm ~/.ads-write-window.json
+```
+
+(`open` adds the profile and keeps existing ones; removing the record makes it permanent.) Then set its goals'
+**Managed by** = Ads API, strike it from the Perpetua Actioning SOP client config, and log it in the Task Register.
+Check first that the TDS login has edit rights on that ad account (a read-only login makes every apply FAIL safely).
+
+**Switch everything off in an emergency:** Cloud Run › ads-connector › Edit › Variables › `WRITES_ENABLED=false` › Deploy.
+
+### Opening and closing a one-off write window (profile still on Perpetua)
+
+Only for an agreed test on a profile not yet handed over. Open a window only with Ryan's go-ahead, only for a profile already handed over from
 Perpetua (or for an agreed test), and close it as soon as the work is done. Run in Cloud Shell from `~/td-dashboard`:
 
 1. **Check:** `bash ads-connector/deploy/write-window.sh status` — shows the live `WRITES_ENABLED`,
