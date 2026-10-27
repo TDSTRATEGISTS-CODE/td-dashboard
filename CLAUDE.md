@@ -158,3 +158,8 @@ Perpetua Replacement — Project Plan". Rules: never print or log secret values;
 RUNBOOK › "Change tools" (Approved queue row + matching plan code, guards, Perpetua release, `WRITES_ENABLED`,
 log-first, re-read); never switch `WRITES_ENABLED` on or release a profile without Ryan's explicit go-ahead; run
 `cd ads-connector && npm ci && npm test` before pushing. Merges to `main` touching it auto-deploy.
+
+**This repo is PUBLIC (checked 27 Oct 2026) until Ryan upgrades GitHub and makes it private.** Until then, for
+`ads-connector/`: never commit secrets (always true), client performance figures, search-term or bid data, change-log
+exports, or strategy notes. Those live in Notion and BigQuery only. Code, tests (with made-up data) and the runbook are fine.
+Remove this paragraph once the repo is private.
