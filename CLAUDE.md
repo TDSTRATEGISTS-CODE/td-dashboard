@@ -149,17 +149,7 @@ because the broken paste never saved.
   node with mocked `SpreadsheetApp`/`ContentService`); hand-over ends with Ctrl+S (orange dot gone) →
   **Deploy › Manage deployments › pencil › New version** (never "New deployment" — new URL).
 
-## Amazon Ads connector (`ads-connector/`) — change tools are dry-run by default and gated on Notion approval
+## Amazon Ads connector — lives in its own repo
 
-`ads-connector/` is the TDS Amazon Ads API connector (remote MCP on Cloud Run + daily BigQuery pull),
-not part of the dashboard site. Runbook: `ads-connector/RUNBOOK.md`; plan: Notion "Ads API Migration —
-Perpetua Replacement — Project Plan". Rules: never print or log secret values; the 8-profile allowlist in
-`src/config.js` is the only list of callable profiles; change tools (`src/changes.js`) must keep every gate in
-RUNBOOK › "Change tools" (Approved queue row + matching plan code, guards, Perpetua release, `WRITES_ENABLED`,
-log-first, re-read); never switch `WRITES_ENABLED` on or release a profile without Ryan's explicit go-ahead; run
-`cd ads-connector && npm ci && npm test` before pushing. Merges to `main` touching it auto-deploy.
-
-**This repo is PUBLIC (checked 27 Oct 2026) until Ryan upgrades GitHub and makes it private.** Until then, for
-`ads-connector/`: never commit secrets (always true), client performance figures, search-term or bid data, change-log
-exports, or strategy notes. Those live in Notion and BigQuery only. Code, tests (with made-up data) and the runbook are fine.
-Remove this paragraph once the repo is private.
+The Ads API connector (XecutiveAds) moved to the private repo `TDSTRATEGISTS-CODE/xecutive-ads` on 28 Oct 2026.
+Don't add Amazon Ads connector code here.
