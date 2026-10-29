@@ -254,22 +254,24 @@ window.DASHBOARD_DATA = {
       // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
       // First baked 12 Oct 2026 (review used as approved for this run by Ryan's instruction). The sheet-era
       // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
-      // healthMgmtSpec ← "12 Oct 2026 - Balance 8 Account Health Review" › Notes for client (⚠️ lines; ✅ lines left out).
-      // adsStrategySpec ← "Balance8 Ad Strategy" task › Notes for Client (updated 13 Oct 2026) + Weekly log for done items.
-      // stockWarn      ← Balance8_UK_sku-sync_2026-10-19 (MerchantSpring, 19 Sep–18 Oct 2026, FBA). Thresholds ≤21d / soon ≤45d: none hit.
-      healthMgmtSpec: { badge:'2 open', subLabel:'Weekly review · 12 Oct 2026', items:[
-        {level:'amber',title:'UK — Sales',sub:'In progress · WIRED flavours and Creatine slow since mid-September; we\'ve proposed listing improvements'},
-        {level:'amber',title:'UK — Deals',sub:'In progress · Black Friday deal submissions close 18 Nov; we\'ve proposed a deal plan'},
-        {level:'green',title:'UK — WIRED listings confirmed live',sub:'Done 12 Oct · all 14 UK listings Active, none inactive'}
+      // healthMgmtSpec ← "26 Oct 2026 - Balance 8 Account Health Review" › Notes for client (⚠️ lines; ✅ lines left out).
+      //                  No client-suitable Resolved items this week (both are internal data / Register fixes), so no Done lines.
+      // adsStrategySpec ← "Balance8 Ad Strategy" task › Notes for Client (updated 27 Oct 2026) + Weekly log (22 Oct actions) for done items.
+      // stockWarn      ← Balance8_UK_sku-sync_2026-10-26 (MerchantSpring, 26 Sep–25 Oct 2026, FBA). Thresholds ≤21d / soon ≤45d: none hit.
+      healthMgmtSpec: { badge:'3 open', subLabel:'Weekly review · 26 Oct 2026', items:[
+        {level:'amber',title:'UK — Sales',sub:'In progress · last week\'s sales were below the recent average; we\'re reviewing ad spend to match'},
+        {level:'amber',title:'UK — WIRED sales',sub:'In progress · WIRED flavours still slow; the new main image is our next fix'},
+        {level:'amber',title:'UK — Deals',sub:'In progress · Discovery Pack is eligible for Black Friday deals; submissions close 18 Nov'}
       ] },
-      adsStrategySpec: { badge:'Building keywords', subLabel:'Weekly review · 14 Oct 2026', items:[
-        {level:'amber',title:'BrainMatter',sub:'In progress · Calm\'s keyword campaign is now converting well (5 orders in the week to 12 Oct). The automatic campaigns are being monitored as sales build'},
-        {level:'amber',title:'WIRED',sub:'In progress · the automatic campaigns haven\'t produced a sale since launch on 17 Sep. As agreed, we\'re keeping them running and trialling a new main image to lift conversion; Amazon Vine is still recommended to build reviews'},
-        {level:'muted',title:'Next step',sub:'Next up · building the Cognitive keyword campaign from search terms that already convert'},
-        {level:'green',title:'WIRED campaigns live',sub:'Done 17 Sep · first advertising campaigns running'},
-        {level:'green',title:'BrainMatter manual keyword campaigns added',sub:'Done 2 Sep · targeting terms alongside the automatic campaigns'}
+      adsStrategySpec: { badge:'Launch phase', subLabel:'Weekly review · 27 Oct 2026', items:[
+        {level:'amber',title:'UK — BrainMatter Cognitive',sub:'In progress · ads brought in £192 of sales from £110 of ad spend in the 4 weeks to 13 Oct (ad spend 57% of the sales it drove, ACoS), within our launch target. The keyword campaign went live last week and is already reaching twice as many shoppers'},
+        {level:'amber',title:'UK — WIRED',sub:'In progress · ads produced 1 order from £51 of spend in the 4 weeks to 13 Oct. As agreed, the campaigns keep running while the new main image is trialled, and we\'ll judge them 2–4 weeks after it goes live. Amazon Vine is still recommended to build reviews'},
+        {level:'muted',title:'UK — BrainMatter Calm',sub:'Clearly more efficient: ad spend was 69% of the sales it drove in the 4 weeks to 13 Oct, down from 121% the 4 weeks before, with 10 orders (from 2). Spend has eased since (£59 in the week to 26 Oct)'},
+        {level:'muted',title:'UK — Account',sub:'Total sales were £906 in the 4 weeks to 13 Oct (£2,450 the 4 weeks before), so ad spend was 39% of total sales (TACoS), up from 6%. The drop is mainly lower WIRED sales without ads, which the image trial is meant to fix; BrainMatter sales driven by ads grew'},
+        {level:'green',title:'UK — BrainMatter Cognitive keyword campaign restarted',sub:'Done 22 Oct · first search terms switched back on'},
+        {level:'green',title:'UK — Brand-defence campaign launched',sub:'Done 22 Oct · protects BrainMatter and WIRED searches'}
       ] },
-      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'All in stock', subLabel:'SKU sync · UK FBA stock · 19 Oct 2026', items:[
+      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'All in stock', subLabel:'SKU sync · UK FBA stock · 26 Oct 2026', items:[
         {level:'muted',title:'All live listings in stock',sub:'No stock-up needed on current sales'}
       ] }
     },

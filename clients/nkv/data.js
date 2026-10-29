@@ -245,30 +245,31 @@ window.DASHBOARD_DATA = {
       // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
       // First baked 12 Oct 2026 (review used as approved for this run by Ryan's instruction). The sheet-era
       // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
-      // healthMgmtSpec ← "12 Oct 2026 - NKV Account Health Review" › Notes for client (🔴/⚠️ lines; ✅ lines left out;
+      // healthMgmtSpec ← "26 Oct 2026 - NKV Account Health Review" › Notes for client (🔴/⚠️ lines; ✅ lines left out;
       //                  the UK inventory note is folded into stockWarn).
-      // adsStrategySpec ← "NKV Beauty Ad Strategy" task › Notes for Client (updated 13 Oct 2026) + Ads Action Plan / Weekly log for done items.
-      // stockWarn      ← NKV_UK + NKV_US_sku-sync_2026-10-19 (MerchantSpring, 19 Sep–18 Oct 2026, FBA). Thresholds ≤14d / soon ≤30d.
+      // adsStrategySpec ← "NKV Beauty Ad Strategy" task › Notes for Client (updated 27 Oct 2026) + Weekly log (22 Oct actions) for done items.
+      // stockWarn      ← NKV_UK + NKV_US_sku-sync_2026-10-26 (MerchantSpring, 26 Sep–25 Oct 2026, FBA). Thresholds ≤14d / soon ≤30d.
       //                  The dormant Girlactik long-tail (no sale in 120+ days) is left off. Card title/sub come from config.layout.relabel.
-      healthMgmtSpec: { badge:'3 open', subLabel:'Weekly review · 12 Oct 2026', items:[
-        {level:'red',title:'US — Account Health',sub:'In progress · Seller Central access restricted by Amazon: invalid payment method. Please update the card on file.'},
-        {level:'red',title:'US — Compliance',sub:'In progress · GrowPod policy item still overdue, $500 sales at risk; appeal in progress with Amazon.'},
-        {level:'amber',title:'UK — Deals',sub:'In progress · Three products eligible for Black Friday deals; submissions close 18 Nov.'}
+      healthMgmtSpec: { badge:'3 open', subLabel:'Weekly review · 26 Oct 2026', items:[
+        {level:'red',title:'US — Compliance',sub:'In progress · Amazon plans to remove some Newnique listings on 27 Oct; we\'re reviewing the affected products'},
+        {level:'red',title:'US — Account Health',sub:'In progress · Amazon is still asking for a card update; please update the payment card in Seller Central'},
+        {level:'red',title:'US — Compliance',sub:'In progress · GrowPod listing remains removed as a restricted product; Amazon\'s review is still in progress'},
+        {level:'green',title:'US — Seller Central access restored',sub:'Done 26 Oct · account is accessible again'}
       ] },
-      adsStrategySpec: { badge:'Q4 push', subLabel:'Weekly review · 14 Oct 2026', items:[
-        {level:'amber',title:'UK — White Luxe (Q4 push)',sub:'In progress · the Whitening Kit\'s keyword campaign is live again for peak season and the Strips are converting well. Ad spend is planned at around 20% of each product\'s sales across the quarter'},
-        {level:'amber',title:'UK — Newnique hair growth range',sub:'In progress · launch advertising continues to build sales and ranking. Recommended: switch off the two campaigns that haven\'t paid back over 12 weeks (the Organic Hair Growth Serum automatic campaign and the Serum Bundle) and keep the search terms that convert. Next review in early November'},
-        {level:'muted',title:'UK — Efficiency',sub:'Ad spend was £2,402 against £4,521 of ad-driven sales in the 30 days to 12 Oct. Ad spend as a share of total sales fell to 23% (25% the month before)'},
-        {level:'muted',title:'UK — Stock',sub:'Stock-up recommended for several Lids by Design sizes, and for the Whitening Strips ahead of Black Friday'},
-        {level:'muted',title:'US',sub:'Ads remain paused while a stock issue on the GrowPod Hair Comb is resolved'},
-        {level:'green',title:'UK — Display re-targeting paused',sub:'Done 8 Oct · Mixed Re-targeting campaign'},
-        {level:'green',title:'UK — Grow Bundle campaigns paused',sub:'Done 6 Oct · Manual and Auto'}
+      adsStrategySpec: { badge:'Q4 push', subLabel:'Weekly review · 27 Oct 2026', items:[
+        {level:'amber',title:'UK — White Luxe',sub:'In progress · the Whitening Strips ads stay efficient (ad spend 34% of the sales they drove, 4 weeks to 13 Oct). The Whitening Kit\'s ads cost more than they brought in over the same period (143%), so its daily budget was reduced last week. Recommended: a tighter efficiency target on the Kit\'s search-ranking campaign ahead of Black Friday'},
+        {level:'amber',title:'UK — Newnique',sub:'In progress · the Organic Hair Growth Serum\'s ads are becoming more efficient (ad spend 154% of the sales they drove in the 4 weeks to 13 Oct, down from 234%), and more of its sales now come without ads. A three-month growth plan starts in November and will be judged on total sales, not ad returns alone'},
+        {level:'muted',title:'UK — Lids by Design',sub:'The main earner and getting more efficient: non-brand searches 42% of the sales they drove (from 49%) and brand-name searches 9% (4 weeks to 13 Oct). Stock-ups for the 4mm and assortment packs are in ahead of Black Friday'},
+        {level:'muted',title:'UK — Overall',sub:'In the 4 weeks to 13 Oct, ad spend was £2,188 against total UK sales of £11,250, so advertising cost 19% of total sales (22% in the 4 weeks before)'},
+        {level:'muted',title:'US',sub:'Ads remain paused while a stock issue on the GrowPod device is resolved'},
+        {level:'green',title:'UK — Whitening Kit ad budget reduced',sub:'Done 22 Oct · daily budget cut while the Kit\'s ads are under review'},
+        {level:'green',title:'UK — HYDRTE efficiency target tightened',sub:'Done 22 Oct · travel bottle campaign'}
       ] },
-      stockWarn: { badge:'2 stock-up · 3 OOS', subLabel:'SKU sync · per market (FBA) · 19 Oct 2026', items:[
+      stockWarn: { badge:'2 stock-up · 3 OOS', subLabel:'SKU sync · per market (FBA) · 26 Oct 2026', items:[
         {level:'red',title:'Girlactik Gel Eyeliner Pure Black — OOS UK',sub:'B099KVFGZP · since 5 Oct · please confirm a stock-up date'},
         {level:'red',title:'Lilibeth Brow Shaper Pink 2-Pack — OOS UK',sub:'B0FFDPBJP2 · since 3 Oct · please confirm a stock-up date'},
         {level:'red',title:'Lilibeth Brow Shaper Pack of 3 (Mint, Aqua, Baby Pink) — OOS UK',sub:'B0DWSNH6M3 · since 28 Aug'},
-        {level:'amber',title:'Newnique GrowPod Device — stock-up soon',sub:'B0F8QKKZMQ · UK · ~30 days cover · 2 units'},
+        {level:'amber',title:'Lilibeth Brow Shaper Aqua 2-Pack — stock-up soon',sub:'B00NNPLTBI · UK · ~28 days cover · 11 units'},
         {level:'amber',title:'Lilibeth Brow Shaper Purple 2-Pack — stock-up soon',sub:'B0FFDSR57K · UK · ~30 days cover · 6 units'}
       ] }
       // Account Health (strategy/performance alerts) card removed from the NKV Overview per client request.
