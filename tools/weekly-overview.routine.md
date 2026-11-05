@@ -11,8 +11,8 @@ When this runbook changes, edit this file (via git); the trigger prompt just poi
 
 **Runs:** Thursday 08:56 UK (`CRON_TZ=Europe/London 56 8 * * 4`), after Solei has approved each client's
 **Client Notes** task. Approval = that task's Approval status reads `Approved — Solei, <date>`. (From 5 Nov 2026
-this replaces Coogan's Done on the review as the gate; Done on the review now only lets the Tuesday draft step
-copy the notes across. See Notion: SOP — Ops — Client Notes Review.) **Publishes straight to `main` — no PR.**
+this replaces Coogan's Done on the review as the gate: the Tuesday draft step copies the latest review's notes
+whether or not it is Done. See Notion: SOP — Ops — Client Notes Review.) **Publishes straight to `main` — no PR.**
 
 **Connectors needed:** Notion (read only) and Google Drive (read only, for the SKU sync files).
 
@@ -236,6 +236,8 @@ Item shape: `{level, title, sub}`.
 
 ## 6. Change log
 
+- **05 Nov 2026 (later):** the Tuesday draft now pulls the latest Account Health Review even if still pending, so
+  Solei can edit every section before this bake; her approval is the only gate.
 - **05 Nov 2026:** health and ads cards now bake from each client's Client Notes task (Notion, under
   `<Client> — Client Communications`), approved by Solei, instead of directly from the Done Account Health
   Review and the Ad Strategy task. Done on the review now only gates the Tuesday draft step. Stock card
