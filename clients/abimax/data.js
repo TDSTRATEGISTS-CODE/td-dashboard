@@ -240,21 +240,21 @@ window.DASHBOARD_DATA = {
       // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
       // First baked 12 Oct 2026 (review used as approved for this run by Ryan's instruction). The sheet-era
       // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
-      // healthMgmtSpec ← "Abimax — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026;
-      //                  based on the 02 Nov 2026 Account Health Review). No Done lines this week.
-      // adsStrategySpec ← same task › Advertising (approved 5 Nov 2026; Abimax US Ad Strategy notes of 4 Nov).
-      //                  Dropped by the 7-item limit: the generic "Next up" line.
+      // healthMgmtSpec ← "Abimax — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026; based on the 02 Nov 2026 Account Health Review);
+      //                  includes the ✅ Healthy line for US (SOP rule). No Done lines this week.
+      // adsStrategySpec ← same task › Advertising (fixed format: Overall, Best seller, Conversion, Flags, Budget + 2 Done).
       // stockWarn      ← Abimax_US_sku-sync_2026-11-02 (MerchantSpring, 3 Oct–1 Nov 2026, FBA). Thresholds ≤45d / soon ≤120d.
       //                  Magno-PRO-002 (0 stock since 19 Feb, no sales) and the Bundle (no sale since 20 Sep) left off.
       healthMgmtSpec: { badge:'1 open', subLabel:'Weekly review · 2 Nov 2026', items:[
-        {level:'amber',title:'US — Deals',sub:'In progress · Amazon\'s Black Friday deal submissions close on 13 Nov'}
+        {level:'amber',title:'US — Deals',sub:'In progress · Amazon\'s Black Friday deal submissions close on 13 Nov'},
+        {level:'green',title:'US — Account Health',sub:'Healthy · all metrics within Amazon\'s targets'}
       ] },
-      adsStrategySpec: { badge:'Budget shift', subLabel:'Weekly review · 4 Nov 2026', items:[
-        {level:'amber',title:'US — Magnostream Pro',sub:'In progress · ads paused for now, as they cost more than the sales they brought in (Oct)'},
-        {level:'muted',title:'US — Magnostream',sub:'Automatic campaign at 37% (target 35%), keyword campaign at 28% (target 40%)'},
-        {level:'muted',title:'US — Overall',sub:'Sales $5,307 in the 4 weeks to 21 Oct, up 31%. TACoS 25.5% against our 25% target'},
-        {level:'muted',title:'US — Stock',sub:'Pro has 13 units plus 10 inbound (about 70 days of cover, 4 Nov)'},
-        {level:'muted',title:'US — Black Friday & Cyber Monday',sub:'Deals approved and submitted'},
+      adsStrategySpec: { badge:'TACoS on goal', subLabel:'Weekly review · 4 Nov 2026', items:[
+        {level:'amber',title:'US — Flags',sub:'In progress · Magnostream Pro ads are paused as they cost more than the sales they brought in (Oct); reviewed weekly'},
+        {level:'muted',title:'US — Overall',sub:'TACoS 25.5% (4 weeks to 21 Oct) against a 25% goal; sales $5,307, up 31%'},
+        {level:'muted',title:'US — Best seller',sub:'Magnostream Pro, $2,227 from 8 units (3 Oct–1 Nov, incl. tax)'},
+        {level:'muted',title:'US — Conversion',sub:'2.6% US session conversion (October 2026, 1,626 sessions)'},
+        {level:'muted',title:'US — Budget',sub:'November budget $1,600; $49 spent 1–3 Nov'},
         {level:'green',title:'US — MAGNO-PRO ads paused',sub:'Done 29 Oct'},
         {level:'green',title:'US — Magnostream keyword campaign widened',sub:'Done 22 Oct'}
       ] },

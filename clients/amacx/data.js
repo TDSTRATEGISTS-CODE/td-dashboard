@@ -291,10 +291,9 @@ window.DASHBOARD_DATA = {
       buyBoxLosses: [{ name:'Turbo Energy Gel – Citrus', asin:'B0C9MZVSZW', ean:'8714411000536', market:'de', reason:'Losing to Others', rc:'ba', your:'€42.95', winner:'€39.99', gap:'+€2.96' },{ name:'Cherry Juice+ 12x500ml', asin:'B0GZW1BJ1C', ean:'8714411088275', market:'de', reason:'Losing to Others', rc:'ba', your:'€69.95', winner:'€68.99', gap:'+€0.96' },{ name:'Energy Gel – Citrus', asin:'B0CRFD8L2X', ean:'8714411000208', market:'de', reason:'Losing to Others', rc:'ba', your:'€29.95', winner:'€28.99', gap:'+€0.96' },{ name:'Turbo Energy Gel – Blackcurrant/Caffeine', asin:'B0C9R21RSR', ean:'8714411000529', market:'de', reason:'Losing to Others', rc:'ba', your:'€42.95', winner:'€41.99', gap:'+€0.96' },{ name:'Energy Gel – Strawberry', asin:'B0CRFV72G4', ean:'8714411000246', market:'de', reason:'Losing to Others', rc:'ba', your:'€29.95', winner:'€29.94', gap:'+€0.01' },{ name:'Energy Gel – Raspberry', asin:'B0CRFW8KR7', ean:'8714411000239', market:'de', reason:'Losing to Others', rc:'ba', your:'€29.95', winner:'€29.95', gap:'+€0.00' },{ name:'Energy Gel – Orange', asin:'B0CRFCLQJ1', ean:'8714411000222', market:'de', reason:'Losing to Others', rc:'ba', your:'€29.95', winner:'€29.95', gap:'+€0.00' },{ name:'Turbo Drink Powder 850g – Watermelon', asin:'B0GSWHPXQV', ean:'8714411001908', market:'de', reason:'Losing to Others', rc:'ba', your:'€34.95', winner:'€34.95', gap:'+€0.00' },{ name:'Turbo Energy Gel – Cola Lime', asin:'B0D2Y3PZTR', ean:'8714411002288', market:'de', reason:'Losing to Others', rc:'ba', your:'€42.95', winner:'€42.95', gap:'+€0.00' },{ name:'Energy Ice Gel 12x77ml – Lemon-Lime', asin:'B0F332LV9B', ean:'8714411002912', market:'fr', reason:'No Winner', rc:'ba', your:'€59.95', winner:'n/a', gap:'' },{ name:'Turbo Ice Gel 12x77ml – Cola Lime', asin:'B0F331SKR5', ean:'8714411002929', market:'fr', reason:'No Winner', rc:'ba', your:'€79.95', winner:'n/a', gap:'' },{ name:'Energy Ice Gel 12x77ml – Lemon-Lime', asin:'B0F332LV9B', ean:'8714411002912', market:'es', reason:'No Winner', rc:'ba', your:'€59.95', winner:'n/a', gap:'' },{ name:'Turbo Ice Gel 12x77ml – Cola Lime', asin:'B0F331SKR5', ean:'8714411002929', market:'es', reason:'No Winner', rc:'ba', your:'€79.95', winner:'n/a', gap:'' },{ name:'Recovery Whey Protein 880g – Chocolate', asin:'B0F38H49R3', ean:'8714411000185', market:'it', reason:'No Winner', rc:'ba', your:'€49.95', winner:'n/a', gap:'' },{ name:'Turbo Ice Gel 12x77ml – Cola Lime', asin:'B0F331SKR5', ean:'8714411002929', market:'it', reason:'No Winner', rc:'ba', your:'€79.95', winner:'n/a', gap:'' }],
       cvr: { val:'4.5%', note:'recent month · 2,472 sessions', sub:'All EU · session conversion' },
       // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
-      // healthMgmtSpec ← "AMACX — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026;
-      //                  based on the 02 Nov 2026 Account Health Review). Dropped by the 7-item limit: the "Next up" Black Friday line.
-      // adsStrategySpec ← same task › Advertising (approved 5 Nov 2026; AMACX Ad Strategy notes of 4 Nov).
-      //                  Dropped by the 7-item limit: the generic "Next up" line.
+      // healthMgmtSpec ← "AMACX — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026; based on the 02 Nov 2026 Account Health Review).
+      // adsStrategySpec ← same task › Advertising (fixed format: Overall, Best seller, Conversion, Flags, Budget + 2 Done).
+      //                  No AMACX deal content (AMACX does not run deals).
       // stockWarn      ← AMACX_EU_sku-sync_2026-11-02 (pooled EU FBM stock, MerchantSpring 3 Oct–1 Nov 2026) + SKU List.
       //                  One pooled stock → every OOS SKU is OOS in all markets.
       //                  Discontinued / superseded SKUs (Hydro Tabs 3×20, Beet Shot, Energy Drink Grape,
@@ -309,12 +308,12 @@ window.DASHBOARD_DATA = {
         {level:'green',title:'Italy — tracking rate back to target',sub:'Done 2 Nov'},
         {level:'green',title:'Germany — ad efficiency back in range',sub:'Done 2 Nov'}
       ] },
-      adsStrategySpec: { badge:'Cherry Juice+ review', subLabel:'Weekly review · 4 Nov 2026', items:[
-        {level:'amber',title:'France — Energy Gels',sub:'In progress · non-brand ads cost more than the sales they drove; spend is now about €2 a week'},
-        {level:'amber',title:'Spain, Italy, France — Cherry Juice+',sub:'In progress · Spain and Italy are within target (31% and 25%); France has no orders yet, on a small budget'},
-        {level:'amber',title:'Germany — Cherry Juice+',sub:'In progress · campaign stopped showing on 24 Oct; under review'},
-        {level:'muted',title:'All markets — Results',sub:'Ad spend as a share of total sales (TACoS), 4 weeks to 21 Oct: Germany 7.6%, Italy 15.6%, Spain 10.5%, all under our 20% goal. France 24.2%'},
-        {level:'muted',title:'All markets — Brand defence',sub:'Still our most efficient ads (23–37% of the sales they drive)'},
+      adsStrategySpec: { badge:'TACoS on goal', subLabel:'Weekly review · 4 Nov 2026', items:[
+        {level:'amber',title:'All markets — Flags',sub:'In progress · Germany Cherry Juice+ stopped showing on 24 Oct (under review); France Energy Gel ads now about €2 a week'},
+        {level:'muted',title:'All markets — Overall',sub:'TACoS, 4 weeks to 21 Oct: Germany 7.6%, Italy 15.6%, Spain 10.5%, France 24.2%. Goal 20%'},
+        {level:'muted',title:'All markets — Best seller',sub:'Cherry Juice+ 12×500ml, €630 from 9 units (3 Oct–1 Nov, incl. VAT)'},
+        {level:'muted',title:'All markets — Conversion',sub:'4.5% across the EU (latest month, 2,472 sessions)'},
+        {level:'muted',title:'All markets — Budget',sub:'November budget €1,450 across four markets (DE €850, FR €200, IT €250, ES €150); €53 spent 1–3 Nov'},
         {level:'green',title:'France — Energy Gel target tightened',sub:'Done 29 Oct · final step'},
         {level:'green',title:'Spain — Cherry Juice+ variant campaign paused',sub:'Done 22 Oct'}
       ] },
