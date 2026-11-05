@@ -228,33 +228,33 @@ window.DASHBOARD_DATA = {
       ],
       cvr: { val:'5.6%', note:'recent month · 3,991 sessions', sub:'All EU · session conversion' },
       // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
-      // healthMgmtSpec ← "26 Oct 2026 - AMACX Account Health Review" (latest sub-task of AMACX Account Health, Done):
-      //                  its "Notes for client" lines as written (max 5 open; inventory notes go to stockWarn),
-      //                  plus the 2 most recent "Resolved" items as Done. Dropped by the 5-item limit: DE Buy Box 58%.
-      // adsStrategySpec ← "AMACX Ad Strategy" task › Notes for Client (updated 27 Oct 2026) + Weekly log (22 Oct actions) for
-      //                  done items. Dropped by the 7-item limit: Germany and Spain results (muted).
-      // stockWarn      ← AMACX_EU_sku-sync_2026-10-26 (pooled EU FBM stock, MerchantSpring 26 Sep–25 Oct 2026) + SKU List.
+      // healthMgmtSpec ← "02 Nov 2026 - AMACX Account Health Review" (latest sub-task of AMACX Account Health, Done):
+      //                  its "Notes for client" lines as written (max 5 open; the inventory note goes to stockWarn),
+      //                  plus the 2 most recent "Resolved" items as Done.
+      // adsStrategySpec ← "AMACX Ad Strategy" task › Notes for Client (updated 4 Nov 2026) + Weekly log (29 Oct and 22 Oct actions) for
+      //                  done items.
+      // stockWarn      ← AMACX_EU_sku-sync_2026-11-02 (pooled EU FBM stock, MerchantSpring 3 Oct–1 Nov 2026) + SKU List.
       //                  One pooled stock → every OOS SKU is OOS in all markets.
       //                  Discontinued / superseded SKUs (Hydro Tabs 3×20, Beet Shot, Energy Drink Grape,
-      //                  Cherry Juice Booster 6×500) are left off.
+      //                  Cherry Juice Booster 6×500, Fast Bar Lemon — now De-Listed in the SKU List) are left off.
       // Item levels: red/amber = open issue · green = done · muted = next up. Client-facing wording only.
-      healthMgmtSpec: { badge:'5 open', subLabel:'Weekly review · 26 Oct 2026', items:[
+      healthMgmtSpec: { badge:'5 open', subLabel:'Weekly review · 2 Nov 2026', items:[
         {level:'red',title:'All markets — Compliance',sub:'In progress · Amazon needs more VAT information by mid-November to avoid deactivation; please send it'},
         {level:'red',title:'Spain — Compliance',sub:'In progress · Spanish packaging EPR registration is overdue; please send your EPR number'},
-        {level:'red',title:'Italy — Account Health',sub:'In progress · order defects 2.3% and late dispatch 6.7%; we\'re tightening dispatch and tracking'},
-        {level:'amber',title:'France — Account Health',sub:'In progress · order defect rate 1.1% from one September rating; it drops off mid-November'},
-        {level:'amber',title:'All markets — Compliance',sub:'In progress · Hydro Tabs remain blocked in France, Spain and Italy pending safety documents'},
-        {level:'green',title:'France — on-time delivery back to target',sub:'Done 26 Oct · 100%'},
-        {level:'green',title:'Spain — late dispatch back to target',sub:'Done 26 Oct · 0%'}
+        {level:'red',title:'Italy — Account Health',sub:'In progress · one A-to-z claim and one late dispatch put Italy at risk; we\'re tightening dispatch'},
+        {level:'red',title:'All markets — Compliance',sub:'In progress · Amazon sent listing-removal notices for Spain and Italy; we\'re reviewing which products'},
+        {level:'amber',title:'Germany — Buy Box',sub:'In progress · Buy Box share fell to 41%; we\'re looking into the competing offer'},
+        {level:'green',title:'Italy — valid tracking rate back to target',sub:'Done 2 Nov · 96.88%'},
+        {level:'green',title:'Germany — advertising efficiency back in range',sub:'Done 2 Nov · ad spend 33% of the sales it drove, from 141%'}
       ] },
-      adsStrategySpec: { badge:'Non-brand clean-up', subLabel:'Weekly review · 27 Oct 2026', items:[
-        {level:'amber',title:'France — Energy Gels',sub:'In progress · the non-brand gel campaigns cost more than the sales they drove in the 4 weeks to 13 Oct (130%). We tightened their efficiency target on 22 Oct and spend on them has since dropped to almost nothing; a second step is planned'},
-        {level:'amber',title:'Italy and Germany — Non-brand campaigns',sub:'In progress · recommended: pause the non-brand Energy Drinks and Energy Gels campaigns in Italy and the non-brand Fruit Chews campaign in Germany, which haven\'t paid back over the 12 weeks to 13 Oct, and keep the brand campaigns that do'},
-        {level:'amber',title:'Spain and Italy — Brand defence',sub:'In progress · recommended: stop brand-defence ads appearing on our own Cherry Juice+ page, where they haven\'t produced an order (12 weeks to 13 Oct); Cherry Juice+ keeps its own campaigns'},
-        {level:'amber',title:'France, Spain and Italy — Cherry Juice+',sub:'In progress · the dedicated campaigns are building visibility; first results will be judged in early November'},
-        {level:'muted',title:'France — Brand defence',sub:'Still the most efficient spend in the account: ad spend was 17% of the sales it drove in the 4 weeks to 13 Oct'},
-        {level:'green',title:'France — Energy Gel efficiency target tightened',sub:'Done 22 Oct · first step'},
-        {level:'green',title:'Spain — Brand defence paused on Cherry Juice+ page',sub:'Done 22 Oct · Cherry Juice+ keeps its own campaigns'}
+      adsStrategySpec: { badge:'Cherry Juice+ review', subLabel:'Weekly review · 4 Nov 2026', items:[
+        {level:'amber',title:'France — Energy Gels',sub:'In progress · the non-brand gel ads cost more than the sales they drove in the 4 weeks to 21 Oct; after we tightened them in October they now spend about €2 a week while we rebuild them'},
+        {level:'amber',title:'Spain, Italy and France — Cherry Juice+',sub:'In progress · after four weeks, Spain and Italy are running within target (ad spend 31% and 25% of ad sales, 4 weeks to 21 Oct); France has no ad orders yet and stays on a small budget. Recommended: stop brand-defence ads showing on our own Cherry Juice+ page in Spain and Italy, where they haven\'t produced an order'},
+        {level:'amber',title:'Germany — Cherry Juice+',sub:'In progress · the German campaign stopped showing on 24 Oct; we are checking why and will restart it'},
+        {level:'muted',title:'All markets — Results',sub:'Ad spend as a share of total sales (TACoS) in the 4 weeks to 21 Oct was 7.6% in Germany, 15.6% in Italy and 10.5% in Spain, all inside our 20% goal; France was 24.2%, mainly because total French sales were lower in October'},
+        {level:'muted',title:'All markets — Brand defence',sub:'The ads that protect our own product pages remain the most efficient spend: ad spend was 23–37% of the sales they drove in the 4 weeks to 21 Oct (Germany 17.5%)'},
+        {level:'green',title:'France — Energy Gel efficiency target tightened',sub:'Done 29 Oct · second and final step'},
+        {level:'green',title:'Spain — Cherry Juice+ variant campaign paused',sub:'Done 22 Oct · Cherry Juice+ keeps its main campaigns'}
       ] },
       // stockWarn.shipping ← MerchantSpring, Jul–Sep 2026, per market: shipping charged to customers (channelProfitAndLoss
       // accrual otherIncome, tax incl., Europe/Berlin) ÷ orders from getSalesByPeriod (lineItemCount = the dashboard's
@@ -267,10 +267,10 @@ window.DASHBOARD_DATA = {
       stockWarn: { shipping: { label:'Avg shipping per order', note:'Jul–Sep 2026 baseline · charged to customer', target:6.95,
           targetTxt:'Target €6.95 per order in every market · being raised gradually to protect the Buy Box', items:[
           {flag:'de',label:'DE',val:'€5.95',num:5.95}, {flag:'fr',label:'FR',val:'€4.13',num:4.13}, {flag:'es',label:'ES',val:'€3.70',num:3.70}, {flag:'it',label:'IT',val:'€3.41',num:3.41} ] },
-        title:'&#128230; Logistics &amp; Operations', badge:'3 OOS SKUs', subLabel:'SKU sync · pooled EU stock · 26 Oct 2026', items:[
+        title:'&#128230; Logistics &amp; Operations', badge:'3 OOS SKUs', subLabel:'SKU sync · pooled EU stock · 2 Nov 2026', items:[
+        {level:'red',title:'Energy Gel Raspberry — OOS all markets',sub:'B0CRFW8KR7 · since 29 Oct · stock-up now · please confirm a stock-up date'},
         {level:'red',title:'Energy Drink Powder 320g Lemon — OOS all markets',sub:'B0GZ43HK1F · since 29 Jul'},
-        {level:'red',title:'Energy Drink Powder 320g Forest Fruit — OOS all markets',sub:'B0GZ469Z98 · since 17 Jul'},
-        {level:'red',title:'Fast Bar Lemon — OOS all markets',sub:'B086XB1N46 · since 14 May'}
+        {level:'red',title:'Energy Drink Powder 320g Forest Fruit — OOS all markets',sub:'B0GZ469Z98 · since 17 Jul'}
       ] }
     },
     pnl: {
