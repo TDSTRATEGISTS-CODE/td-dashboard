@@ -239,27 +239,25 @@ campaigns: [
       // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
       // First baked 12 Oct 2026 (review used as approved for this run by Ryan's instruction). The sheet-era
       // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
-      // healthMgmtSpec ← "02 Nov 2026 - NKV Account Health Review" › Notes for client (🔴/⚠️ lines; ✅ lines left out;
-      //                  the UK inventory note is folded into stockWarn). Done lines: US sales back in line (2 Nov review, Resolved)
-      //                  and Seller Central access restored (26 Oct review).
-      // adsStrategySpec ← "NKV — Amazon PPC Strategy" task › Notes for Client (updated 4 Nov 2026) + Weekly log (31 Oct and 22 Oct actions) for done items.
-      //                  Note wording changed to the house term "stock-up".
+      // healthMgmtSpec ← "NKV — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026;
+      //                  based on the 02 Nov 2026 Account Health Review). The US payment-card line was left off by Solei.
+      // adsStrategySpec ← same task › Advertising (approved 5 Nov 2026; NKV PPC Strategy notes of 4 Nov).
+      //                  Dropped by the 7-item limit: the generic "Next up" line.
       // stockWarn      ← NKV_UK + NKV_US_sku-sync_2026-11-02 (MerchantSpring, 3 Oct–1 Nov 2026, FBA). Thresholds ≤14d / soon ≤30d.
       //                  The dormant Girlactik long-tail (no sale in 120+ days) is left off. Card title/sub come from config.layout.relabel.
-      healthMgmtSpec: { badge:'2 open', subLabel:'Weekly review · 2 Nov 2026', items:[
-        {level:'red',title:'US — Compliance',sub:'In progress · GrowPod listing remains removed; Amazon\'s review is still in progress'},
-        {level:'amber',title:'US — Account Health',sub:'In progress · please confirm the payment card in Seller Central has been updated'},
-        {level:'green',title:'US — sales back in line',sub:'Done 2 Nov · $28 against a $28 four-week average'},
-        {level:'green',title:'US — Seller Central access restored',sub:'Done 26 Oct · account is accessible again'}
+      healthMgmtSpec: { badge:'1 open', subLabel:'Weekly review · 2 Nov 2026', items:[
+        {level:'red',title:'US — GrowPod',sub:'In progress · listing still removed; 40 units Stranded in FBA'},
+        {level:'green',title:'US — sales back in line',sub:'Done 2 Nov'},
+        {level:'green',title:'US — Seller Central access restored',sub:'Done 26 Oct'}
       ] },
       adsStrategySpec: { badge:'Q4 push', subLabel:'Weekly review · 4 Nov 2026', items:[
-        {level:'amber',title:'UK — White Luxe',sub:'In progress · the Whitening Strips ads stay efficient (37% ACoS, 4 weeks to 21 Oct). The Whitening Kit\'s ads still cost too much for each sale (95%). The Kit\'s new £42.95 price is being given two weeks of data before we change its ads (review 17 Nov). Kit ads showed far less in the last week of October; we recommend resetting their bids so the Kit stays visible into Black Friday'},
-        {level:'amber',title:'UK — Newnique',sub:'In progress · the November–January growth plan is under way and is judged on total sales, not ad returns alone. The Organic serum\'s ads still cost more than the sales they drove in the 4 weeks to 21 Oct (145%), improving to 90% in 28 Oct–3 Nov (early figures). We recommend tighter efficiency targets on the serums for November. The GrowPod Device is down to its last unit and the Scalp Exfoliator to 16 units (4 Nov): we recommend a stock-up of both and holding their ads back until stock lands'},
-        {level:'amber',title:'US',sub:'In progress · small, capped test campaigns restarted on the serums and the scalp exfoliant at the end of October. Spend is still small ($16 in 28 Oct–3 Nov) and the exfoliant ads have barely started showing, so we recommend raising their starting bids. First results are due mid-November'},
-        {level:'muted',title:'UK — Overall',sub:'In the 4 weeks to 21 Oct, Sponsored Products ad spend was £1,843 against total UK sales of £10,801, so advertising cost 17% of total sales (TACoS; 21% in the 4 weeks before), inside the 20% target. Ad spend as a share of the sales the ads drove (ACoS) improved to 47% from 56%'},
-        {level:'muted',title:'UK — Lids by Design',sub:'Still the main earner. Brand-name searches stay very efficient (ad spend 9% of the sales they drove) and non-brand ads ran at 45% against a 40% target (4 weeks to 21 Oct). Stock is healthy ahead of Black Friday (Assortment Pack 145 units, 4mm 94 units, 4 Nov)'},
-        {level:'green',title:'US — test campaigns restarted',sub:'Done 31 Oct · serums and scalp exfoliant, small capped budget'},
-        {level:'green',title:'UK — Whitening Kit ad budget reduced',sub:'Done 22 Oct · daily budget cut while the Kit\'s ads are under review'}
+        {level:'amber',title:'UK — White Luxe',sub:'In progress · Strips ads efficient (37%). Kit ads cost more than the sales they drove (95%); its new £42.95 price is being given two weeks of data'},
+        {level:'amber',title:'UK — Newnique',sub:'In progress · Nov–Jan growth plan under way, judged on total sales. Organic serum ads at 145%, improving to 90% early this week. GrowPod and Scalp Exfoliator stock is low (4 Nov)'},
+        {level:'muted',title:'UK — Overall',sub:'TACoS 17% in the 4 weeks to 21 Oct, inside our 20% target'},
+        {level:'muted',title:'UK — Lids by Design',sub:'Main earner. Brand ads 9%, non-brand 45% against a 40% target. Stock healthy for Black Friday'},
+        {level:'muted',title:'US',sub:'Small test campaigns restarted, $16 spend so far'},
+        {level:'green',title:'US — test campaigns restarted',sub:'Done 31 Oct'},
+        {level:'green',title:'UK — Whitening Kit ad budget reduced',sub:'Done 22 Oct'}
       ] },
       stockWarn: { badge:'2 stock-up · 2 OOS', subLabel:'SKU sync · per market (FBA) · 2 Nov 2026', items:[
         {level:'red',title:'Girlactik Gel Eyeliner Pure Black — OOS UK',sub:'B099KVFGZP · since 5 Oct'},
