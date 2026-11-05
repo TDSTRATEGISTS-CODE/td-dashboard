@@ -254,19 +254,19 @@ window.DASHBOARD_DATA = {
       // First baked 12 Oct 2026 (review used as approved for this run by Ryan's instruction). The sheet-era
       // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
       // healthMgmtSpec ← "Balance 8 — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026;
-      //                  based on the 02 Nov 2026 Account Health Review). No Done lines this week.
-      // adsStrategySpec ← same task › Advertising (approved 5 Nov 2026; Balance8 PPC Strategy notes of 4 Nov).
-      //                  Calm and Account lines as edited by Solei; periods for those two lines still to confirm (Ryan).
+      //                  based on the 02 Nov 2026 Account Health Review); includes the ✅ Healthy line for UK (SOP rule).
+      // adsStrategySpec ← same task › Advertising (fixed format: Overall, Best seller, Conversion, Flags, Budget + 2 Done).
       // stockWarn      ← Balance8_UK_sku-sync_2026-11-02 (MerchantSpring, 3 Oct–1 Nov 2026, FBA). Thresholds ≤21d / soon ≤45d: none hit.
       healthMgmtSpec: { badge:'1 open', subLabel:'Weekly review · 2 Nov 2026', items:[
-        {level:'amber',title:'UK — Sales',sub:'In progress · BrainMatter is carrying the range'}
+        {level:'amber',title:'UK — Sales',sub:'In progress · BrainMatter is carrying the range'},
+        {level:'green',title:'UK — Account Health',sub:'Healthy · all metrics within Amazon\'s targets'}
       ] },
-      adsStrategySpec: { badge:'WIRED push', subLabel:'Weekly review · 4 Nov 2026', items:[
-        {level:'amber',title:'UK — BrainMatter Calm',sub:'In progress · ad spend is above sales from ads this period (ACoS 116%)'},
-        {level:'amber',title:'UK — WIRED',sub:'In progress · focused push on Creatine, Discovery Pack and Berry Fusion runs to 20 Nov; few shoppers reached and no orders yet'},
-        {level:'muted',title:'UK — BrainMatter Cognitive',sub:'£275 sales from £153 ad spend (4 weeks to 21 Oct)'},
-        {level:'muted',title:'UK — Account',sub:'Ad spend is 55% of total sales, against our 30% limit for the launch period. Most of the gap is WIRED ad spend that hasn\'t turned into orders yet'},
-        {level:'muted',title:'UK — WIRED push and new main image',sub:'Next up · 20 Nov · reviewed together'},
+      adsStrategySpec: { badge:'Launch phase', subLabel:'Weekly review · 4 Nov 2026', items:[
+        {level:'amber',title:'UK — Flags',sub:'In progress · WIRED push runs to 20 Nov: few shoppers reached, no orders yet. BrainMatter Calm ad spend is above sales from ads (4 weeks to 21 Oct)'},
+        {level:'muted',title:'UK — Overall',sub:'TACoS 55% (4 weeks to 21 Oct) against a 30% launch ceiling (to 31 Jan)'},
+        {level:'muted',title:'UK — Best seller',sub:'BrainMatter Calm, £491 from 15 units (3 Oct–1 Nov, incl. VAT)'},
+        {level:'muted',title:'UK — Conversion',sub:'5.0% UK session conversion (October 2026, 680 sessions)'},
+        {level:'muted',title:'UK — Budget',sub:'November budget £700; £62 spent 1–3 Nov'},
         {level:'green',title:'UK — WIRED bids raised on high-intent searches',sub:'Done 29 Oct'},
         {level:'green',title:'UK — WIRED ads focused on three products',sub:'Done 29 Oct'}
       ] },
