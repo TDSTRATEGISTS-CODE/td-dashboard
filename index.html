@@ -224,7 +224,7 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
      cached page (GitHub Pages caps index.html at a 10-min browser cache) by reloading once with a
      cache-bust param; and if it changes mid-session it shows the "please refresh" overlay. One bump,
      all jobs. */
-  var APP_VER = '2026-11-05j';
+  var APP_VER = '2026-11-05k';
   /* Loads the ?client= folder's config.js + data.js synchronously, before app.js. */
   (function(){
     var c = (new URLSearchParams(location.search).get('client') || 'amacx').replace(/[^a-z0-9_-]/gi,'');
@@ -399,6 +399,21 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
 
     <div class="fade nld-ph" id="sec-ov-nld" style="display:none;">       <div class="card" style="padding:56px 24px;text-align:center;">         <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>         <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>         <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>       </div>     </div>
 
+    <!-- Account Health: hidden unless a client supplies sections.overview.healthSpec -->
+    <div class="fade" id="sec-health-wrap" style="display:none;">
+      <div class="sec-lbl">Account Health</div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-ttl">&#128153; Account Health</div><div class="card-sub" id="sec-health-sub">Strategy &amp; performance alerts</div></div><span id="sec-health-badge" style="font-size:10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span></div>
+        <div id="sec-health" style="display:flex;flex-direction:column;gap:0;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: PERFORMANCE ========== -->
+  <!-- Headline KPIs, revenue trend, targets, Buy Box. Split out of the Overview (now strategy only). -->
+  <div class="page-content" id="page-performance">
+    <div class="fade nld-ph" id="sec-perf-nld" style="display:none;">       <div class="card" style="padding:56px 24px;text-align:center;">         <div style="font-size:30px;margin-bottom:12px;">&#128274;</div>         <div class="card-ttl" style="font-size:16px;margin-bottom:6px;">Netherlands</div>         <div style="font-size:13px;color:var(--muted);">Pending Koongo Integration with Shopify</div>       </div>     </div>
+
     <div>
       <div class="sec-lbl" id="sec-toplevel">Top-Level &mdash; <span id="sec-period-1">May 2026</span></div>
       <div class="g6">
@@ -491,14 +506,6 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
       <div class="nld-card">
         <div class="nld-icon"><img src="https://flagcdn.com/16x12/nl.png" width="16" height="12" style="vertical-align:middle;" alt="NL"></div>
         <div><div class="nld-ttl">Early Launch &mdash; May 2026</div><div class="nld-body">NLD live with 3 ASINs. &#8364;1.2k revenue in first 6 weeks &mdash; early traction positive. Organic ranking building; ad seeding underway. Buy Box secured on all active listings. Full reporting from Month 3.</div></div>
-      </div>
-    </div>
-    <!-- Account Health: hidden unless a client supplies sections.overview.healthSpec -->
-    <div class="fade" id="sec-health-wrap" style="display:none;">
-      <div class="sec-lbl">Account Health</div>
-      <div class="card">
-        <div class="card-hdr"><div><div class="card-ttl">&#128153; Account Health</div><div class="card-sub" id="sec-health-sub">Strategy &amp; performance alerts</div></div><span id="sec-health-badge" style="font-size:10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-weight:500;">&mdash;</span></div>
-        <div id="sec-health" style="display:flex;flex-direction:column;gap:0;"></div>
       </div>
     </div>
   </div>
@@ -1052,6 +1059,11 @@ select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--b
         <div id="f-ov-milestones"></div>
       </div>
     </div>
+  </div>
+
+  <!-- ========== PAGE: FOUNDER PERFORMANCE ========== -->
+  <!-- Amazon KPIs, revenue trend, Buy Box + CVR. Split out of the Founder Overview (now strategy only). -->
+  <div class="page-content" id="page-founder-performance">
     <div>
       <div class="sec-lbl">Amazon Performance &mdash; <span class="dr-period">May 2026</span></div>
       <div class="g4" id="f-ov-akpis"></div>

@@ -37,7 +37,7 @@ window.DASHBOARD_CONFIG = {
   // performance) just before the locked Amazon P&L. Declaring `pages` here (rather than adding
   // 'shopify' to the shared template) keeps the Shopify page NKV-only — it stays hidden for every
   // other client until they opt in the same way. 'keywords' + 'pnl' are still removed via hiddenPages.
-  pages: ['overview', 'pnl', 'advertising', 'inventory', 'products', 'keywords', 'shopify', 'shopifypnl', 'amazonpnl'],
+  pages: ['overview', 'performance', 'pnl', 'advertising', 'inventory', 'products', 'keywords', 'shopify', 'shopifypnl', 'amazonpnl'],
 
   // Pages to hide for this client (nav item + tab + page).
   // 'keywords' dropped — MerchantSpring's MCP exposes no keyword-level data (matches AMACX).

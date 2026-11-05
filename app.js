@@ -20,7 +20,8 @@ var dateRanges = DATA.dateRanges || {};
 // (used by Founder clients to expose not-yet-built Amazon pages). New pages added here become
 // available to ANY client/template — that's how founder pages can later be offered to others.
 var PAGE_REGISTRY = {
-  'overview':         { label: 'Overview',              icon: '&#9635;' },
+  'overview':         { label: 'Overview',              icon: '&#9635;' },   // strategy only (Notion/sheet cards)
+  'performance':      { label: 'Performance',           icon: '&#128200;' }, // KPIs, revenue trend, targets, Buy Box
   'pnl':              { label: 'P&amp;L &amp; Expenses', icon: '&#8364;', currency: true },
   'advertising':      { label: 'Advertising',           icon: '&#9670;' },
   'inventory':        { label: 'Inventory',             icon: '&#9723;' },
@@ -30,18 +31,19 @@ var PAGE_REGISTRY = {
   'shopify':          { label: 'Shopify',               icon: '&#128722;' },
   'shopifypnl':       { label: 'Shopify P&amp;L',       icon: '&#163;' },
   'founder-overview': { label: 'Overview',              icon: '&#9635;' },
+  'founder-performance': { label: 'Performance',        icon: '&#128200;' },
   'founder-pnl':      { label: 'P&amp;L Detail',        icon: '&#8364;', currency: true },
   'founder-stock':    { label: 'Stock &amp; COGS',      icon: '&#128230;' },
   'founder-loan':     { label: "Director's Loan",       icon: '&#127974;' }
 };
 var TEMPLATES = {
   // Amazon analytics clients (amacx, demo) — the original page set. Default when no template set.
-  amazon: { pages: ['overview', 'pnl', 'advertising', 'inventory', 'products', 'keywords', 'amazonpnl'] },
+  amazon: { pages: ['overview', 'performance', 'pnl', 'advertising', 'inventory', 'products', 'keywords', 'amazonpnl'] },
   // Founder clients (harvaza) — founder-native pages first, then every Amazon page as a
   // maintenance stub until a founder version is built (drop a key from `maintenance` to go live).
   founder: {
     // 'pnl' (the real P&L renderer) sits at position 2, relabelled "Amazon P&L" via CONFIG.pageLabels.
-    pages: ['founder-overview', 'pnl', 'founder-pnl', 'founder-stock', 'founder-loan',
+    pages: ['founder-overview', 'founder-performance', 'pnl', 'founder-pnl', 'founder-stock', 'founder-loan',
             'advertising', 'inventory', 'products', 'keywords'],
     maintenance: []
   }
@@ -455,7 +457,7 @@ window.switchDateRange = function (val) {
 // #sec-prod-nld toggle. Client-agnostic: a no-op for clients with no 'nld' market.
 function applyNldPages() {
   var isNld = currentMarket === 'nld';
-  ['page-overview', 'page-advertising', 'page-inventory'].forEach(function (id) {
+  ['page-overview', 'page-performance', 'page-advertising', 'page-inventory'].forEach(function (id) {
     var p = el(id); if (p) p.classList.toggle('nld-active', isNld);
   });
 }
