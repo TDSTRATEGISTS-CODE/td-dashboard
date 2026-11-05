@@ -244,30 +244,30 @@ window.DASHBOARD_DATA = {
       // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
       // First baked 12 Oct 2026 (review used as approved for this run by Ryan's instruction). The sheet-era
       // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
-      // healthMgmtSpec ← "26 Oct 2026 - Abimax Account Health Review" › Notes for client (⚠️ lines; ✅ lines left out;
+      // healthMgmtSpec ← "02 Nov 2026 - Abimax Account Health Review" › Notes for client (⚠️ lines; ✅ lines left out;
       //                  the inventory note is folded into stockWarn). No client-suitable Resolved items this week
-      //                  (MerchantSpring connection = internal; shipment in transit = stockWarn), so no Done lines.
-      // adsStrategySpec ← "Abimax US Ad Strategy" task › Notes for Client (updated 27 Oct 2026) + Weekly log (22 Oct actions) for done items.
-      // stockWarn      ← Abimax_US_sku-sync_2026-10-26 (MerchantSpring, 26 Sep–25 Oct 2026, FBA). Thresholds ≤45d / soon ≤120d.
-      //                  Magno-PRO-002 (0 stock since 19 Feb, no sales) left off as dormant.
-      healthMgmtSpec: { badge:'2 open', subLabel:'Weekly review · 26 Oct 2026', items:[
-        {level:'amber',title:'US — Sales',sub:'In progress · sales dropped last week after the price changes; we\'re reviewing pricing and ads'},
-        {level:'amber',title:'US — Deals',sub:'In progress · Black Friday deal submissions open until 13 Nov; we\'ll share options for approval'}
+      //                  (shipment arrival = stockWarn), so no Done lines.
+      // adsStrategySpec ← "Abimax US Ad Strategy" task › Notes for Client (updated 4 Nov 2026) + Weekly log (29 Oct and 22 Oct actions) for done items.
+      //                  Note wording changed to the house term "stock-up".
+      // stockWarn      ← Abimax_US_sku-sync_2026-11-02 (MerchantSpring, 3 Oct–1 Nov 2026, FBA). Thresholds ≤45d / soon ≤120d.
+      //                  Magno-PRO-002 (0 stock since 19 Feb, no sales) and the Bundle (no sale since 20 Sep) left off.
+      healthMgmtSpec: { badge:'2 open', subLabel:'Weekly review · 2 Nov 2026', items:[
+        {level:'amber',title:'US — Sales',sub:'In progress · sales fell sharply last week; we\'re reviewing pricing and advertising'},
+        {level:'amber',title:'US — Deals',sub:'In progress · Black Friday deal submissions close 13 Nov; we\'re preparing your approved deal'}
       ] },
-      adsStrategySpec: { badge:'Magnostream migration', subLabel:'Weekly review · 27 Oct 2026', items:[
-        {level:'amber',title:'US — Magnostream',sub:'In progress · the main automatic campaign stays efficient (ad spend 31% of the sales it drove over the 12 weeks to 13 Oct). The new keyword campaign is still bedding in; its best search ("water softener system") converts well. We\'ll decide around 3 Nov how far to move spend across'},
-        {level:'amber',title:'US — MAGNO-PRO',sub:'In progress · still the least efficient line: its ads cost slightly more than the sales they drove in the four weeks to 13 Oct (106%), while most of its sales come without ads. We tightened its efficiency target and stopped two non-selling searches on 22 Oct; weekly ad spend has since fallen by about a third'},
-        {level:'muted',title:'US — Overall',sub:'Total sales were $4,683 in the four weeks to 13 Oct, up 19% on the four weeks before, and ad spend was 29% of total sales (TACoS, 31% before)'},
-        {level:'muted',title:'US — Stock',sub:'Stock-ups are on the way for the Magnostream range (27 Oct: 2-pack 9 units + 40 inbound, Pro 13 + 10 inbound). Pro stock is still the tightest ahead of Black Friday'},
-        {level:'green',title:'US — MAGNO-PRO efficiency target tightened',sub:'Done 22 Oct · two non-selling searches also stopped'},
+      adsStrategySpec: { badge:'Budget shift', subLabel:'Weekly review · 4 Nov 2026', items:[
+        {level:'amber',title:'US — MAGNO-PRO',sub:'In progress · its ads cost more than the sales they drove in the four weeks to 21 Oct (115%), while most Pro sales come without ads. On 12 Nov we\'ll decide whether to restart them on its best search ("water descaler") only'},
+        {level:'muted',title:'US — Magnostream',sub:'Next up · in the four weeks to 21 Oct the main automatic campaign spent 37% of the sales it drove (ACoS; target 35%), and the newer keyword campaign 28%, comfortably inside its 40% target. We recommend moving more of the daily budget to the keyword campaign from 12 Nov, keeping total spend the same'},
+        {level:'muted',title:'US — Overall',sub:'Total sales were $5,307 in the four weeks to 21 Oct, up 31% on the four weeks before. Ad spend was 25.5% of total sales (TACoS: ad spend as a share of all sales, ads and organic), down from 28.8%, and in line with our 25% target'},
+        {level:'muted',title:'US — Stock',sub:'On 4 Nov the Pro had 13 units plus 10 inbound (about 70 days at the current pace); a stock-up is due now to cover Black Friday (27 Nov). The Magnostream packs are well covered (Pack of 1: 50 available plus 50 in transfer; 2-pack and 3-pack stock-ups in transit)'},
+        {level:'green',title:'US — MAGNO-PRO ads paused',sub:'Done 29 Oct · to stop the loss while we decide'},
         {level:'green',title:'US — Magnostream keyword campaign widened',sub:'Done 22 Oct · "magnetic water conditioner" search added'}
       ] },
-      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'4 stock-up · 0 OOS', subLabel:'SKU sync · US FBA stock · 26 Oct 2026', items:[
-        {level:'red',title:'Magnostream Pro — stock-up now',sub:'B0GGRJKS2D · ~39 days cover · 13 units'},
-        {level:'red',title:'Magnostream Pack of 2 — stock-up now',sub:'B0GLPQ6YZ4 · ~45 days cover · 9 units'},
-        {level:'amber',title:'Magnostream Single — stock-up soon',sub:'B0GLT2LYKY · ~63 days cover · 55 units'},
-        {level:'amber',title:'Magnostream Pack of 3 — stock-up soon',sub:'B0GLPWZCRV · ~70 days cover · 14 units'},
-        {level:'amber',title:'Magnostream — stock-up shipment in transit',sub:'124 units on their way to Amazon · expected 25–31 Oct'}
+      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'3 stock-up · 0 OOS', subLabel:'SKU sync · US FBA stock · 2 Nov 2026', items:[
+        {level:'amber',title:'Magnostream Pro — stock-up soon',sub:'B0GGRJKS2D · ~49 days cover · 13 units'},
+        {level:'amber',title:'Magnostream Pack of 2 — stock-up soon',sub:'B0GLPQ6YZ4 · ~54 days cover · 9 units'},
+        {level:'amber',title:'Magnostream Single — stock-up soon',sub:'B0GLT2LYKY · ~68 days cover · 54 units'},
+        {level:'muted',title:'Magnostream — stock-up shipment arriving',sub:'At Amazon and being checked in · 35 of 124 units received (2 Nov)'}
       ] }
     },
     // P&L is ACTIVE for Abimax (Executive tier, Sep 2026) — full MerchantSpring financial P&L, built
