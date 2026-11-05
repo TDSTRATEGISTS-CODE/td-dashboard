@@ -1452,24 +1452,49 @@ function renderSupplierPOs(arr) {
   if (card) card.style.display = '';
 }
 
+// Month-on-month comparison arrows for the Products tables. A client opts in by baking
+// sections.products.prevMonth = { table:[...rows], groups:{ all:[...], uk:[...], ... } } (the PREVIOUS month's rows in the
+// same shape as tableByPeriod.may / groupsByPeriod.may — see tools/bake-prev-month.js). Only shown on the
+// Last Month ('may') slot; a metric with no comparable prior value (e.g. '—') shows no arrow.
+function cmpNum(v) {
+  if (v == null) return NaN;
+  var m = String(v).replace(/,/g, '').match(/-?\d+(\.\d+)?/);
+  return m ? parseFloat(m[0]) : NaN;
+}
+function cmpMark(cur, prev, higherBetter) {
+  var c = cmpNum(cur), p = cmpNum(prev);
+  if (isNaN(c) || isNaN(p) || c === p) return '';
+  var better = higherBetter ? c > p : c < p;
+  return ' <span class="cmp ' + (better ? 'du' : 'dd') + '" title="vs last month: ' + String(prev).replace(/"/g, '') + '">' + (c > p ? '▲' : '▼') + '</span>';
+}
+function prevProducts() {
+  var pm = (((DATA.sections || {}).products) || {}).prevMonth;
+  return (pm && currentPeriod === 'may') ? pm : null;
+}
 function renderProdTable(arr) {
   if (!arr) return;
+  var pm = prevProducts(), pt = (pm && pm.table) || [];
   renderRowsTable('sec-prod-table', arr.map(function (r) {
-    return '<tr><td>' + flagTag(r.flag, r.name) + r.name + '</td><td>' + r.revenue + '</td><td>' + r.units +
-      '</td><td>' + r.orders + '</td><td><span class="badge ' + (r.cvrCls || 'bg') + '">' + r.cvr + '</span></td><td>' + r.aov + '</td></tr>';
+    var q = null; pt.forEach(function (x) { if (x.name === r.name) q = x; });
+    var m = function (k, hb) { return q ? cmpMark(r[k], q[k], hb) : ''; };
+    return '<tr><td>' + flagTag(r.flag, r.name) + r.name + '</td><td>' + r.revenue + m('revenue', true) + '</td><td>' + r.units + m('units', true) +
+      '</td><td>' + r.orders + m('orders', true) + '</td><td><span class="badge ' + (r.cvrCls || 'bg') + '">' + r.cvr + '</span>' + m('cvr', true) + '</td><td>' + r.aov + m('aov', true) + '</td></tr>';
   }));
 }
 
-function renderProdGroups(arr) {
+function renderProdGroups(arr, mktKey) {
   var card = el('sec-prod-groups-card');
   if (!arr || !arr.length) { if (card) card.style.display = 'none'; return; }
+  var pm = prevProducts(), pg = (pm && pm.groups && pm.groups[mktKey || 'all']) || [];
   renderRowsTable('sec-prod-groups', arr.map(function (g) {
-    return '<tr><td>' + g.name + '</td><td>' + g.sales +
-      '</td><td>' + (g.adSpend != null ? g.adSpend : '—') +
-      '</td><td>' + (g.tacos != null ? '<span class="badge ' + (g.tacosCls || 'bb') + '">' + g.tacos + '</span>' : '—') +
-      '</td><td>' + g.units +
-      '</td><td>' + (g.cvr != null ? '<span class="badge ' + (g.cvrCls || 'bb') + '">' + g.cvr + '</span>' : '—') +
-      '</td><td>' + g.pct +
+    var q = null; pg.forEach(function (x) { if (x.name === g.name) q = x; });
+    var m = function (k, hb) { return q ? cmpMark(g[k], q[k], hb) : ''; };
+    return '<tr><td>' + g.name + '</td><td>' + g.sales + m('sales', true) +
+      '</td><td>' + (g.adSpend != null ? g.adSpend : '—') + m('adSpend', false) +
+      '</td><td>' + (g.tacos != null ? '<span class="badge ' + (g.tacosCls || 'bb') + '">' + g.tacos + '</span>' + m('tacos', false) : '—') +
+      '</td><td>' + g.units + m('units', true) +
+      '</td><td>' + (g.cvr != null ? '<span class="badge ' + (g.cvrCls || 'bb') + '">' + g.cvr + '</span>' + m('cvr', true) : '—') +
+      '</td><td>' + g.pct + m('pct', true) +
       '</td><td><span class="badge ' + (g.oosCls || 'bg') + '">' + g.oosRate + '</span></td></tr>';
   }));
   if (card) card.style.display = '';
@@ -2075,7 +2100,7 @@ function renderPeriodSections(d) {
     // Product groups: AMACX uses groupsByPeriod[period][market]; clients with only a static `groups`
     // array (demo/nkv) fall back to it (renderProdGroups tolerates the missing adSpend/tacos fields).
     var gp = pr.groupsByPeriod && pr.groupsByPeriod[currentPeriod];
-    renderProdGroups((gp && (pmKey ? gp[pmKey] : gp.all)) || pick(spr.groups, pr.groups));
+    renderProdGroups((gp && (pmKey ? gp[pmKey] : gp.all)) || pick(spr.groups, pr.groups), pmKey);
     var gscope = document.querySelector('#sec-prod-groups-card .cfg-scope');
     if (gscope) gscope.textContent = pmKey ? ((MKT[pmKey] && MKT[pmKey].t) || pmKey) : ((CONFIG.client && CONFIG.client.scopeLabel) || 'All EU');
     var gper = document.querySelector('#sec-prod-groups-card .dr-period');

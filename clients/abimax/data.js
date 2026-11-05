@@ -471,3 +471,8 @@ window.DASHBOARD_DATA = {
     }
   }
 };
+
+/* PREV-MONTH-START — month-on-month comparison rows for the Products tables (September 2026); see tools/bake-prev-month.js */
+(function () { var P = window.DASHBOARD_DATA && window.DASHBOARD_DATA.sections && window.DASHBOARD_DATA.sections.products;
+  if (P) P.prevMonth = {"table":[{"name":"United States","flag":"us","revenue":"$5,003","units":"47","orders":"46","cvr":"2.8%","cvrCls":"br","aov":"$108.77"}],"groups":{"all":[{"name":"Magnostream Pro — Heavy-Duty","sales":"$1,562","units":5,"pct":"31%","adSpend":"$632","tacos":"40.5%","tacosCls":"br","cvr":"0.6%","cvrCls":"br","oosRate":"0%","oosCls":"bg"},{"name":"Magnostream Single","sales":"$1,304","units":26,"pct":"26%","adSpend":"$593","tacos":"45.4%","tacosCls":"br","cvr":"4.0%","cvrCls":"ba","oosRate":"0%","oosCls":"bg"},{"name":"Magnostream Pack of 3","sales":"$1,276","units":10,"pct":"25%","adSpend":"$57","tacos":"4.4%","tacosCls":"bg","cvr":"11.2%","cvrCls":"bg","oosRate":"0%","oosCls":"bg"},{"name":"Magnostream Pack of 2","sales":"$480","units":5,"pct":"10%","adSpend":"$76","tacos":"15.8%","tacosCls":"bg","cvr":"4.6%","cvrCls":"ba","oosRate":"0%","oosCls":"bg"},{"name":"Magnostream Multi-Unit Bundle","sales":"$381","units":1,"pct":"8%","adSpend":"$0","tacos":"0.0%","tacosCls":"bg","cvr":"9.1%","cvrCls":"ba","oosRate":"0%","oosCls":"bg"}]}}; })();
+/* PREV-MONTH-END */

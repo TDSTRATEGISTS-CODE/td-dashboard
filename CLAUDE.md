@@ -148,3 +148,12 @@ because the broken paste never saved.
 - Either way: keep the repo copies identical to what's live; test locally (concatenate the files, run in
   node with mocked `SpreadsheetApp`/`ContentService`); hand-over ends with Ctrl+S (orange dot gone) →
   **Deploy › Manage deployments › pencil › New version** (never "New deployment" — new URL).
+
+## Products-table month-on-month arrows — run `tools/bake-prev-month.js` on every rebake (all clients)
+
+The Products page tables (Performance by Market + Sales by Product Group) show small green/red ▲/▼ vs the previous
+month on the Last Month (`may`) slot. They read `sections.products.prevMonth`, appended to the end of
+`clients/<client>/data.js` between `PREV-MONTH-START/END` markers. A rebake replaces `data.js`, so **in the same commit**:
+`git show <this-month's-rebake-parent>:clients/<client>/data.js > /tmp/prev.js` (the file from just BEFORE the rebake) then
+`node tools/bake-prev-month.js <client> /tmp/prev.js`. If you skip it the arrows silently disappear (or compare against a
+stale month). Higher is better except Ad Spend and TACOS (lower is better); metrics with no comparable value show no arrow.

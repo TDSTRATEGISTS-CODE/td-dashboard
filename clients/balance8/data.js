@@ -485,3 +485,8 @@ window.DASHBOARD_DATA = {
     }
   }
 };
+
+/* PREV-MONTH-START — month-on-month comparison rows for the Products tables (September 2026); see tools/bake-prev-month.js */
+(function () { var P = window.DASHBOARD_DATA && window.DASHBOARD_DATA.sections && window.DASHBOARD_DATA.sections.products;
+  if (P) P.prevMonth = {"table":[{"name":"United Kingdom","flag":"gb","revenue":"£1,779","units":"68","orders":"~68*","cvr":"5.1%","cvrCls":"ba","aov":"£26.15"}],"groups":{"all":[{"name":"WIRED Electrolytes — Berry Fusion","sales":"£975","units":31,"pct":"55%","adSpend":"£12","tacos":"1.2%","tacosCls":"bg","cvr":"23.9%","cvrCls":"bg","oosRate":"0%","oosCls":"bg"},{"name":"BrainMatter Cognitive","sales":"£250","units":7,"pct":"14%","adSpend":"£109","tacos":"43.6%","tacosCls":"br","cvr":"4.5%","cvrCls":"ba","oosRate":"0%","oosCls":"bg"},{"name":"BrainMatter Calm","sales":"£185","units":5,"pct":"10%","adSpend":"£102","tacos":"55.2%","tacosCls":"br","cvr":"3.4%","cvrCls":"br","oosRate":"0%","oosCls":"bg"},{"name":"WIRED Electrolytes Discovery Pack","sales":"£179","units":18,"pct":"10%","adSpend":"£7","tacos":"3.9%","tacosCls":"bg","cvr":"2.6%","cvrCls":"br","oosRate":"0%","oosCls":"bg"},{"name":"WIRED Pure Creatine Monohydrate","sales":"£67","units":3,"pct":"4%","adSpend":"£23","tacos":"33.8%","tacosCls":"br","cvr":"2.4%","cvrCls":"br","oosRate":"0%","oosCls":"bg"},{"name":"WIRED Electrolytes — Melon Ice","sales":"£62","units":2,"pct":"3%","adSpend":"£0","tacos":"0.0%","tacosCls":"bg","cvr":"5.3%","cvrCls":"ba","oosRate":"0%","oosCls":"bg"},{"name":"WIRED Electrolytes — Citrus Lime","sales":"£61","units":2,"pct":"3%","adSpend":"£0","tacos":"0.0%","tacosCls":"bg","cvr":"6.3%","cvrCls":"ba","oosRate":"0%","oosCls":"bg"}]}}; })();
+/* PREV-MONTH-END */
