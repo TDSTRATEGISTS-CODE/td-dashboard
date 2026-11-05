@@ -9,9 +9,10 @@ When this runbook changes, edit this file (via git); the trigger prompt just poi
 - `adsStrategySpec`: Advertising & Marketing Strategy
 - `stockWarn`: Logistics & Operations (card title set by `stockWarn.title`)
 
-**Runs:** Thursday 08:56 UK (`CRON_TZ=Europe/London 56 8 * * 4`), after Coogan has reviewed each Monday
-Account Health Review and marked it **Done**. Done = that client's "Notes for client" are approved to
-publish. **Publishes straight to `main` — no PR** (the approval is the Done status in Notion).
+**Runs:** Thursday 08:56 UK (`CRON_TZ=Europe/London 56 8 * * 4`), after Solei has approved each client's
+**Client Notes** task. Approval = that task's Approval status reads `Approved — Solei, <date>`. (From 5 Nov 2026
+this replaces Coogan's Done on the review as the gate; Done on the review now only lets the Tuesday draft step
+copy the notes across. See Notion: SOP — Ops — Client Notes Review.) **Publishes straight to `main` — no PR.**
 
 **Connectors needed:** Notion (read only) and Google Drive (read only, for the SKU sync files).
 
@@ -23,14 +24,16 @@ Work through the clients one at a time. A problem with one client never blocks t
 note why in the run report, and carry on.
 
 ### 1a. Read the sources
-1. **Account Health:** open the client's **Account Health parent task**, list its **Sub-tasks**, open the
-   most recent one (by the date in its title, e.g. "12 Oct 2026 - AMACX Account Health Review").
-   - **Check its Status.** Only a review with Status **Done** is approved for the client.
-   - Read its **"Notes for client"** section and "Changes vs last week" → **Resolved**.
-2. **Advertising:** open the client's **Advertising task** (a sub-task of 🪄 Amazon Advertising,
-   https://app.notion.com/p/399d3da05122803ea766e2232a94aa79). Read its **"Notes for client"** section
-   if it has one. Also read its most recent sub-task and its **Weekly log** entries from the last 14 days,
-   and the client's section of the **Ads Action Plan** on 🪄 Amazon Advertising (ticked = done).
+1. **Client Notes (source for the health and ads cards):** open the client's **Client Notes task** (link in
+   section 5; a sub-task of `<Client> — Client Communications`).
+   - **Check its Approval status.** Only `Approved — Solei, <date>` is approved for the client. `Awaiting Solei`
+     or an approval older than 10 days means the notes are not approved (see 1b).
+   - Read its **Account Health** section (open lines + Done lines) for `healthMgmtSpec` and its **Advertising**
+     section (lines + Done lines) for `adsStrategySpec`. These are the only source for those two cards. Use the
+     wording exactly as approved; do not go back to the review or the Ad Strategy task for wording.
+2. **Inventory notes:** the Account Health section may carry an inventory line (🔴/⚠️ Inventory). It goes to
+   `stockWarn`, not `healthMgmtSpec` (section 2). For stock context, the client's latest Account Health Review
+   (Notion) may still be read, but never for wording of the two approved cards.
 3. **What's next:** open the client's **Monthly SOP** and read the week block for next week
    (Week 1 = 1st–5th, then Weeks 2–4).
 4. **Stock:** in Google Drive, find the newest SKU sync file for each of the client's **SKU sync files**
@@ -40,12 +43,12 @@ note why in the run report, and carry on.
    - Where the client config lists a **SKU List** source, read it too (statuses + mismatches).
 
 ### 1b. Gates
-- **Latest review not Done, or more than 10 days old:** don't touch `healthMgmtSpec` or
+- **Client Notes not Approved, or approval more than 10 days old:** don't touch `healthMgmtSpec` or
   `adsStrategySpec` (they keep last week's approved content). Still refresh `stockWarn` (factual stock
-  data, no approval needed). Report "<Client>: review <date> not Done / stale; health and ads not updated".
+  data, no approval needed). Report "<Client>: Client Notes <status / approval date>; health and ads not updated".
 - **SKU sync file missing or more than 8 days old:** leave `stockWarn` as it is and say so.
 - **First run for a client** (its `config.js` doesn't yet have `overviewSource: 'notion'`): only go
-  ahead if the review is Done. Then bake all three cards and set `overviewSource: 'notion'` in
+  ahead if its Client Notes task is Approved. Then bake all three cards and set `overviewSource: 'notion'` in
   `clients/<folder>/config.js` in the same commit. If not Done, skip the client entirely this week.
 - If nothing changed for a client, leave its files alone.
 
@@ -141,7 +144,7 @@ Item shape: `{level, title, sub}`.
    - `grep -niE 'order this week|order soon|order now|reorder|restock' clients/<folder>/data.js`: no new
      hits in the three blocks
    - No item presents a market the client config marks as not live
-   - Every Account Health item traces to a "Notes for client" or "Resolved" line on a **Done** review
+   - Every Account Health and Advertising item traces to a line on an **Approved** Client Notes task
 4. One commit to `main`, message `Overview cards — <d Mon YYYY> (<clients updated>)`, and push
    (`git push origin main`). This is the authorised publish step. Touch nothing outside
    `clients/*/data.js`, `clients/*/config.js` (first-run switch only) and `index.html`.
@@ -151,8 +154,8 @@ Item shape: `{level, title, sub}`.
 
 ## 4. Switching a client on or off
 
-- **On:** set `Overview: On` in its block below. The next Thursday run bakes its cards (only if its review
-  is Done) and flips its `config.js` to `overviewSource: 'notion'`. Check any layout note in the block first.
+- **On:** set `Overview: On` in its block below and create its Client Notes task (Notion: SOP — Ops — Client
+  Notes Review). The next Thursday run bakes its cards (only if that task is Approved) and flips its `config.js` to `overviewSource: 'notion'`. Check any layout note in the block first.
 - **Off / revert:** set `overviewSource: 'sheet'` in `clients/<folder>/config.js`, bump `APP_VER`, and set
   `Overview: Off` here. The sheet's Project Scope cards come back.
 
@@ -164,6 +167,7 @@ Item shape: `{level, title, sub}`.
 | Overview | **On** (live since 12 Oct 2026) |
 | Dashboard folder | `clients/amacx` |
 | Markets | DE, FR, ES, IT · **NLD is not live** — never show it |
+| Client Notes task (approved source) | https://app.notion.com/p/40fd3da051228116bf7df4243df7a3a8 |
 | Account Health parent task | https://app.notion.com/p/3e5d3da051228054b583d449b7c849a5 |
 | Advertising task | https://app.notion.com/p/399d3da051228051a0a7cc400c7b774e (AMACX Advertising) |
 | Monthly SOP | https://app.notion.com/p/349d3da05122803eacc5ee7b997942c7 |
@@ -181,6 +185,7 @@ Item shape: `{level, title, sub}`.
 | Overview | **On** (from 12 Oct 2026 — first bake on the first Thursday its review is Done) |
 | Dashboard folder | `clients/abimax` |
 | Markets | US |
+| Client Notes task (approved source) | https://app.notion.com/p/40fd3da051228184beb9d00f091dc6fc |
 | Account Health parent task | https://app.notion.com/p/3e5d3da051228184ba65f127069cd0a5 |
 | Advertising task | https://app.notion.com/p/399d3da0512280b197adc4418abc5e9f |
 | Monthly SOP | https://app.notion.com/p/2b7d3da0512280a5b53af9f0788d0e81 |
@@ -197,6 +202,7 @@ Item shape: `{level, title, sub}`.
 | Overview | **On** (from 12 Oct 2026 — first bake on the first Thursday its review is Done) |
 | Dashboard folder | `clients/balance8` |
 | Markets | UK |
+| Client Notes task (approved source) | https://app.notion.com/p/40fd3da051228141ab05d7913a5404db |
 | Account Health parent task | https://app.notion.com/p/3e5d3da0512281fda711ec3cc1000d46 |
 | Advertising task | https://app.notion.com/p/3c0d3da0512280968ed2fb99af06d7f2 |
 | Monthly SOP | https://app.notion.com/p/3a3d3da051228085a495eafafcdd6e7a |
@@ -213,6 +219,7 @@ Item shape: `{level, title, sub}`.
 | Overview | **On** (from 12 Oct 2026 — first bake on the first Thursday its review is Done) |
 | Dashboard folder | `clients/nkv` |
 | Markets | UK, US (IRL early-stage) |
+| Client Notes task (approved source) | https://app.notion.com/p/40fd3da051228107bb33e4e2607eaecb |
 | Account Health parent task | https://app.notion.com/p/3e5d3da05122819ca0e6c0d790f4a9d9 |
 | Advertising task | https://app.notion.com/p/399d3da0512280aea9e5d96fdbf82901 (NKV UK; US has no ads task yet) |
 | Monthly SOP | https://app.notion.com/p/341d3da0512281098d22d1d6a3657cd3 |
@@ -226,3 +233,10 @@ Item shape: `{level, title, sub}`.
 ### Not covered
 - **Harvaza:** founder dashboard layout; tasks and milestones already come from Notion via its proxy.
 - **HSB, VH Life:** no client dashboard.
+
+## 6. Change log
+
+- **05 Nov 2026:** health and ads cards now bake from each client's Client Notes task (Notion, under
+  `<Client> — Client Communications`), approved by Solei, instead of directly from the Done Account Health
+  Review and the Ad Strategy task. Done on the review now only gates the Tuesday draft step. Stock card
+  unchanged (SKU sync, no approval). Harvaza and HSB not covered.
