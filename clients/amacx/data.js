@@ -294,7 +294,7 @@ window.DASHBOARD_DATA = {
       // healthMgmtSpec ← "AMACX — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026; based on the 02 Nov 2026 Account Health Review).
       // adsStrategySpec ← same task › Advertising (fixed format: Overall, Best seller, Conversion, Flags, Budget + 2 Done).
       //                  No AMACX deal content (AMACX does not run deals).
-      // stockWarn      ← AMACX_EU_sku-sync_2026-11-02 (pooled EU FBM stock, MerchantSpring 3 Oct–1 Nov 2026) + SKU List.
+      // stockWarn      ← AMACX_EU_sku-sync_2026-11-09 (pooled EU FBM stock, MerchantSpring 10 Oct–8 Nov 2026) + SKU List.
       //                  One pooled stock → every OOS SKU is OOS in all markets.
       //                  Discontinued / superseded SKUs (Hydro Tabs 3×20, Beet Shot, Energy Drink Grape,
       //                  Cherry Juice Booster 6×500, Fast Bar Lemon — now De-Listed in the SKU List) are left off.
@@ -328,8 +328,7 @@ window.DASHBOARD_DATA = {
       stockWarn: { shipping: { label:'Avg shipping per order', note:'Jul–Sep 2026 baseline · charged to customer', target:6.95,
           targetTxt:'Target €6.95 per order in every market · being raised gradually to protect the Buy Box', items:[
           {flag:'de',label:'DE',val:'€5.95',num:5.95}, {flag:'fr',label:'FR',val:'€4.13',num:4.13}, {flag:'es',label:'ES',val:'€3.70',num:3.70}, {flag:'it',label:'IT',val:'€3.41',num:3.41} ] },
-        title:'&#128230; Logistics &amp; Operations', badge:'3 OOS SKUs', subLabel:'SKU sync · pooled EU stock · 2 Nov 2026', items:[
-        {level:'red',title:'Energy Gel Raspberry — OOS all markets',sub:'B0CRFW8KR7 · since 29 Oct · stock-up now · please confirm a stock-up date'},
+        title:'&#128230; Logistics &amp; Operations', badge:'2 OOS SKUs', subLabel:'SKU sync · pooled EU stock · 9 Nov 2026', items:[
         {level:'red',title:'Energy Drink Powder 320g Lemon — OOS all markets',sub:'B0GZ43HK1F · since 29 Jul'},
         {level:'red',title:'Energy Drink Powder 320g Forest Fruit — OOS all markets',sub:'B0GZ469Z98 · since 17 Jul'}
       ] }
