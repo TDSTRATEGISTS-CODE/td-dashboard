@@ -300,9 +300,10 @@ window.DASHBOARD_DATA = {
       //                  Discontinued / superseded SKUs (Hydro Tabs 3×20, Beet Shot, Energy Drink Grape,
       //                  Cherry Juice Booster 6×500, Fast Bar Lemon — now De-Listed in the SKU List) are left off.
       // Item levels: red/amber = open issue · green = done · muted = next up. Client-facing wording only.
-      healthMgmtSpec: { badge:'2 open', subLabel:'Weekly review · 9 Nov 2026', items:[
+      healthMgmtSpec: { badge:'3 open', subLabel:'Weekly review · 9 Nov 2026', items:[
         {level:'red',title:'Spain — EPR',sub:'In progress · Spanish packaging registration is still overdue; the EPR number is needed'},
         {level:'amber',title:'Italy — Account Health',sub:'In progress · no longer At risk; one late dispatch keeps the late-dispatch rate (6.67%, 30 days) above Amazon\'s 4% target; monitored weekly'},
+        {level:'amber',title:'France, Spain and Italy — Compliance',sub:'In progress · pre-market qualification compliance is still needed in France, Spain and Italy'},
         {level:'green',title:'France — Account Health',sub:'Healthy · all metrics within Amazon\'s targets'},
         {level:'green',title:'Germany — Account Health',sub:'Healthy · all metrics within Amazon\'s targets'},
         {level:'green',title:'Italy — order defect rate back to 0%',sub:'Done 9 Nov · account no longer At risk'},
