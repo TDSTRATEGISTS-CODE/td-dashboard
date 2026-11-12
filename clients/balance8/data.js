@@ -256,7 +256,7 @@ window.DASHBOARD_DATA = {
       // healthMgmtSpec ← "Balance 8 — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026;
       //                  based on the 02 Nov 2026 Account Health Review); includes the ✅ Healthy line for UK (SOP rule).
       // adsStrategySpec ← same task › Advertising (fixed format: Overall, Best seller, Conversion, Flags, Budget + 2 Done).
-      // stockWarn      ← Balance8_UK_sku-sync_2026-11-02 (MerchantSpring, 3 Oct–1 Nov 2026, FBA). Thresholds ≤21d / soon ≤45d: none hit.
+      // stockWarn      ← Balance8_UK_sku-sync_2026-11-09 (MerchantSpring, 10 Oct–8 Nov 2026, FBA). Thresholds ≤21d / soon ≤45d: none hit.
       healthMgmtSpec: { badge:'1 open', subLabel:'Weekly review · 2 Nov 2026', items:[
         {level:'amber',title:'UK — Sales',sub:'In progress · BrainMatter is carrying the range'},
         {level:'green',title:'UK — Account Health',sub:'Healthy · all metrics within Amazon\'s targets'}
@@ -270,7 +270,7 @@ window.DASHBOARD_DATA = {
         {level:'green',title:'UK — WIRED bids raised on high-intent searches',sub:'Done 29 Oct'},
         {level:'green',title:'UK — WIRED ads focused on three products',sub:'Done 29 Oct'}
       ] },
-      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'All in stock', subLabel:'SKU sync · UK FBA stock · 2 Nov 2026', items:[
+      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'All in stock', subLabel:'SKU sync · UK FBA stock · 9 Nov 2026', items:[
         {level:'muted',title:'All live listings in stock',sub:'No stock-up needed on current sales'}
       ] }
     },

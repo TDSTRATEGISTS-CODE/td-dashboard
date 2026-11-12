@@ -239,31 +239,32 @@ campaigns: [
       // ---- Overview cards — baked WEEKLY (config.overviewSource:'notion'; runbook tools/weekly-overview.routine.md) ----
       // First baked 12 Oct 2026 (review used as approved for this run by Ryan's instruction). The sheet-era
       // tasksSpec / flagsSpec / completedSpec above are ignored while overviewSource is 'notion'.
-      // healthMgmtSpec ← "NKV — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026; based on the 02 Nov 2026 Account Health Review);
-      //                  includes the ✅ Healthy line for UK (SOP rule). The US payment-card line was left off by Solei.
+      // healthMgmtSpec ← "NKV — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 11 Nov 2026; based on the 09 Nov 2026 Account Health Review);
+      //                  includes the ✅ Healthy line for UK (SOP rule). The ⚠️ UK Serum Bundle inventory line moved to stockWarn.
       // adsStrategySpec ← same task › Advertising (fixed format: Overall, Best seller, Conversion, Flags, Budget + 2 Done).
-      // stockWarn      ← NKV_UK + NKV_US_sku-sync_2026-11-02 (MerchantSpring, 3 Oct–1 Nov 2026, FBA). Thresholds ≤14d / soon ≤30d.
-      //                  The dormant Girlactik long-tail (no sale in 120+ days) is left off. Card title/sub come from config.layout.relabel.
-      healthMgmtSpec: { badge:'1 open', subLabel:'Weekly review · 2 Nov 2026', items:[
-        {level:'red',title:'US — GrowPod',sub:'In progress · listing still removed; 40 units Stranded in FBA'},
+      // stockWarn      ← NKV_UK + NKV_US_sku-sync_2026-11-09 (MerchantSpring, 10 Oct–8 Nov 2026, FBA). Thresholds ≤14d / soon ≤30d.
+      //                  Serum Bundle OOS from the approved Client Notes (Seller Central; sync shows 14 reserved units).
+      //                  Left off: dormant Girlactik long-tail (no sale in 120+ days); Girlactik Pure Black and Lilibeth Pink/Purple
+      //                  GB 2-packs (De-Listed per the SKU List, 9 Nov); 0-stock FBM duplicate offers of FBA-stocked Newnique ASINs.
+      //                  Card title/sub come from config.layout.relabel.
+      healthMgmtSpec: { badge:'1 open', subLabel:'Weekly review · 9 Nov 2026', items:[
+        {level:'red',title:'US — Compliance',sub:'In progress · Amazon has completed its review; the GrowPod listing remains removed'},
         {level:'green',title:'UK — Account Health',sub:'Healthy · all metrics within Amazon\'s targets'},
-        {level:'green',title:'US — sales back in line',sub:'Done 2 Nov'},
         {level:'green',title:'US — Seller Central access restored',sub:'Done 26 Oct'}
       ] },
-      adsStrategySpec: { badge:'Q4 push', subLabel:'Weekly review · 4 Nov 2026', items:[
-        {level:'amber',title:'UK — Flags',sub:'In progress · Whitening Kit ads cost more than the sales they drove (95%); organic serum ads at 145%, improving early this week'},
-        {level:'muted',title:'UK — Overall',sub:'TACoS 17% (4 weeks to 21 Oct) against a 20% goal'},
-        {level:'muted',title:'UK — Best seller',sub:'Lids by Design Assortment Pack, £1,921 from 62 units (3 Oct–1 Nov, incl. VAT)'},
+      adsStrategySpec: { badge:'TACoS on goal', subLabel:'Weekly review · 10 Nov 2026', items:[
+        {level:'amber',title:'UK — Flags',sub:'In progress · Whitening Kit, HYDRTE bottle and Newnique serum ads cost more than planned (4 weeks to 27 Oct); reviewed weekly. Whitening Strips: no sales 1–9 Nov, under review'},
+        {level:'muted',title:'UK — Overall',sub:'TACoS 17.3% (4 weeks to 27 Oct) against a 20% goal; down from 21.4% the 4 weeks before'},
+        {level:'muted',title:'UK — Best seller',sub:'Lids by Design Assortment Pack, £1,931 from 60 units (UK, 10 Oct–8 Nov, incl. VAT)'},
         {level:'muted',title:'UK — Conversion',sub:'8.8% UK session conversion (October 2026, 5,282 sessions)'},
-        {level:'muted',title:'UK — Budget',sub:'November budget £3,000; £152 spent 1–3 Nov'},
-        {level:'green',title:'US — test campaigns restarted',sub:'Done 31 Oct'},
-        {level:'green',title:'UK — Whitening Kit ad budget reduced',sub:'Done 22 Oct'}
+        {level:'muted',title:'UK — Budget',sub:'UK November budget £3,000; £580 spent 1–9 Nov'},
+        {level:'green',title:'UK — Newnique and HYDRTE ad spend tightened',sub:'Done 8 Nov'},
+        {level:'green',title:'UK — more spend behind the best-performing Lids by Design searches',sub:'Done 5 Nov'}
       ] },
-      stockWarn: { badge:'2 stock-up · 2 OOS', subLabel:'SKU sync · per market (FBA) · 2 Nov 2026', items:[
-        {level:'red',title:'Girlactik Gel Eyeliner Pure Black — OOS UK',sub:'B099KVFGZP · since 5 Oct'},
-        {level:'red',title:'Lilibeth Brow Shaper Pink 2-Pack — OOS UK',sub:'B0FFDPBJP2 · since 3 Oct · please confirm a stock-up date'},
-        {level:'red',title:'Lilibeth Brow Shaper Purple 2-Pack — stock-up now',sub:'B0FFDSR57K · UK · ~9 days cover · 2 units · please confirm a stock-up date'},
-        {level:'amber',title:'Newnique GrowPod Device — stock-up soon',sub:'B0F8QKKZMQ · UK · ~30 days cover · 2 units'}
+      stockWarn: { badge:'2 stock-up · 1 OOS', subLabel:'SKU sync · per market (FBA) · 9 Nov 2026', items:[
+        {level:'amber',title:'Newnique Serum Bundle — OOS UK',sub:'B0H1N9G61C · since 2 Nov · stock-up now; shipment to be arranged'},
+        {level:'amber',title:'Newnique Scalp Renewal Exfoliant — stock-up soon',sub:'B0F8QLYNMQ · UK · ~16 days cover · 13 units'},
+        {level:'amber',title:'Newnique GrowPod Device — stock-up soon',sub:'B0F8QKKZMQ · UK · ~30 days cover · 1 unit'}
       ] }
       // Account Health (strategy/performance alerts) card removed from the NKV Overview per client request.
     },

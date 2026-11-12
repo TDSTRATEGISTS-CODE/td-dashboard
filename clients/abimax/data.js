@@ -243,7 +243,7 @@ window.DASHBOARD_DATA = {
       // healthMgmtSpec ← "Abimax — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026; based on the 02 Nov 2026 Account Health Review);
       //                  includes the ✅ Healthy line for US (SOP rule). No Done lines this week.
       // adsStrategySpec ← same task › Advertising (fixed format: Overall, Best seller, Conversion, Flags, Budget + 2 Done).
-      // stockWarn      ← Abimax_US_sku-sync_2026-11-02 (MerchantSpring, 3 Oct–1 Nov 2026, FBA). Thresholds ≤45d / soon ≤120d.
+      // stockWarn      ← Abimax_US_sku-sync_2026-11-09 (MerchantSpring, 10 Oct–8 Nov 2026, FBA). Thresholds ≤45d / soon ≤120d.
       //                  Magno-PRO-002 (0 stock since 19 Feb, no sales) and the Bundle (no sale since 20 Sep) left off.
       healthMgmtSpec: { badge:'1 open', subLabel:'Weekly review · 2 Nov 2026', items:[
         {level:'amber',title:'US — Deals',sub:'In progress · Amazon\'s Black Friday deal submissions close on 13 Nov'},
@@ -258,10 +258,10 @@ window.DASHBOARD_DATA = {
         {level:'green',title:'US — MAGNO-PRO ads paused',sub:'Done 29 Oct'},
         {level:'green',title:'US — Magnostream keyword campaign widened',sub:'Done 22 Oct'}
       ] },
-      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'3 stock-up · 0 OOS', subLabel:'SKU sync · US FBA stock · 2 Nov 2026', items:[
+      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'3 stock-up · 0 OOS', subLabel:'SKU sync · US FBA stock · 9 Nov 2026', items:[
         {level:'amber',title:'Magnostream Pro — stock-up soon',sub:'B0GGRJKS2D · ~49 days cover · 13 units'},
         {level:'amber',title:'Magnostream Pack of 2 — stock-up soon',sub:'B0GLPQ6YZ4 · ~54 days cover · 9 units'},
-        {level:'amber',title:'Magnostream Single — stock-up soon',sub:'B0GLT2LYKY · ~68 days cover · 54 units'},
+        {level:'amber',title:'Magnostream Single — stock-up soon',sub:'B0GLT2LYKY · ~61 days cover · 49 units'},
         {level:'muted',title:'Magnostream — stock-up shipment arriving',sub:'At Amazon and being checked in · 35 of 124 units received (2 Nov)'}
       ] }
     },
