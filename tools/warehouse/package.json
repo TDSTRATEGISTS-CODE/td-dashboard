@@ -1,0 +1,11 @@
+{
+  "name": "td-dashboard-warehouse",
+  "private": true,
+  "description": "Builds client data.js number fields from the TDS Data Warehouse (BigQuery). See run.js.",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "@google-cloud/bigquery": "^9.5.0"
+  }
+}
