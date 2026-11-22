@@ -1585,6 +1585,8 @@ function renderChart(id, legId, spec) {
   }
   svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
   svg.innerHTML = p.join('');
+  // Optional per-period subtitle (warehouse-built charts: daily / weekly / monthly) replaces the card's fixed text.
+  if (spec.subtitle && svg.closest) { var cd = svg.closest('.card'), sb = cd && cd.querySelector('.card-sub'); if (sb) sb.textContent = spec.subtitle; }
   if (legId) {
     var lg = el(legId);
     if (lg) {

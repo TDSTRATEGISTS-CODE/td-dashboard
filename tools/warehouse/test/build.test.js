@@ -45,8 +45,22 @@ test('figures: October from the Ads API, comparisons against September (Merchant
   assert.equal(m.tacosS, 'Target <15%');
   assert.deepEqual(m.mktRows[0], ['Amazon UK', 'gb', '—', '£930', 'bb', 'No budget set', '£3,100', 'br', '30.0%']);
   assert.deepEqual(m.campaignMix.slices.map((s) => [s.name, s.pct, s.acos]), [['Sponsored Products', 66.7, '66.7%'], ['Sponsored Brands', 33.3, '66.7%']]);
-  assert.deepEqual(m.revChart.xLabels, ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct']);
-  assert.deepEqual(m.revChart.series[0].values.slice(-2), [3000, 3100]);
+  // Last Month: one point per day, labelled every 5 days plus first and last
+  assert.equal(m.revChart.grain, 'day');
+  assert.equal(m.revChart.xLabels.length, 31);
+  assert.deepEqual(m.revChart.xLabels.filter(Boolean), ['1 Oct', '6 Oct', '11 Oct', '16 Oct', '21 Oct', '26 Oct', '31 Oct']);
+  assert.deepEqual([m.revChart.series[0].values[0], m.revChart.series[1].values[0]], [100, 30]);
+  assert.equal(m.revChart.series[0].dots, false);
+  const q = o.dateRanges['3m'].revChart; // weekly, Monday weeks cut to the window
+  assert.equal(q.grain, 'week');
+  assert.equal(q.series[0].values.reduce((a, b) => a + b, 0), 9200);
+  assert.equal(q.series[0].values.length, 13); // 92 days: 13 weeks, the 1-day remainder joins the last week
+  assert.equal(q.series[0].values[0], 700);
+  assert.equal(q.subtitle, 'Weekly revenue and ad spend · Aug–Oct 2026');
+  assert.equal(m.revChart.subtitle, 'Daily revenue and ad spend · Oct 2026');
+  assert.equal(o.dateRanges['12m'].revChart.subtitle, 'Monthly revenue and ad spend · 12 months');
+  assert.equal(o.dateRanges['12m'].revChart.xLabels.length, 12);
+  assert.equal(o.dateRanges.mtd.revChart.xLabels.length, 20);
 });
 
 test('3 and 12 months: totals across both ad sources; pie kept when the period starts before the Ads API', () => {
