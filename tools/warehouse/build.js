@@ -206,7 +206,10 @@ function periodFields(key, rows, cfg, existing, win, prevWin, adsStart, exSectio
     const note = 'ad sales still settling (up to 14 days)';
     o.adSalesS += ' · ' + note; o.roasS = note; o.roasAdS = note;
   }
-  Object.assign(o, { aov: Number.isFinite(asp) ? F.money2(asp) : '—', aovD: isTotal ? span + ' ASP' : 'ASP (per unit)', aovC: 'df', aovS: s.units + ' units' + (isTotal ? ' total' : '') });
+  // AOV = revenue per order (the warehouse holds order counts); falls back to ASP (per unit) when a period has none.
+  const aov = s.orders > 0 ? s.rev / s.orders : NaN;
+  if (Number.isFinite(aov)) Object.assign(o, { aov: F.money2(aov), aovD: isTotal ? span + ' AOV' : 'AOV (per order)', aovC: 'df', aovS: s.orders + ' orders' + (isTotal ? ' total' : '') + (Number.isFinite(asp) ? ' · ASP ' + F.money2(asp) : '') });
+  else Object.assign(o, { aov: Number.isFinite(asp) ? F.money2(asp) : '—', aovD: isTotal ? span + ' ASP' : 'ASP (per unit)', aovC: 'df', aovS: s.units + ' units' + (isTotal ? ' total' : '') });
 
   // Market rows: keep the label, flag, budget and class cells; replace spend, revenue and TACoS.
   if (Array.isArray(ex.mktRows)) o.mktRows = ex.mktRows.map((r) => { const n = r.slice(); n[3] = F.money(s.adSpend); n[6] = F.money(s.rev); n[8] = F.pct(tacos); return n; });

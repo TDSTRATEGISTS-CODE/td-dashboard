@@ -66,7 +66,8 @@ function marketRow(win, ctx, existingRow) {
   return {
     ...(existingRow || {}), revenue: money(rev), units: String(units), orders: String(orders),
     cvr: pct(cvr), cvrCls: !Number.isFinite(cvr) ? 'bb' : cvr >= 0.1 ? 'bg' : cvr >= 0.05 ? 'ba' : 'br',
-    aov: units > 0 ? money2(rev / units) : '—',
+    aov: orders > 0 ? money2(rev / orders) : units > 0 ? money2(rev / units) : '—', // per order; per unit if no orders
+    asp: units > 0 ? money2(rev / units) : '—',
   };
 }
 
@@ -77,7 +78,7 @@ function productKpis(win, ctx, groups, row) {
     { bar: '#404935', lbl: 'Active SKUs', val: String(groups.length), dCls: 'df', d: 'sold in ' + win.short, s: listed ? groups.length + ' of ' + listed + ' listed products sold' : '' },
     { bar: 'var(--green)', lbl: 'Top Product Rev.', val: top ? top.sales : '—', dCls: 'df', d: top ? top.name : 'no sales', s: top ? top.pct + ' of ' + win.short + ' sales' : '' },
     { bar: 'var(--blue)', lbl: 'Units', val: row.units, dCls: 'df', d: win.short, s: row.orders + ' orders' },
-    { bar: 'var(--amber)', lbl: 'ASP', val: row.aov, dCls: 'df', d: 'per unit', s: 'revenue ÷ units' },
+    { bar: 'var(--amber)', lbl: 'ASP', val: row.asp, dCls: 'df', d: 'per unit', s: 'revenue ÷ units' },
   ];
 }
 
