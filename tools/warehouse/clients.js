@@ -8,6 +8,14 @@ module.exports = {
     currency: 'GBP', symbol: '£', timezone: 'Europe/London',
     // One market: the market row label and flag are taken from the existing data.js, only the numbers change.
     markets: [{ key: 'uk', profileId: '783989167267519' }],
-    periods: ['may', '3m', '12m', 'mtd'],
+    periods: ['mtd', 'may', '3m', '12m'],
+    live: true, // built and committed daily (Ryan, 22 Nov 2026)
+  },
+  abimax: {
+    currency: 'USD', symbol: '$', timezone: 'America/Los_Angeles',
+    markets: [{ key: 'all', profileId: '4302554244642336' }],
+    periods: ['mtd', 'may', '3m', '6m'],
+    launch: '2026-03', // "Since Launch" (6m key) starts with the first sale, March 2026
+    live: false, // dry runs only until Ryan signs off the comparison
   },
 };
