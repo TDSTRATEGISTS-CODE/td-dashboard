@@ -17,11 +17,17 @@ const CLIENTS = require('./clients');
 const ROOT = path.join(__dirname, '..', '..');
 const START = '/* WAREHOUSE-START', END = '/* WAREHOUSE-END */';
 
+// data.js assigns window.DASHBOARD_DATA, so a stand-in window is set while it loads and removed straight after:
+// Google's auth library treats any global `window` as a browser and then fails ("fetchImpl is not a function").
 function loadData(file) {
   global.window = {};
-  delete require.cache[require.resolve(file)];
-  require(file);
-  return global.window.DASHBOARD_DATA;
+  try {
+    delete require.cache[require.resolve(file)];
+    require(file);
+    return global.window.DASHBOARD_DATA;
+  } finally {
+    delete global.window;
+  }
 }
 function stripBlock(text) {
   const a = text.indexOf('\n' + START), b = text.indexOf(END);
@@ -78,4 +84,4 @@ async function main() {
 }
 
 if (require.main === module) main().catch((e) => { console.error(e.message); process.exit(1); });
-module.exports = { stripBlock, blockFor, compare };
+module.exports = { stripBlock, blockFor, compare, loadData };
