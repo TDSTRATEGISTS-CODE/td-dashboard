@@ -38,7 +38,8 @@ test('figures: October from the Ads API, comparisons against September (Merchant
   const o = buildOverlay({ cfg, existing, days, ads, adsStart: '2026-10-01' });
   const m = o.dateRanges.may;
   assert.equal(o.asOf, '2026-11-20');
-  assert.deepEqual([m.rev, m.spend, m.adSales, m.tacos, m.roas, m.aov], ['£3,100', '£930', '£1,395', '30.0%', '1.50×', '£25.00']);
+  assert.deepEqual([m.rev, m.spend, m.adSales, m.tacos, m.roas, m.aov], ['£3,100', '£930', '£1,395', '30.0%', '1.50×', '£33.33']);
+  assert.deepEqual([m.aovD, m.aovS], ['AOV (per order)', '93 orders · ASP £25.00']); // revenue ÷ orders, ASP alongside
   assert.equal(m.revD, '▲ 3.3% vs Sep'); // 31 days vs 30
   assert.equal(m.spendC, 'dd'); // spend up = red
   assert.equal(m.tacosD, '▲ 20.0pp vs Sep (10.0%)');
