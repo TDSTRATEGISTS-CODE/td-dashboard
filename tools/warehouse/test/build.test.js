@@ -4,7 +4,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs'), path = require('path'), os = require('os');
 const { buildOverlay, mergeDays, windows } = require('../build');
-const { stripBlock, blockFor } = require('../run');
+const { stripBlock, blockFor, loadData } = require('../run');
 
 const cfg = { symbol: '£', periods: ['may', '3m', '12m', 'mtd'], markets: [{ key: 'uk', profileId: 'x' }] };
 const addDays = (iso, n) => { const d = new Date(iso + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
@@ -76,4 +76,10 @@ test('data.js block: replaces only the warehouse block, keeps the hand-baked fil
   assert.equal(D.dateRanges.mtd.label, 'Month to date (1–20 Nov 2026)');
   assert.ok(D.sections.products && D.sections.overview, 'hand-baked sections untouched');
   assert.equal(D.warehouse.asOf, '2026-11-20');
+});
+
+test('loadData leaves no global window behind (Google auth treats one as a browser)', () => {
+  const D = loadData(path.join(__dirname, '..', '..', '..', 'clients', 'balance8', 'data.js'));
+  assert.ok(D && D.dateRanges);
+  assert.equal(typeof global.window, 'undefined');
 });
