@@ -12,7 +12,7 @@ window.DASHBOARD_CONFIG = {
     name: 'Balance 8',                        // sidebar client name
     title: 'Balance 8 — TD Strategists',      // browser tab <title>
     portalLabel: 'CLIENT PORTAL',             // small label under the logo
-    reportPeriodLabel: 'October 2026 · Monthly Report',
+    reportPeriodLabel: 'Monthly Report · numbers updated daily',
     scopeLabel: 'UK',                         // replaces the template's '.cfg-scope' default ('All EU')
     currencyIcon: '&#163;',                   // £ — used for the P&L nav icon (currency:true pages)
     logo: 'td-logo.png',                      // per-client fallback (unused while logoSrc is set)
@@ -21,7 +21,7 @@ window.DASHBOARD_CONFIG = {
     logoBlend: '',                            // TD SVG is light-on-dark — no blend trick needed
     logoWidth: '110px',                       // square TD emblem — keep compact in the sidebar
     footer: {
-      cadence: 'Updated Monthly',
+      cadence: 'Sales & ads updated daily · full report monthly',
       autoNext: true,            // always the 5th of next month (computed at load)
       managedBy: 'Managed by TD Strategists'
     }
@@ -68,7 +68,9 @@ window.DASHBOARD_CONFIG = {
   dateRangeOptions: [
     { value: 'may', label: 'Last Month' },
     { value: '3m',  label: 'Last 3 Months' },
-    { value: '12m', label: 'Last 12 Months' }
+    { value: '12m', label: 'Last 12 Months' },
+    // Numbers for these periods are built daily from the TDS Data Warehouse (tools/warehouse, 22 Nov 2026).
+    { value: 'mtd', label: 'Month to Date' }
   ],
 
   // ---- Markets (sidebar chips, market switching, topbar labels) ----

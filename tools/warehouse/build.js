@@ -168,6 +168,11 @@ function periodFields(key, rows, cfg, existing, win, prevWin, adsStart) {
 
   Object.assign(o, { tacosAd: o.tacos, tacosAdD: o.tacosD, tacosAdC: o.tacosC, tacosAdS: o.tacosS });
   Object.assign(o, { roasAd: o.roas, roasAdD: 'ACOS ' + F.pct(acos), roasAdC: o.roasC, roasAdS: F.money(s.rev) + ' revenue' });
+  if (key === 'mtd') {
+    // Amazon credits ad sales up to 14 days after the click, so recent days read low until they settle.
+    const note = 'ad sales still settling (up to 14 days)';
+    o.adSalesS += ' · ' + note; o.roasS = note; o.roasAdS = note;
+  }
   Object.assign(o, { aov: Number.isFinite(asp) ? F.money2(asp) : '—', aovD: isTotal ? span + ' ASP' : 'ASP (per unit)', aovC: 'df', aovS: s.units + ' units' + (isTotal ? ' total' : '') });
 
   // Market rows: keep the label, flag, budget and class cells; replace spend, revenue and TACoS.
