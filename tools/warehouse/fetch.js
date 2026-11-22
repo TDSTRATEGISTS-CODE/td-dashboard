@@ -7,13 +7,14 @@ const t = (name) => '`' + PROJECT + '.' + DATASET + '.' + name + '`';
 
 const SQL = {
   days: `SELECT FORMAT_DATE('%F', date) AS date, SUM(sales) AS sales, SUM(orders) AS orders, SUM(units) AS units, SUM(sessions) AS sessions,
-      SUM(ad_spend) AS ms_ad_spend, SUM(ad_sales) AS ms_ad_sales
+      SUM(ad_spend) AS ms_ad_spend, SUM(ad_sales) AS ms_ad_sales, SUM(ad_impressions) AS ms_ad_impressions, SUM(ad_clicks) AS ms_ad_clicks
     FROM ${t('account_sales_daily')} WHERE profile_id IN UNNEST(@profiles) AND date BETWEEN @from AND @to
     GROUP BY date ORDER BY date`,
-  ads: `SELECT FORMAT_DATE('%F', date) AS date, 'SP' AS ad_type, SUM(cost) AS spend, SUM(sales_14d) AS sales
+  ads: `SELECT FORMAT_DATE('%F', date) AS date, 'SP' AS ad_type, SUM(cost) AS spend, SUM(sales_14d) AS sales,
+      SUM(impressions) AS impressions, SUM(clicks) AS clicks
       FROM ${t('sp_campaign_daily')} WHERE profile_id IN UNNEST(@profiles) AND date BETWEEN @from AND @to GROUP BY date
     UNION ALL
-    SELECT FORMAT_DATE('%F', date), 'SB', SUM(cost), SUM(sales_14d)
+    SELECT FORMAT_DATE('%F', date), 'SB', SUM(cost), SUM(sales_14d), SUM(impressions), SUM(clicks)
       FROM ${t('sb_campaign_daily')} WHERE profile_id IN UNNEST(@profiles) AND date BETWEEN @from AND @to GROUP BY date`,
   asinDaily: `SELECT FORMAT_DATE('%F', date) AS date, asin, SUM(total_sales) AS sales, SUM(units) AS units
     FROM ${t('total_sales_daily')} WHERE profile_id IN UNNEST(@profiles) AND date BETWEEN @from AND @to GROUP BY 1, 2`,

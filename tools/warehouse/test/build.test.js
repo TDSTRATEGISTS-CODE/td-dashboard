@@ -74,6 +74,10 @@ test('3 and 12 months: totals across both ad sources; pie kept when the period s
   assert.equal(o.dateRanges.mtd.rev, '£2,000');
   assert.equal(o.dateRanges.mtd.revD, '▲ 0.0% vs 1–20 Oct');
   assert.match(o.dateRanges.mtd.roasS, /still settling/);
+  assert.equal(o.dateRanges.mtd.sectionFallback, 'may');
+  assert.equal(o.dateRanges.may.sectionFallback, undefined);
+  const mt = Object.fromEntries(o.dateRanges.mtd.sec.advertising.metrics.map((x) => [x.lbl, x.val]));
+  assert.deepEqual([mt['Total Spend'], mt['Ad Sales']], ['£600', '£900']);
   assert.doesNotMatch(o.dateRanges.may.roasS, /settling/);
 });
 

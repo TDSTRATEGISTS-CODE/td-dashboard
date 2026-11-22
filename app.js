@@ -371,6 +371,15 @@ window.switchDateRange = function (val) {
   var mktSub = (MKT[currentMarket] ? MKT[currentMarket].m : '') + ' · ' + d.label;
   var tbMkt = document.getElementById('tb-mkt'); if (tbMkt) tbMkt.textContent = mktSub;
   document.querySelectorAll('.dr-period').forEach(function (el) { el.textContent = d.shortLabel; });
+  // Monthly-only cards (P&L page, Buy Box): a period with sectionFallback (warehouse Month to Date → 'may') shows them
+  // for that period instead, labelled so. Nothing else sets sectionFallback, so other clients are unchanged.
+  var fbD = d.sectionFallback && dateRanges[d.sectionFallback];
+  if (fbD) {
+    var pgP = document.getElementById('page-pnl');
+    if (pgP) pgP.querySelectorAll('.dr-period').forEach(function (el) { el.textContent = fbD.shortLabel; });
+    var bbs = document.getElementById('bb-scope'), bbc = bbs && bbs.closest ? bbs.closest('.card') : null;
+    if (bbc) bbc.querySelectorAll('.dr-period').forEach(function (el) { el.textContent = fbD.shortLabel; });
+  }
   document.querySelectorAll('.dr-chart-sub').forEach(function (el) { el.textContent = d.shortLabel; });
   [1, 2, 3, 4, 5, 6, 7].forEach(function (n) { var el = document.getElementById('sec-period-' + n); if (el) el.textContent = d.shortLabel; });
 
@@ -1998,11 +2007,16 @@ function renderPeriodSections(d) {
   var sec = d.sec || {};
   var o = S.overview || {}, pl = S.pnl || {}, pr = S.products || {}, kw = S.keywords || {}, ad = S.advertising || {};
   var so = sec.overview || {}, spl = sec.pnl || {}, spr = sec.products || {}, skw = sec.keywords || {}, sad = sec.advertising || {};
+  // P&L is monthly: a period with sectionFallback and no P&L of its own (Month to Date) shows the fallback period's P&L.
+  var fbP = d.sectionFallback && dateRanges[d.sectionFallback], pnlD = d, pnlKey = currentPeriod;
+  if (fbP && !spl.statement) { pnlD = fbP; pnlKey = d.sectionFallback; spl = (fbP.sec && fbP.sec.pnl) || {}; }
 
   // Period charts (carried on the period object itself).
   if (d.revChart) renderChart('chart-rev', 'chart-rev-leg', d.revChart);
   if (d.adChart) renderChart('chart-adtrend', 'chart-adtrend-leg', d.adChart);
-  if (d.revBreakChart) renderRevBreak(d.revBreakChart);
+  // Revenue Breakdown sits on the P&L page, which is monthly: follow its fallback period under Month to Date.
+  var rbD = (d.sectionFallback && dateRanges[d.sectionFallback]) || d;
+  if (rbD.revBreakChart) renderRevBreak(rbD.revBreakChart);
   // Ad widgets (campaign-type pie + Ad Metrics) are region-aware: a market with no ad spend in the
   // selected period (e.g. NKV's Ireland / USA, AMACX's pre-launch NLD) blanks them rather than showing
   // the account total under that market's label. Driven by the market's own spend KPI (no extra data).
@@ -2065,16 +2079,19 @@ function renderPeriodSections(d) {
     } else {
       // comparison = the next-longer period in the date-range selector (1m→3m→6m→12m).
       var opts = CONFIG.dateRangeOptions || [], idx = -1, i;
-      for (i = 0; i < opts.length; i++) { if (opts[i].value === currentPeriod) { idx = i; break; } }
+      for (i = 0; i < opts.length; i++) { if (opts[i].value === pnlKey) { idx = i; break; } }
       var cmpD = (idx >= 0 && idx + 1 < opts.length) ? dateRanges[opts[idx + 1].value] : null;
       var cmpSt = cmpD ? ((cmpD.sec && cmpD.sec.pnl && cmpD.sec.pnl.statement) || (S.pnl && S.pnl.statement)) : null;
-      renderStatement(pst, cmpSt, d.shortLabel, cmpD ? cmpD.shortLabel : null);
+      renderStatement(pst, cmpSt, pnlD.shortLabel, cmpD ? cmpD.shortLabel : null);
     }
   }
   // Optional P&L caveat line (e.g. settled-basis clients: the most recent weeks are still settling).
   // Opt-in via the current statement's `caveat` — hidden for clients/periods that don't set one.
   var pnlNote = el('sec-pnl-note');
-  if (pnlNote) { var cav = pst && pst.caveat; if (cav) { pnlNote.innerHTML = '&#9432; ' + cav; pnlNote.style.display = ''; } else { pnlNote.style.display = 'none'; } }
+  if (pnlNote) {
+    var cav = [pnlD !== d ? 'The P&amp;L is monthly: showing ' + pnlD.label + '.' : '', (pst && pst.caveat) || ''].filter(Boolean).join(' ');
+    if (cav) { pnlNote.innerHTML = '&#9432; ' + cav; pnlNote.style.display = ''; } else { pnlNote.style.display = 'none'; }
+  }
 
   // Products page is market-aware: KPIs, the per-market table, and product groups all follow the
   // sidebar market selector. NLD has no MerchantSpring data yet → show the integration placeholder.
