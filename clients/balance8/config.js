@@ -65,12 +65,12 @@ window.DASHBOARD_CONFIG = {
   // (confirmed via per-SKU pull, not a reporting gap) before the Aug 2026 WIRED relaunch — so
   // "Last 12 Months" (not "Since Launch") is the honest widest window: it shows the Sep–Jan build,
   // the Mar–Jul gap, and the Aug recovery, rather than implying a clean straight-line launch.
+  // Numbers for these periods are built daily from the TDS Data Warehouse (tools/warehouse, 22 Nov 2026).
   dateRangeOptions: [
+    { value: 'mtd', label: 'Month to Date' },
     { value: 'may', label: 'Last Month' },
     { value: '3m',  label: 'Last 3 Months' },
-    { value: '12m', label: 'Last 12 Months' },
-    // Numbers for these periods are built daily from the TDS Data Warehouse (tools/warehouse, 22 Nov 2026).
-    { value: 'mtd', label: 'Month to Date' }
+    { value: '12m', label: 'Last 12 Months' }
   ],
 
   // ---- Markets (sidebar chips, market switching, topbar labels) ----

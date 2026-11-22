@@ -3,6 +3,7 @@
 // Definitions match the hand-baked files: TACoS = ad spend ÷ revenue, ROAS = ad sales ÷ ad spend, "AOV" = revenue ÷ units.
 // Ad figures: the Ads API tables for every day from the profile's Ads API start date, MerchantSpring's ad columns before it.
 'use strict';
+const { buildSections } = require('./sections');
 
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTH_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -118,8 +119,8 @@ function periodFields(key, rows, cfg, existing, win, prevWin, adsStart) {
   const ex = existing || {};
   const target = ex.tacosS || 'Target —';
   const o = { label: win.label, shortLabel: win.short, dataTo: win.to };
-  const isTotal = key === '3m' || key === '12m';
-  const span = key === '3m' ? '3-month' : '12-month';
+  const isTotal = key === '3m' || key === '12m' || key === '6m';
+  const span = key === '3m' ? '3-month' : key === '12m' ? '12-month' : 'since-launch';
   const ymList = months(monthOf(win.from), monthOf(win.to));
 
   o.rev = F.money(s.rev);
@@ -179,7 +180,7 @@ function periodFields(key, rows, cfg, existing, win, prevWin, adsStart) {
   if (Array.isArray(ex.mktRows)) o.mktRows = ex.mktRows.map((r) => { const n = r.slice(); n[3] = F.money(s.adSpend); n[6] = F.money(s.rev); n[8] = F.pct(tacos); return n; });
 
   // Charts: trailing 6 months (12 for the 12-month view), ending with the period's last month.
-  const trendMonths = key === '12m' ? ymList : months(addMonths(monthOf(win.to), -5), monthOf(win.to));
+  const trendMonths = key === '12m' || key === '6m' ? ymList : months(addMonths(monthOf(win.to), -5), monthOf(win.to));
   o.revChart = trendChart(rows, trendMonths, cfg.symbol, true);
   o.adChart = o.revChart;
   o.revBreakChart = breakChart(rows, ymList, cfg.symbol);
@@ -190,7 +191,7 @@ function periodFields(key, rows, cfg, existing, win, prevWin, adsStart) {
 
 // Period windows from the last day the warehouse holds (asOf). "Last Month" = the calendar month before the month
 // that follows asOf; Month to date = 1st of the current month to asOf (falls back to Last Month on the 1st).
-function windows(asOf) {
+function windows(asOf, cfg) {
   const today = addDays(asOf, 1);
   const cur = monthOf(today), last = addMonths(cur, -1), prev = addMonths(cur, -2);
   const W = {
@@ -198,6 +199,10 @@ function windows(asOf) {
     '3m': { from: addMonths(last, -2) + '-01', to: lastDay(last), label: mShort(addMonths(last, -2)) + '–' + mShort(last) + ' ' + last.slice(0, 4), short: mShort(addMonths(last, -2)) + '–' + mShort(last) + ' ' + last.slice(0, 4) },
     '12m': { from: addMonths(last, -11) + '-01', to: lastDay(last), label: mShort(addMonths(last, -11)) + ' ' + addMonths(last, -11).slice(0, 4) + ' – ' + mShort(last) + ' ' + last.slice(0, 4), short: 'Last 12 Months' },
   };
+  if (cfg && cfg.launch) { // "Since Launch" (6m key): launch month to Last Month
+    const L = cfg.launch;
+    W['6m'] = { from: L + '-01', to: lastDay(last), label: 'Since Launch · ' + mShort(L) + '–' + mShort(last) + ' ' + last.slice(0, 4), short: 'Since Launch' };
+  }
   const P = { may: { from: prev + '-01', to: lastDay(prev), short: mShort(prev) } };
   if (asOf >= cur + '-01') {
     const dayN = +asOf.slice(8);
@@ -208,16 +213,23 @@ function windows(asOf) {
   return { W, P };
 }
 
-function buildOverlay({ cfg, existing, days, ads, adsStart }) {
+function buildOverlay({ cfg, existing, days, ads, adsStart, asinDaily, asinMonthly, asinAds, campaigns, names }) {
   if (!days.length) throw new Error('No account_sales_daily rows: nothing to build');
   const rows = mergeDays(days, ads, adsStart);
   const asOf = rows[rows.length - 1].date;
-  const { W, P } = windows(asOf);
+  const { W, P } = windows(asOf, cfg);
   const out = { asOf, adsStart: adsStart || null, dateRanges: {} };
   for (const key of cfg.periods) {
     if (!W[key]) continue;
     const ex = (existing && existing.dateRanges && (existing.dateRanges[key] || existing.dateRanges.may)) || {};
     out.dateRanges[key] = periodFields(key, rows, cfg, ex, W[key], P[key] || null, adsStart);
+  }
+  if (asinDaily) { // period-keyed Products and campaigns sections (sections.js)
+    const productsTo = asinDaily.reduce((m, r) => (r.date > m ? r.date : m), '');
+    const ctx = { symbol: cfg.symbol, days, adsStart, asinDaily, asinMonthly: asinMonthly || [], asinAds: asinAds || [], campaigns: campaigns || [], names: names || {}, productsTo: productsTo || null };
+    const wins = Object.fromEntries(cfg.periods.filter((k) => W[k]).map((k) => [k, W[k]]));
+    out.sections = buildSections({ ctx, windows: wins, prevMay: P.may, existing });
+    out.productsTo = productsTo || null;
   }
   return out;
 }

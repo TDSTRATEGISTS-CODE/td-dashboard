@@ -34,11 +34,14 @@ function stripBlock(text) {
   return a >= 0 && b > a ? text.slice(0, a) + text.slice(b + END.length + 1) : text;
 }
 function blockFor(overlay) {
-  const meta = { asOf: overlay.asOf, adsApiFrom: overlay.adsStart, builtAt: new Date().toISOString(), source: 'TDS Data Warehouse (BigQuery amazon_ads)' };
+  const meta = { asOf: overlay.asOf, productsTo: overlay.productsTo || null, adsApiFrom: overlay.adsStart, builtAt: new Date().toISOString(), source: 'TDS Data Warehouse (BigQuery amazon_ads)' };
   return '\n' + START + ' — numbers from the TDS Data Warehouse, data to ' + overlay.asOf + '; see tools/warehouse/run.js */\n' +
     '(function () { var D = window.DASHBOARD_DATA; if (!D || !D.dateRanges) return;\n' +
     '  var O = ' + JSON.stringify(overlay.dateRanges) + ';\n' +
     '  Object.keys(O).forEach(function (k) { D.dateRanges[k] = Object.assign(D.dateRanges[k] || {}, O[k]); });\n' +
+    '  var S = ' + JSON.stringify(overlay.sections || {}) + '; D.sections = D.sections || {};\n' +
+    '  Object.keys(S).forEach(function (sec) { var T = D.sections[sec] = D.sections[sec] || {};\n' +
+    '    Object.keys(S[sec]).forEach(function (k) { T[k] = /ByPeriod$/.test(k) ? Object.assign(T[k] || {}, S[sec][k]) : S[sec][k]; }); });\n' +
     '  D.warehouse = ' + JSON.stringify(meta) + '; })();\n' + END + '\n';
 }
 const n = (s) => (typeof s === 'string' ? Number(s.replace(/[^0-9.\-]/g, '')) : NaN);
@@ -53,11 +56,28 @@ function compare(oldD, overlay) {
       lines.push(`  ${f.padEnd(8)} hand-baked ${String(a ?? '—').padEnd(10)} warehouse ${String(b).padEnd(10)} ${diff === null ? '' : (diff >= 0 ? '+' : '') + diff.toFixed(1) + '%'}${diff !== null && Math.abs(diff) > 1 ? '  ⚠ over 1%' : ''}`);
     }
   }
+  if (overlay.sections) { // sanity check: product rows should add up to the headline revenue (products lag a day)
+    const P = overlay.sections.products, A = overlay.sections.advertising;
+    lines.push(`\nProducts (data to ${overlay.productsTo || '—'}) and campaigns per period:`);
+    for (const k of Object.keys(P.groupsByPeriod)) {
+      const g = P.groupsByPeriod[k].all, sumP = g.reduce((t, r) => t + n(r.sales), 0);
+      const head = n(overlay.dateRanges[k] && overlay.dateRanges[k].rev);
+      lines.push(`  ${k.padEnd(4)} ${g.length} products, product sales ${Math.round(sumP)} vs headline ${Math.round(head)}` +
+        `${head ? ' (' + (((sumP - head) / head) * 100).toFixed(1) + '%)' : ''} · campaigns ${A.campaignsByPeriod[k] ? A.campaignsByPeriod[k].length : 'kept baked (before Ads API history)'}`);
+    }
+  }
   return lines.join('\n');
 }
 
 async function main() {
-  const client = process.argv[2], dry = process.argv.includes('--dry-run');
+  const dry = process.argv.includes('--dry-run');
+  const arg = process.argv[2];
+  // --live: every client marked live in clients.js (the daily schedule); otherwise one named client.
+  const list = arg === '--live' ? Object.keys(CLIENTS).filter((c) => CLIENTS[c].live) : [arg];
+  for (const client of list) await buildClient(client, dry);
+}
+
+async function buildClient(client, dry) {
   const cfg = CLIENTS[client];
   if (!cfg) throw new Error(`Unknown client "${client}". Known: ${Object.keys(CLIENTS).join(', ')}`);
   const file = path.join(ROOT, 'clients', client, 'data.js');
