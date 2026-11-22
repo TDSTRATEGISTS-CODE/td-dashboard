@@ -59,6 +59,8 @@ test('3 and 12 months: totals across both ad sources; pie kept when the period s
   assert.equal(o.dateRanges['12m'].revChart.xLabels.length, 12);
   assert.equal(o.dateRanges.mtd.rev, '£2,000');
   assert.equal(o.dateRanges.mtd.revD, '▲ 0.0% vs 1–20 Oct');
+  assert.match(o.dateRanges.mtd.roasS, /still settling/);
+  assert.doesNotMatch(o.dateRanges.may.roasS, /settling/);
 });
 
 test('data.js block: replaces only the warehouse block, keeps the hand-baked file and the PREV-MONTH block', () => {

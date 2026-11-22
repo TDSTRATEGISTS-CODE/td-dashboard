@@ -157,3 +157,12 @@ month on the Last Month (`may`) slot. They read `sections.products.prevMonth`, a
 `git show <this-month's-rebake-parent>:clients/<client>/data.js > /tmp/prev.js` (the file from just BEFORE the rebake) then
 `node tools/bake-prev-month.js <client> /tmp/prev.js`. If you skip it the arrows silently disappear (or compare against a
 stale month). Higher is better except Ad Spend and TACOS (lower is better); metrics with no comparable value show no arrow.
+
+## Warehouse-built numbers (Balance 8 live from 22 Nov 2026) — keep the WAREHOUSE block
+
+For clients listed in `tools/warehouse/clients.js` (Balance 8 so far), `dateRanges.may/3m/12m/mtd` numbers are rebuilt
+**daily** from the TDS Data Warehouse (BigQuery `amazon_ads`) by the "Warehouse build" GitHub Action (08:41 UTC), as one
+block between `WAREHOUSE-START/END` markers at the end of `data.js` (`tools/warehouse/run.js`; plan: Notion *Digital
+Dashboard Live Data — Data Warehouse — Project Plan*). A monthly rebake of these clients still owns everything else
+(products, P&L, campaigns, commentary) but **must keep that block at the end of the file** (or the numbers fall back to the
+hand-baked ones until the next daily build). Don't hand-edit numbers inside the block: the next build overwrites them.

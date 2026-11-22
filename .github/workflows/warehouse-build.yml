@@ -1,11 +1,13 @@
 # Builds client data.js number fields from the TDS Data Warehouse (BigQuery amazon_ads). See tools/warehouse/run.js.
 # Read-only towards the warehouse: signs in keyless as dashboard-reader@ (Workload Identity, main branch of td-dashboard
 # only; set up once by xecutive-ads deploy/dashboard-reader-setup.sh). No Amazon, MerchantSpring or Claude calls.
-# Manual for now: run with dry_run = true to compare against the hand-baked data.js; dry_run = false writes and commits.
-# A daily schedule is added only after Ryan signs off the Balance 8 pilot.
+# Daily at 08:41 UTC (08:41 UK in winter, 09:41 in summer), after the 07:23 Commerce Load: builds and commits Balance 8
+# (signed off by Ryan, 22 Nov 2026). Manual runs: dry_run = true compares only; false writes and commits.
 name: Warehouse build
 
 on:
+  schedule:
+    - cron: '41 8 * * *'
   workflow_dispatch:
     inputs:
       client:
@@ -43,13 +45,13 @@ jobs:
           workload_identity_provider: projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github/providers/dashboards
           service_account: dashboard-reader@tds-amazon-ads.iam.gserviceaccount.com
       - name: Build
-        run: node tools/warehouse/run.js "${{ inputs.client }}" ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: node tools/warehouse/run.js "${{ inputs.client || 'balance8' }}" ${{ inputs.dry_run && '--dry-run' || '' }}
       - name: Commit
         if: ${{ !inputs.dry_run }}
         run: |
           git config user.name "TDS warehouse build"
           git config user.email "admin@tdstrategists.co.uk"
-          git add "clients/${{ inputs.client }}/data.js" index.html
+          git add "clients/${{ inputs.client || 'balance8' }}/data.js" index.html
           git diff --cached --quiet && { echo "No change"; exit 0; }
-          git commit -m "Warehouse build: ${{ inputs.client }} ($(date -u +%F))"
+          git commit -m "Warehouse build: ${{ inputs.client || 'balance8' }} ($(date -u +%F))"
           git push
