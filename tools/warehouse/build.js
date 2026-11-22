@@ -78,6 +78,34 @@ function trendChart(rows, ymList, symbol, highlightLast) {
     legend: [{ name: 'Revenue', color: C_MAIN }, { name: 'Ad Spend', color: C_SUB }],
   };
 }
+// Daily (Month to date, Last Month) or weekly (3 months) trend: same spec as trendChart, but one point per day or
+// week. Labels only every few points so a month of days stays readable (the renderer prints one label per point).
+function periodChart(rows, from, to, symbol, grain, short) {
+  const pts = [];
+  if (grain === 'day') {
+    for (let d = from; d <= to; d = addDays(d, 1)) { const s = sum(rows, d, d); pts.push({ d, rev: s.rev, spend: s.adSpend }); }
+  } else { // 7-day weeks counted from the start of the window; a remainder under 4 days joins the last week
+    const starts = [];
+    for (let d = from; d <= to; d = addDays(d, 7)) starts.push(d);
+    if (starts.length > 1 && addDays(starts[starts.length - 1], 3) > to) starts.pop();
+    starts.forEach((d, i) => {
+      const end = i === starts.length - 1 ? to : addDays(starts[i + 1], -1);
+      const s = sum(rows, d, end); pts.push({ d, rev: s.rev, spend: s.adSpend });
+    });
+  }
+  const every = grain === 'day' ? 5 : 2, last = pts.length - 1;
+  const label = (iso) => +iso.slice(8) + ' ' + MON[+iso.slice(5, 7) - 1];
+  const xLabels = pts.map((p, i) => (i === 0 || i === last || (i % every === 0 && last - i >= every) ? label(p.d) : ''));
+  const rev = pts.map((p) => Math.round(p.rev)), spend = pts.map((p) => Math.round(p.spend));
+  const max = niceMax(Math.max(1, ...rev, ...spend));
+  return {
+    max, yTicks: ticks(max, symbol), xLabels, xHighlight: C_MAIN, grain,
+    subtitle: (grain === 'day' ? 'Daily' : 'Weekly') + ' revenue and ad spend · ' + short,
+    series: [{ color: C_MAIN, values: rev, main: true, area: true, dots: pts.length <= 14 }, { color: C_SUB, values: spend, dash: true, dots: pts.length <= 14 }],
+    legend: [{ name: grain === 'day' ? 'Revenue (daily)' : 'Revenue (weekly)', color: C_MAIN }, { name: grain === 'day' ? 'Ad Spend (daily)' : 'Ad Spend (weekly)', color: C_SUB }],
+  };
+}
+
 function breakChart(rows, ymList, symbol) {
   const ad = ymList.map((m) => Math.round(sum(rows, m + '-01', lastDay(m)).adSales));
   const org = ymList.map((m, i) => Math.max(0, Math.round(sum(rows, m + '-01', lastDay(m)).rev) - ad[i]));
@@ -180,8 +208,13 @@ function periodFields(key, rows, cfg, existing, win, prevWin, adsStart) {
   if (Array.isArray(ex.mktRows)) o.mktRows = ex.mktRows.map((r) => { const n = r.slice(); n[3] = F.money(s.adSpend); n[6] = F.money(s.rev); n[8] = F.pct(tacos); return n; });
 
   // Charts: trailing 6 months (12 for the 12-month view), ending with the period's last month.
-  const trendMonths = key === '12m' || key === '6m' ? ymList : months(addMonths(monthOf(win.to), -5), monthOf(win.to));
-  o.revChart = trendChart(rows, trendMonths, cfg.symbol, true);
+  // Trend chart grain follows the window: days for Month to date and Last Month, weeks for 3 months, months beyond.
+  if (key === 'mtd' || key === 'may') o.revChart = periodChart(rows, win.from, win.to, cfg.symbol, 'day', win.short);
+  else if (key === '3m') o.revChart = periodChart(rows, win.from, win.to, cfg.symbol, 'week', win.short);
+  else {
+    const tm = key === '12m' || key === '6m' ? ymList : months(addMonths(monthOf(win.to), -5), monthOf(win.to));
+    o.revChart = { ...trendChart(rows, tm, cfg.symbol, true), subtitle: 'Monthly revenue and ad spend · ' + tm.length + ' months' };
+  }
   o.adChart = o.revChart;
   o.revBreakChart = breakChart(rows, ymList, cfg.symbol);
   const mix = campaignMix(s, F, adsStart && win.from >= adsStart);
