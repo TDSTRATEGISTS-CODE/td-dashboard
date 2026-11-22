@@ -9,6 +9,27 @@ Balance 8 is Amazon-only, single UK marketplace, GBP. Two brands on one seller a
 (nootropics, live since Sep 2025) and WIRED (sports nutrition, first sale Aug 2026). Digital Dash
 tier until Oct 2026, when the Amazon P&L was activated (settled basis).
 
+## ⚠️ Scope from 22 Nov 2026 — the TDS Data Warehouse builds most of this file DAILY. Read first; it overrides the rest.
+
+Balance 8's numbers are rebuilt every day by the td-dashboard "Warehouse build" GitHub Action (`tools/warehouse/run.js`,
+08:41 UTC) and written as one block between `WAREHOUSE-START/END` markers at the end of `clients/balance8/data.js`. That
+block wins over anything above it. So this monthly rebake must NOT pull or rebuild (it would be overwritten — wasted tokens):
+- `dateRanges.*` headline KPIs, `mktRows`, `revChart`/`adChart`/`revBreakChart`, `campaignMix`, `dateRanges.mtd`;
+- `sections.products.kpisByPeriod` / `tableByPeriod` / `groupsByPeriod` sales, units, ad spend, TACoS, and `prevMonth`;
+- `sections.advertising.campaignsByPeriod` for `may` (Last Month) and `mtd`;
+- per-period Ad Metrics tiles and the Overview conversion card (`dateRanges[p].sec.advertising.metrics`, `sec.overview.cvr`);
+- skip the `getSalesByPeriod` / `getSalesByProduct` revenue pulls and the revenue cross-check below — they only fed those.
+
+This rebake still owns (pull and bake as before): the **Amazon P&L** (`sections.pnl` + `dateRanges['3m'/'12m'].sec.pnl`,
+`getStoreProfitAndLoss`), **inventory/stock** (`sections.inventory`), **per-product session CVR and OOS rate** in
+`groupsByPeriod[p].all[].cvr/cvrCls/oosRate/oosCls` (the warehouse keeps these where the product name matches), the
+**campaign lists for `3m`/`12m`** (windows that start before the Ads API history, mid-Aug 2026), the Overview Buy Box
+bars, and the top-of-file comment.
+
+Rules: **keep the WAREHOUSE block exactly as it is at the end of the file** (rebuild only the hand-baked part above it);
+**do not change `reportPeriodLabel`** (it now reads "Monthly Report · numbers updated daily"); still bump `APP_VER`.
+Self-check gates 3–5 and the `node` reconciliation check below apply only to the sections this rebake still owns.
+
 ## What to do
 
 Re-bake `clients/balance8/data.js` from MerchantSpring for the latest fully-closed month. The

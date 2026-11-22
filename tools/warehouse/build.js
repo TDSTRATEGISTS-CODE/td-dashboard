@@ -30,8 +30,8 @@ function fmt(symbol) {
 function mergeDays(days, ads, adsStart) {
   const byDate = new Map();
   for (const a of ads) {
-    const cur = byDate.get(a.date) || { spend: 0, sales: 0, types: {} };
-    cur.spend += num(a.spend); cur.sales += num(a.sales);
+    const cur = byDate.get(a.date) || { spend: 0, sales: 0, impressions: 0, clicks: 0, types: {} };
+    cur.spend += num(a.spend); cur.sales += num(a.sales); cur.impressions += num(a.impressions); cur.clicks += num(a.clicks);
     const t = cur.types[a.ad_type] || (cur.types[a.ad_type] = { spend: 0, sales: 0 });
     t.spend += num(a.spend); t.sales += num(a.sales);
     byDate.set(a.date, cur);
@@ -42,16 +42,20 @@ function mergeDays(days, ads, adsStart) {
     return {
       date: d.date, rev: num(d.sales), orders: num(d.orders), units: num(d.units),
       adSpend: api ? (a ? a.spend : 0) : num(d.ms_ad_spend), adSales: api ? (a ? a.sales : 0) : num(d.ms_ad_sales),
+      impressions: api ? (a ? a.impressions : 0) : num(d.ms_ad_impressions), clicks: api ? (a ? a.clicks : 0) : num(d.ms_ad_clicks),
+      sessions: d.sessions === null || d.sessions === undefined ? null : num(d.sessions),
       types: api && a ? a.types : null, apiAds: !!api,
     };
   }).sort((p, q) => p.date.localeCompare(q.date));
 }
 
 function sum(rows, from, to) {
-  const s = { rev: 0, orders: 0, units: 0, adSpend: 0, adSales: 0, days: 0, apiDays: 0, types: {} };
+  const s = { rev: 0, orders: 0, units: 0, adSpend: 0, adSales: 0, impressions: 0, clicks: 0, sessions: 0, sessUnits: 0, days: 0, apiDays: 0, types: {} };
   for (const r of rows) {
     if (r.date < from || r.date > to) continue;
     s.rev += r.rev; s.orders += r.orders; s.units += r.units; s.adSpend += r.adSpend; s.adSales += r.adSales; s.days++;
+    s.impressions += r.impressions || 0; s.clicks += r.clicks || 0;
+    if (r.sessions !== null && r.sessions !== undefined) { s.sessions += r.sessions; s.sessUnits += r.units; } // CVR only over days with traffic
     if (r.apiAds) s.apiDays++;
     if (r.types) for (const [k, v] of Object.entries(r.types)) { const t = s.types[k] || (s.types[k] = { spend: 0, sales: 0 }); t.spend += v.spend; t.sales += v.sales; }
   }
@@ -136,7 +140,7 @@ const chg = (cur, prev) => (prev > 0 ? (cur - prev) / prev : null);
 const arrow = (d) => (d >= 0 ? '▲' : '▼');
 
 // The overlay for one period: the same field names as the hand-baked dateRanges entry.
-function periodFields(key, rows, cfg, existing, win, prevWin, adsStart) {
+function periodFields(key, rows, cfg, existing, win, prevWin, adsStart, exSections) {
   const F = fmt(cfg.symbol);
   const s = sum(rows, win.from, win.to);
   const p = prevWin ? sum(rows, prevWin.from, prevWin.to) : null;
@@ -219,6 +223,24 @@ function periodFields(key, rows, cfg, existing, win, prevWin, adsStart) {
   o.revBreakChart = breakChart(rows, ymList, cfg.symbol);
   const mix = campaignMix(s, F, adsStart && win.from >= adsStart);
   if (mix) o.campaignMix = mix;
+
+  // Per-period Ad Metrics tiles and Overview conversion card (dateRanges[p].sec.*), so they follow the selector too.
+  const exS = exSections || {};
+  const compact = (n) => (n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.round(n)));
+  const byLbl = Object.fromEntries(((exS.advertising && exS.advertising.metrics) || []).map((m) => [m.lbl, m]));
+  const tile = (lbl, val, extra) => ({ ...(byLbl[lbl] || {}), lbl, val, ...(extra || {}) });
+  const cvr = s.sessions > 0 ? s.sessUnits / s.sessions : NaN;
+  const exCvr = (exS.overview && exS.overview.cvr) || {};
+  o.sec = {
+    advertising: { metrics: [
+      tile('Total Spend', F.money(s.adSpend)), tile('Ad Sales', F.money(s.adSales)),
+      tile('ACOS', F.pct(acos), { color: !Number.isFinite(acos) ? undefined : acos <= 0.3 ? 'green' : acos <= 0.6 ? 'amber' : 'red' }),
+      tile('ROAS', F.x(roas), { color: !Number.isFinite(roas) ? undefined : roas >= 3 ? 'green' : roas >= 1.5 ? 'amber' : 'red' }),
+      tile('Impressions', compact(s.impressions)), tile('Avg. CPC', s.clicks > 0 ? F.money2(s.adSpend / s.clicks) : '—'),
+    ] },
+    overview: { cvr: { ...exCvr, val: F.pct(cvr), note: win.label + ' · ' + Math.round(s.sessions).toLocaleString('en-GB') + ' sessions' } },
+  };
+  if (key === 'mtd') o.sectionFallback = 'may'; // monthly-only cards (P&L, Buy Box) show Last Month under Month to Date
   return o;
 }
 
@@ -255,7 +277,7 @@ function buildOverlay({ cfg, existing, days, ads, adsStart, asinDaily, asinMonth
   for (const key of cfg.periods) {
     if (!W[key]) continue;
     const ex = (existing && existing.dateRanges && (existing.dateRanges[key] || existing.dateRanges.may)) || {};
-    out.dateRanges[key] = periodFields(key, rows, cfg, ex, W[key], P[key] || null, adsStart);
+    out.dateRanges[key] = periodFields(key, rows, cfg, ex, W[key], P[key] || null, adsStart, existing && existing.sections);
   }
   if (asinDaily) { // period-keyed Products and campaigns sections (sections.js)
     const productsTo = asinDaily.reduce((m, r) => (r.date > m ? r.date : m), '');

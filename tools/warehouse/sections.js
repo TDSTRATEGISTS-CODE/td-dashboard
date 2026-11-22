@@ -33,20 +33,23 @@ function asinSales(win, daily, monthly) {
 
 const tacosCls = (t) => (!Number.isFinite(t) ? 'bb' : t <= 0.15 ? 'bg' : t <= 0.3 ? 'ba' : 'br');
 
-function groupRows(win, ctx, covered) {
+function groupRows(win, ctx, covered, bakedRows) {
   const { money, pct } = F(ctx.symbol);
   const rows = asinSales(win, ctx.asinDaily, ctx.asinMonthly);
   const total = rows.reduce((t, r) => t + r.sales, 0);
   const spendBy = new Map();
   if (covered) for (const r of ctx.asinAds) if (r.date >= win.from && r.date <= win.to) spendBy.set(r.asin, (spendBy.get(r.asin) || 0) + num(r.spend));
+  // Per-product conversion and stock-out rate are not in the warehouse: keep the monthly rebake's values (same product name).
+  const baked = Object.fromEntries((bakedRows || []).map((b) => [String(b.name).toLowerCase(), b]));
   return rows.map((r) => {
     const sp = covered ? spendBy.get(r.asin) || 0 : null;
+    const b = baked[String(ctx.names[r.asin] || r.asin).toLowerCase()] || {};
     const t = sp !== null && r.sales > 0 ? sp / r.sales : NaN;
     return {
       name: ctx.names[r.asin] || r.asin, sales: money(r.sales), units: r.units,
       pct: total > 0 ? Math.round((r.sales / total) * 100) + '%' : '—',
       adSpend: sp === null ? '—' : money(sp), tacos: sp === null ? '—' : pct(t), tacosCls: sp === null ? 'bb' : tacosCls(t),
-      cvr: '—', cvrCls: 'bb', oosRate: '—', oosCls: 'bb', // per-product sessions and stock-out days are not in the warehouse yet
+      cvr: b.cvr || '—', cvrCls: b.cvr ? b.cvrCls : 'bb', oosRate: b.oosRate || '—', oosCls: b.oosRate ? b.oosCls : 'bb',
     };
   });
 }
@@ -112,7 +115,8 @@ function buildSections({ ctx, windows, prevMay, existing }) {
     // Product rows lag a day behind account totals (read for D-2): never ask for days not loaded yet.
     const win = { ...win0, to: ctx.productsTo && win0.to > ctx.productsTo ? ctx.productsTo : win0.to };
     const covered = !!ctx.adsStart && win0.from >= ctx.adsStart;
-    const groups = groupRows(win, ctx, covered);
+    const bakedG = S.products && S.products.groupsByPeriod && S.products.groupsByPeriod[key];
+    const groups = groupRows(win, ctx, covered, bakedG && bakedG.all);
     const row = marketRow(win0, ctx, exRow);
     products.groupsByPeriod[key] = { all: groups };
     products.tableByPeriod[key] = [row];
