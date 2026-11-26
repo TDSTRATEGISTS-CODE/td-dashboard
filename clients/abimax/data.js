@@ -243,9 +243,10 @@ window.DASHBOARD_DATA = {
       // healthMgmtSpec ← "Abimax — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026; based on the 02 Nov 2026 Account Health Review);
       //                  includes the ✅ Healthy line for US (SOP rule). No Done lines this week.
       // adsStrategySpec ← same task › Advertising (fixed format: Overall, Best seller, Conversion, Flags, Budget + 2 Done).
-      // stockWarn      ← Abimax_US_sku-sync_2026-11-16 (MerchantSpring, 17 Oct–15 Nov 2026, FBA). Thresholds ≤45d / soon ≤120d.
+      // stockWarn      ← Abimax_US_sku-sync_2026-11-23 (MerchantSpring, 24 Oct–22 Nov 2026, FBA). Thresholds ≤45d / soon ≤120d.
       //                  Magno-PRO-002 (0 stock since 19 Feb, no sales) and the Bundle (no sale since 20 Sep) left off.
-      //                  Health and ads held at the 5 Nov approval (Client Notes approval >10 days old on 19 Nov; stock only refreshed).
+      //                  Magnostream Pro now ~130 days cover (13 units, 3 sold) → above the 120-day line, off the card.
+      //                  Health and ads held at the 5 Nov approval (Client Notes approval >10 days old on 26 Nov; stock only refreshed).
       healthMgmtSpec: { badge:'1 open', subLabel:'Weekly review · 2 Nov 2026', items:[
         {level:'amber',title:'US — Deals',sub:'In progress · Amazon\'s Black Friday deal submissions close on 13 Nov'},
         {level:'green',title:'US — Account Health',sub:'Healthy · all metrics within Amazon\'s targets'}
@@ -259,9 +260,8 @@ window.DASHBOARD_DATA = {
         {level:'green',title:'US — MAGNO-PRO ads paused',sub:'Done 29 Oct'},
         {level:'green',title:'US — Magnostream keyword campaign widened',sub:'Done 22 Oct'}
       ] },
-      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'2 stock-up · 0 OOS', subLabel:'SKU sync · US FBA stock · 16 Nov 2026', items:[
-        {level:'amber',title:'Magnostream Single — stock-up soon',sub:'B0GLT2LYKY · ~60 days cover · 54 units'},
-        {level:'amber',title:'Magnostream Pro — stock-up soon',sub:'B0GGRJKS2D · ~70 days cover · 14 units'}
+      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'1 stock-up · 0 OOS', subLabel:'SKU sync · US FBA stock · 23 Nov 2026', items:[
+        {level:'amber',title:'Magnostream Single — stock-up soon',sub:'B0GLT2LYKY · ~69 days cover · 62 units'}
       ] }
     },
     // P&L is ACTIVE for Abimax (Executive tier, Sep 2026) — full MerchantSpring financial P&L, built

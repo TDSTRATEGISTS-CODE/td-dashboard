@@ -242,8 +242,9 @@ campaigns: [
       // healthMgmtSpec ← "NKV — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 11 Nov 2026; based on the 09 Nov 2026 Account Health Review);
       //                  includes the ✅ Healthy line for UK (SOP rule). The ⚠️ UK Serum Bundle inventory line moved to stockWarn.
       // adsStrategySpec ← same task › Advertising (fixed format: Overall, Best seller, Conversion, Flags, Budget + 2 Done).
-      // stockWarn      ← NKV_UK + NKV_US_sku-sync_2026-11-16 (MerchantSpring, 17 Oct–15 Nov 2026, FBA). Thresholds ≤14d / soon ≤30d.
-      //                  Serum Bundle OOS from the approved Client Notes (Seller Central; sync shows 14 units). US: nothing hit.
+      // stockWarn      ← NKV_UK + NKV_US_sku-sync_2026-11-23 (MerchantSpring, 24 Oct–22 Nov 2026, FBA). Thresholds ≤14d / soon ≤30d.
+      //                  Serum Bundle OOS carried from the 11 Nov Client Notes (Seller Central; sync shows 14 units). US: nothing hit.
+      //                  Health and ads held at the 11 Nov approval (Client Notes approval >10 days old on 26 Nov; stock only refreshed).
       //                  Left off: dormant Girlactik long-tail (no sale in 120+ days); Girlactik Pure Black and Lilibeth Pink/Purple
       //                  GB 2-packs (De-Listed per the SKU List, 9 Nov); 0-stock FBM duplicate offers of FBA-stocked Newnique ASINs.
       //                  Card title/sub come from config.layout.relabel.
@@ -261,12 +262,14 @@ campaigns: [
         {level:'green',title:'UK — Newnique and HYDRTE ad spend tightened',sub:'Done 8 Nov'},
         {level:'green',title:'UK — more spend behind the best-performing Lids by Design searches',sub:'Done 5 Nov'}
       ] },
-      stockWarn: { badge:'3 stock-up · 2 OOS', subLabel:'SKU sync · per market (FBA) · 16 Nov 2026', items:[
+      stockWarn: { badge:'4 stock-up · 3 OOS', subLabel:'SKU sync · per market (FBA) · 23 Nov 2026', items:[
+        {level:'red',title:'Contours Rx Brow & Lash Serum — OOS UK',sub:'B09C131LCZ · since 17 Nov · stock-up now'},
         {level:'red',title:'Newnique GrowPod Device — OOS UK',sub:'B0F8QKKZMQ · since 14 Nov · stock-up now'},
-        {level:'red',title:'Newnique Scalp Renewal Exfoliant — stock-up now',sub:'B0F8QLYNMQ · UK · ~13 days cover · 10 units'},
         {level:'amber',title:'Newnique Serum Bundle — OOS UK',sub:'B0H1N9G61C · since 2 Nov · shipment to be arranged'},
-        {level:'amber',title:'Hydrte Travel Bottle Nero Black — stock-up soon',sub:'B0CHYNZMXR · UK · ~19 days cover · 12 units'},
-        {level:'amber',title:'Lilibeth Brow Shaper 2-Pack Aqua — stock-up soon',sub:'B00NNPLTBI · UK · ~30 days cover · 15 units'}
+        {level:'amber',title:'Newnique Scalp Renewal Exfoliant — stock-up soon',sub:'B0F8QLYNMQ · UK · ~15 days cover · 11 units'},
+        {level:'amber',title:'Hydrte Travel Bottle Nero Black — stock-up soon',sub:'B0CHYNZMXR · UK · ~16 days cover · 10 units'},
+        {level:'amber',title:'Lilibeth Brow Shaper 2-Pack Aqua — stock-up soon',sub:'B00NNPLTBI · UK · ~20 days cover · 10 units'},
+        {level:'amber',title:'Lids by Design 2-Pack Assortment — stock-up soon',sub:'B0CV2D3J1G · UK · ~30 days cover · 4 units'}
       ] }
       // Account Health (strategy/performance alerts) card removed from the NKV Overview per client request.
     },

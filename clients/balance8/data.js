@@ -256,8 +256,8 @@ window.DASHBOARD_DATA = {
       // healthMgmtSpec ← "Balance 8 — Client Notes (dashboard & reports)" task › Account Health (Approved — Solei, 5 Nov 2026;
       //                  based on the 02 Nov 2026 Account Health Review); includes the ✅ Healthy line for UK (SOP rule).
       // adsStrategySpec ← same task › Advertising (fixed format: Overall, Best seller, Conversion, Flags, Budget + 2 Done).
-      // stockWarn      ← Balance8_UK_sku-sync_2026-11-16 (MerchantSpring, 17 Oct–15 Nov 2026, FBA). Thresholds ≤21d / soon ≤45d.
-      //                  Health and ads held at the 5 Nov approval (Client Notes approval >10 days old on 19 Nov; stock only refreshed).
+      // stockWarn      ← Balance8_UK_sku-sync_2026-11-23 (MerchantSpring, 24 Oct–22 Nov 2026, FBA rows). Thresholds ≤21d / soon ≤45d.
+      //                  Health and ads held at the 5 Nov approval (Client Notes approval >10 days old on 26 Nov; stock only refreshed).
       healthMgmtSpec: { badge:'1 open', subLabel:'Weekly review · 2 Nov 2026', items:[
         {level:'amber',title:'UK — Sales',sub:'In progress · BrainMatter is carrying the range'},
         {level:'green',title:'UK — Account Health',sub:'Healthy · all metrics within Amazon\'s targets'}
@@ -271,8 +271,9 @@ window.DASHBOARD_DATA = {
         {level:'green',title:'UK — WIRED bids raised on high-intent searches',sub:'Done 29 Oct'},
         {level:'green',title:'UK — WIRED ads focused on three products',sub:'Done 29 Oct'}
       ] },
-      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'1 stock-up · 0 OOS', subLabel:'SKU sync · UK FBA stock · 16 Nov 2026', items:[
-        {level:'amber',title:'WIRED Electrolytes Melon Ice — stock-up soon',sub:'B0HD7JBLVY · UK · ~40 days cover · 40 units'}
+      stockWarn: { title:'&#128230; Logistics &amp; Operations', badge:'2 stock-up · 0 OOS', subLabel:'SKU sync · UK FBA stock · 23 Nov 2026', items:[
+        {level:'amber',title:'WIRED Electrolytes Melon Ice — stock-up soon',sub:'B0HD7JBLVY · UK · ~40 days cover · 40 units'},
+        {level:'amber',title:'WIRED Electrolytes Citrus Lime — stock-up soon',sub:'B0HD7WP7VT · UK · ~40 days cover · 40 units'}
       ] }
     },
     // Amazon P&L — ACTIVE (un-gated Oct 2026, see config.js hiddenPages). Basis: getStoreProfitAndLoss,
